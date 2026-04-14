@@ -754,6 +754,25 @@ export const LESSONS: Lesson[] = [
 // Back-compat alias so any old import (TOPICS) still works.
 export const TOPICS: Lesson[] = LESSONS;
 
+// --- AP CED unit + subtopic data (one module per category) ---
+import { MATH_UNITS } from "@/lib/apUnits/math";
+import { SCIENCE_UNITS } from "@/lib/apUnits/science";
+import { CS_UNITS } from "@/lib/apUnits/cs";
+import { HISTORY_UNITS } from "@/lib/apUnits/history";
+
+const AP_UNITS: Record<string, ApUnit[]> = {
+  ...MATH_UNITS,
+  ...SCIENCE_UNITS,
+  ...CS_UNITS,
+  ...HISTORY_UNITS,
+};
+
+/** Pull the official CED units for a course slug, or return the fallback
+ *  units if the course isn't in the AP_UNITS registry yet. */
+function cedUnits(slug: string, fallback: ApUnit[]): ApUnit[] {
+  return AP_UNITS[slug] ?? fallback;
+}
+
 export const COURSES: Course[] = [
   // ---------- MATH ----------
   {
@@ -763,12 +782,12 @@ export const COURSES: Course[] = [
     category: "math",
     subtitle:
       "Polynomial, rational, exponential, logarithmic, and trigonometric functions.",
-    units: [
+    units: cedUnits("quadratics", [
       { number: 1, title: "Polynomial & Rational Functions" },
       { number: 2, title: "Exponential & Logarithmic Functions" },
       { number: 3, title: "Trigonometric & Polar Functions" },
       { number: 4, title: "Functions Involving Parameters, Vectors & Matrices" },
-    ],
+    ]),
   },
   {
     slug: "ap-calc-ab",
@@ -776,7 +795,7 @@ export const COURSES: Course[] = [
     shortTitle: "Calc AB",
     category: "math",
     subtitle: "Single-variable calculus: limits, derivatives, and integrals.",
-    units: [
+    units: cedUnits("ap-calc-ab", [
       { number: 1, title: "Limits & Continuity" },
       { number: 2, title: "Differentiation: Definition & Fundamental Properties" },
       { number: 3, title: "Differentiation: Composite, Implicit & Inverse Functions" },
@@ -785,7 +804,7 @@ export const COURSES: Course[] = [
       { number: 6, title: "Integration & Accumulation of Change" },
       { number: 7, title: "Differential Equations" },
       { number: 8, title: "Applications of Integration" },
-    ],
+    ]),
   },
   {
     slug: "ap-calc-bc",
@@ -793,7 +812,7 @@ export const COURSES: Course[] = [
     shortTitle: "Calc BC",
     category: "math",
     subtitle: "Everything in AB, plus sequences, series, parametric and polar.",
-    units: [
+    units: cedUnits("ap-calc-bc", [
       { number: 1, title: "Limits & Continuity" },
       { number: 2, title: "Differentiation: Definition & Fundamental Properties" },
       { number: 3, title: "Differentiation: Composite, Implicit & Inverse Functions" },
@@ -804,7 +823,7 @@ export const COURSES: Course[] = [
       { number: 8, title: "Applications of Integration" },
       { number: 9, title: "Parametric Equations, Polar Coordinates & Vector Functions" },
       { number: 10, title: "Infinite Sequences & Series" },
-    ],
+    ]),
   },
   {
     slug: "ap-statistics",
@@ -812,7 +831,7 @@ export const COURSES: Course[] = [
     shortTitle: "Stats",
     category: "math",
     subtitle: "Exploring data, probability, sampling distributions, and inference.",
-    units: [
+    units: cedUnits("ap-statistics", [
       { number: 1, title: "Exploring One-Variable Data" },
       { number: 2, title: "Exploring Two-Variable Data" },
       { number: 3, title: "Collecting Data" },
@@ -822,7 +841,7 @@ export const COURSES: Course[] = [
       { number: 7, title: "Inference for Quantitative Data: Means" },
       { number: 8, title: "Inference for Categorical Data: Chi-Square" },
       { number: 9, title: "Inference for Quantitative Data: Slopes" },
-    ],
+    ]),
   },
 
   // ---------- SCIENCE ----------
@@ -832,7 +851,7 @@ export const COURSES: Course[] = [
     shortTitle: "Physics 1",
     category: "science",
     subtitle: "Algebra-based mechanics: kinematics, forces, energy, momentum.",
-    units: [
+    units: cedUnits("ap-physics-1", [
       { number: 1, title: "Kinematics" },
       { number: 2, title: "Force & Translational Dynamics" },
       { number: 3, title: "Work, Energy & Power" },
@@ -841,7 +860,7 @@ export const COURSES: Course[] = [
       { number: 6, title: "Energy & Momentum of Rotating Systems" },
       { number: 7, title: "Oscillations" },
       { number: 8, title: "Fluids" },
-    ],
+    ]),
   },
   {
     slug: "ap-physics-2",
@@ -850,7 +869,7 @@ export const COURSES: Course[] = [
     category: "science",
     subtitle:
       "Algebra-based: thermodynamics, electricity, magnetism, optics, modern physics.",
-    units: [
+    units: cedUnits("ap-physics-2", [
       { number: 1, title: "Thermodynamics" },
       { number: 2, title: "Electric Force, Field & Potential" },
       { number: 3, title: "Electric Circuits" },
@@ -858,7 +877,7 @@ export const COURSES: Course[] = [
       { number: 5, title: "Geometric Optics" },
       { number: 6, title: "Waves, Sound & Physical Optics" },
       { number: 7, title: "Modern Physics" },
-    ],
+    ]),
   },
   {
     slug: "ap-physics-c-mech",
@@ -866,7 +885,7 @@ export const COURSES: Course[] = [
     shortTitle: "Physics C Mech",
     category: "science",
     subtitle: "Calculus-based mechanics for engineering and physics majors.",
-    units: [
+    units: cedUnits("ap-physics-c-mech", [
       { number: 1, title: "Kinematics" },
       { number: 2, title: "Newton's Laws of Motion" },
       { number: 3, title: "Work, Energy & Power" },
@@ -874,7 +893,7 @@ export const COURSES: Course[] = [
       { number: 5, title: "Rotation" },
       { number: 6, title: "Oscillations" },
       { number: 7, title: "Gravitation" },
-    ],
+    ]),
   },
   {
     slug: "ap-physics-c-em",
@@ -882,13 +901,13 @@ export const COURSES: Course[] = [
     shortTitle: "Physics C E&M",
     category: "science",
     subtitle: "Calculus-based electricity and magnetism.",
-    units: [
+    units: cedUnits("ap-physics-c-em", [
       { number: 1, title: "Electrostatics" },
       { number: 2, title: "Conductors, Capacitors & Dielectrics" },
       { number: 3, title: "Electric Circuits" },
       { number: 4, title: "Magnetic Fields" },
       { number: 5, title: "Electromagnetism" },
-    ],
+    ]),
   },
   {
     slug: "ap-biology",
@@ -896,7 +915,7 @@ export const COURSES: Course[] = [
     shortTitle: "Bio",
     category: "science",
     subtitle: "Molecular biology, genetics, evolution, and ecology.",
-    units: [
+    units: cedUnits("ap-biology", [
       { number: 1, title: "Chemistry of Life" },
       { number: 2, title: "Cell Structure & Function" },
       { number: 3, title: "Cellular Energetics" },
@@ -905,7 +924,7 @@ export const COURSES: Course[] = [
       { number: 6, title: "Gene Expression & Regulation" },
       { number: 7, title: "Natural Selection" },
       { number: 8, title: "Ecology" },
-    ],
+    ]),
   },
   {
     slug: "ap-chemistry",
@@ -913,7 +932,7 @@ export const COURSES: Course[] = [
     shortTitle: "Chem",
     category: "science",
     subtitle: "Atomic structure, bonding, reactions, kinetics, equilibrium, thermo.",
-    units: [
+    units: cedUnits("ap-chemistry", [
       { number: 1, title: "Atomic Structure & Properties" },
       { number: 2, title: "Molecular & Ionic Compound Structure & Properties" },
       { number: 3, title: "Intermolecular Forces & Properties" },
@@ -923,7 +942,7 @@ export const COURSES: Course[] = [
       { number: 7, title: "Equilibrium" },
       { number: 8, title: "Acids & Bases" },
       { number: 9, title: "Applications of Thermodynamics" },
-    ],
+    ]),
   },
   {
     slug: "ap-environmental",
@@ -931,7 +950,7 @@ export const COURSES: Course[] = [
     shortTitle: "APES",
     category: "science",
     subtitle: "Ecosystems, populations, pollution, climate, and sustainability.",
-    units: [
+    units: cedUnits("ap-environmental", [
       { number: 1, title: "The Living World: Ecosystems" },
       { number: 2, title: "The Living World: Biodiversity" },
       { number: 3, title: "Populations" },
@@ -941,7 +960,7 @@ export const COURSES: Course[] = [
       { number: 7, title: "Atmospheric Pollution" },
       { number: 8, title: "Aquatic & Terrestrial Pollution" },
       { number: 9, title: "Global Change" },
-    ],
+    ]),
   },
 
   // ---------- CS ----------
@@ -951,7 +970,7 @@ export const COURSES: Course[] = [
     shortTitle: "CS A",
     category: "cs",
     subtitle: "Java programming: objects, control flow, arrays, inheritance, recursion.",
-    units: [
+    units: cedUnits("ap-cs-a", [
       { number: 1, title: "Primitive Types" },
       { number: 2, title: "Using Objects" },
       { number: 3, title: "Boolean Expressions & if Statements" },
@@ -962,7 +981,7 @@ export const COURSES: Course[] = [
       { number: 8, title: "2D Array" },
       { number: 9, title: "Inheritance" },
       { number: 10, title: "Recursion" },
-    ],
+    ]),
   },
   {
     slug: "ap-cs-principles",
@@ -970,13 +989,13 @@ export const COURSES: Course[] = [
     shortTitle: "CSP",
     category: "cs",
     subtitle: "Big ideas of computing: creativity, data, algorithms, networks, impact.",
-    units: [
+    units: cedUnits("ap-cs-principles", [
       { number: 1, title: "Creative Development" },
       { number: 2, title: "Data" },
       { number: 3, title: "Algorithms & Programming" },
       { number: 4, title: "Computer Systems & Networks" },
       { number: 5, title: "Impact of Computing" },
-    ],
+    ]),
   },
 
   // ---------- HISTORY ----------
@@ -986,7 +1005,7 @@ export const COURSES: Course[] = [
     shortTitle: "APUSH",
     category: "history",
     subtitle: "United States history from 1491 to the present, organized by period.",
-    units: [
+    units: cedUnits("ap-us-history", [
       { number: 1, title: "Period 1: 1491-1607" },
       { number: 2, title: "Period 2: 1607-1754" },
       { number: 3, title: "Period 3: 1754-1800" },
@@ -996,7 +1015,7 @@ export const COURSES: Course[] = [
       { number: 7, title: "Period 7: 1890-1945" },
       { number: 8, title: "Period 8: 1945-1980" },
       { number: 9, title: "Period 9: 1980-Present" },
-    ],
+    ]),
   },
   {
     slug: "ap-world-history",
@@ -1004,7 +1023,7 @@ export const COURSES: Course[] = [
     shortTitle: "World History",
     category: "history",
     subtitle: "World history from c. 1200 CE to the present.",
-    units: [
+    units: cedUnits("ap-world-history", [
       { number: 1, title: "The Global Tapestry (c. 1200-1450)" },
       { number: 2, title: "Networks of Exchange (c. 1200-1450)" },
       { number: 3, title: "Land-Based Empires (c. 1450-1750)" },
@@ -1014,7 +1033,7 @@ export const COURSES: Course[] = [
       { number: 7, title: "Global Conflict (c. 1900-present)" },
       { number: 8, title: "Cold War & Decolonization (c. 1900-present)" },
       { number: 9, title: "Globalization (c. 1900-present)" },
-    ],
+    ]),
   },
   {
     slug: "ap-euro-history",
@@ -1022,7 +1041,7 @@ export const COURSES: Course[] = [
     shortTitle: "Euro",
     category: "history",
     subtitle: "European history from the Renaissance to the present.",
-    units: [
+    units: cedUnits("ap-euro-history", [
       { number: 1, title: "Renaissance & Exploration" },
       { number: 2, title: "Age of Reformation" },
       { number: 3, title: "Absolutism & Constitutionalism" },
@@ -1032,7 +1051,7 @@ export const COURSES: Course[] = [
       { number: 7, title: "19th-Century Perspectives & Political Developments" },
       { number: 8, title: "20th-Century Global Conflicts" },
       { number: 9, title: "Cold War & Contemporary Europe" },
-    ],
+    ]),
   },
 ];
 
