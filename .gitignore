@@ -7,3 +7,4 @@ out
 captures.jsonl
 .firebase-service-account.json
 .vercel
+tsconfig.tsbuildinfo
