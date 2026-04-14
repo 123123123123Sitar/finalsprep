@@ -4,9 +4,12 @@
  *
  * Shape:
  *   users/{uid}/profile/billing = {
- *     plan: "free" | "pro",
+ *     plan: "free" | "regular" | "pro",
+ *     billingInterval?: "monthly" | "yearly",
+ *     status?: string,
  *     stripeCustomerId?: string,
  *     stripeSubscriptionId?: string,
+ *     stripePriceId?: string,
  *     currentPeriodEnd?: number,  // unix seconds
  *     updatedAt: number,
  *   }
@@ -16,13 +19,22 @@
  * a user after checkout.session.completed and demote on cancellation.
  */
 import { getAdminDb } from "@/lib/firebaseAdmin";
-
-export type PlanTier = "free" | "pro";
+import {
+  isPaidPlan,
+  normalizeBillingInterval,
+  normalizePlanTier,
+  type BillingInterval,
+  type PlanTier,
+} from "@/lib/plans";
+import type { Tier } from "@/lib/rateLimit";
 
 export type UserPlan = {
   plan: PlanTier;
+  billingInterval?: BillingInterval;
+  status?: string;
   stripeCustomerId?: string;
   stripeSubscriptionId?: string;
+  stripePriceId?: string;
   currentPeriodEnd?: number;
   updatedAt: number;
 };
@@ -39,10 +51,20 @@ export async function getPlan(uid: string): Promise<UserPlan> {
   try {
     const snap = await billingRef(uid).get();
     if (!snap.exists) return { plan: "free", updatedAt: Date.now() };
-    const data = snap.data() as UserPlan;
+    const raw = (snap.data() || {}) as Partial<UserPlan>;
+    const data: UserPlan = {
+      plan: normalizePlanTier(raw.plan),
+      billingInterval: normalizeBillingInterval(raw.billingInterval),
+      status: typeof raw.status === "string" ? raw.status : undefined,
+      stripeCustomerId: raw.stripeCustomerId,
+      stripeSubscriptionId: raw.stripeSubscriptionId,
+      stripePriceId: raw.stripePriceId,
+      currentPeriodEnd: raw.currentPeriodEnd,
+      updatedAt: typeof raw.updatedAt === "number" ? raw.updatedAt : Date.now(),
+    };
     // Auto-downgrade if the subscription period has ended.
     if (
-      data.plan === "pro" &&
+      isPaidPlan(data.plan) &&
       data.currentPeriodEnd &&
       data.currentPeriodEnd * 1000 < Date.now()
     ) {
@@ -72,5 +94,16 @@ export async function setPlan(
 }
 
 export function isPaid(plan: UserPlan | null | undefined): boolean {
-  return !!plan && plan.plan === "pro";
+  return !!plan && isPaidPlan(plan.plan);
+}
+
+export function planToRateTier(plan: UserPlan | null | undefined): Tier {
+  switch (plan?.plan) {
+    case "regular":
+      return "regular";
+    case "pro":
+      return "pro";
+    default:
+      return "free";
+  }
 }

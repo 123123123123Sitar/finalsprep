@@ -221,6 +221,31 @@ export default function Study() {
                     ))
                   )}
                 </ul>
+                {unit.topics && unit.topics.length > 0 && (
+                  <details className="group mt-2 pl-3">
+                    <summary className="cursor-pointer list-none text-[11px] uppercase tracking-[0.12em] text-muted hover:text-ink">
+                      <span className="inline-block w-3 transition-transform group-open:rotate-90">
+                        ›
+                      </span>
+                      <span className="ml-1">
+                        {unit.topics.length} CED topics
+                      </span>
+                    </summary>
+                    <ul className="mt-2 space-y-1 border-l border-hair pl-3">
+                      {unit.topics.map((t) => (
+                        <li
+                          key={t.id}
+                          className="flex items-start gap-2 text-[12px] leading-snug text-muted"
+                        >
+                          <span className="shrink-0 font-mono text-[11px] text-dim">
+                            {t.id}
+                          </span>
+                          <span>{t.title}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
               </div>
             ))}
           </aside>

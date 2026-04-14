@@ -2,10 +2,13 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getAuthedUser } from "@/lib/authGuard";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
+import {
+  checkoutDescription,
+  parseCheckoutPlan,
+  type PaidCheckoutPlan,
+} from "@/lib/plans";
 
 export const runtime = "nodejs";
-
-type Plan = "monthly" | "yearly";
 
 export async function POST(req: Request) {
   const secret = process.env.STRIPE_SECRET_KEY;
@@ -41,20 +44,17 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {}
-  const plan: Plan = body?.plan === "yearly" ? "yearly" : "monthly";
-
-  const priceId =
-    plan === "yearly"
-      ? process.env.STRIPE_PRICE_YEARLY
-      : process.env.STRIPE_PRICE_MONTHLY;
+  const checkoutPlan = parseCheckoutPlan(
+    body?.checkoutPlan ??
+      body?.plan ??
+      (body?.tier && body?.interval ? `${body.tier}-${body.interval}` : undefined)
+  );
+  const priceId = resolvePriceId(checkoutPlan.key);
 
   if (!priceId) {
     return NextResponse.json(
       {
-        error:
-          plan === "yearly"
-            ? "Set STRIPE_PRICE_YEARLY in your environment."
-            : "Set STRIPE_PRICE_MONTHLY in your environment.",
+        error: missingPriceMessage(checkoutPlan.key),
       },
       { status: 500 }
     );
@@ -65,11 +65,17 @@ export async function POST(req: Request) {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${site}/success?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
+      success_url: `${site}/success?session_id={CHECKOUT_SESSION_ID}&plan=${checkoutPlan.key}`,
       cancel_url: `${site}/?canceled=1`,
       allow_promotion_codes: true,
       billing_address_collection: "auto",
       customer_creation: "always",
+      metadata: {
+        tier: checkoutPlan.tier,
+        interval: checkoutPlan.interval,
+        checkout_plan: checkoutPlan.key,
+        ...(user ? { uid: user.uid } : {}),
+      },
       // Attach the Firebase uid to the session and subscription so the
       // webhook can upgrade the right user.
       ...(user
@@ -77,21 +83,62 @@ export async function POST(req: Request) {
             client_reference_id: user.uid,
             customer_email: user.email ?? undefined,
             subscription_data: {
-              description:
-                plan === "yearly" ? "FinalsPrep - Yearly" : "FinalsPrep - Monthly",
-              metadata: { uid: user.uid, plan },
+              description: checkoutDescription(
+                checkoutPlan.tier,
+                checkoutPlan.interval
+              ),
+              metadata: {
+                uid: user.uid,
+                tier: checkoutPlan.tier,
+                interval: checkoutPlan.interval,
+                checkout_plan: checkoutPlan.key,
+              },
             },
           }
         : {
             subscription_data: {
-              description:
-                plan === "yearly" ? "FinalsPrep - Yearly" : "FinalsPrep - Monthly",
-              metadata: { plan },
+              description: checkoutDescription(
+                checkoutPlan.tier,
+                checkoutPlan.interval
+              ),
+              metadata: {
+                tier: checkoutPlan.tier,
+                interval: checkoutPlan.interval,
+                checkout_plan: checkoutPlan.key,
+              },
             },
           }),
     });
     return NextResponse.json({ url: session.url });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
+  }
+}
+
+function resolvePriceId(plan: PaidCheckoutPlan): string | undefined {
+  switch (plan) {
+    case "regular-yearly":
+      return process.env.STRIPE_PRICE_REGULAR_YEARLY || process.env.STRIPE_PRICE_YEARLY;
+    case "pro-monthly":
+      return process.env.STRIPE_PRICE_PRO_MONTHLY;
+    case "pro-yearly":
+      return process.env.STRIPE_PRICE_PRO_YEARLY;
+    case "regular-monthly":
+    default:
+      return process.env.STRIPE_PRICE_REGULAR_MONTHLY || process.env.STRIPE_PRICE_MONTHLY;
+  }
+}
+
+function missingPriceMessage(plan: PaidCheckoutPlan): string {
+  switch (plan) {
+    case "regular-yearly":
+      return "Set STRIPE_PRICE_REGULAR_YEARLY or legacy STRIPE_PRICE_YEARLY in your environment.";
+    case "pro-monthly":
+      return "Set STRIPE_PRICE_PRO_MONTHLY in your environment.";
+    case "pro-yearly":
+      return "Set STRIPE_PRICE_PRO_YEARLY in your environment.";
+    case "regular-monthly":
+    default:
+      return "Set STRIPE_PRICE_REGULAR_MONTHLY or legacy STRIPE_PRICE_MONTHLY in your environment.";
   }
 }

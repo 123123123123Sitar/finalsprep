@@ -18,8 +18,14 @@ import {
 } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getDb, getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
+import { normalizePlanTier, type PlanTier } from "@/lib/plans";
 
-export type ClientPlan = "free" | "pro";
+export type ClientPlan = PlanTier;
+export type AuthResult = {
+  ok: boolean;
+  code?: string;
+  message?: string;
+};
 
 type AuthContextValue = {
   user: User | null;
@@ -28,11 +34,11 @@ type AuthContextValue = {
   plan: ClientPlan;
   /** Returns an ID token for the current user, or null if not signed in. */
   getIdToken: () => Promise<string | null>;
-  signUp: (email: string, password: string) => Promise<{ ok: boolean; message?: string }>;
-  signIn: (email: string, password: string) => Promise<{ ok: boolean; message?: string }>;
+  signUp: (email: string, password: string) => Promise<AuthResult>;
+  signIn: (email: string, password: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
-  resendVerification: () => Promise<{ ok: boolean; message?: string }>;
-  refresh: () => Promise<void>;
+  resendVerification: () => Promise<AuthResult>;
+  refresh: () => Promise<User | null>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -77,7 +83,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const nowSec = Math.floor(Date.now() / 1000);
         const expired =
           data.currentPeriodEnd && data.currentPeriodEnd < nowSec;
-        setPlan(data.plan === "pro" && !expired ? "pro" : "free");
+        const nextPlan = normalizePlanTier(data.plan);
+        setPlan(nextPlan !== "free" && !expired ? nextPlan : "free");
       },
       () => setPlan("free")
     );
@@ -96,36 +103,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function signUp(email: string, password: string) {
     const auth = getFirebaseAuth();
-    if (!auth) return { ok: false, message: "Auth is not configured on this server." };
+    if (!auth) {
+      return { ok: false, message: "Auth is not configured on this server." };
+    }
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
-      await sendEmailVerification(cred.user);
+      try {
+        await sendEmailVerification(cred.user);
+      } catch (verificationError: any) {
+        const detail = formatFirebaseError(verificationError);
+        return {
+          ok: true,
+          code: detail.code,
+          message:
+            detail.code === "auth/too-many-requests"
+              ? "Account created, but Firebase throttled the verification email. Wait a minute, then use 'Resend verification email'."
+              : "Account created, but we couldn't send the verification email yet. Use 'Resend verification email' on the next screen.",
+        };
+      }
       return {
         ok: true,
         message:
           "Account created. We just sent a verification link to your inbox - click it, then come back and sign in.",
       };
     } catch (e: any) {
-      return { ok: false, message: prettyFirebaseError(e) };
+      return { ok: false, ...formatFirebaseError(e) };
     }
   }
 
   async function signIn(email: string, password: string) {
     const auth = getFirebaseAuth();
-    if (!auth) return { ok: false, message: "Auth is not configured on this server." };
+    if (!auth) {
+      return { ok: false, message: "Auth is not configured on this server." };
+    }
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
       await reload(cred.user);
       if (!cred.user.emailVerified) {
         return {
           ok: false,
+          code: "auth/email-not-verified",
           message:
             "Your email isn't verified yet. Check your inbox for the verification link, then sign in again.",
         };
       }
       return { ok: true };
     } catch (e: any) {
-      return { ok: false, message: prettyFirebaseError(e) };
+      return { ok: false, ...formatFirebaseError(e) };
     }
   }
 
@@ -144,15 +168,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await sendEmailVerification(auth.currentUser);
       return { ok: true, message: "Verification email resent." };
     } catch (e: any) {
-      return { ok: false, message: prettyFirebaseError(e) };
+      return { ok: false, ...formatFirebaseError(e) };
     }
   }
 
   async function refresh() {
     const auth = getFirebaseAuth();
-    if (!auth || !auth.currentUser) return;
+    if (!auth || !auth.currentUser) return null;
     await reload(auth.currentUser);
-    setUser({ ...auth.currentUser });
+    const refreshedUser = auth.currentUser;
+    setUser({ ...refreshedUser });
+    return refreshedUser;
   }
 
   const value = useMemo<AuthContextValue>(
@@ -180,9 +206,21 @@ export function useAuth() {
   return ctx;
 }
 
-function prettyFirebaseError(e: any): string {
+function formatFirebaseError(
+  e: any
+): { code?: string; message: string } {
   const code = e?.code as string | undefined;
-  if (!code) return e?.message || "Something went wrong.";
+  return {
+    code,
+    message: prettyFirebaseError(code, e?.message),
+  };
+}
+
+function prettyFirebaseError(
+  code?: string,
+  fallbackMessage?: string
+): string {
+  if (!code) return fallbackMessage || "Something went wrong.";
   switch (code) {
     case "auth/invalid-email":
       return "That email address doesn't look valid.";
@@ -200,7 +238,16 @@ function prettyFirebaseError(e: any): string {
       return "Network error. Check your connection and try again.";
     case "auth/operation-not-allowed":
       return "Email/Password sign-in isn't enabled in Firebase. Enable it in the Firebase console.";
+    case "auth/app-not-authorized":
+      return "This domain isn't authorized for Firebase auth. Add it under Firebase Authentication -> Settings -> Authorized domains.";
+    case "auth/configuration-not-found":
+      return "Firebase auth isn't fully configured for this project yet. Check the web app config and enabled sign-in methods.";
+    case "auth/invalid-api-key":
+    case "auth/api-key-not-valid":
+      return "The Firebase web API key is invalid for this app. Re-copy the NEXT_PUBLIC_FIREBASE_* config from the Firebase console and restart the app.";
+    case "auth/user-disabled":
+      return "This account has been disabled.";
     default:
-      return e?.message || "Something went wrong.";
+      return fallbackMessage || "Something went wrong.";
   }
 }

@@ -10,8 +10,9 @@ import {
   userKey,
 } from "@/lib/rateLimit";
 import { getAuthedUser } from "@/lib/authGuard";
-import { getPlan, isPaid } from "@/lib/userPlan";
+import { getPlan, planToRateTier } from "@/lib/userPlan";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
+import { recordAiHistory } from "@/lib/aiHistory";
 
 export const runtime = "nodejs";
 
@@ -74,9 +75,9 @@ export async function POST(req: Request) {
     return jsonError(400, { error: "Last message must be from user." });
   }
 
-  const plan = user ? await getPlan(user.uid) : null;
-  const paid = isPaid(plan);
-  const tier = paid ? "paid" : "free";
+  const userPlan = user ? await getPlan(user.uid) : null;
+  const tier = planToRateTier(userPlan);
+  const plan = userPlan?.plan ?? "free";
 
   const key = userKey(user?.uid, req);
   const r = reserve(key, tier);
@@ -84,15 +85,17 @@ export async function POST(req: Request) {
     return jsonError(429, {
       error: "Rate limited",
       limitReached: true,
-      message: r.message,
-      tokensRemaining: r.tokensRemaining,
-      messagesRemaining: r.messagesRemaining,
-      resetMinutes: r.resetMinutes,
-      plan: tier,
-    });
+        message: r.message,
+        tokensRemaining: r.tokensRemaining,
+        messagesRemaining: r.messagesRemaining,
+        resetMinutes: r.resetMinutes,
+        plan,
+        rateTier: tier,
+      });
   }
 
   const client = new Anthropic({ apiKey });
+  const model = "claude-sonnet-4-6";
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -102,7 +105,7 @@ export async function POST(req: Request) {
       let accumulated = "";
       try {
         const response = client.messages.stream({
-          model: "claude-sonnet-4-6",
+          model,
           max_tokens: 1200,
           system: CHAT_SYSTEM_PROMPT,
           messages,
@@ -137,6 +140,21 @@ export async function POST(req: Request) {
           estimateTokens(messages.map((m) => m.content).join("\n")) +
             estimateTokens(accumulated);
         record(key, totalTokens);
+        if (user?.uid) {
+          void recordAiHistory({
+            uid: user.uid,
+            kind: "chat",
+            source: "ai",
+            plan,
+            prompt: messages[messages.length - 1]?.content || "",
+            response: accumulated,
+            tokens: totalTokens,
+            model,
+            metadata: {
+              contextMessages: messages.length,
+            },
+          });
+        }
 
         controller.close();
       } catch (e: any) {
@@ -158,7 +176,8 @@ export async function POST(req: Request) {
       "X-Tokens-Remaining": String(p.tokensRemaining),
       "X-Messages-Remaining": String(p.messagesRemaining),
       "X-Reset-Minutes": String(p.resetMinutes),
-      "X-Plan": tier,
+      "X-Plan": plan,
+      "X-Rate-Tier": tier,
       "Cache-Control": "no-store, no-transform",
       "X-Accel-Buffering": "no",
     },

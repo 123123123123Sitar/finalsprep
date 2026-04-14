@@ -13,10 +13,10 @@ export default function Success() {
         </h1>
         <div className="prose-body mt-6">
           <p>
-            Your lifetime access is active. A receipt is on its way from
-            Stripe. If you paid with a school email, the receipt may land in
-            spam - it's the email with the subject line that starts with
-            "Your receipt from FinalsPrep".
+            Your plan is active. A receipt is on its way from Stripe. If you
+            paid with a school email, the receipt may land in spam - it's the
+            email with the subject line that starts with "Your receipt from
+            FinalsPrep".
           </p>
           <p className="mt-4">
             Start with whatever topic you have a test on first. Most people

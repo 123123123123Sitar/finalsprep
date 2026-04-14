@@ -1,5 +1,11 @@
 import Stripe from "stripe";
 import { setPlan } from "@/lib/userPlan";
+import {
+  normalizeBillingInterval,
+  normalizePlanTier,
+  type BillingInterval,
+  type PlanTier,
+} from "@/lib/plans";
 
 export const runtime = "nodejs";
 // Webhook handlers need the raw request body for signature verification.
@@ -51,18 +57,38 @@ export async function POST(req: Request) {
             : session.subscription.id;
           const sub = await stripe.subscriptions.retrieve(subscriptionId);
           currentPeriodEnd = sub.current_period_end;
+          const priceId = sub.items.data[0]?.price?.id;
+          const resolvedPlan = resolvePlanTier(session.metadata, sub.metadata, priceId);
+          const billingInterval = resolveBillingInterval(
+            session.metadata,
+            sub.metadata,
+            sub.items.data[0]?.price?.recurring?.interval
+          );
+          const customerId = typeof session.customer === "string"
+            ? session.customer
+            : session.customer?.id;
+
+          await setPlan(uid, {
+            plan: resolvedPlan,
+            billingInterval,
+            status: sub.status,
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscriptionId,
+            stripePriceId: priceId,
+            currentPeriodEnd,
+          });
+          console.log("[stripe-webhook] promoted user", uid, "to", resolvedPlan);
+          break;
         }
         const customerId = typeof session.customer === "string"
           ? session.customer
           : session.customer?.id;
-
         await setPlan(uid, {
-          plan: "pro",
+          plan: resolvePlanTier(session.metadata, undefined, undefined),
           stripeCustomerId: customerId,
           stripeSubscriptionId: subscriptionId,
           currentPeriodEnd,
         });
-        console.log("[stripe-webhook] promoted user", uid, "to pro");
         break;
       }
 
@@ -75,12 +101,23 @@ export async function POST(req: Request) {
         }
         const status = sub.status;
         const isActive = status === "active" || status === "trialing";
+        const priceId = sub.items.data[0]?.price?.id;
+        const resolvedPlan = isActive
+          ? resolvePlanTier(undefined, sub.metadata, priceId)
+          : "free";
         await setPlan(uid, {
-          plan: isActive ? "pro" : "free",
+          plan: resolvedPlan,
+          billingInterval: resolveBillingInterval(
+            undefined,
+            sub.metadata,
+            sub.items.data[0]?.price?.recurring?.interval
+          ),
+          status,
           stripeSubscriptionId: sub.id,
+          stripePriceId: priceId,
           currentPeriodEnd: sub.current_period_end,
         });
-        console.log("[stripe-webhook] subscription.updated", uid, status);
+        console.log("[stripe-webhook] subscription.updated", uid, status, resolvedPlan);
         break;
       }
 
@@ -90,6 +127,7 @@ export async function POST(req: Request) {
         if (!uid) break;
         await setPlan(uid, {
           plan: "free",
+          status: sub.status,
           stripeSubscriptionId: undefined,
           currentPeriodEnd: sub.current_period_end,
         });
@@ -111,3 +149,44 @@ export async function POST(req: Request) {
     headers: { "Content-Type": "application/json" },
   });
 }
+
+function resolvePlanTier(
+  sessionMetadata?: Stripe.Metadata | null,
+  subscriptionMetadata?: Stripe.Metadata | null,
+  priceId?: string
+): PlanTier {
+  const explicit =
+    readTier(subscriptionMetadata?.tier) || readTier(sessionMetadata?.tier);
+  if (explicit) return explicit;
+  if (priceId && PRO_PRICE_IDS.has(priceId)) return "pro";
+  return "regular";
+}
+
+function resolveBillingInterval(
+  sessionMetadata?: Stripe.Metadata | null,
+  subscriptionMetadata?: Stripe.Metadata | null,
+  recurringInterval?: Stripe.Price.Recurring.Interval | null
+): BillingInterval | undefined {
+  const explicit =
+    normalizeBillingInterval(subscriptionMetadata?.interval) ||
+    normalizeBillingInterval(sessionMetadata?.interval);
+  if (explicit) return explicit;
+  if (recurringInterval === "month") return "monthly";
+  if (recurringInterval === "year") return "yearly";
+  const legacy =
+    normalizeBillingInterval(subscriptionMetadata?.plan) ||
+    normalizeBillingInterval(sessionMetadata?.plan);
+  return legacy;
+}
+
+function readTier(value: string | null | undefined): PlanTier | null {
+  const tier = normalizePlanTier(value);
+  return tier === "free" ? null : tier;
+}
+
+const PRO_PRICE_IDS = new Set(
+  [
+    process.env.STRIPE_PRICE_PRO_MONTHLY,
+    process.env.STRIPE_PRICE_PRO_YEARLY,
+  ].filter(Boolean)
+);

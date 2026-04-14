@@ -44,14 +44,24 @@ export type Lesson = {
 // Back-compat alias for any code still importing `Topic`.
 export type Topic = Lesson;
 
+/** One topic / subunit inside an AP unit, matching the CED code and title. */
+export type ApTopic = { id: string; title: string };
+
+/** One unit in a College Board CED. `topics` is the optional CED topic breakdown. */
+export type ApUnit = {
+  number: number;
+  title: string;
+  topics?: ApTopic[];
+};
+
 export type Course = {
   slug: CourseSlug;
   title: string;
   shortTitle: string;
   subtitle: string;
   category: CourseCategory;
-  /** Official AP unit list. Lessons will be grouped under these. */
-  units: { number: number; title: string }[];
+  /** Official AP unit list with optional per-unit CED topic breakdown. */
+  units: ApUnit[];
 };
 
 const SVG = (inner: string) =>
@@ -1037,6 +1047,8 @@ export type UnitGroup = {
   number: number;
   title: string;
   lessons: Lesson[];
+  /** CED topic breakdown inherited from the course definition, if any. */
+  topics?: ApTopic[];
 };
 
 /** Returns lessons for a course, grouped by AP unit number.
@@ -1049,7 +1061,12 @@ export function unitsForCourse(courseSlug: CourseSlug): UnitGroup[] {
 
   if (course) {
     for (const u of course.units) {
-      groups.set(u.number, { number: u.number, title: u.title, lessons: [] });
+      groups.set(u.number, {
+        number: u.number,
+        title: u.title,
+        lessons: [],
+        topics: u.topics,
+      });
     }
   }
 

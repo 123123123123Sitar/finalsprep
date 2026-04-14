@@ -1,18 +1,30 @@
 "use client";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import SiteNav from "@/app/components/SiteNav";
 import AuthPanel from "@/app/components/AuthPanel";
 import { useAuth } from "@/app/components/AuthProvider";
 
 export default function SignInPage() {
+  return (
+    <Suspense fallback={<SignInPageSkeleton />}>
+      <SignInPageInner />
+    </Suspense>
+  );
+}
+
+function SignInPageInner() {
   const { user, loading, configured } = useAuth();
+  const searchParams = useSearchParams();
+  const nextHref = searchParams.get("next") || "/chat";
+  const initialMode = searchParams.get("mode") === "signup" ? "signup" : "signin";
 
   // If they're already signed in + verified, send them to the chat.
   useEffect(() => {
     if (!loading && user && user.emailVerified) {
-      window.location.href = "/chat";
+      window.location.href = nextHref;
     }
-  }, [user, loading]);
+  }, [user, loading, nextHref]);
 
   return (
     <main className="bg-paper text-body">
@@ -73,13 +85,32 @@ export default function SignInPage() {
 
             <div>
               <AuthPanel
-                initialMode={user ? "signin" : "signup"}
+                initialMode={initialMode}
                 pendingUser={!!user && !user.emailVerified}
-                onSuccess={() => (window.location.href = "/chat")}
+                onSuccess={() => (window.location.href = nextHref)}
               />
             </div>
           </div>
         )}
+      </section>
+    </main>
+  );
+}
+
+function SignInPageSkeleton() {
+  return (
+    <main className="bg-paper text-body">
+      <SiteNav>
+        <a href="/study" className="nav-link">Study</a>
+        <a href="/" className="nav-link">Home</a>
+      </SiteNav>
+
+      <section className="mx-auto max-w-5xl px-6 py-16">
+        <div className="flex h-64 items-center justify-center text-muted">
+          <div className="typing-dots" aria-label="Loading">
+            <span /> <span /> <span />
+          </div>
+        </div>
       </section>
     </main>
   );

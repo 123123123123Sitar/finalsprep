@@ -8,12 +8,12 @@
  *   punishes anyone asking a real question. Tokens scale with actual cost,
  *   which is both fair to users and protective of our margins.
  *
- * Two tiers:
- *   FREE  - tight budget, ~5-8 short chat exchanges per 5 hours
- *   PAID  - generous budget, ~50-100 exchanges per 5 hours, which is
- *           effectively unlimited for a human reading at normal speed
+ * Three tiers:
+ *   FREE    - tight budget, enough to test the tutor
+ *   REGULAR - noticeably larger budget for active students
+ *   PRO     - largest budget for heavy daily use
  *
- * Both tiers also enforce a message-count safety cap so that a
+ * All tiers also enforce a message-count safety cap so that a
  * low-token spammer can't hammer the API with hundreds of one-word
  * prompts.
  *
@@ -24,7 +24,7 @@
  *   Firestore - this file is the single place to swap the backend.
  */
 
-export type Tier = "free" | "paid";
+export type Tier = "free" | "regular" | "pro";
 
 export const LIMITS = {
   WINDOW_MS: 5 * 60 * 60 * 1000, // 5-hour sliding window
@@ -37,8 +37,12 @@ export const LIMITS = {
     tokens: 4000, // ~5-8 real chat exchanges per 5h
     messages: 10,
   },
-  paid: {
-    tokens: 60000, // ~60-100 chat exchanges per 5h - effectively unlimited
+  regular: {
+    tokens: 18000,
+    messages: 40,
+  },
+  pro: {
+    tokens: 60000,
     messages: 120,
   },
 } as const;
@@ -77,6 +81,28 @@ function humanReset(minutes: number): string {
   return `Resets in ${h}h ${m}m.`;
 }
 
+function tierLabel(tier: Tier): string {
+  switch (tier) {
+    case "regular":
+      return "regular plan";
+    case "pro":
+      return "pro plan";
+    default:
+      return "free plan";
+  }
+}
+
+function tierUpgradeHint(tier: Tier): string {
+  switch (tier) {
+    case "free":
+      return " Upgrade for more AI budget.";
+    case "regular":
+      return " Upgrade to Pro for the largest AI budget.";
+    default:
+      return "";
+  }
+}
+
 export type ReserveResult =
   | {
       ok: true;
@@ -112,7 +138,9 @@ export function reserve(key: string, tier: Tier): ReserveResult {
       ok: false,
       tier,
       reason: "messages",
-      message: `You've hit the free message cap for this 5-hour window. ${humanReset(mins)}`,
+      message: `You've hit the ${tierLabel(tier)} message cap for this 5-hour window. ${humanReset(
+        mins
+      )}${tierUpgradeHint(tier)}`,
       tokensRemaining,
       messagesRemaining: 0,
       resetMinutes: mins,
@@ -124,7 +152,9 @@ export function reserve(key: string, tier: Tier): ReserveResult {
       ok: false,
       tier,
       reason: "tokens",
-      message: `You've used your free tokens for this 5-hour window. ${humanReset(mins)} Upgrade for unlimited.`,
+      message: `You've used your ${tierLabel(tier)} tokens for this 5-hour window. ${humanReset(
+        mins
+      )}${tierUpgradeHint(tier)}`,
       tokensRemaining: 0,
       messagesRemaining,
       resetMinutes: mins,

@@ -43,7 +43,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto px-6 py-16">
       <AuthPanel
-        initialMode={user ? "signin" : "signup"}
+        initialMode="signin"
         pendingUser={!!user && !user.emailVerified}
       />
     </div>

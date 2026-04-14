@@ -6,3 +6,4 @@ out
 .DS_Store
 captures.jsonl
 .firebase-service-account.json
+.vercel

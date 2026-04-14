@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "./AuthProvider";
 
 type Mode = "signin" | "signup";
@@ -9,7 +9,7 @@ type Mode = "signin" | "signup";
  * /signin page. Email verification is required after sign-up.
  */
 export default function AuthPanel({
-  initialMode = "signup",
+  initialMode = "signin",
   pendingUser = false,
   onSuccess,
 }: {
@@ -24,6 +24,14 @@ export default function AuthPanel({
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
+  useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
+
+  useEffect(() => {
+    if (user?.email) setEmail(user.email);
+  }, [user?.email]);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -32,6 +40,9 @@ export default function AuthPanel({
     const res = await fn(email.trim(), password);
     setBusy(false);
     if (!res.ok) {
+      if (mode === "signup" && res.code === "auth/email-already-in-use") {
+        setMode("signin");
+      }
       setMsg({ kind: "err", text: res.message || "Something went wrong." });
     } else if (res.message) {
       setMsg({ kind: "ok", text: res.message });
@@ -52,16 +63,52 @@ export default function AuthPanel({
 
   async function checkVerified() {
     setBusy(true);
-    await refresh();
+    const refreshedUser = await refresh();
     setBusy(false);
-    if (onSuccess) onSuccess();
+    if (refreshedUser?.emailVerified) {
+      setMsg(null);
+      if (onSuccess) onSuccess();
+      return;
+    }
+    setMsg({
+      kind: "err",
+      text: "That account still isn't verified yet. Click the email link first, then try again.",
+    });
   }
 
   return (
     <div className="mx-auto max-w-md animate-scaleIn">
       <div className="label mb-3">
-        {pendingUser ? "Verify your email" : "Sign in required"}
+        {pendingUser ? "Verify your email" : mode === "signup" ? "Create account" : "Sign in"}
       </div>
+      {!pendingUser && (
+        <div className="mb-5 inline-flex rounded-full border border-hair bg-white p-1 text-sm">
+          <button
+            type="button"
+            onClick={() => {
+              setMode("signin");
+              setMsg(null);
+            }}
+            className={`rounded-full px-3 py-1.5 ${
+              mode === "signin" ? "bg-ink text-white" : "text-muted hover:text-ink"
+            }`}
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMode("signup");
+              setMsg(null);
+            }}
+            className={`rounded-full px-3 py-1.5 ${
+              mode === "signup" ? "bg-ink text-white" : "text-muted hover:text-ink"
+            }`}
+          >
+            Create account
+          </button>
+        </div>
+      )}
       <h2 className="font-serif text-3xl font-normal text-ink">
         {pendingUser
           ? "Check your inbox."
@@ -136,6 +183,7 @@ export default function AuthPanel({
               <>
                 Already have an account?{" "}
                 <button
+                  type="button"
                   onClick={() => {
                     setMode("signin");
                     setMsg(null);
@@ -149,6 +197,7 @@ export default function AuthPanel({
               <>
                 Don't have one yet?{" "}
                 <button
+                  type="button"
                   onClick={() => {
                     setMode("signup");
                     setMsg(null);

@@ -1,9 +1,11 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import MathRender from "@/app/components/Math";
+import { LogoMark } from "@/app/components/Logo";
 import SiteNav from "@/app/components/SiteNav";
 import AuthGate from "@/app/components/AuthGate";
 import { useAuth } from "@/app/components/AuthProvider";
+import { planLabel, type PlanTier } from "@/lib/plans";
 import {
   createConversation,
   deleteConversation,
@@ -444,9 +446,9 @@ function ChatInner() {
                 }`}
               >
                 <div>{error}</div>
-                {limitHit && (
+                {limitHit && plan === "free" && (
                   <button onClick={() => buy("monthly")} className="btn-link mt-2">
-                    Unlock unlimited - $9/month →
+                    Start Regular - $9/month →
                   </button>
                 )}
               </div>
@@ -527,10 +529,8 @@ function ChatInner() {
               </button>
             </div>
             <div className="mt-2 flex items-center justify-center gap-2 px-2 text-center text-[11px] text-muted">
-              <span>
-                {plan === "pro" ? "Pro plan · unlimited" : "Free plan · budget refills every 5h"}
-              </span>
-              {tokensRemaining !== null && plan !== "pro" && (
+              <span>{planStatus(plan)}</span>
+              {tokensRemaining !== null && (
                 <>
                   <span className="text-dim">·</span>
                   <span>
@@ -571,8 +571,8 @@ function Message({
   }
   return (
     <div className="animate-messageIn flex gap-3">
-      <div className="mt-1 h-7 w-7 shrink-0 rounded-full border border-orange/40 bg-orange-tint text-center font-serif text-sm leading-7 text-orange-ink">
-        ∫
+      <div className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full border border-orange/40 bg-orange-tint text-orange-ink">
+        <LogoMark size={15} className="text-orange-ink" />
       </div>
       <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-hair bg-white px-5 py-4 text-[15.5px] leading-relaxed text-body">
         {isLastAssistantEmpty ? (
@@ -591,4 +591,15 @@ function Message({
       </div>
     </div>
   );
+}
+
+function planStatus(plan: PlanTier): string {
+  switch (plan) {
+    case "regular":
+      return `${planLabel(plan)} plan · larger budget refills every 5h`;
+    case "pro":
+      return `${planLabel(plan)} plan · largest budget refills every 5h`;
+    default:
+      return `${planLabel(plan)} plan · starter budget refills every 5h`;
+  }
 }

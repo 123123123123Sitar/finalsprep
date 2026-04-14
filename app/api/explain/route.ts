@@ -12,8 +12,9 @@ import {
   userKey,
 } from "@/lib/rateLimit";
 import { getAuthedUser } from "@/lib/authGuard";
-import { getPlan, isPaid } from "@/lib/userPlan";
+import { getPlan, planToRateTier } from "@/lib/userPlan";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
+import { recordAiHistory } from "@/lib/aiHistory";
 
 export const runtime = "nodejs";
 
@@ -36,10 +37,28 @@ export async function POST(req: Request) {
     );
   }
 
+  const adminOn = isAdminConfigured();
+  const user = adminOn ? await getAuthedUser(req) : null;
+  const userPlan = user ? await getPlan(user.uid) : null;
+  const plan = userPlan?.plan ?? "free";
+
   // 1. Curated walkthroughs never cost us an API call and are open to
   //    anyone (even anonymous users). Return early.
   const canned = findWalkthrough(problem);
   if (canned) {
+    if (user?.uid) {
+      void recordAiHistory({
+        uid: user.uid,
+        kind: "explain",
+        source: "curated",
+        plan,
+        prompt: problem,
+        response: canned.sampleWalkthrough,
+        tokens: 0,
+        model: "curated",
+        metadata: { topic: canned.slug },
+      });
+    }
     return NextResponse.json({
       explanation: canned.sampleWalkthrough,
       source: "curated",
@@ -50,8 +69,6 @@ export async function POST(req: Request) {
   // 2. For arbitrary problems we require a signed-in user when admin SDK
   //    is configured. If it's not configured we fall back to IP-keyed
   //    anonymous access (dev ergonomics only).
-  const adminOn = isAdminConfigured();
-  const user = adminOn ? await getAuthedUser(req) : null;
   if (adminOn && !user) {
     return NextResponse.json(
       {
@@ -72,9 +89,7 @@ export async function POST(req: Request) {
   }
 
   // 3. Plan lookup.
-  const plan = user ? await getPlan(user.uid) : null;
-  const paid = isPaid(plan);
-  const tier = paid ? "paid" : "free";
+  const tier = planToRateTier(userPlan);
 
   // 4. Reserve budget.
   const key = userKey(user?.uid, req);
@@ -88,7 +103,8 @@ export async function POST(req: Request) {
         tokensRemaining: r.tokensRemaining,
         messagesRemaining: r.messagesRemaining,
         resetMinutes: r.resetMinutes,
-        plan: tier,
+        plan,
+        rateTier: tier,
       },
       { status: 429 }
     );
@@ -96,6 +112,7 @@ export async function POST(req: Request) {
 
   // 5. Call Claude.
   const apiKey = process.env.ANTHROPIC_API_KEY;
+  const model = "claude-sonnet-4-6";
   if (!apiKey) {
     return NextResponse.json(
       {
@@ -111,7 +128,7 @@ export async function POST(req: Request) {
   const client = new Anthropic({ apiKey });
   try {
     const msg = await client.messages.create({
-      model: "claude-sonnet-4-6",
+      model,
       max_tokens: 900,
       system: TUTOR_SYSTEM_PROMPT,
       messages: [
@@ -129,6 +146,18 @@ export async function POST(req: Request) {
     const inputTokens = (msg as any).usage?.input_tokens ?? estimateTokens(problem);
     const outputTokens = (msg as any).usage?.output_tokens ?? estimateTokens(text);
     record(key, inputTokens + outputTokens);
+    if (user?.uid) {
+      void recordAiHistory({
+        uid: user.uid,
+        kind: "explain",
+        source: "ai",
+        plan,
+        prompt: problem,
+        response: text,
+        tokens: inputTokens + outputTokens,
+        model,
+      });
+    }
 
     const p = peek(key, tier);
     return NextResponse.json({
@@ -137,7 +166,8 @@ export async function POST(req: Request) {
       tokensRemaining: p.tokensRemaining,
       messagesRemaining: p.messagesRemaining,
       resetMinutes: p.resetMinutes,
-      plan: tier,
+      plan,
+      rateTier: tier,
     });
   } catch (e: any) {
     return NextResponse.json(
