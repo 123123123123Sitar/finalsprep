@@ -10,6 +10,8 @@ import {
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
+  signInWithRedirect,
+  getRedirectResult,
   onAuthStateChanged,
   reload,
   sendEmailVerification,
@@ -63,6 +65,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       return;
     }
+    // Finalize any in-progress Google redirect flow (no-op if none).
+    getRedirectResult(auth).catch((e) => {
+      console.warn("[auth] getRedirectResult failed", e?.code || e);
+    });
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
@@ -195,15 +201,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!auth) {
       return { ok: false, message: "Auth is not configured on this server." };
     }
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
     try {
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
       await signInWithPopup(auth, provider);
       return { ok: true };
     } catch (e: any) {
       const code = e?.code as string | undefined;
-      if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
+      if (
+        code === "auth/popup-closed-by-user" ||
+        code === "auth/cancelled-popup-request"
+      ) {
         return { ok: false, code, message: "Sign-in popup was closed." };
+      }
+      // Popup-blocked, cross-origin, or generic-internal: fall back to a
+      // full-page redirect flow. This never resolves — the browser
+      // navigates away and we finish the sign-in via getRedirectResult
+      // on the next page load (handled in AuthProvider mount).
+      if (
+        code === "auth/popup-blocked" ||
+        code === "auth/operation-not-supported-in-this-environment" ||
+        code === "auth/internal-error" ||
+        code === "auth/web-storage-unsupported"
+      ) {
+        try {
+          await signInWithRedirect(auth, provider);
+          return { ok: true };
+        } catch (redirectErr: any) {
+          return { ok: false, ...formatFirebaseError(redirectErr) };
+        }
       }
       return { ok: false, ...formatFirebaseError(e) };
     }

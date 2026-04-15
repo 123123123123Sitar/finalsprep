@@ -392,7 +392,7 @@ export default function Graph3D({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        style={{ width: "100%", height: `${height}px`, touchAction: "none" }}
+        style={{ width: "100%", height: `${height}px`, touchAction: "pan-y" }}
         className="mt-3 cursor-grab rounded-md border border-hair bg-paper active:cursor-grabbing"
       />
       <div className="mt-2 text-[10px] text-muted">
