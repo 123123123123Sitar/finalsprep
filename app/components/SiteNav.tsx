@@ -41,7 +41,7 @@ const THEME_META: Record<Theme, { label: string; icon: string }> = {
   sepia: { label: "Sepia", icon: "✦" },
 };
 
-function ThemePicker() {
+export function ThemePicker() {
   const { theme, setTheme, canUseThemes } = useTheme();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -95,7 +95,7 @@ function ThemePicker() {
   );
 }
 
-function BuyProButton() {
+export function BuyProButton() {
   const { getIdToken, plan } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -133,6 +133,10 @@ function BuyProButton() {
       {loading ? "Opening…" : "Get Pro - $11 first month"}
     </button>
   );
+}
+
+export function NavUserArea() {
+  return <AuthMenu />;
 }
 
 function AuthMenu() {

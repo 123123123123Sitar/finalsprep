@@ -6,6 +6,11 @@ import { LogoMark } from "@/app/components/Logo";
 import AuthGate from "@/app/components/AuthGate";
 import { useAuth } from "@/app/components/AuthProvider";
 import {
+  BuyProButton,
+  NavUserArea,
+  ThemePicker,
+} from "@/app/components/SiteNav";
+import {
   AI_MODE_OPTIONS,
   AI_PERSONALITY_OPTIONS,
   AI_VERBOSITY_OPTIONS,
@@ -518,22 +523,71 @@ function ChatInner() {
 
       {/* Main chat column */}
       <div className="flex flex-1 flex-col">
-        {/* Thin top strip: breadcrumb + current chat title + link to study */}
-        <div className="flex items-center justify-between border-b border-hair bg-white px-6 py-3">
-          <div className="flex items-center gap-3 text-xs text-muted">
-            <span>{currentConvId ? "Editing saved chat" : "New chat"}</span>
+        {/* Top navbar: context on the left, shared nav actions on the right */}
+        <div className="flex items-center justify-between gap-4 border-b border-hair bg-paper/85 px-6 py-3 backdrop-blur">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-3.5 w-3.5"
+                fill="none"
+                aria-hidden
+              >
+                <path
+                  d="M7 8h10M7 12h7M7 16h10"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M4 4h16v16H4z"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span>{currentConvId ? "Saved chat" : "New chat"}</span>
+            </div>
             {currentProjectName && (
-              <span className="animate-fadeUp inline-flex items-center gap-1.5 rounded-full border border-orange/40 bg-orange-tint px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-orange-ink">
-                <svg viewBox="0 0 16 16" className="h-3 w-3" fill="currentColor" aria-hidden>
+              <button
+                onClick={() => setProjectsOverlayOpen(true)}
+                className="animate-fadeUp inline-flex min-w-0 max-w-[240px] items-center gap-1.5 truncate rounded-full border border-orange/40 bg-orange-tint px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-orange-ink hover:border-orange hover:bg-orange/20"
+                title={`Project: ${currentProjectName}`}
+              >
+                <svg
+                  viewBox="0 0 16 16"
+                  className="h-3 w-3 shrink-0"
+                  fill="currentColor"
+                  aria-hidden
+                >
                   <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h3.086a1.5 1.5 0 0 1 1.06.44L7.707 3.29a.5.5 0 0 0 .354.146H13.5A1.5 1.5 0 0 1 15 4.935V12.5A1.5 1.5 0 0 1 13.5 14h-11A1.5 1.5 0 0 1 1 12.5v-9Z" />
                 </svg>
-                Project: <span className="normal-case tracking-normal">{currentProjectName}</span>
-              </span>
+                <span className="truncate normal-case tracking-normal">
+                  {currentProjectName}
+                </span>
+              </button>
             )}
           </div>
-          <a href="/study" className="text-xs text-muted hover:text-ink">
-            ← Study tool
-          </a>
+
+          <div className="flex shrink-0 items-center gap-4 text-sm">
+            <a
+              href="/"
+              className="nav-link hidden md:inline"
+              title="FinalsPrep home"
+            >
+              Home
+            </a>
+            <a
+              href="/study"
+              className="nav-link hidden md:inline"
+              title="Study tool"
+            >
+              Study
+            </a>
+            <ThemePicker />
+            <BuyProButton />
+            <NavUserArea />
+          </div>
         </div>
 
         {/* MESSAGES */}
