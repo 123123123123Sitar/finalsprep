@@ -13,6 +13,7 @@ import { getAuthedUser } from "@/lib/authGuard";
 import { getPlan, planToRateTier } from "@/lib/userPlan";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
 import { recordAiHistory } from "@/lib/aiHistory";
+import { logEvent } from "@/lib/events";
 
 export const runtime = "nodejs";
 
@@ -42,7 +43,7 @@ function pickModel(
   if (!id) return DEFAULT_MODEL_ID;
   // Free and Pro always get Sonnet. Premium can pick any, or anyone bringing
   // their own API key (since they're paying for it directly).
-  if (plan === "premium" || bringsOwnKey) return id;
+  if (plan === "hacker" || bringsOwnKey) return id;
   return DEFAULT_MODEL_ID;
 }
 
@@ -92,12 +93,12 @@ export async function POST(req: Request) {
 
   const userPlan = user ? await getPlan(user.uid) : null;
   const tier = planToRateTier(userPlan);
-  const plan = userPlan?.plan ?? "free";
+  const plan = userPlan?.plan ?? "learner";
 
   // Premium users can bring their own Anthropic API key and pick a model.
   // When they do, we don't rate-limit them since it's their wallet.
   const clientApiKey =
-    plan === "premium" && typeof body?.anthropicApiKey === "string"
+    plan === "hacker" && typeof body?.anthropicApiKey === "string"
       ? body.anthropicApiKey.trim()
       : "";
   const bringsOwnKey = clientApiKey.startsWith("sk-ant-");
@@ -114,6 +115,13 @@ export async function POST(req: Request) {
     ? { ok: true as const, tier, tokensRemaining: Infinity, messagesRemaining: Infinity }
     : reserve(key, tier);
   if (!r.ok) {
+    void logEvent({
+      kind: "chat.limit_hit",
+      uid: user?.uid,
+      email: user?.email,
+      plan,
+      meta: { reason: r.reason, tier },
+    });
     return jsonError(429, {
       error: "Rate limited",
       limitReached: true,
@@ -126,12 +134,24 @@ export async function POST(req: Request) {
       });
   }
 
+  void logEvent({
+    kind: "chat.send",
+    uid: user?.uid,
+    email: user?.email,
+    plan,
+    meta: {
+      model: body?.model || "default",
+      bringsOwnKey,
+      hasImages: Array.isArray(body?.images) && body.images.length > 0,
+    },
+  });
+
   const client = new Anthropic({ apiKey });
   const model = pickModel(body?.model, plan, bringsOwnKey);
 
   // Image uploads: Pro and Premium only. Attach to the last user message.
   const rawImages = Array.isArray(body?.images) ? body.images : [];
-  const allowImages = plan === "pro" || plan === "premium" || bringsOwnKey;
+  const allowImages = plan === "pro" || plan === "hacker" || bringsOwnKey;
   const validImages = allowImages
     ? rawImages
         .filter(

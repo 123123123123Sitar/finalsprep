@@ -40,7 +40,7 @@ export async function POST(req: Request) {
   const adminOn = isAdminConfigured();
   const user = adminOn ? await getAuthedUser(req) : null;
   const userPlan = user ? await getPlan(user.uid) : null;
-  const plan = userPlan?.plan ?? "free";
+  const plan = userPlan?.plan ?? "learner";
 
   // 1. Curated walkthroughs never cost us an API call and are open to
   //    anyone (even anonymous users). Return early.

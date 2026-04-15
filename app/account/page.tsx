@@ -274,7 +274,7 @@ export default function AccountPage() {
                 Premium
               </span>
               <span className="text-xs text-muted">
-                {plan === "premium"
+                {plan === "hacker"
                   ? "Active — configure below"
                   : "Upgrade to Premium to unlock"}
               </span>
@@ -287,7 +287,7 @@ export default function AccountPage() {
                 {MODELS.map((m) => (
                   <button
                     key={m.key}
-                    disabled={plan !== "premium"}
+                    disabled={plan !== "hacker"}
                     onClick={() =>
                       setPrefs((p) => ({ ...p, preferredModel: m.key }))
                     }
@@ -313,7 +313,7 @@ export default function AccountPage() {
               <input
                 type="password"
                 autoComplete="off"
-                disabled={plan !== "premium"}
+                disabled={plan !== "hacker"}
                 value={prefs.anthropicApiKey}
                 onChange={(e) =>
                   setPrefs((p) => ({ ...p, anthropicApiKey: e.target.value }))
@@ -363,7 +363,7 @@ export default function AccountPage() {
           {/* Plan / danger zone */}
           <div className="border-t border-hair pt-8">
             <div className="label mb-2">Subscription</div>
-            {plan === "free" ? (
+            {plan === "learner" ? (
               <p className="text-[15px] text-body">
                 You're on the free plan.{" "}
                 <a href="/#pricing" className="text-orange underline">

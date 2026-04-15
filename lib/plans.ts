@@ -1,14 +1,17 @@
-export type PlanTier = "free" | "pro" | "premium";
-export type PaidPlanTier = Exclude<PlanTier, "free">;
+export type PlanTier = "learner" | "pro" | "hacker";
+export type PaidPlanTier = Exclude<PlanTier, "learner">;
 export type BillingInterval = "monthly" | "sixmonth";
 export type PaidCheckoutPlan = `${PaidPlanTier}-${BillingInterval}`;
 export type CheckoutPlan = "monthly" | "sixmonth" | PaidCheckoutPlan;
 
 export function normalizePlanTier(value: unknown): PlanTier {
-  if (value === "pro" || value === "premium") return value;
-  // Legacy: "regular" used to be the mid tier — coerce to "pro" now.
+  if (value === "pro" || value === "hacker" || value === "learner") return value;
+  // Legacy aliases — "free" used to be the bottom tier, "premium" the top.
+  if (value === "premium") return "hacker";
+  if (value === "free") return "learner";
+  // "regular" was a deprecated mid tier; coerce to pro.
   if (value === "regular") return "pro";
-  return "free";
+  return "learner";
 }
 
 export function normalizeBillingInterval(
@@ -20,17 +23,17 @@ export function normalizeBillingInterval(
 }
 
 export function isPaidPlan(plan: PlanTier | null | undefined): boolean {
-  return !!plan && plan !== "free";
+  return !!plan && plan !== "learner";
 }
 
 export function planLabel(plan: PlanTier): string {
   switch (plan) {
     case "pro":
       return "Pro";
-    case "premium":
-      return "Premium";
+    case "hacker":
+      return "Hacker";
     default:
-      return "Free";
+      return "Learner";
   }
 }
 
@@ -41,11 +44,14 @@ export function parseCheckoutPlan(input: unknown): {
 } {
   const raw = typeof input === "string" ? input : "";
   switch (raw) {
-    case "premium-monthly":
-      return { key: "premium-monthly", tier: "premium", interval: "monthly" };
-    case "premium-sixmonth":
-    case "premium-yearly":
-      return { key: "premium-sixmonth", tier: "premium", interval: "sixmonth" };
+    case "hacker-monthly":
+    case "premium-monthly": // legacy
+      return { key: "hacker-monthly", tier: "hacker", interval: "monthly" };
+    case "hacker-sixmonth":
+    case "hacker-yearly":
+    case "premium-sixmonth": // legacy
+    case "premium-yearly": // legacy
+      return { key: "hacker-sixmonth", tier: "hacker", interval: "sixmonth" };
     case "pro-monthly":
     case "monthly":
     case "regular-monthly":
@@ -79,9 +85,13 @@ export function planPrice(
       return { amount: 16, period: "/ month", monthly: 16 };
     case "pro-sixmonth":
       return { amount: 90, period: "/ 6 months", monthly: 15 };
-    case "premium-monthly":
+    case "hacker-monthly":
       return { amount: 29, period: "/ month", monthly: 29 };
-    case "premium-sixmonth":
+    case "hacker-sixmonth":
       return { amount: 160, period: "/ 6 months", monthly: 27 };
   }
 }
+
+/** AP-season promo: $5 off the first month. Used in the hero banner and checkout copy. */
+export const AP_SALE_ACTIVE = true;
+export const AP_SALE_FIRST_MONTH_OFF_USD = 5;

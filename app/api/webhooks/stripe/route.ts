@@ -107,7 +107,7 @@ export async function POST(req: Request) {
         const isActive = status === "active" || status === "trialing";
         const priceId = sub.items.data[0]?.price?.id;
         const recurring = sub.items.data[0]?.price?.recurring;
-        const resolvedPlan = isActive ? resolvePlanTier(priceId) : "free";
+        const resolvedPlan = isActive ? resolvePlanTier(priceId) : "learner";
         await setPlan(uid, {
           plan: resolvedPlan,
           billingInterval: resolveBillingInterval(
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
         const uid = (sub.metadata && sub.metadata.uid) || null;
         if (!uid) break;
         await setPlan(uid, {
-          plan: "free",
+          plan: "learner",
           status: sub.status,
           stripeSubscriptionId: undefined,
           currentPeriodEnd: sub.current_period_end,
@@ -161,10 +161,10 @@ export async function POST(req: Request) {
  * derive from the authoritative priceId on the subscription.
  */
 function resolvePlanTier(priceId: string | undefined): PlanTier {
-  if (priceId && PREMIUM_PRICE_IDS.has(priceId)) return "premium";
+  if (priceId && HACKER_PRICE_IDS.has(priceId)) return "hacker";
   if (priceId && PRO_PRICE_IDS.has(priceId)) return "pro";
-  // Unknown price → default to free to avoid accidentally granting paid access.
-  return "free";
+  // Unknown price → default to learner to avoid accidentally granting paid access.
+  return "learner";
 }
 
 /**
@@ -197,8 +197,11 @@ const PRO_PRICE_IDS = new Set(
   ].filter(Boolean)
 );
 
-const PREMIUM_PRICE_IDS = new Set(
+const HACKER_PRICE_IDS = new Set(
   [
+    process.env.STRIPE_PRICE_HACKER_MONTHLY,
+    process.env.STRIPE_PRICE_HACKER_SIXMONTH,
+    process.env.STRIPE_PRICE_HACKER_YEARLY,
     process.env.STRIPE_PRICE_PREMIUM_MONTHLY,
     process.env.STRIPE_PRICE_PREMIUM_SIXMONTH,
     process.env.STRIPE_PRICE_PREMIUM_YEARLY, // legacy
@@ -208,6 +211,7 @@ const PREMIUM_PRICE_IDS = new Set(
 const SIXMONTH_PRICE_IDS = new Set(
   [
     process.env.STRIPE_PRICE_PRO_SIXMONTH,
+    process.env.STRIPE_PRICE_HACKER_SIXMONTH,
     process.env.STRIPE_PRICE_PREMIUM_SIXMONTH,
     process.env.STRIPE_PRICE_SIXMONTH, // legacy alt
   ].filter(Boolean)

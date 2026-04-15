@@ -64,14 +64,14 @@ export default function ReviewPage() {
           without peeking at the answer.
         </p>
 
-        {plan === "free" && (
+        {plan === "learner" && (
           <div className="mt-8 rounded-md border border-orange/40 bg-orange-tint p-4 text-sm text-body">
             Saving problems to the review bank is a Pro feature. Upgrade
             to start building your wrong-answer library.
           </div>
         )}
 
-        {loaded && entries.length === 0 && plan !== "free" && (
+        {loaded && entries.length === 0 && plan !== "learner" && (
           <div className="mt-10 rounded-md border border-dashed border-hair bg-offwhite p-8 text-center text-sm text-muted">
             You haven't saved any problems yet. On any practice problem, tap{" "}
             <strong className="text-ink">Save for review</strong> to add it

@@ -53,7 +53,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [plan, setPlan] = useState<ClientPlan>("free");
+  const [plan, setPlan] = useState<ClientPlan>("learner");
   const [streak, setStreak] = useState<StreakDoc | null>(null);
   const configured = isFirebaseConfigured();
 
@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // when the Stripe webhook promotes them.
   useEffect(() => {
     if (!user) {
-      setPlan("free");
+      setPlan("learner");
       return;
     }
     const db = getDb();
@@ -114,16 +114,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       (snap) => {
         const data = snap.data() as any;
         if (!data) {
-          setPlan("free");
+          setPlan("learner");
           return;
         }
         const nowSec = Math.floor(Date.now() / 1000);
         const expired =
           data.currentPeriodEnd && data.currentPeriodEnd < nowSec;
         const nextPlan = normalizePlanTier(data.plan);
-        setPlan(nextPlan !== "free" && !expired ? nextPlan : "free");
+        setPlan(nextPlan !== "learner" && !expired ? nextPlan : "learner");
       },
-      () => setPlan("free")
+      () => setPlan("learner")
     );
     return () => unsub();
   }, [user]);

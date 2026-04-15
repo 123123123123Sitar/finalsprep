@@ -44,6 +44,6 @@ export function getCurriculumUnit(
  * first FREE_UNIT_LIMIT units of every course. Paid plans get everything.
  */
 export function isUnitUnlocked(unitNumber: number, plan: PlanTier): boolean {
-  if (plan !== "free") return true;
+  if (plan !== "learner") return true;
   return unitNumber <= FREE_UNIT_LIMIT;
 }

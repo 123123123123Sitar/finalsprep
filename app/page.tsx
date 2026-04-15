@@ -81,8 +81,8 @@ export default function Home() {
     checkoutPlan:
       | "pro-monthly"
       | "pro-sixmonth"
-      | "premium-monthly"
-      | "premium-sixmonth" = "pro-monthly"
+      | "hacker-monthly"
+      | "hacker-sixmonth" = "pro-monthly"
   ) {
     setLoading(true);
     try {
@@ -144,14 +144,19 @@ export default function Home() {
         <a href="/study" className="nav-link">Study</a>
         <a href="#coverage" className="nav-link hidden sm:inline">Coverage</a>
         <a href="#price" className="nav-link hidden sm:inline">Pricing</a>
-        <button onClick={() => buy("pro-monthly")} className="btn-primary">Get Pro - $16/mo</button>
+        <button onClick={() => buy("pro-monthly")} className="btn-primary">Get Pro - $11 first month</button>
       </SiteNav>
 
-      {/* TOP BANNER - real urgency */}
+      {/* TOP BANNER - AP sale urgency */}
       <div className="animate-slideDown border-b border-hair bg-orange-tint">
-        <div className="mx-auto flex max-w-5xl items-center justify-center gap-2 px-6 py-2 text-xs text-orange-ink">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-2 px-6 py-2 text-xs text-orange-ink">
           <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-orange" />
-          Finals &amp; AP exams: <strong className="font-semibold">May 5 - June 10</strong>. Every week you wait is 7% of your prep time.
+          <span className="font-semibold">AP sale:</span>
+          <span>
+            $5 off your first month. Code{" "}
+            <code className="rounded bg-white/60 px-1 font-mono text-[11px]">APPREP</code>{" "}
+            at checkout.
+          </span>
         </div>
       </div>
 
@@ -172,16 +177,17 @@ export default function Home() {
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary text-base">
-              {loading ? "Opening checkout…" : "Start Pro - $16/month"}
+              {loading ? "Opening checkout…" : "Start Pro - $11 first month"}
             </button>
             <a href="#try" className="btn-ghost text-base">
               Try 3 free right here ↓
             </a>
           </div>
           <p className="mt-4 max-w-xl text-sm text-muted">
-            All curated walkthroughs are free. Plus a free chat budget that
-            replenishes every 5 hours - try the tutor on your real homework
-            with no signup. Upgrade for unlimited.
+            All curated walkthroughs are free. Plus{" "}
+            <strong className="text-ink">10,000 AI tokens per day</strong>{" "}
+            on the Learner tier — enough to run the tutor on your real
+            homework with no signup.
           </p>
         </div>
 
@@ -226,13 +232,14 @@ export default function Home() {
             <p className="mt-3 text-sm text-muted">
               A real explanation, right now, with no signup. Pick an example
               or type your own. Our curated problems are always free. New
-              problems share a token budget that refills every 5 hours.
+              problems pull from a daily token budget — 10,000 tokens a day
+              on the Learner tier.
             </p>
             <div className="mt-4 text-xs text-muted">
               {demoTokensRemaining === null
-                ? "Free budget refills every 5h"
+                ? "Free budget refills daily"
                 : demoTokensRemaining === 0
-                ? `Out of free budget${
+                ? `Out of today's budget${
                     demoResetMinutes
                       ? ` · resets in ${formatMinutes(demoResetMinutes)}`
                       : ""
@@ -588,16 +595,17 @@ export default function Home() {
           Three plans. Cancel anytime.
         </h2>
         <p className="mt-4 max-w-2xl text-[17px] text-body">
-          Start free with a 5-hour chat budget. Upgrade to Pro for image
-          uploads and a larger budget, or Premium for the model chooser,
-          your own Claude API key, and the biggest budget we offer.
+          Learner is free forever — 10,000 AI tokens a day, every day. Pro
+          unlocks 80k tokens a day, image uploads, FRQs, and diagnostic
+          quizzes. Hacker gets 250k tokens a day, the model chooser, priority
+          traffic, and a slot for your own Anthropic key.
         </p>
 
         {/* THREE TIER CARDS */}
         <div className="mt-10 grid gap-5 md:grid-cols-3">
-          {/* FREE */}
+          {/* LEARNER */}
           <div className="rounded-xl border border-hair bg-white p-7">
-            <div className="label">Free</div>
+            <div className="label">Learner</div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="font-serif text-6xl font-normal text-ink">$0</span>
               <span className="text-sm text-muted">forever</span>
@@ -606,9 +614,10 @@ export default function Home() {
               Test the tutor on your real homework. No card required.
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>~5-8 AI chat exchanges every 5 hours</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Units 1-2 of every AP course, curated walkthroughs</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span><strong className="text-ink">10,000 AI tokens / day</strong></span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Units 1-2 of every AP course (curated walkthroughs)</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Graphing calc, physics sims, code sandbox</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>1 diagnostic quiz per month</span></li>
             </ul>
             <a
               href="/signin?mode=signup"
@@ -625,25 +634,28 @@ export default function Home() {
             </span>
             <div className="label">Pro</div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-serif text-6xl font-normal text-ink">$16</span>
-              <span className="text-sm text-muted">/ month</span>
+              <span className="font-serif text-6xl font-normal text-ink">$11</span>
+              <span className="text-sm text-muted">first month</span>
             </div>
             <p className="mt-2 text-sm text-muted">
-              Or <strong className="text-ink">$90</strong> for 6 months ($15/mo).
-              Good for finals week.
+              <span className="text-dim line-through">$16</span>{" "}
+              with <code className="font-mono text-[11px] text-ink">APPREP</code>,
+              then $16/mo. Or <strong className="text-ink">$90</strong>{" "}
+              for 6 months.
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Everything in Free</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Larger AI budget (~30k tokens / 5h)</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Upload images of handwritten work</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, every unit</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Everything in Learner</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span><strong className="text-ink">80,000 AI tokens / day</strong></span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, every unit + flashcards + full lessons</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Image uploads, quiz notes, FRQ practice, Insights</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>5 diagnostic quizzes per month</span></li>
             </ul>
             <button
               onClick={() => buy("pro-monthly")}
               disabled={loading}
               className="btn-primary mt-7 w-full justify-center text-base disabled:opacity-50"
             >
-              {loading ? "Opening checkout…" : "Start Pro - $16/mo"}
+              {loading ? "Opening checkout…" : "Start Pro - $11 first month"}
             </button>
             <button
               onClick={() => buy("pro-sixmonth")}
@@ -654,35 +666,38 @@ export default function Home() {
             </button>
           </div>
 
-          {/* PREMIUM */}
+          {/* HACKER */}
           <div className="relative rounded-xl border border-hair bg-gradient-to-b from-amber-50 to-white p-7">
             <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
-              <CrownIcon className="h-3 w-3" /> Premium
+              <CrownIcon className="h-3 w-3" /> Hacker
             </span>
-            <div className="label">Premium</div>
+            <div className="label">Hacker</div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-serif text-6xl font-normal text-ink">$29</span>
-              <span className="text-sm text-muted">/ month</span>
+              <span className="font-serif text-6xl font-normal text-ink">$24</span>
+              <span className="text-sm text-muted">first month</span>
             </div>
             <p className="mt-2 text-sm text-muted">
-              Or <strong className="text-ink">$160</strong> for 6 months ($27/mo).
-              Heavy users and power students.
+              <span className="text-dim line-through">$29</span>{" "}
+              with <code className="font-mono text-[11px] text-ink">APPREP</code>,
+              then $29/mo. Or <strong className="text-ink">$160</strong>{" "}
+              for 6 months.
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Everything in Pro</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Biggest AI budget (~120k tokens / 5h)</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span><strong className="text-ink">250,000 AI tokens / day</strong></span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Priority AI traffic — no queueing</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Model chooser (Haiku / Sonnet / Opus)</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Bring your own Anthropic API key</span></li>
             </ul>
             <button
-              onClick={() => buy("premium-monthly")}
+              onClick={() => buy("hacker-monthly")}
               disabled={loading}
               className="mt-7 w-full rounded-md bg-amber-500 px-4 py-3 text-center text-base font-medium text-white transition hover:bg-amber-600 disabled:opacity-50"
             >
-              {loading ? "Opening checkout…" : "Go Premium - $29/mo"}
+              {loading ? "Opening checkout…" : "Go Hacker - $24 first month"}
             </button>
             <button
-              onClick={() => buy("premium-sixmonth")}
+              onClick={() => buy("hacker-sixmonth")}
               disabled={loading}
               className="mt-2 w-full text-center text-xs text-muted hover:text-ink"
             >
@@ -702,7 +717,7 @@ export default function Home() {
                     Feature
                   </th>
                   <th className="w-[110px] py-4 text-center font-semibold text-ink">
-                    Free
+                    Learner
                   </th>
                   <th className="w-[110px] py-4 text-center font-semibold text-ink">
                     Pro
@@ -710,12 +725,20 @@ export default function Home() {
                   <th className="w-[130px] py-4 text-center font-semibold text-ink">
                     <span className="inline-flex items-center gap-1">
                       <CrownIcon className="h-3.5 w-3.5 text-amber-500" />
-                      Premium
+                      Hacker
                     </span>
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-hair">
+                <FeatureRow
+                  label="AI tokens per day"
+                  values={{ free: "10,000", pro: "80,000", premium: "250,000" }}
+                />
+                <FeatureRow
+                  label="AI messages per day"
+                  values={{ free: "30", pro: "200", premium: "600" }}
+                />
                 <FeatureRow
                   label="AI chat tutor"
                   free
@@ -723,19 +746,11 @@ export default function Home() {
                   premium
                 />
                 <FeatureRow
-                  label="Token budget / 5h"
-                  values={{ free: "4k", pro: "30k", premium: "120k" }}
-                />
-                <FeatureRow
-                  label="Messages / 5h"
-                  values={{ free: "10", pro: "80", premium: "250" }}
-                />
-                <FeatureRow
                   label="All 16 AP curriculum walkthroughs"
                   values={{ free: "Units 1-2", pro: "All units", premium: "All units" }}
                 />
                 <FeatureRow
-                  label="Practice problems (every unit)"
+                  label="Practice problems"
                   free
                   pro
                   premium
@@ -753,13 +768,37 @@ export default function Home() {
                   premium
                 />
                 <FeatureRow
+                  label="Full lessons, flashcards, diagrams"
+                  pro
+                  premium
+                />
+                <FeatureRow
                   label="Image uploads (photos of handwritten work)"
                   pro
                   premium
                 />
                 <FeatureRow
-                  label="Priority rate limits"
+                  label="FRQ practice + quiz notes"
                   pro
+                  premium
+                />
+                <FeatureRow
+                  label="Diagnostic quizzes per month"
+                  values={{ free: "1", pro: "5", premium: "Unlimited" }}
+                />
+                <FeatureRow
+                  label="Insights (usage dashboard)"
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Wrong-answer review bank"
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Priority AI traffic"
+                  premiumOnly
                   premium
                 />
                 <FeatureRow
@@ -769,11 +808,6 @@ export default function Home() {
                 />
                 <FeatureRow
                   label="Bring your own Anthropic API key"
-                  premiumOnly
-                  premium
-                />
-                <FeatureRow
-                  label="Unlimited with your own key"
                   premiumOnly
                   premium
                 />

@@ -7,6 +7,7 @@ import {
   parseCheckoutPlan,
   type PaidCheckoutPlan,
 } from "@/lib/plans";
+import { logEvent } from "@/lib/events";
 
 export const runtime = "nodejs";
 
@@ -61,6 +62,12 @@ export async function POST(req: Request) {
   }
 
   const stripe = new Stripe(secret, { apiVersion: "2024-06-20" });
+  // AP season promo: $5 off first month via a Stripe coupon.
+  // The coupon ID must exist in your Stripe dashboard (Products → Coupons)
+  // with code APPREP, $5 off, once. When not found, checkout still works
+  // with the `allow_promotion_codes: true` fallback — users can enter the
+  // code manually on Stripe's hosted page.
+  const apSaleCouponId = process.env.STRIPE_COUPON_APPREP;
   try {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
@@ -68,6 +75,9 @@ export async function POST(req: Request) {
       success_url: `${site}/success?session_id={CHECKOUT_SESSION_ID}&plan=${checkoutPlan.key}`,
       cancel_url: `${site}/?canceled=1`,
       allow_promotion_codes: true,
+      ...(apSaleCouponId && checkoutPlan.interval === "monthly"
+        ? { discounts: [{ coupon: apSaleCouponId }] }
+        : {}),
       billing_address_collection: "auto",
       customer_creation: "always",
       metadata: {
@@ -109,6 +119,15 @@ export async function POST(req: Request) {
             },
           }),
     });
+    void logEvent({
+      kind: "checkout.start",
+      uid: user?.uid ?? null,
+      email: user?.email ?? null,
+      meta: {
+        tier: checkoutPlan.tier,
+        interval: checkoutPlan.interval,
+      },
+    });
     return NextResponse.json({ url: session.url });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
@@ -128,10 +147,16 @@ function resolvePriceId(plan: PaidCheckoutPlan): string | undefined {
         process.env.STRIPE_PRICE_SIXMONTH ||
         process.env.STRIPE_PRICE_YEARLY
       );
-    case "premium-monthly":
-      return process.env.STRIPE_PRICE_PREMIUM_MONTHLY;
-    case "premium-sixmonth":
-      return process.env.STRIPE_PRICE_PREMIUM_SIXMONTH;
+    case "hacker-monthly":
+      return (
+        process.env.STRIPE_PRICE_HACKER_MONTHLY ||
+        process.env.STRIPE_PRICE_PREMIUM_MONTHLY
+      );
+    case "hacker-sixmonth":
+      return (
+        process.env.STRIPE_PRICE_HACKER_SIXMONTH ||
+        process.env.STRIPE_PRICE_PREMIUM_SIXMONTH
+      );
   }
 }
 
@@ -141,9 +166,9 @@ function missingPriceMessage(plan: PaidCheckoutPlan): string {
       return "Set STRIPE_PRICE_PRO_MONTHLY in your environment.";
     case "pro-sixmonth":
       return "Set STRIPE_PRICE_PRO_SIXMONTH in your environment.";
-    case "premium-monthly":
-      return "Set STRIPE_PRICE_PREMIUM_MONTHLY in your environment.";
-    case "premium-sixmonth":
-      return "Set STRIPE_PRICE_PREMIUM_SIXMONTH in your environment.";
+    case "hacker-monthly":
+      return "Set STRIPE_PRICE_HACKER_MONTHLY in your environment.";
+    case "hacker-sixmonth":
+      return "Set STRIPE_PRICE_HACKER_SIXMONTH in your environment.";
   }
 }

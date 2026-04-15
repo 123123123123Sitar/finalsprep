@@ -17,7 +17,7 @@ export default function PracticeProblems({
   courseTitle?: string;
 }) {
   const { user, plan } = useAuth();
-  const canWrongBank = !!user && plan !== "free";
+  const canWrongBank = !!user && plan !== "learner";
 
   function generateMore() {
     const subject = courseTitle || courseSlug;

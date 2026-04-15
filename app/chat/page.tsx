@@ -44,11 +44,7 @@ const STARTERS = [
 
 export default function ChatPage() {
   return (
-    <main className="flex h-screen flex-col bg-paper text-body">
-      <SiteNav maxWidth="max-w-6xl">
-        <a href="/study" className="nav-link">Study</a>
-        <a href="/" className="nav-link">Home</a>
-      </SiteNav>
+    <main className="flex h-screen bg-paper text-body">
       <AuthGate>
         <ChatInner />
       </AuthGate>
@@ -76,7 +72,7 @@ function ChatInner() {
   const [limitHit, setLimitHit] = useState(false);
   const [tokensRemaining, setTokensRemaining] = useState<number | null>(null);
   const [resetMinutes, setResetMinutes] = useState<number | null>(null);
-  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(true);
   const [conversations, setConversations] = useState<StoredConversation[]>([]);
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
   const [modelKey, setModelKey] = useState<ModelKey>("sonnet");
@@ -98,7 +94,7 @@ function ChatInner() {
 
   // Load premium prefs (model + custom API key) from Firestore
   useEffect(() => {
-    if (!user || plan !== "premium") return;
+    if (!user || plan !== "hacker") return;
     const db = getDb();
     if (!db) return;
     getDoc(doc(db, "users", user.uid, "profile", "prefs"))
@@ -156,7 +152,7 @@ function ChatInner() {
   async function handleImagePick(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
     e.target.value = ""; // allow re-selecting the same file
-    if (plan === "free") {
+    if (plan === "learner") {
       setError("Image uploads are a Pro feature. Upgrade to attach photos.");
       return;
     }
@@ -214,8 +210,8 @@ function ChatInner() {
         },
         body: JSON.stringify({
           messages: withUser,
-          ...(plan === "premium" ? { model: modelKey } : {}),
-          ...(plan === "premium" && customApiKey ? { anthropicApiKey: customApiKey } : {}),
+          ...(plan === "hacker" ? { model: modelKey } : {}),
+          ...(plan === "hacker" && customApiKey ? { anthropicApiKey: customApiKey } : {}),
           ...(pendingImages.length > 0
             ? {
                 images: pendingImages.map((i) => ({
@@ -383,8 +379,8 @@ function ChatInner() {
     checkoutPlan:
       | "pro-monthly"
       | "pro-sixmonth"
-      | "premium-monthly"
-      | "premium-sixmonth" = "pro-monthly"
+      | "hacker-monthly"
+      | "hacker-sixmonth" = "pro-monthly"
   ) {
     const token = await getIdToken();
     const res = await fetch("/api/checkout", {
@@ -400,97 +396,59 @@ function ChatInner() {
     else alert(error || "Checkout isn't wired up yet.");
   }
 
+  const [convSearch, setConvSearch] = useState("");
+  const filteredConversations = convSearch.trim()
+    ? conversations.filter((c) =>
+        c.title.toLowerCase().includes(convSearch.trim().toLowerCase())
+      )
+    : conversations;
+
   return (
     <div className="flex flex-1 overflow-hidden">
-      {/* History sidebar */}
+      {/* LEFT SIDEBAR — persistent ChatGPT-style nav */}
       <aside
-        className={`shrink-0 border-r border-hair bg-offwhite transition-all duration-300 ease-out ${
-          historyOpen ? "w-72" : "w-0"
+        className={`shrink-0 border-r border-hair bg-[#f5f3ed] transition-all duration-200 ease-out ${
+          historyOpen ? "w-64" : "w-14"
         } overflow-hidden`}
       >
-        <div className="flex h-full w-72 flex-col">
-          <div className="flex items-center justify-between border-b border-hair px-4 py-3">
-            <div className="label">History</div>
-            <button
-              onClick={startNewChat}
-              className="rounded-md border border-hair bg-white px-2 py-1 text-xs text-ink hover:border-rule hover:bg-offwhite"
-            >
-              + New
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {conversations.length === 0 ? (
-              <div className="p-4 text-xs text-muted">
-                No conversations yet. Start a new chat to see it here.
-              </div>
-            ) : (
-              <ul className="space-y-0.5 p-2">
-                {conversations.map((c) => (
-                  <li key={c.id}>
-                    <div className="group flex items-center gap-1">
-                      <button
-                        onClick={() => openConversation(c)}
-                        className={`flex-1 truncate rounded-md px-3 py-2 text-left text-sm transition-colors ${
-                          currentConvId === c.id
-                            ? "bg-white font-medium text-ink shadow-sm"
-                            : "text-body hover:bg-white"
-                        }`}
-                      >
-                        {c.title}
-                      </button>
-                      <button
-                        onClick={() => removeConversation(c)}
-                        className="opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100"
-                        aria-label="Delete conversation"
-                        title="Delete"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                          <path
-                            d="M6 6l12 12M6 18L18 6"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div className="border-t border-hair px-4 py-3 text-xs text-muted">
-            Signed in as <span className="text-ink">{user?.email}</span>
-          </div>
-        </div>
+        {historyOpen ? (
+          <ExpandedSidebar
+            userEmail={user?.email}
+            conversations={filteredConversations}
+            currentConvId={currentConvId}
+            convSearch={convSearch}
+            setConvSearch={setConvSearch}
+            startNewChat={startNewChat}
+            openConversation={openConversation}
+            removeConversation={removeConversation}
+            collapse={() => setHistoryOpen(false)}
+          />
+        ) : (
+          <CollapsedSidebar
+            startNewChat={startNewChat}
+            expand={() => setHistoryOpen(true)}
+          />
+        )}
       </aside>
 
       {/* Main chat column */}
       <div className="flex flex-1 flex-col">
-        {/* Header with history toggle */}
-        <div className="border-b border-hair bg-white">
-          <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-2">
-            <button
-              onClick={() => setHistoryOpen((v) => !v)}
-              className="inline-flex items-center gap-2 text-xs text-muted hover:text-ink"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-              </svg>
-              {historyOpen ? "Hide history" : "History"}
-            </button>
-            <div className="text-xs text-muted">
-              {currentConvId ? "Editing saved chat" : "New chat"}
-            </div>
+        {/* Thin top strip: breadcrumb + current chat title + link to study */}
+        <div className="flex items-center justify-between border-b border-hair bg-white px-6 py-3">
+          <div className="text-xs text-muted">
+            {currentConvId ? "Editing saved chat" : "New chat"}
           </div>
+          <a href="/study" className="text-xs text-muted hover:text-ink">
+            ← Study tool
+          </a>
         </div>
 
         {/* MESSAGES */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-4xl px-6 py-8">
+          <div className="mx-auto max-w-4xl px-6 pb-8 pt-10">
             {messages.length === 0 ? (
-              <div className="animate-slideInUp py-12">
-                <h1 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
+              <div className="animate-slideInUp py-8">
+                <h1 className="font-serif text-4xl font-normal leading-[1.15] text-ink sm:text-5xl">
                   What are you stuck on?
                 </h1>
                 <p className="mt-3 max-w-xl text-muted">
@@ -540,7 +498,7 @@ function ChatInner() {
                 }`}
               >
                 <div>{error}</div>
-                {limitHit && plan === "free" && (
+                {limitHit && plan === "learner" && (
                   <button onClick={() => buy("pro-monthly")} className="btn-link mt-2">
                     Upgrade to Pro - $16/month →
                   </button>
@@ -594,7 +552,7 @@ function ChatInner() {
               <button
                 type="button"
                 onClick={() => {
-                  if (plan === "free") {
+                  if (plan === "learner") {
                     setError("Image uploads are a Pro feature. Upgrade to attach photos of your work.");
                     return;
                   }
@@ -602,13 +560,13 @@ function ChatInner() {
                 }}
                 disabled={streaming || loading}
                 aria-label="Attach image"
-                title={plan === "free" ? "Upload images (Pro feature)" : "Attach an image"}
+                title={plan === "learner" ? "Upload images (Pro feature)" : "Attach an image"}
                 className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-40"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M21 12.5 12.5 21a5.5 5.5 0 0 1-7.8-7.8L13 5a4 4 0 1 1 5.7 5.7l-8.5 8.5a2.5 2.5 0 1 1-3.5-3.5L14 8.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                {plan === "free" && (
+                {plan === "learner" && (
                   <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-amber-500" />
                 )}
               </button>
@@ -666,7 +624,7 @@ function ChatInner() {
             </div>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-2 px-2 text-center text-[11px] text-muted">
               <span>{planStatus(plan)}</span>
-              {plan === "premium" && (
+              {plan === "hacker" && (
                 <>
                   <span className="text-dim">·</span>
                   <label className="inline-flex items-center gap-1">
@@ -757,10 +715,271 @@ function Message({
 function planStatus(plan: PlanTier): string {
   switch (plan) {
     case "pro":
-      return `${planLabel(plan)} plan · larger budget refills every 5h`;
-    case "premium":
-      return `${planLabel(plan)} plan · largest budget refills every 5h`;
+      return `${planLabel(plan)} · 80k tokens / day`;
+    case "hacker":
+      return `${planLabel(plan)} · 250k tokens / day · priority traffic`;
     default:
-      return `${planLabel(plan)} plan · starter budget refills every 5h`;
+      return `${planLabel(plan)} · 10k tokens / day`;
   }
+}
+
+function SidebarItem({
+  href,
+  onClick,
+  icon,
+  label,
+  active,
+}: {
+  href?: string;
+  onClick?: () => void;
+  icon: React.ReactNode;
+  label: string;
+  active?: boolean;
+}) {
+  const cls = `flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition-colors ${
+    active ? "bg-white text-ink" : "text-body hover:bg-white/60 hover:text-ink"
+  }`;
+  if (href) {
+    return (
+      <a href={href} className={cls}>
+        <span className="h-4 w-4 shrink-0 text-muted">{icon}</span>
+        <span className="truncate">{label}</span>
+      </a>
+    );
+  }
+  return (
+    <button onClick={onClick} className={cls}>
+      <span className="h-4 w-4 shrink-0 text-muted">{icon}</span>
+      <span className="truncate">{label}</span>
+    </button>
+  );
+}
+
+function ExpandedSidebar({
+  userEmail,
+  conversations,
+  currentConvId,
+  convSearch,
+  setConvSearch,
+  startNewChat,
+  openConversation,
+  removeConversation,
+  collapse,
+}: {
+  userEmail: string | null | undefined;
+  conversations: StoredConversation[];
+  currentConvId: string | null;
+  convSearch: string;
+  setConvSearch: (v: string) => void;
+  startNewChat: () => void;
+  openConversation: (c: StoredConversation) => void;
+  removeConversation: (c: StoredConversation) => void;
+  collapse: () => void;
+}) {
+  return (
+    <div className="flex h-full w-64 flex-col">
+      {/* Logo + collapse */}
+      <div className="flex items-center justify-between px-3 py-4">
+        <a href="/" className="flex items-center gap-2 px-1 text-sm font-medium text-ink">
+          <svg width="20" height="18" viewBox="0 0 44 32" fill="none" className="text-ink">
+            <path d="M6 7.5C9.6 5.2 13.8 4 18.6 4C20.4 4 21.8 5.4 21.8 7.2V27.5C17.2 27.5 12.2 28.7 6 31V7.5Z" fill="currentColor" fillOpacity="0.08" />
+            <path d="M38 7.5C34.4 5.2 30.2 4 25.4 4C23.6 4 22.2 5.4 22.2 7.2V27.5C26.8 27.5 31.8 28.7 38 31V7.5Z" fill="currentColor" fillOpacity="0.08" />
+            <path d="M6 7.5C9.6 5.2 13.8 4 18.6 4C20.4 4 21.8 5.4 21.8 7.2V27.5C17.2 27.5 12.2 28.7 6 31V7.5Z M38 7.5C34.4 5.2 30.2 4 25.4 4C23.6 4 22.2 5.4 22.2 7.2V27.5C26.8 27.5 31.8 28.7 38 31V7.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+          </svg>
+          <span>FinalsPrep</span>
+        </a>
+        <button
+          onClick={collapse}
+          className="rounded p-1 text-muted hover:bg-white/60 hover:text-ink"
+          title="Collapse sidebar"
+          aria-label="Collapse sidebar"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M9 4v16" stroke="currentColor" strokeWidth="1.8" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="px-2">
+        <button
+          onClick={startNewChat}
+          className="mb-2 flex w-full items-center gap-3 rounded-lg border border-hair bg-white px-3 py-2 text-[14px] font-medium text-ink hover:border-orange"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-muted">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          New chat
+        </button>
+        <div className="relative mb-3">
+          <svg
+            className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted"
+            viewBox="0 0 24 24"
+            fill="none"
+          >
+            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
+            <path d="m20 20-3.5-3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+          <input
+            type="text"
+            value={convSearch}
+            onChange={(e) => setConvSearch(e.target.value)}
+            placeholder="Search chats"
+            className="w-full rounded-lg border border-hair bg-white px-7 py-1.5 text-[13px] text-ink placeholder-dim outline-none focus:border-orange"
+          />
+        </div>
+      </div>
+
+      <nav className="flex flex-col gap-0.5 px-2">
+        <SidebarItem
+          href="/study"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 5a2 2 0 0 1 2-2h10l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="M8 13h8M8 17h6M8 9h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          }
+          label="Study"
+        />
+        <SidebarItem
+          href="/study?tab=cards"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M7 2h10M5 4h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          }
+          label="Flashcards"
+        />
+        <SidebarItem
+          href="/review"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="M8 10h8M8 14h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          }
+          label="Review bank"
+        />
+        <SidebarItem
+          href="/insights"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 20V10m6 10V4m6 16v-8m6 8v-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          }
+          label="Insights"
+        />
+      </nav>
+
+      {/* Recents */}
+      <div className="mt-4 flex min-h-0 flex-1 flex-col">
+        <div className="px-4 py-2 text-[10px] font-medium uppercase tracking-[0.12em] text-muted">
+          Recents
+        </div>
+        <div className="flex-1 overflow-y-auto px-2">
+          {conversations.length === 0 ? (
+            <div className="px-3 py-2 text-[12px] text-muted">
+              No chats yet.
+            </div>
+          ) : (
+            <ul className="space-y-0.5">
+              {conversations.map((c) => (
+                <li key={c.id}>
+                  <div className="group flex items-center gap-1">
+                    <button
+                      onClick={() => openConversation(c)}
+                      className={`flex-1 truncate rounded-lg px-3 py-1.5 text-left text-[13px] ${
+                        currentConvId === c.id
+                          ? "bg-white font-medium text-ink"
+                          : "text-body hover:bg-white/60 hover:text-ink"
+                      }`}
+                    >
+                      {c.title}
+                    </button>
+                    <button
+                      onClick={() => removeConversation(c)}
+                      className="opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100"
+                      aria-label="Delete"
+                      title="Delete"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* Footer: account */}
+      <div className="mt-auto border-t border-hair px-3 py-3">
+        <a
+          href="/account"
+          className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] text-muted hover:bg-white/60 hover:text-ink"
+          title={userEmail || ""}
+        >
+          <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-orange-tint text-[10px] font-medium text-orange-ink">
+            {(userEmail || "?").charAt(0).toUpperCase()}
+          </div>
+          <span className="truncate">{userEmail || "Account"}</span>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function CollapsedSidebar({
+  startNewChat,
+  expand,
+}: {
+  startNewChat: () => void;
+  expand: () => void;
+}) {
+  return (
+    <div className="flex h-full w-14 flex-col items-center gap-3 py-4">
+      <button
+        onClick={expand}
+        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        title="Expand sidebar"
+        aria-label="Expand sidebar"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M9 4v16" stroke="currentColor" strokeWidth="1.8" />
+        </svg>
+      </button>
+      <button
+        onClick={startNewChat}
+        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        title="New chat"
+        aria-label="New chat"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      </button>
+      <a
+        href="/study"
+        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        title="Study"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M4 5a2 2 0 0 1 2-2h10l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+        </svg>
+      </a>
+      <a
+        href="/review"
+        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        title="Review bank"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+        </svg>
+      </a>
+    </div>
+  );
 }

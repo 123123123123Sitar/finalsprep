@@ -4,7 +4,7 @@
  *
  * Shape:
  *   users/{uid}/profile/billing = {
- *     plan: "free" | "pro" | "premium",
+ *     plan: "learner" | "pro" | "hacker",
  *     billingInterval?: "monthly" | "sixmonth",
  *     status?: string,
  *     stripeCustomerId?: string,
@@ -47,10 +47,10 @@ function billingRef(uid: string) {
 
 export async function getPlan(uid: string): Promise<UserPlan> {
   const db = getAdminDb();
-  if (!db) return { plan: "free", updatedAt: Date.now() };
+  if (!db) return { plan: "learner", updatedAt: Date.now() };
   try {
     const snap = await billingRef(uid).get();
-    if (!snap.exists) return { plan: "free", updatedAt: Date.now() };
+    if (!snap.exists) return { plan: "learner", updatedAt: Date.now() };
     const raw = (snap.data() || {}) as Partial<UserPlan>;
     const data: UserPlan = {
       plan: normalizePlanTier(raw.plan),
@@ -68,12 +68,12 @@ export async function getPlan(uid: string): Promise<UserPlan> {
       data.currentPeriodEnd &&
       data.currentPeriodEnd * 1000 < Date.now()
     ) {
-      return { ...data, plan: "free" };
+      return { ...data, plan: "learner" };
     }
     return data;
   } catch (e) {
     console.error("[userPlan] getPlan failed", e);
-    return { plan: "free", updatedAt: Date.now() };
+    return { plan: "learner", updatedAt: Date.now() };
   }
 }
 
@@ -101,9 +101,9 @@ export function planToRateTier(plan: UserPlan | null | undefined): Tier {
   switch (plan?.plan) {
     case "pro":
       return "pro";
-    case "premium":
-      return "premium";
+    case "hacker":
+      return "hacker";
     default:
-      return "free";
+      return "learner";
   }
 }

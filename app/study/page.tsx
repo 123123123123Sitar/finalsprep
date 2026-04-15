@@ -70,7 +70,7 @@ export default function Study() {
     ? getCurriculumUnit(courseSlug, selectedUnit)
     : undefined;
   const locked = !isUnitUnlocked(selectedUnit, plan);
-  const isPro = plan !== "free";
+  const isPro = plan !== "learner";
   const currentMembership = selectedLesson?.courses.find(
     (c) => c.courseSlug === courseSlug
   );
@@ -149,8 +149,8 @@ export default function Study() {
     checkoutPlan:
       | "pro-monthly"
       | "pro-sixmonth"
-      | "premium-monthly"
-      | "premium-sixmonth" = "pro-monthly"
+      | "hacker-monthly"
+      | "hacker-sixmonth" = "pro-monthly"
   ) {
     setBuyLoading(true);
     try {
@@ -440,7 +440,7 @@ export default function Study() {
 
                 <div className="mt-4 flex flex-wrap gap-6 border-b border-hair">
                   {TABS.filter((t) => t.show).map((t) => {
-                    const needsPro = t.proOnly && plan === "free";
+                    const needsPro = t.proOnly && plan === "learner";
                     return (
                       <button
                         key={t.key}
@@ -509,7 +509,7 @@ export default function Study() {
                   )}
 
                   {tab === "lesson" && selectedLesson && (
-                    plan === "free" ? (
+                    plan === "learner" ? (
                       <LockedTabTeaser
                         label="full lesson walkthrough"
                         count={selectedLesson.keyIdeas.length}
@@ -556,7 +556,7 @@ export default function Study() {
                   )}
 
                   {tab === "cards" && selectedLesson && (
-                    plan === "free" ? (
+                    plan === "learner" ? (
                       <LockedTabTeaser
                         label="flashcards"
                         count={selectedLesson.flashcards.length}

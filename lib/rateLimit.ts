@@ -1,49 +1,48 @@
 /**
- * Rate limiter using a sliding 5-hour token window - the same shape as
- * Claude's own free plan. Every call costs real tokens (input + output);
- * the limit is a total token budget that replenishes continuously.
- *
- * Why tokens not requests:
- *   A per-request cap (3/day, etc.) lets tiny messages be "free" and
- *   punishes anyone asking a real question. Tokens scale with actual cost,
- *   which is both fair to users and protective of our margins.
+ * Rate limiter with per-day token budgets.
  *
  * Three tiers:
- *   FREE    - tight budget, enough to test the tutor
- *   PRO     - larger budget for active students, includes image uploads
- *   PREMIUM - largest budget, model chooser, custom API key option
+ *   LEARNER - starter budget, enough to test the tutor on real homework
+ *   PRO     - comfortable daily budget for active students
+ *   HACKER  - biggest budget + priority traffic
  *
- * All tiers also enforce a message-count safety cap so that a
- * low-token spammer can't hammer the API with hundreds of one-word
- * prompts.
+ * Each call costs real tokens (input + output). We record the actual
+ * usage so the budget scales with real cost, not request count.
+ *
+ * Budgets are displayed as "tokens per day" and the values below are
+ * the numbers the user actually sees — generous round totals so the
+ * value is obvious. Inflation is a feature, not a bug: each chat
+ * exchange burns only a few hundred tokens so a 10k/day learner
+ * budget still lets them run the tutor every day.
  *
  * IMPORTANT production caveat:
  *   This limiter is in-memory. In local dev (single Node process) it
  *   works. On Vercel serverless, each cold start gets a fresh Map. For
  *   real production abuse protection, back this with Upstash Redis or
- *   Firestore - this file is the single place to swap the backend.
+ *   Firestore — this file is the single place to swap the backend.
  */
 
-export type Tier = "free" | "pro" | "premium";
+export type Tier = "learner" | "pro" | "hacker";
 
 export const LIMITS = {
-  WINDOW_MS: 5 * 60 * 60 * 1000, // 5-hour sliding window
+  /** 24-hour sliding window. */
+  WINDOW_MS: 24 * 60 * 60 * 1000,
   MAX_INPUT_CHARS: 1200,
   MAX_HISTORY: 20,
   /** Minimum tokens we need in the budget before we even attempt a call. */
   RESERVE_MIN_TOKENS: 700,
 
-  free: {
-    tokens: 4000, // ~5-8 real chat exchanges per 5h
-    messages: 10,
+  learner: {
+    tokens: 10_000,
+    messages: 30,
   },
   pro: {
-    tokens: 30000,
-    messages: 80,
+    tokens: 80_000,
+    messages: 200,
   },
-  premium: {
-    tokens: 120000,
-    messages: 250,
+  hacker: {
+    tokens: 250_000,
+    messages: 600,
   },
 } as const;
 
@@ -85,19 +84,19 @@ function tierLabel(tier: Tier): string {
   switch (tier) {
     case "pro":
       return "Pro plan";
-    case "premium":
-      return "Premium plan";
+    case "hacker":
+      return "Hacker plan";
     default:
-      return "Free plan";
+      return "Learner plan";
   }
 }
 
 function tierUpgradeHint(tier: Tier): string {
   switch (tier) {
-    case "free":
-      return " Upgrade to Pro or Premium for more AI budget.";
+    case "learner":
+      return " Upgrade to Pro or Hacker for a much bigger daily budget.";
     case "pro":
-      return " Upgrade to Premium for the largest AI budget.";
+      return " Upgrade to Hacker for the largest daily budget + priority traffic.";
     default:
       return "";
   }
@@ -120,7 +119,7 @@ export type ReserveResult =
       resetMinutes: number;
     };
 
-/** Check whether a new call is allowed. Does NOT deduct tokens - you must
+/** Check whether a new call is allowed. Does NOT deduct tokens — you must
  *  call `record()` after the API call with the actual token count. */
 export function reserve(key: string, tier: Tier): ReserveResult {
   const at = now();
@@ -138,7 +137,7 @@ export function reserve(key: string, tier: Tier): ReserveResult {
       ok: false,
       tier,
       reason: "messages",
-      message: `You've hit the ${tierLabel(tier)} message cap for this 5-hour window. ${humanReset(
+      message: `You've hit the ${tierLabel(tier)} daily message cap. ${humanReset(
         mins
       )}${tierUpgradeHint(tier)}`,
       tokensRemaining,
@@ -152,7 +151,7 @@ export function reserve(key: string, tier: Tier): ReserveResult {
       ok: false,
       tier,
       reason: "tokens",
-      message: `You've used your ${tierLabel(tier)} tokens for this 5-hour window. ${humanReset(
+      message: `You've used your ${tierLabel(tier)} daily tokens. ${humanReset(
         mins
       )}${tierUpgradeHint(tier)}`,
       tokensRemaining: 0,
@@ -227,8 +226,7 @@ export function clampInput(text: unknown): string {
 }
 
 /** Rough token estimator when the API doesn't report usage (fallback only).
- *  Real calls always return usage - this is just so we never record 0. */
+ *  Real calls always return usage — this is just so we never record 0. */
 export function estimateTokens(text: string): number {
-  // 1 token ≈ 4 chars for English text, plus some overhead.
   return Math.max(1, Math.ceil(text.length / 4));
 }
