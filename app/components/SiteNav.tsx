@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
 import Logo from "@/app/components/Logo";
 import { useAuth } from "@/app/components/AuthProvider";
 import { useTheme, THEMES, type Theme } from "@/app/components/ThemeProvider";
+import { getDb } from "@/lib/firebase";
 
 export default function SiteNav({
   children,
@@ -157,22 +159,12 @@ function AuthMenu() {
             Saved
           </a>
         )}
-        <a
-          href="/account"
-          className="nav-link"
-          title={user.email || undefined}
-        >
-          Account
-        </a>
-        <button
-          onClick={async () => {
-            await signOut();
-            window.location.href = "/";
-          }}
-          className="nav-link"
-        >
-          Sign out
-        </button>
+        <AccountMenu
+          email={user.email}
+          plan={plan}
+          signOut={signOut}
+          uid={user.uid}
+        />
       </>
     );
   }
@@ -182,4 +174,185 @@ function AuthMenu() {
       Sign in
     </a>
   );
+}
+
+const WEEKDAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
+
+function AccountMenu({
+  email,
+  plan,
+  signOut,
+  uid,
+}: {
+  email: string | null;
+  plan: string | null | undefined;
+  signOut: () => Promise<void>;
+  uid: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [scheduledDays, setScheduledDays] = useState<number[]>([]);
+  const [lastClaimDate, setLastClaimDate] = useState<string>("");
+  const ref = useRef<HTMLDivElement>(null);
+  const today = new Date().getDay();
+  const todayYmd = ymdLocal(new Date());
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [open]);
+
+  // Subscribe to the schedule doc only once the menu is opened for the
+  // first time, so idle users don't pay for the listener.
+  const [subscribed, setSubscribed] = useState(false);
+  useEffect(() => {
+    if (!open || subscribed) return;
+    setSubscribed(true);
+    const db = getDb();
+    if (!db) return;
+    const unsub = onSnapshot(
+      doc(db, "users", uid, "profile", "schedule"),
+      (snap) => {
+        const data = snap.data() as any;
+        const days = Array.isArray(data?.days) ? data.days : [];
+        setScheduledDays(days.filter((n: any) => typeof n === "number"));
+        setLastClaimDate(
+          typeof data?.lastClaimDate === "string" ? data.lastClaimDate : ""
+        );
+      },
+      () => {}
+    );
+    return () => unsub();
+  }, [open, subscribed, uid]);
+
+  const claimedToday = lastClaimDate === todayYmd;
+  const initial = (email || "?").charAt(0).toUpperCase();
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="nav-link flex items-center gap-2"
+        title={email || "Account"}
+        aria-label="Account menu"
+        aria-expanded={open}
+      >
+        <span
+          aria-hidden="true"
+          className="grid h-6 w-6 place-items-center rounded-full bg-orange-tint text-[10px] font-semibold text-orange-ink"
+        >
+          {initial}
+        </span>
+        <span>Account</span>
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full z-40 mt-2 w-72 rounded-xl border border-hair bg-paper p-4 shadow-[0_28px_80px_-28px_rgba(0,0,0,0.4)]">
+          <div className="mb-3">
+            <div className="truncate text-sm font-medium text-ink">
+              {email || "Signed in"}
+            </div>
+            <div className="mt-0.5 text-[11px] uppercase tracking-wider text-muted">
+              {plan || "learner"} plan
+            </div>
+          </div>
+
+          <div className="label mb-2">This week</div>
+          <div className="flex items-center justify-between gap-1">
+            {WEEKDAY_LABELS.map((lbl, i) => {
+              const isToday = i === today;
+              const isScheduled = scheduledDays.includes(i);
+              return (
+                <a
+                  key={i}
+                  href="/schedule"
+                  className={`flex h-9 w-9 flex-col items-center justify-center rounded-lg text-[10px] font-medium transition ${
+                    isToday
+                      ? "bg-ink text-white"
+                      : isScheduled
+                      ? "bg-orange-tint text-orange-ink hover:bg-orange/20"
+                      : "bg-offwhite text-muted hover:bg-hair/60 hover:text-ink"
+                  }`}
+                >
+                  <span>{lbl}</span>
+                  {isScheduled && (
+                    <span
+                      aria-hidden="true"
+                      className={`mt-0.5 h-1 w-1 rounded-full ${
+                        isToday ? "bg-white" : "bg-orange"
+                      }`}
+                    />
+                  )}
+                </a>
+              );
+            })}
+          </div>
+          <a
+            href="/schedule"
+            className="mt-3 flex items-center justify-between rounded-md bg-offwhite px-3 py-2 text-[12px] text-muted hover:bg-hair/60 hover:text-ink"
+          >
+            <span>
+              {claimedToday
+                ? "Claimed today ✓"
+                : scheduledDays.includes(today)
+                ? "Check in for today →"
+                : "Open calendar →"}
+            </span>
+          </a>
+
+          <div className="my-3 border-t border-hair" />
+
+          <div className="flex flex-col">
+            <a
+              href="/account"
+              className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
+            >
+              <span>Account settings</span>
+              <span aria-hidden="true" className="text-dim">
+                ›
+              </span>
+            </a>
+            {(plan === "pro" || plan === "hacker") && (
+              <a
+                href="/bookmarks"
+                className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
+              >
+                <span>Saved lessons</span>
+                <span aria-hidden="true" className="text-dim">
+                  ›
+                </span>
+              </a>
+            )}
+            <a
+              href="/shop"
+              className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
+            >
+              <span>Shop tokens</span>
+              <span aria-hidden="true" className="text-dim">
+                ›
+              </span>
+            </a>
+            <button
+              onClick={async () => {
+                await signOut();
+                window.location.href = "/";
+              }}
+              className="mt-1 flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-[13px] text-muted hover:bg-offwhite hover:text-ink"
+            >
+              <span>Sign out</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ymdLocal(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
 }
