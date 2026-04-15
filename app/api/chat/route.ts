@@ -1,6 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { CHAT_SYSTEM_PROMPT } from "@/lib/chatSystemPrompt";
+import { buildChatSystemPrompt } from "@/lib/chatSystemPrompt";
+import { maxOutputTokens, normalizeAiPrefs } from "@/lib/aiPrefs";
+import { getStoredAiPrefs } from "@/lib/aiPrefsStore";
 import {
   clampInput,
   estimateTokens,
@@ -117,6 +119,11 @@ export async function POST(req: Request) {
   const userPlan = user ? await getPlan(user.uid) : null;
   const tier = planToRateTier(userPlan);
   const plan = userPlan?.plan ?? "learner";
+  const aiPrefs = user
+    ? await getStoredAiPrefs(user.uid)
+    : normalizeAiPrefs(body?.aiPrefs);
+  const systemPrompt = buildChatSystemPrompt(aiPrefs);
+  const outputTokenLimit = maxOutputTokens("chat", aiPrefs.aiVerbosity);
 
   // Thinking mode: only Pro/Hacker users can enable it. Learners ignored.
   const thinking =
@@ -190,6 +197,9 @@ export async function POST(req: Request) {
       provider: picked.provider,
       thinking,
       hasImages: Array.isArray(body?.images) && body.images.length > 0,
+      aiVerbosity: aiPrefs.aiVerbosity,
+      aiMode: aiPrefs.aiMode,
+      aiPersonality: aiPrefs.aiPersonality,
     },
   });
 
@@ -247,8 +257,8 @@ export async function POST(req: Request) {
           );
           const response = client.messages.stream({
             model: picked.model,
-            max_tokens: 1200,
-            system: CHAT_SYSTEM_PROMPT,
+            max_tokens: outputTokenLimit,
+            system: systemPrompt,
             messages: anthMessages,
           });
           for await (const event of response) {
@@ -281,7 +291,10 @@ export async function POST(req: Request) {
           const genAi = new GoogleGenerativeAI(geminiKey!);
           const model = genAi.getGenerativeModel({
             model: picked.model,
-            systemInstruction: CHAT_SYSTEM_PROMPT,
+            systemInstruction: systemPrompt,
+            generationConfig: {
+              maxOutputTokens: outputTokenLimit,
+            },
           });
           const history = messages.slice(0, -1).map((m) => ({
             role: m.role === "assistant" ? "model" : "user",
@@ -333,6 +346,9 @@ export async function POST(req: Request) {
               provider: picked.provider,
               thinking,
               contextMessages: messages.length,
+              aiVerbosity: aiPrefs.aiVerbosity,
+              aiMode: aiPrefs.aiMode,
+              aiPersonality: aiPrefs.aiPersonality,
             },
           });
         }

@@ -4,19 +4,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        paper: "#ffffff",
-        offwhite: "#fafaf7",
-        ink: "#0a0a0a",
-        body: "#1a1a1a",
-        muted: "#6b6b6b",
-        dim: "#9a9a9a",
-        hair: "#e8e6e0",
-        rule: "#d4d1c8",
+        paper: "rgb(var(--paper) / <alpha-value>)",
+        offwhite: "rgb(var(--offwhite) / <alpha-value>)",
+        ink: "rgb(var(--ink) / <alpha-value>)",
+        body: "rgb(var(--body) / <alpha-value>)",
+        muted: "rgb(var(--muted) / <alpha-value>)",
+        dim: "rgb(var(--dim) / <alpha-value>)",
+        hair: "rgb(var(--hair) / <alpha-value>)",
+        rule: "rgb(var(--rule) / <alpha-value>)",
         orange: {
-          DEFAULT: "#c2410c", // burnt orange, functional use only
-          hover: "#9a330a",
-          ink: "#7c2d0a",
-          tint: "#fff1e6",
+          DEFAULT: "rgb(var(--orange) / <alpha-value>)",
+          hover: "rgb(var(--orange-hover) / <alpha-value>)",
+          ink: "rgb(var(--orange-ink) / <alpha-value>)",
+          tint: "rgb(var(--orange-tint) / <alpha-value>)",
         },
       },
       fontFamily: {

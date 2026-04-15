@@ -5,6 +5,15 @@ import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getDb, getFirebaseAuth } from "@/lib/firebase";
+import {
+  AI_CUSTOM_INSTRUCTIONS_LIMIT,
+  AI_MODE_OPTIONS,
+  AI_PERSONALITY_OPTIONS,
+  AI_VERBOSITY_OPTIONS,
+  DEFAULT_AI_PREFS,
+  normalizeAiPrefs,
+  type AiPrefs,
+} from "@/lib/aiPrefs";
 import { CATEGORIES, type CourseCategory } from "@/lib/topics";
 import { planLabel } from "@/lib/plans";
 
@@ -17,7 +26,7 @@ const ACCENTS: { key: AccentKey; label: string; swatch: string }[] = [
   { key: "plum", label: "Plum", swatch: "#6b21a8" },
 ];
 
-type Prefs = {
+type Prefs = AiPrefs & {
   defaultCategory: CourseCategory;
   accent: AccentKey;
   mathJaxRender: boolean;
@@ -27,6 +36,7 @@ const DEFAULT_PREFS: Prefs = {
   defaultCategory: "math",
   accent: "orange",
   mathJaxRender: true,
+  ...DEFAULT_AI_PREFS,
 };
 
 export default function AccountPage() {
@@ -50,16 +60,22 @@ export default function AccountPage() {
   }, [user?.displayName]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoadingPrefs(false);
+      return;
+    }
     const db = getDb();
-    if (!db) return;
+    if (!db) {
+      setLoadingPrefs(false);
+      return;
+    }
     let cancelled = false;
     (async () => {
       try {
         const snap = await getDoc(doc(db, "users", user.uid, "profile", "prefs"));
         if (cancelled) return;
         const data = snap.data() as Partial<Prefs> | undefined;
-        if (data) setPrefs({ ...DEFAULT_PREFS, ...data });
+        if (data) setPrefs({ ...DEFAULT_PREFS, ...data, ...normalizeAiPrefs(data) });
       } finally {
         if (!cancelled) setLoadingPrefs(false);
       }
@@ -82,13 +98,14 @@ export default function AccountPage() {
       }
       const db = getDb();
       if (db) {
+        const normalizedAiPrefs = normalizeAiPrefs(prefs);
         await setDoc(
           doc(db, "users", user.uid, "profile", "prefs"),
-          { ...prefs, updatedAt: serverTimestamp() },
+          { ...prefs, ...normalizedAiPrefs, updatedAt: serverTimestamp() },
           { merge: true }
         );
       }
-      setMsg({ kind: "ok", text: "Saved. Your preferences will apply next load." });
+      setMsg({ kind: "ok", text: "Saved." });
     } catch (e: any) {
       setMsg({
         kind: "err",
@@ -253,6 +270,118 @@ export default function AccountPage() {
                 </span>
               </span>
             </label>
+          </div>
+
+          <div className="rounded-xl border border-hair bg-offwhite p-5">
+            <div className="label mb-2">AI tutor behavior</div>
+            <p className="text-[15px] text-body">
+              These settings apply to chat and instant explanations. The default
+              is brief so the tutor does not waste tokens on extra filler.
+            </p>
+
+            <div className="mt-6">
+              <div className="label mb-2">Response length</div>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {AI_VERBOSITY_OPTIONS.map((option) => (
+                  <button
+                    key={option.key}
+                    type="button"
+                    onClick={() =>
+                      setPrefs((p) => ({ ...p, aiVerbosity: option.key }))
+                    }
+                    className={`rounded-lg border p-3 text-left transition ${
+                      prefs.aiVerbosity === option.key
+                        ? "border-orange bg-orange-tint text-ink"
+                        : "border-hair bg-white text-body hover:border-orange"
+                    }`}
+                  >
+                    <div className="text-sm font-medium">{option.label}</div>
+                    <div className="mt-1 text-xs text-muted">
+                      {option.description}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <div className="label mb-2">Tutor mode</div>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {AI_MODE_OPTIONS.map((option) => (
+                  <button
+                    key={option.key}
+                    type="button"
+                    onClick={() =>
+                      setPrefs((p) => ({ ...p, aiMode: option.key }))
+                    }
+                    className={`rounded-lg border p-3 text-left transition ${
+                      prefs.aiMode === option.key
+                        ? "border-orange bg-orange-tint text-ink"
+                        : "border-hair bg-white text-body hover:border-orange"
+                    }`}
+                  >
+                    <div className="text-sm font-medium">{option.label}</div>
+                    <div className="mt-1 text-xs text-muted">
+                      {option.description}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <div className="label mb-2">Personality</div>
+              <div className="grid gap-2 sm:grid-cols-3">
+                {AI_PERSONALITY_OPTIONS.map((option) => (
+                  <button
+                    key={option.key}
+                    type="button"
+                    onClick={() =>
+                      setPrefs((p) => ({ ...p, aiPersonality: option.key }))
+                    }
+                    className={`rounded-lg border p-3 text-left transition ${
+                      prefs.aiPersonality === option.key
+                        ? "border-orange bg-orange-tint text-ink"
+                        : "border-hair bg-white text-body hover:border-orange"
+                    }`}
+                  >
+                    <div className="text-sm font-medium">{option.label}</div>
+                    <div className="mt-1 text-xs text-muted">
+                      {option.description}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <label className="label mb-2 block">Custom instructions</label>
+              <textarea
+                value={prefs.aiCustomInstructions}
+                onChange={(e) =>
+                  setPrefs((p) => ({
+                    ...p,
+                    aiCustomInstructions: e.target.value.slice(
+                      0,
+                      AI_CUSTOM_INSTRUCTIONS_LIMIT
+                    ),
+                  }))
+                }
+                maxLength={AI_CUSTOM_INSTRUCTIONS_LIMIT}
+                rows={5}
+                placeholder="Examples: be tougher about algebra mistakes, keep answers under 5 bullets, use more worked examples when I seem lost."
+                className="w-full rounded-md border border-hair bg-white px-4 py-3 text-[15px] text-ink outline-none focus:border-orange"
+              />
+              <div className="mt-2 flex items-center justify-between gap-3 text-xs text-muted">
+                <span>
+                  Saved as a style preference. It will not override the tutor's
+                  core safety and teaching rules.
+                </span>
+                <span>
+                  {prefs.aiCustomInstructions.length}/{AI_CUSTOM_INSTRUCTIONS_LIMIT}
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Plan status */}

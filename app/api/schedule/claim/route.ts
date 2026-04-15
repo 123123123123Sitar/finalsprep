@@ -3,7 +3,7 @@ import { getAuthedUser } from "@/lib/authGuard";
 import { isAdminConfigured, getAdminDb } from "@/lib/firebaseAdmin";
 import { addToTokenBank } from "@/lib/tokenBank";
 import { logEvent } from "@/lib/events";
-import { DAILY_CLAIM_TOKENS, ymdLocal } from "@/lib/schedule";
+import { DAILY_CLAIM_TOKENS, engagementTokens, ymdLocal } from "@/lib/schedule";
 
 export const runtime = "nodejs";
 
@@ -34,6 +34,19 @@ export async function POST(req: Request) {
   const ref = db.doc(`users/${user.uid}/profile/schedule`);
   const today = ymdLocal();
 
+  // Engagement-based reward: client reports completed minutes for today's
+  // sessions. We clamp and compute tokens server-side so the UI can't just
+  // pass an arbitrary number.
+  let minutes = 0;
+  try {
+    const body = await req.json().catch(() => ({}));
+    if (typeof body?.minutes === "number" && Number.isFinite(body.minutes)) {
+      minutes = Math.max(0, Math.min(Math.round(body.minutes), 240));
+    }
+  } catch {}
+
+  const credited = minutes > 0 ? engagementTokens(minutes) : DAILY_CLAIM_TOKENS;
+
   let claimed = false;
   let reason: string | undefined;
   try {
@@ -63,14 +76,14 @@ export async function POST(req: Request) {
   }
 
   if (claimed) {
-    await addToTokenBank(user.uid, DAILY_CLAIM_TOKENS, "schedule.claim");
+    await addToTokenBank(user.uid, credited, "schedule.claim");
     void logEvent({
       kind: "chat.send", // reuse for now; add "schedule.claim" later
       uid: user.uid,
       email: user.email,
-      meta: { kind: "schedule.claim", tokens: DAILY_CLAIM_TOKENS },
+      meta: { kind: "schedule.claim", tokens: credited, minutes },
     });
-    return NextResponse.json({ ok: true, credited: DAILY_CLAIM_TOKENS });
+    return NextResponse.json({ ok: true, credited, minutes });
   }
 
   return NextResponse.json(

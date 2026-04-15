@@ -160,29 +160,34 @@ export default function Home() {
       </div>
 
       {/* HERO */}
-      <section className="mx-auto max-w-5xl px-6 pt-20 pb-24 sm:pt-28">
-        <div className="max-w-3xl">
-          <div className="label mb-6">For high school students</div>
-          <h1 className="font-serif text-[52px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[76px]">
+      <section className="relative mx-auto max-w-5xl overflow-visible px-6 pt-20 pb-24 sm:pt-28">
+        {/* Animated background blobs */}
+        <div className="hero-blob animate-blob -left-20 top-10 h-72 w-72 bg-orange-tint" aria-hidden />
+        <div className="hero-blob animate-floatSlow right-0 top-40 h-80 w-80 rounded-full bg-amber-100" aria-hidden />
+        <div className="hero-blob animate-float -right-10 bottom-20 h-60 w-60 rounded-full bg-orange/10" aria-hidden />
+
+        <div className="relative max-w-3xl">
+          <div className="label animate-fadeUp mb-6">For high school students</div>
+          <h1 className="animate-heroReveal font-serif text-[52px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[76px]">
             Step-by-step answers<br />
-            for <span className="italic">every</span> math problem.
+            for <span className="italic gradient-text">every</span> math problem.
           </h1>
-          <p className="mt-8 max-w-2xl text-[19px] leading-relaxed text-body">
+          <p className="animate-fadeUp delay-300 mt-8 max-w-2xl text-[19px] leading-relaxed text-body">
             Instant walkthroughs for algebra, calculus, physics, biology,
             chemistry, computer science, and history - the concept, the
             reasoning, and the common mistakes, not just the final answer.
             Free to try. <strong className="text-ink">$16/month</strong> or{" "}
             <strong className="text-ink">$90/6 months</strong> for unlimited.
           </p>
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary text-base">
+          <div className="animate-fadeUp delay-500 mt-10 flex flex-wrap items-center gap-3">
+            <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary animate-glowPulse text-base">
               {loading ? "Opening checkout…" : "Start Pro - $11 first month"}
             </button>
             <a href="#try" className="btn-ghost text-base">
               Try 3 free right here ↓
             </a>
           </div>
-          <p className="mt-4 max-w-xl text-sm text-muted">
+          <p className="animate-fadeUp delay-700 mt-4 max-w-xl text-sm text-muted">
             All curated walkthroughs are free. Plus{" "}
             <strong className="text-ink">10,000 AI tokens per day</strong>{" "}
             on the Learner tier — enough to run the tutor on your real
@@ -191,34 +196,29 @@ export default function Home() {
         </div>
 
         {/* social proof strip */}
+        <Reveal from="up">
         <div className="mt-16 border-y border-hair py-6">
           <div className="grid gap-4 text-center sm:grid-cols-4">
-            <div>
-              <div className="font-serif text-3xl text-ink">21</div>
-              <div className="mt-1 text-xs uppercase tracking-wider text-muted">
-                Worked problems, free
+            {[
+              { n: "21", l: "Worked problems, free" },
+              { n: "4", l: "Subjects covered" },
+              { n: "<10s", l: "Average walkthrough" },
+              { n: "7 days", l: "No-questions refund" },
+            ].map((s, i) => (
+              <div
+                key={s.l}
+                className="animate-countUp"
+                style={{ animationDelay: `${200 + i * 140}ms` }}
+              >
+                <div className="font-serif text-4xl text-ink">{s.n}</div>
+                <div className="mt-1 text-xs uppercase tracking-wider text-muted">
+                  {s.l}
+                </div>
               </div>
-            </div>
-            <div>
-              <div className="font-serif text-3xl text-ink">4</div>
-              <div className="mt-1 text-xs uppercase tracking-wider text-muted">
-                Subjects covered
-              </div>
-            </div>
-            <div>
-              <div className="font-serif text-3xl text-ink">&lt;10s</div>
-              <div className="mt-1 text-xs uppercase tracking-wider text-muted">
-                Average walkthrough
-              </div>
-            </div>
-            <div>
-              <div className="font-serif text-3xl text-ink">7 days</div>
-              <div className="mt-1 text-xs uppercase tracking-wider text-muted">
-                No-questions refund
-              </div>
-            </div>
+            ))}
           </div>
         </div>
+        </Reveal>
       </section>
 
       <hr className="rule mx-auto max-w-5xl" />
@@ -555,7 +555,7 @@ export default function Home() {
           ].map((group) => (
             <div
               key={group.label}
-              className="rounded-lg border border-hair bg-white p-6"
+              className="card-hover rounded-lg border border-hair bg-white p-6"
             >
               <div className="label">{group.label}</div>
               <ul className="mt-3 space-y-2">
@@ -603,7 +603,7 @@ export default function Home() {
         {/* THREE TIER CARDS */}
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {/* LEARNER */}
-          <div className="rounded-xl border border-hair bg-white p-7">
+          <div className="card-hover rounded-xl border border-hair bg-white p-7">
             <div className="label">Learner</div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="font-serif text-6xl font-normal text-ink">$0</span>
@@ -627,8 +627,8 @@ export default function Home() {
           </div>
 
           {/* PRO - recommended */}
-          <div className="relative rounded-xl border-2 border-ink bg-white p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]">
-            <span className="absolute right-4 top-4 rounded-full bg-orange px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+          <div className="card-hover relative rounded-xl border-2 border-ink bg-white p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]">
+            <span className="absolute right-4 top-4 animate-bounceIn rounded-full bg-orange px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
               Most popular
             </span>
             <div className="label">Pro</div>
@@ -667,7 +667,7 @@ export default function Home() {
           </div>
 
           {/* HACKER */}
-          <div className="relative rounded-xl border border-hair bg-gradient-to-b from-amber-50 to-white p-7">
+          <div className="card-hover relative rounded-xl border border-hair bg-gradient-to-b from-amber-50 to-white p-7">
             <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
               <CrownIcon className="h-3 w-3" /> Hacker
             </span>
@@ -899,7 +899,7 @@ export default function Home() {
         <Reveal from="up">
         <div className="max-w-2xl">
           <h2 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
-            Your next exam is closer than you think.
+            Your next exam is <span className="sweep-underline italic">closer</span> than you think.
           </h2>
           <p className="mt-5 text-[17px] text-body">
             It takes less time to paste a problem in than to read the rest

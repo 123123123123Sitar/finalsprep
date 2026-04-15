@@ -1,10 +1,19 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import MathRender from "@/app/components/Math";
 import { LogoMark } from "@/app/components/Logo";
-import SiteNav from "@/app/components/SiteNav";
 import AuthGate from "@/app/components/AuthGate";
 import { useAuth } from "@/app/components/AuthProvider";
+import {
+  AI_MODE_OPTIONS,
+  AI_PERSONALITY_OPTIONS,
+  AI_VERBOSITY_OPTIONS,
+  DEFAULT_AI_PREFS,
+  normalizeAiPrefs,
+  type AiPrefs,
+} from "@/lib/aiPrefs";
+import { getDb } from "@/lib/firebase";
 import { planLabel, type PlanTier } from "@/lib/plans";
 import {
   createConversation,
@@ -15,6 +24,7 @@ import {
   type StoredConversation,
 } from "@/lib/chatStore";
 import { bumpStreak } from "@/lib/streaks";
+import { listProjects } from "@/lib/projects";
 
 type UploadImage = { mediaType: string; data: string; thumb: string };
 type Msg = { role: "user" | "assistant"; content: string; streaming?: boolean };
@@ -46,6 +56,7 @@ export default function ChatPage() {
 function ChatInner() {
   const { user, getIdToken, plan } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
+  const [aiPrefs, setAiPrefs] = useState<AiPrefs>(DEFAULT_AI_PREFS);
   const [input, setInput] = useState(() => {
     if (typeof window === "undefined") return "";
     const url = new URL(window.location.href);
@@ -72,6 +83,7 @@ function ChatInner() {
     const p = url.searchParams.get("project");
     return p && /^[A-Za-z0-9_-]{6,64}$/.test(p) ? p : null;
   });
+  const [currentProjectName, setCurrentProjectName] = useState<string | null>(null);
   const [thinking, setThinking] = useState(false);
   const [pendingImages, setPendingImages] = useState<UploadImage[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -87,6 +99,50 @@ function ChatInner() {
     if (!user) return;
     listConversations(user.uid).then(setConversations).catch(() => {});
   }, [user]);
+
+  useEffect(() => {
+    if (!user) {
+      setAiPrefs(DEFAULT_AI_PREFS);
+      return;
+    }
+    const db = getDb();
+    if (!db) {
+      setAiPrefs(DEFAULT_AI_PREFS);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid, "profile", "prefs"));
+        if (cancelled) return;
+        setAiPrefs(normalizeAiPrefs((snap.data() as Partial<AiPrefs> | undefined) ?? null));
+      } catch {
+        if (!cancelled) setAiPrefs(DEFAULT_AI_PREFS);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  // Resolve project name when a project is selected
+  useEffect(() => {
+    if (!user || !currentProjectId) {
+      setCurrentProjectName(null);
+      return;
+    }
+    let cancelled = false;
+    listProjects(user.uid)
+      .then((list) => {
+        if (cancelled) return;
+        const match = list.find((p) => p.id === currentProjectId);
+        setCurrentProjectName(match?.name ?? null);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [user, currentProjectId]);
 
 
   // Smooth auto-scroll on new content
@@ -194,6 +250,7 @@ function ChatInner() {
         body: JSON.stringify({
           messages: withUser,
           thinking: plan !== "learner" && thinking,
+          aiPrefs,
           ...(pendingImages.length > 0
             ? {
                 images: pendingImages.map((i) => ({
@@ -417,8 +474,16 @@ function ChatInner() {
       <div className="flex flex-1 flex-col">
         {/* Thin top strip: breadcrumb + current chat title + link to study */}
         <div className="flex items-center justify-between border-b border-hair bg-white px-6 py-3">
-          <div className="text-xs text-muted">
-            {currentConvId ? "Editing saved chat" : "New chat"}
+          <div className="flex items-center gap-3 text-xs text-muted">
+            <span>{currentConvId ? "Editing saved chat" : "New chat"}</span>
+            {currentProjectName && (
+              <span className="animate-fadeUp inline-flex items-center gap-1.5 rounded-full border border-orange/40 bg-orange-tint px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-orange-ink">
+                <svg viewBox="0 0 16 16" className="h-3 w-3" fill="currentColor" aria-hidden>
+                  <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h3.086a1.5 1.5 0 0 1 1.06.44L7.707 3.29a.5.5 0 0 0 .354.146H13.5A1.5 1.5 0 0 1 15 4.935V12.5A1.5 1.5 0 0 1 13.5 14h-11A1.5 1.5 0 0 1 1 12.5v-9Z" />
+                </svg>
+                Project: <span className="normal-case tracking-normal">{currentProjectName}</span>
+              </span>
+            )}
           </div>
           <a href="/study" className="text-xs text-muted hover:text-ink">
             ← Study tool
@@ -644,6 +709,32 @@ function ChatInner() {
                   </span>
                 </>
               )}
+              <>
+                <span className="text-dim">·</span>
+                <span>
+                  {labelFor(AI_VERBOSITY_OPTIONS, aiPrefs.aiVerbosity)} replies
+                </span>
+              </>
+              <>
+                <span className="text-dim">·</span>
+                <span>{labelFor(AI_MODE_OPTIONS, aiPrefs.aiMode)}</span>
+              </>
+              <>
+                <span className="text-dim">·</span>
+                <span>{labelFor(AI_PERSONALITY_OPTIONS, aiPrefs.aiPersonality)}</span>
+              </>
+              {aiPrefs.aiCustomInstructions && (
+                <>
+                  <span className="text-dim">·</span>
+                  <span>Custom instructions on</span>
+                </>
+              )}
+              <>
+                <span className="text-dim">·</span>
+                <a href="/account" className="hover:text-ink">
+                  Customize AI
+                </a>
+              </>
             </div>
           </div>
         </div>
@@ -707,6 +798,13 @@ function planStatus(plan: PlanTier): string {
     default:
       return `${planLabel(plan)} · 10k tokens / day`;
   }
+}
+
+function labelFor<T extends string>(
+  options: Array<{ key: T; label: string }>,
+  value: T
+): string {
+  return options.find((option) => option.key === value)?.label ?? value;
 }
 
 function SidebarItem({

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { TUTOR_SYSTEM_PROMPT } from "@/lib/systemPrompt";
+import { buildTutorSystemPrompt } from "@/lib/systemPrompt";
+import { maxOutputTokens, normalizeAiPrefs } from "@/lib/aiPrefs";
+import { getStoredAiPrefs } from "@/lib/aiPrefsStore";
 import { findWalkthrough } from "@/lib/topics";
 import {
   clampInput,
@@ -41,6 +43,11 @@ export async function POST(req: Request) {
   const user = adminOn ? await getAuthedUser(req) : null;
   const userPlan = user ? await getPlan(user.uid) : null;
   const plan = userPlan?.plan ?? "learner";
+  const aiPrefs = user
+    ? await getStoredAiPrefs(user.uid)
+    : normalizeAiPrefs(body?.aiPrefs);
+  const systemPrompt = buildTutorSystemPrompt(aiPrefs);
+  const outputTokenLimit = maxOutputTokens("explain", aiPrefs.aiVerbosity);
 
   // 1. Curated walkthroughs never cost us an API call and are open to
   //    anyone (even anonymous users). Return early.
@@ -129,8 +136,8 @@ export async function POST(req: Request) {
   try {
     const msg = await client.messages.create({
       model,
-      max_tokens: 900,
-      system: TUTOR_SYSTEM_PROMPT,
+      max_tokens: outputTokenLimit,
+      system: systemPrompt,
       messages: [
         {
           role: "user",
@@ -156,6 +163,11 @@ export async function POST(req: Request) {
         response: text,
         tokens: inputTokens + outputTokens,
         model,
+        metadata: {
+          aiVerbosity: aiPrefs.aiVerbosity,
+          aiMode: aiPrefs.aiMode,
+          aiPersonality: aiPrefs.aiPersonality,
+        },
       });
     }
 

@@ -34,6 +34,7 @@ import GraphingCalculator from "@/app/components/GraphingCalculator";
 import Graph3D from "@/app/components/Graph3D";
 import PhysicsSim from "@/app/components/PhysicsSim";
 import CodeSandbox from "@/app/components/CodeSandbox";
+import BookmarkButton from "@/app/components/BookmarkButton";
 import { useAuth } from "@/app/components/AuthProvider";
 
 type Tab =
@@ -65,6 +66,32 @@ export default function Study() {
   );
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [tab, setTab] = useState<Tab>("curriculum");
+
+  // Deep-link from /bookmarks or external links: ?course=slug&lesson=slug
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const courseParam = params.get("course") as CourseSlug | null;
+    const lessonParam = params.get("lesson");
+    if (courseParam && COURSES.some((c) => c.slug === courseParam)) {
+      setCourseSlug(courseParam);
+      const courseCat = COURSES.find((c) => c.slug === courseParam)?.category;
+      if (courseCat) setCategory(courseCat);
+    }
+    if (lessonParam) {
+      const l = LESSONS.find((x) => x.slug === lessonParam);
+      if (l) {
+        setSelectedLesson(l);
+        const m = l.courses.find(
+          (c) => c.courseSlug === (courseParam ?? courseSlug)
+        );
+        if (m) setSelectedUnit(m.unitNumber);
+        setTab("lesson");
+      }
+    }
+    // Run once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Always start on the Overview tab when the page first mounts or when the
   // user switches to a unit without a lesson context. Prevents landing on
@@ -432,9 +459,23 @@ export default function Study() {
                         ? ` · Unit ${currentMembership.unitNumber}: ${currentMembership.unitTitle}`
                         : ""}
                     </div>
-                    <h2 className="mt-1 font-serif text-3xl font-normal text-ink sm:text-4xl">
-                      {selectedLesson.title}
-                    </h2>
+                    <div className="mt-1 flex items-start justify-between gap-4">
+                      <h2 className="font-serif text-3xl font-normal text-ink sm:text-4xl">
+                        {selectedLesson.title}
+                      </h2>
+                      <div className="shrink-0 pt-2">
+                        <BookmarkButton
+                          bookmark={{
+                            slug: selectedLesson.slug,
+                            title: selectedLesson.title,
+                            courseSlug,
+                            courseTitle: course.title,
+                            unitNumber: currentMembership?.unitNumber,
+                            unitTitle: currentMembership?.unitTitle,
+                          }}
+                        />
+                      </div>
+                    </div>
                     <p className="mt-2 max-w-2xl text-muted">
                       <MathRender auto>{selectedLesson.blurb}</MathRender>
                     </p>
