@@ -17,28 +17,16 @@ const ACCENTS: { key: AccentKey; label: string; swatch: string }[] = [
   { key: "plum", label: "Plum", swatch: "#6b21a8" },
 ];
 
-type ModelKey = "haiku" | "sonnet" | "opus";
-
-const MODELS: { key: ModelKey; label: string; note: string }[] = [
-  { key: "haiku", label: "Haiku 4.5", note: "Fastest, cheapest" },
-  { key: "sonnet", label: "Sonnet 4.6", note: "Balanced (default)" },
-  { key: "opus", label: "Opus 4.6", note: "Strongest reasoning" },
-];
-
 type Prefs = {
   defaultCategory: CourseCategory;
   accent: AccentKey;
   mathJaxRender: boolean;
-  preferredModel: ModelKey;
-  anthropicApiKey: string;
 };
 
 const DEFAULT_PREFS: Prefs = {
   defaultCategory: "math",
   accent: "orange",
   mathJaxRender: true,
-  preferredModel: "sonnet",
-  anthropicApiKey: "",
 };
 
 export default function AccountPage() {
@@ -267,74 +255,16 @@ export default function AccountPage() {
             </label>
           </div>
 
-          {/* Premium-only section */}
-          <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-5">
-            <div className="mb-3 flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-                Premium
-              </span>
-              <span className="text-xs text-muted">
-                {plan === "hacker"
-                  ? "Active — configure below"
-                  : "Upgrade to Premium to unlock"}
-              </span>
-            </div>
-
-            {/* Model chooser */}
-            <div>
-              <div className="label mb-2">Preferred model</div>
-              <div className="grid gap-2 sm:grid-cols-3">
-                {MODELS.map((m) => (
-                  <button
-                    key={m.key}
-                    disabled={plan !== "hacker"}
-                    onClick={() =>
-                      setPrefs((p) => ({ ...p, preferredModel: m.key }))
-                    }
-                    className={`rounded-md border px-3 py-3 text-left text-sm transition disabled:cursor-not-allowed disabled:opacity-50 ${
-                      prefs.preferredModel === m.key
-                        ? "border-amber-500 bg-white"
-                        : "border-hair bg-white hover:border-amber-400"
-                    }`}
-                  >
-                    <div className="font-medium text-ink">{m.label}</div>
-                    <div className="mt-0.5 text-[11px] text-muted">{m.note}</div>
-                  </button>
-                ))}
-              </div>
-              <p className="mt-2 text-xs text-muted">
-                Used by the chat tutor. Pro and Free users always get Sonnet 4.6.
-              </p>
-            </div>
-
-            {/* Custom API key */}
-            <div className="mt-5">
-              <div className="label mb-2">Your Anthropic API key</div>
-              <input
-                type="password"
-                autoComplete="off"
-                disabled={plan !== "hacker"}
-                value={prefs.anthropicApiKey}
-                onChange={(e) =>
-                  setPrefs((p) => ({ ...p, anthropicApiKey: e.target.value }))
-                }
-                placeholder="sk-ant-…"
-                className="w-full rounded-md border border-hair bg-white px-4 py-3 font-mono text-[13px] text-ink outline-none focus:border-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <p className="mt-2 text-xs text-muted">
-                Optional. When set, chat requests use your own Anthropic key so
-                they don't count toward your FinalsPrep token budget. Leave blank
-                to use our shared pool.{" "}
-                <a
-                  href="https://console.anthropic.com/settings/keys"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-amber-600 underline"
-                >
-                  Get a key ↗
-                </a>
-              </p>
-            </div>
+          {/* Plan status */}
+          <div className="rounded-xl border border-hair bg-offwhite p-5">
+            <div className="label mb-2">AI tutor model</div>
+            <p className="text-[15px] text-body">
+              {plan === "hacker"
+                ? "You're on Hacker — the strongest reasoning model is active, plus Thinking mode for the hardest problems."
+                : plan === "pro"
+                ? "You're on Pro — you get the smart model by default, plus a Thinking mode toggle in chat for harder problems."
+                : "You're on Learner — the standard model is active. Upgrade to Pro or Hacker for a smarter model and Thinking mode."}
+            </p>
           </div>
 
           {/* Save + feedback */}

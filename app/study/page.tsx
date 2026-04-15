@@ -1,5 +1,7 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { doc, getDoc, setDoc, arrayUnion, serverTimestamp } from "firebase/firestore";
+import { getDb } from "@/lib/firebase";
 import {
   CATEGORIES,
   COURSES,
@@ -45,7 +47,7 @@ export default function Study() {
     () => COURSES.filter((c) => c.category === category),
     [category]
   );
-  const { getIdToken, plan } = useAuth();
+  const { user, getIdToken, plan } = useAuth();
   const [courseSlug, setCourseSlug] = useState<CourseSlug>(COURSES[0].slug);
   const course = useMemo(
     () => COURSES.find((c) => c.slug === courseSlug)!,
@@ -84,31 +86,17 @@ export default function Study() {
     [courseSlug, selectedUnit]
   );
 
-  const TABS: { key: Tab; label: string; show: boolean; proOnly?: boolean }[] = [
+  const TABS: { key: Tab; label: string; show: boolean }[] = [
     { key: "curriculum", label: "Overview", show: !!curriculumUnit },
-    {
-      key: "practice",
-      label: "Practice",
-      show: unitPractice.length > 0,
-    },
-    {
-      key: "tools",
-      label: "Interactive",
-      show: unitTools.length > 0,
-    },
-    { key: "lesson", label: "Lesson", show: !!selectedLesson, proOnly: true },
-    {
-      key: "diagram",
-      label: "Diagram",
-      show: !!selectedLesson?.diagram,
-      proOnly: true,
-    },
-    { key: "cards", label: "Flashcards", show: !!selectedLesson, proOnly: true },
+    { key: "practice", label: "Practice", show: unitPractice.length > 0 },
+    { key: "tools", label: "Interactive", show: unitTools.length > 0 },
+    { key: "lesson", label: "Lesson", show: !!selectedLesson },
+    { key: "diagram", label: "Diagram", show: !!selectedLesson?.diagram },
+    { key: "cards", label: "Flashcards", show: !!selectedLesson },
     {
       key: "links",
       label: "Links",
       show: !!selectedLesson && selectedLesson.links.length > 0,
-      proOnly: true,
     },
     { key: "solver", label: "Solver", show: true },
   ];
@@ -439,27 +427,19 @@ export default function Study() {
                 )}
 
                 <div className="mt-4 flex flex-wrap gap-6 border-b border-hair">
-                  {TABS.filter((t) => t.show).map((t) => {
-                    const needsPro = t.proOnly && plan === "learner";
-                    return (
-                      <button
-                        key={t.key}
-                        onClick={() => setTab(t.key)}
-                        className={`relative -mb-px flex items-center gap-1.5 border-b-2 px-0 py-3 text-sm font-medium transition-colors ${
-                          tab === t.key
-                            ? "border-orange text-ink"
-                            : "border-transparent text-muted hover:text-ink"
-                        }`}
-                      >
-                        {t.label}
-                        {needsPro && (
-                          <span className="rounded bg-orange/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-orange-ink">
-                            Pro
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
+                  {TABS.filter((t) => t.show).map((t) => (
+                    <button
+                      key={t.key}
+                      onClick={() => setTab(t.key)}
+                      className={`relative -mb-px border-b-2 px-0 py-3 text-sm font-medium transition-colors ${
+                        tab === t.key
+                          ? "border-orange text-ink"
+                          : "border-transparent text-muted hover:text-ink"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
                 </div>
 
                 <HighlightTooltip>
@@ -509,37 +489,13 @@ export default function Study() {
                   )}
 
                   {tab === "lesson" && selectedLesson && (
-                    plan === "learner" ? (
-                      <LockedTabTeaser
-                        label="full lesson walkthrough"
-                        count={selectedLesson.keyIdeas.length}
-                        onUpgrade={() => buy("pro-monthly")}
-                      />
-                    ) : (
-                      <div className="max-w-2xl">
-                        <ul className="space-y-3 text-[16px]">
-                          {selectedLesson.keyIdeas.map((k) => (
-                            <li key={k} className="flex gap-3 text-body">
-                              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-orange" />
-                              <span>
-                                <MathRender auto>{k}</MathRender>
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="mt-8 rounded-md border border-hair bg-offwhite p-5">
-                          <div className="meta">Worked example</div>
-                          <div className="mt-1 text-[15px] text-ink">
-                            <MathRender auto>
-                              {selectedLesson.sampleProblem}
-                            </MathRender>
-                          </div>
-                          <button onClick={loadSample} className="btn-link mt-3">
-                            Show the full walkthrough →
-                          </button>
-                        </div>
-                      </div>
-                    )
+                    <LessonPanel
+                      lesson={selectedLesson}
+                      plan={plan}
+                      uid={user?.uid ?? null}
+                      loadSample={loadSample}
+                      onUpgrade={() => buy("pro-monthly")}
+                    />
                   )}
 
                   {tab === "diagram" && selectedLesson?.diagram && (
@@ -556,24 +512,16 @@ export default function Study() {
                   )}
 
                   {tab === "cards" && selectedLesson && (
-                    plan === "learner" ? (
-                      <LockedTabTeaser
-                        label="flashcards"
-                        count={selectedLesson.flashcards.length}
-                        onUpgrade={() => buy("pro-monthly")}
+                    <div className="max-w-2xl">
+                      <Flashcards
+                        cards={selectedLesson.flashcards}
+                        storageKey={selectedLesson.slug}
                       />
-                    ) : (
-                      <div className="max-w-2xl">
-                        <Flashcards
-                          cards={selectedLesson.flashcards}
-                          storageKey={selectedLesson.slug}
-                        />
-                        <p className="mt-4 text-xs text-muted">
-                          Progress is stored locally in your browser. Clearing site
-                          data will reset your "known" marks.
-                        </p>
-                      </div>
-                    )
+                      <p className="mt-4 text-xs text-muted">
+                        Progress is stored locally in your browser. Clearing site
+                        data will reset your "known" marks.
+                      </p>
+                    </div>
                   )}
 
                   {tab === "links" && selectedLesson && (
@@ -713,6 +661,126 @@ function LockedTabTeaser({
         <a href="/#price" className="btn-ghost text-sm">
           See 6-month ($90) →
         </a>
+      </div>
+    </div>
+  );
+}
+
+const FREE_LESSON_LIMIT = 2;
+
+function LessonPanel({
+  lesson,
+  plan,
+  uid,
+  loadSample,
+  onUpgrade,
+}: {
+  lesson: Lesson;
+  plan: "learner" | "pro" | "hacker";
+  uid: string | null;
+  loadSample: () => void;
+  onUpgrade: () => void;
+}) {
+  const [viewedSlugs, setViewedSlugs] = useState<string[] | null>(null);
+  const [recorded, setRecorded] = useState(false);
+
+  useEffect(() => {
+    if (!uid || plan !== "learner") {
+      setViewedSlugs(null);
+      return;
+    }
+    const db = getDb();
+    if (!db) return;
+    let cancelled = false;
+    (async () => {
+      const snap = await getDoc(doc(db, "users", uid, "profile", "lessons"));
+      if (cancelled) return;
+      const arr = (snap.data() as any)?.viewedSlugs;
+      setViewedSlugs(Array.isArray(arr) ? arr : []);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [uid, plan, lesson.slug]);
+
+  // Whether this lesson is allowed for the current user.
+  const alreadyViewed = viewedSlugs?.includes(lesson.slug) ?? false;
+  const viewedCount = viewedSlugs?.length ?? 0;
+  const allowed =
+    plan !== "learner" || alreadyViewed || viewedCount < FREE_LESSON_LIMIT;
+
+  // Record the lesson view once (free users only, when allowed).
+  useEffect(() => {
+    if (!allowed || recorded) return;
+    if (plan !== "learner") return;
+    if (alreadyViewed) return;
+    if (!uid) return;
+    const db = getDb();
+    if (!db) return;
+    setRecorded(true);
+    setDoc(
+      doc(db, "users", uid, "profile", "lessons"),
+      {
+        viewedSlugs: arrayUnion(lesson.slug),
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true }
+    ).catch(() => {
+      /* ignore */
+    });
+  }, [allowed, alreadyViewed, plan, uid, lesson.slug, recorded]);
+
+  if (!allowed) {
+    return (
+      <div className="max-w-2xl rounded-xl border-2 border-orange/40 bg-orange-tint p-6">
+        <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-orange-ink">
+          Free lesson limit
+        </div>
+        <h4 className="mt-2 font-serif text-2xl font-normal text-ink">
+          You've opened {viewedCount}/{FREE_LESSON_LIMIT} free lessons.
+        </h4>
+        <p className="mt-3 max-w-xl text-[15px] text-body">
+          Free accounts can preview {FREE_LESSON_LIMIT} lessons total across
+          every AP course. Upgrade to Pro for unlimited lessons, flashcards,
+          diagrams, and the full curriculum.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button onClick={onUpgrade} className="btn-primary text-sm">
+            Unlock Pro — $16/mo
+          </button>
+          <a href="/#price" className="btn-ghost text-sm">
+            See all plans →
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl">
+      {plan === "learner" && (
+        <div className="mb-4 rounded-md border border-orange/30 bg-orange-tint/40 p-3 text-xs text-orange-ink">
+          Free preview · {Math.max(viewedCount, 1)}/{FREE_LESSON_LIMIT} lessons used
+        </div>
+      )}
+      <ul className="space-y-3 text-[16px]">
+        {lesson.keyIdeas.map((k) => (
+          <li key={k} className="flex gap-3 text-body">
+            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-orange" />
+            <span>
+              <MathRender auto>{k}</MathRender>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-8 rounded-md border border-hair bg-offwhite p-5">
+        <div className="meta">Worked example</div>
+        <div className="mt-1 text-[15px] text-ink">
+          <MathRender auto>{lesson.sampleProblem}</MathRender>
+        </div>
+        <button onClick={loadSample} className="btn-link mt-3">
+          Show the full walkthrough →
+        </button>
       </div>
     </div>
   );

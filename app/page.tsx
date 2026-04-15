@@ -596,9 +596,9 @@ export default function Home() {
         </h2>
         <p className="mt-4 max-w-2xl text-[17px] text-body">
           Learner is free forever — 10,000 AI tokens a day, every day. Pro
-          unlocks 80k tokens a day, image uploads, FRQs, and diagnostic
-          quizzes. Hacker gets 250k tokens a day, the model chooser, priority
-          traffic, and a slot for your own Anthropic key.
+          doubles that with image uploads, FRQs, diagnostic quizzes, and a
+          smarter thinking mode. Hacker quadruples it again with priority
+          traffic and the strongest reasoning model on demand.
         </p>
 
         {/* THREE TIER CARDS */}
@@ -615,7 +615,7 @@ export default function Home() {
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span><strong className="text-ink">10,000 AI tokens / day</strong></span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Units 1-2 of every AP course (curated walkthroughs)</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Units 1-2 of every AP course + 2 free lessons</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Graphing calc, physics sims, code sandbox</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>1 diagnostic quiz per month</span></li>
             </ul>
@@ -645,9 +645,10 @@ export default function Home() {
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Everything in Learner</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span><strong className="text-ink">80,000 AI tokens / day</strong></span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, every unit + flashcards + full lessons</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Image uploads, quiz notes, FRQ practice, Insights</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span><strong className="text-ink">20,000 AI tokens / day</strong></span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Smarter model + Thinking mode for hard problems</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, every unit + unlimited lessons</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Image uploads, FRQ practice, Insights</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>5 diagnostic quizzes per month</span></li>
             </ul>
             <button
@@ -684,10 +685,10 @@ export default function Home() {
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Everything in Pro</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span><strong className="text-ink">250,000 AI tokens / day</strong></span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span><strong className="text-ink">80,000 AI tokens / day</strong></span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Priority AI traffic — no queueing</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Model chooser (Haiku / Sonnet / Opus)</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Bring your own Anthropic API key</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Strongest model on demand, always</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Unlimited diagnostic quizzes</span></li>
             </ul>
             <button
               onClick={() => buy("hacker-monthly")}
@@ -733,11 +734,11 @@ export default function Home() {
               <tbody className="divide-y divide-hair">
                 <FeatureRow
                   label="AI tokens per day"
-                  values={{ free: "10,000", pro: "80,000", premium: "250,000" }}
+                  values={{ free: "10,000", pro: "20,000", premium: "80,000" }}
                 />
                 <FeatureRow
-                  label="AI messages per day"
-                  values={{ free: "30", pro: "200", premium: "600" }}
+                  label="Model strength"
+                  values={{ free: "Standard", pro: "Smarter + Thinking", premium: "Strongest + Thinking" }}
                 />
                 <FeatureRow
                   label="AI chat tutor"
@@ -748,6 +749,10 @@ export default function Home() {
                 <FeatureRow
                   label="All 16 AP curriculum walkthroughs"
                   values={{ free: "Units 1-2", pro: "All units", premium: "All units" }}
+                />
+                <FeatureRow
+                  label="Full lessons"
+                  values={{ free: "2 free", pro: "Unlimited", premium: "Unlimited" }}
                 />
                 <FeatureRow
                   label="Practice problems"
@@ -762,13 +767,14 @@ export default function Home() {
                   premium
                 />
                 <FeatureRow
-                  label="Chat history saved across sessions"
+                  label="Flashcards + diagrams"
                   free
                   pro
                   premium
                 />
                 <FeatureRow
-                  label="Full lessons, flashcards, diagrams"
+                  label="Chat history saved across sessions"
+                  free
                   pro
                   premium
                 />
@@ -798,16 +804,6 @@ export default function Home() {
                 />
                 <FeatureRow
                   label="Priority AI traffic"
-                  premiumOnly
-                  premium
-                />
-                <FeatureRow
-                  label="Model chooser (Haiku / Sonnet / Opus)"
-                  premiumOnly
-                  premium
-                />
-                <FeatureRow
-                  label="Bring your own Anthropic API key"
                   premiumOnly
                   premium
                 />

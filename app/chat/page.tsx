@@ -14,16 +14,7 @@ import {
   updateConversation,
   type StoredConversation,
 } from "@/lib/chatStore";
-import { doc, getDoc } from "firebase/firestore";
-import { getDb } from "@/lib/firebase";
 import { bumpStreak } from "@/lib/streaks";
-
-type ModelKey = "haiku" | "sonnet" | "opus";
-const MODEL_OPTIONS: { key: ModelKey; label: string }[] = [
-  { key: "haiku", label: "Haiku (fast)" },
-  { key: "sonnet", label: "Sonnet (default)" },
-  { key: "opus", label: "Opus (strongest)" },
-];
 
 type UploadImage = { mediaType: string; data: string; thumb: string };
 type Msg = { role: "user" | "assistant"; content: string; streaming?: boolean };
@@ -75,8 +66,7 @@ function ChatInner() {
   const [historyOpen, setHistoryOpen] = useState(true);
   const [conversations, setConversations] = useState<StoredConversation[]>([]);
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
-  const [modelKey, setModelKey] = useState<ModelKey>("sonnet");
-  const [customApiKey, setCustomApiKey] = useState<string>("");
+  const [thinking, setThinking] = useState(false);
   const [pendingImages, setPendingImages] = useState<UploadImage[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -92,20 +82,6 @@ function ChatInner() {
     listConversations(user.uid).then(setConversations).catch(() => {});
   }, [user]);
 
-  // Load premium prefs (model + custom API key) from Firestore
-  useEffect(() => {
-    if (!user || plan !== "hacker") return;
-    const db = getDb();
-    if (!db) return;
-    getDoc(doc(db, "users", user.uid, "profile", "prefs"))
-      .then((snap) => {
-        const d = snap.data() as any;
-        if (d?.preferredModel) setModelKey(d.preferredModel);
-        if (typeof d?.anthropicApiKey === "string")
-          setCustomApiKey(d.anthropicApiKey);
-      })
-      .catch(() => {});
-  }, [user, plan]);
 
   // Smooth auto-scroll on new content
   useEffect(() => {
@@ -210,8 +186,7 @@ function ChatInner() {
         },
         body: JSON.stringify({
           messages: withUser,
-          ...(plan === "hacker" ? { model: modelKey } : {}),
-          ...(plan === "hacker" && customApiKey ? { anthropicApiKey: customApiKey } : {}),
+          thinking: plan !== "learner" && thinking,
           ...(pendingImages.length > 0
             ? {
                 images: pendingImages.map((i) => ({
@@ -624,32 +599,29 @@ function ChatInner() {
             </div>
             <div className="mt-2 flex flex-wrap items-center justify-center gap-2 px-2 text-center text-[11px] text-muted">
               <span>{planStatus(plan)}</span>
-              {plan === "hacker" && (
+              {plan !== "learner" && (
                 <>
                   <span className="text-dim">·</span>
-                  <label className="inline-flex items-center gap-1">
-                    <span className="text-amber-600">Model:</span>
-                    <select
-                      value={modelKey}
-                      onChange={(e) => setModelKey(e.target.value as ModelKey)}
-                      className="rounded border border-hair bg-white px-1 py-0.5 text-[11px] text-ink"
-                    >
-                      {MODEL_OPTIONS.map((m) => (
-                        <option key={m.key} value={m.key}>
-                          {m.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  {customApiKey && (
-                    <>
-                      <span className="text-dim">·</span>
-                      <span className="text-amber-600">Using your key</span>
-                    </>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setThinking((v) => !v)}
+                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] transition ${
+                      thinking
+                        ? "bg-amber-500 text-white"
+                        : "border border-hair bg-white text-muted hover:text-ink"
+                    }`}
+                    title={
+                      thinking
+                        ? "Thinking mode on — uses a stronger model, counts extra tokens"
+                        : "Turn on Thinking mode for hard problems"
+                    }
+                  >
+                    <span aria-hidden="true">{thinking ? "✨" : "○"}</span>
+                    Thinking {thinking ? "on" : "off"}
+                  </button>
                 </>
               )}
-              {tokensRemaining !== null && !customApiKey && (
+              {tokensRemaining !== null && (
                 <>
                   <span className="text-dim">·</span>
                   <span>
@@ -869,6 +841,26 @@ function ExpandedSidebar({
             </svg>
           }
           label="Insights"
+        />
+        <SidebarItem
+          href="/schedule"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          }
+          label="Schedule"
+        />
+        <SidebarItem
+          href="/shop"
+          icon={
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 7h14l-1.5 11a2 2 0 0 1-2 1.8h-7a2 2 0 0 1-2-1.8L5 7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="M9 7V5a3 3 0 0 1 6 0v2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            </svg>
+          }
+          label="Shop tokens"
         />
       </nav>
 

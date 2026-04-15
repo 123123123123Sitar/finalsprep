@@ -34,15 +34,15 @@ export const LIMITS = {
 
   learner: {
     tokens: 10_000,
-    messages: 30,
+    messages: 40,
   },
   pro: {
-    tokens: 80_000,
-    messages: 200,
+    tokens: 20_000,
+    messages: 80,
   },
   hacker: {
-    tokens: 250_000,
-    messages: 600,
+    tokens: 80_000,
+    messages: 250,
   },
 } as const;
 

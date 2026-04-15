@@ -6,6 +6,7 @@ import {
   type BillingInterval,
   type PlanTier,
 } from "@/lib/plans";
+import { addToTokenBank } from "@/lib/tokenBank";
 
 export const runtime = "nodejs";
 // Webhook handlers need the raw request body for signature verification.
@@ -44,6 +45,25 @@ export async function POST(req: Request) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const uid = session.client_reference_id;
+
+        // One-time purchase: token pack.
+        if (session.mode === "payment") {
+          const md = (session.metadata || {}) as Record<string, string>;
+          if (md.kind === "token_pack" && uid) {
+            const tokens = parseInt(md.tokens || "0", 10) || 0;
+            if (tokens > 0) {
+              await addToTokenBank(uid, tokens, `pack:${md.pack_id || ""}`);
+              console.log(
+                "[stripe-webhook] credited",
+                tokens,
+                "tokens to",
+                uid
+              );
+            }
+          }
+          break;
+        }
+
         if (!uid) {
           console.warn("[stripe-webhook] checkout.session.completed with no client_reference_id");
           break;
