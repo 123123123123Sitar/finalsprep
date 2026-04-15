@@ -29,7 +29,13 @@ export default function SchedulePage() {
   const [saving, setSaving] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  const [celebrate, setCelebrate] = useState<{ open: boolean; tokens: number; minutes: number }>({
+  const [celebrate, setCelebrate] = useState<{
+    open: boolean;
+    tokens: number;
+    minutes: number;
+    base?: number;
+    multiplier?: number;
+  }>({
     open: false,
     tokens: 0,
     minutes: 0,
@@ -147,6 +153,8 @@ export default function SchedulePage() {
           open: true,
           tokens: j.credited || DAILY_CLAIM_TOKENS,
           minutes: j.minutes || minutes,
+          base: typeof j.base === "number" ? j.base : undefined,
+          multiplier: typeof j.multiplier === "number" ? j.multiplier : undefined,
         });
         setCompleted({});
       }
@@ -431,6 +439,8 @@ export default function SchedulePage() {
         <ClaimCelebration
           tokens={celebrate.tokens}
           minutes={celebrate.minutes}
+          base={celebrate.base}
+          multiplier={celebrate.multiplier}
           onClose={() => setCelebrate({ open: false, tokens: 0, minutes: 0 })}
         />
       )}
@@ -561,12 +571,20 @@ function WeekGrid({
 function ClaimCelebration({
   tokens,
   minutes,
+  base,
+  multiplier,
   onClose,
 }: {
   tokens: number;
   minutes: number;
+  base?: number;
+  multiplier?: number;
   onClose: () => void;
 }) {
+  const hasBonus =
+    typeof base === "number" &&
+    typeof multiplier === "number" &&
+    multiplier > 1.01;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -649,6 +667,12 @@ function ClaimCelebration({
             tokens
           </span>
         </div>
+        {hasBonus && (
+          <div className="mt-3 text-[12px] text-orange-ink">
+            Base {base} × {multiplier!.toFixed(2)} depletion bonus —
+            bigger reload because you've been burning through tokens.
+          </div>
+        )}
 
         <div className="mt-7 flex flex-wrap justify-center gap-3">
           <button onClick={onClose} className="btn-primary">

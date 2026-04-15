@@ -19,12 +19,18 @@ import {
   createConversation,
   deleteConversation,
   listConversations,
+  listConversationsInProject,
   titleFromFirstMessage,
   updateConversation,
   type StoredConversation,
 } from "@/lib/chatStore";
 import { bumpStreak } from "@/lib/streaks";
-import { listProjects } from "@/lib/projects";
+import {
+  createProject,
+  deleteProject,
+  listProjects,
+  type Project,
+} from "@/lib/projects";
 
 type UploadImage = { mediaType: string; data: string; thumb: string };
 type Msg = { role: "user" | "assistant"; content: string; streaming?: boolean };
@@ -84,6 +90,21 @@ function ChatInner() {
     return p && /^[A-Za-z0-9_-]{6,64}$/.test(p) ? p : null;
   });
   const [currentProjectName, setCurrentProjectName] = useState<string | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectsOverlayOpen, setProjectsOverlayOpen] = useState(false);
+
+  // Keep projects list fresh for the overlay.
+  useEffect(() => {
+    if (!user) return;
+    listProjects(user.uid).then(setProjects).catch(() => {});
+  }, [user]);
+
+  const selectProject = useCallback((id: string | null) => {
+    setCurrentProjectId(id);
+    setCurrentConvId(null);
+    setMessages([]);
+  }, []);
+
   const [thinking, setThinking] = useState(false);
   const [pendingImages, setPendingImages] = useState<UploadImage[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -461,11 +482,14 @@ function ChatInner() {
             openConversation={openConversation}
             removeConversation={removeConversation}
             collapse={() => setHistoryOpen(false)}
+            onOpenProjects={() => setProjectsOverlayOpen(true)}
+            currentProjectName={currentProjectName}
           />
         ) : (
           <CollapsedSidebar
             startNewChat={startNewChat}
             expand={() => setHistoryOpen(true)}
+            onOpenProjects={() => setProjectsOverlayOpen(true)}
           />
         )}
       </aside>
@@ -739,6 +763,18 @@ function ChatInner() {
           </div>
         </div>
       </div>
+
+      {projectsOverlayOpen && (
+        <ProjectsOverlay
+          uid={user?.uid ?? null}
+          projects={projects}
+          setProjects={setProjects}
+          currentProjectId={currentProjectId}
+          selectProject={selectProject}
+          startNewChat={startNewChat}
+          onClose={() => setProjectsOverlayOpen(false)}
+        />
+      )}
     </div>
   );
 }
@@ -849,6 +885,8 @@ function ExpandedSidebar({
   openConversation,
   removeConversation,
   collapse,
+  onOpenProjects,
+  currentProjectName,
 }: {
   userEmail: string | null | undefined;
   conversations: StoredConversation[];
@@ -859,6 +897,8 @@ function ExpandedSidebar({
   openConversation: (c: StoredConversation) => void;
   removeConversation: (c: StoredConversation) => void;
   collapse: () => void;
+  onOpenProjects: () => void;
+  currentProjectName: string | null;
 }) {
   return (
     <div className="flex h-full w-64 flex-col">
@@ -915,15 +955,32 @@ function ExpandedSidebar({
       </div>
 
       <nav className="flex flex-col gap-0.5 px-2">
-        <SidebarItem
-          href="/projects"
-          icon={
+        <button
+          onClick={onOpenProjects}
+          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[14px] transition-colors ${
+            currentProjectName
+              ? "bg-white text-ink"
+              : "text-body hover:bg-white/60 hover:text-ink"
+          }`}
+          title={currentProjectName ? `Current: ${currentProjectName}` : "Projects"}
+        >
+          <span className="h-4 w-4 shrink-0 text-muted">
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
             </svg>
-          }
-          label="Projects"
-        />
+          </span>
+          <span className="min-w-0 flex-1 truncate">
+            {currentProjectName ? currentProjectName : "Projects"}
+          </span>
+          {currentProjectName && (
+            <span
+              className="rounded-full bg-orange-tint px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-orange-ink"
+              aria-label="Active project"
+            >
+              on
+            </span>
+          )}
+        </button>
         <SidebarItem
           href="/interactives"
           icon={
@@ -1039,9 +1096,11 @@ function ExpandedSidebar({
 function CollapsedSidebar({
   startNewChat,
   expand,
+  onOpenProjects,
 }: {
   startNewChat: () => void;
   expand: () => void;
+  onOpenProjects: () => void;
 }) {
   return (
     <div className="flex h-full w-14 flex-col items-center gap-3 py-4">
@@ -1066,15 +1125,16 @@ function CollapsedSidebar({
           <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </button>
-      <a
-        href="/projects"
+      <button
+        onClick={onOpenProjects}
         className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
         title="Projects"
+        aria-label="Projects"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
           <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
         </svg>
-      </a>
+      </button>
       <a
         href="/interactives"
         className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
@@ -1093,6 +1153,352 @@ function CollapsedSidebar({
           <path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
         </svg>
       </a>
+    </div>
+  );
+}
+
+function ProjectsOverlay({
+  uid,
+  projects,
+  setProjects,
+  currentProjectId,
+  selectProject,
+  startNewChat,
+  onClose,
+}: {
+  uid: string | null;
+  projects: Project[];
+  setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
+  currentProjectId: string | null;
+  selectProject: (id: string | null) => void;
+  startNewChat: () => void;
+  onClose: () => void;
+}) {
+  const [openedId, setOpenedId] = useState<string | null>(currentProjectId);
+  const [convs, setConvs] = useState<StoredConversation[]>([]);
+  const [convsLoading, setConvsLoading] = useState(false);
+  const [showCreate, setShowCreate] = useState(projects.length === 0);
+  const [newName, setNewName] = useState("");
+  const [newDesc, setNewDesc] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const opened = openedId ? projects.find((p) => p.id === openedId) ?? null : null;
+
+  // Close on Escape.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  // Load conversations when a project is opened.
+  useEffect(() => {
+    if (!uid || !openedId) {
+      setConvs([]);
+      return;
+    }
+    let cancelled = false;
+    setConvsLoading(true);
+    listConversationsInProject(uid, openedId)
+      .then((list) => {
+        if (!cancelled) setConvs(list);
+      })
+      .catch(() => {
+        if (!cancelled) setConvs([]);
+      })
+      .finally(() => {
+        if (!cancelled) setConvsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [uid, openedId]);
+
+  async function create() {
+    if (!uid) return;
+    const name = newName.trim();
+    if (!name) return;
+    setBusy(true);
+    try {
+      const id = await createProject(uid, name, newDesc);
+      const next: Project = {
+        id,
+        name,
+        description: newDesc.trim(),
+        contextNotes: "",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
+      setProjects((prev) => [next, ...prev]);
+      setOpenedId(id);
+      setNewName("");
+      setNewDesc("");
+      setShowCreate(false);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove(p: Project) {
+    if (!uid) return;
+    if (
+      !confirm(
+        `Delete "${p.name}"? Conversations inside stay on your account but lose the project link.`
+      )
+    )
+      return;
+    await deleteProject(uid, p.id);
+    setProjects((prev) => prev.filter((x) => x.id !== p.id));
+    if (openedId === p.id) setOpenedId(null);
+    if (currentProjectId === p.id) selectProject(null);
+  }
+
+  function useAsContext(p: Project) {
+    selectProject(p.id);
+    onClose();
+  }
+
+  function startInProject(p: Project) {
+    selectProject(p.id);
+    startNewChat();
+    onClose();
+  }
+
+  return (
+    <div
+      className="animate-fadeIn fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Projects"
+    >
+      <div
+        className="animate-scaleIn relative flex h-[min(88vh,720px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-hair bg-paper shadow-[0_40px_120px_-20px_rgba(0,0,0,0.5)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4 border-b border-hair px-7 py-5">
+          <div>
+            <div className="label">Projects</div>
+            <h2 className="mt-1 font-serif text-2xl font-normal text-ink">
+              Group chats by what you're working on
+            </h2>
+            <p className="mt-1 max-w-xl text-[13px] text-muted">
+              A project is a shared context for a series of chats. New chats
+              started inside a project remember the project's notes.
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="shrink-0 rounded-full p-1.5 text-muted hover:bg-offwhite hover:text-ink"
+            aria-label="Close"
+          >
+            <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor">
+              <path d="M3.28 3.28a.75.75 0 0 1 1.06 0L8 6.94l3.66-3.66a.75.75 0 1 1 1.06 1.06L9.06 8l3.66 3.66a.75.75 0 1 1-1.06 1.06L8 9.06l-3.66 3.66a.75.75 0 0 1-1.06-1.06L6.94 8 3.28 4.34a.75.75 0 0 1 0-1.06Z" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[1fr_1.2fr]">
+          {/* LEFT: list + create */}
+          <div className="flex min-h-0 flex-col overflow-y-auto border-r border-hair px-5 py-5">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="label">Your projects</div>
+              <button
+                onClick={() => setShowCreate((v) => !v)}
+                className="text-[12px] font-medium text-orange hover:text-orange-hover"
+              >
+                {showCreate ? "Cancel" : "+ New"}
+              </button>
+            </div>
+
+            {showCreate && (
+              <div className="mb-4 rounded-lg border border-hair bg-offwhite p-3">
+                <input
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="Project name"
+                  className="w-full rounded border border-hair bg-white px-3 py-2 text-[13px] text-ink outline-none focus:border-orange"
+                  maxLength={120}
+                  autoFocus
+                />
+                <textarea
+                  value={newDesc}
+                  onChange={(e) => setNewDesc(e.target.value)}
+                  placeholder="What is this project for? (optional)"
+                  className="mt-2 w-full resize-none rounded border border-hair bg-white px-3 py-2 text-[13px] text-ink outline-none focus:border-orange"
+                  rows={3}
+                  maxLength={500}
+                />
+                <button
+                  onClick={create}
+                  disabled={busy || !newName.trim()}
+                  className="btn-primary mt-2 w-full justify-center text-[13px] disabled:opacity-50"
+                >
+                  {busy ? "Creating…" : "Create project"}
+                </button>
+              </div>
+            )}
+
+            <button
+              onClick={() => {
+                selectProject(null);
+                setOpenedId(null);
+              }}
+              className={`mb-2 flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left transition ${
+                currentProjectId === null
+                  ? "border-orange bg-orange-tint/50"
+                  : "border-hair bg-paper hover:border-orange"
+              }`}
+            >
+              <div>
+                <div className="text-[13px] font-medium text-ink">No project</div>
+                <div className="text-[11px] text-muted">
+                  Chat without project context
+                </div>
+              </div>
+              {currentProjectId === null && (
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-orange-ink">
+                  Active
+                </span>
+              )}
+            </button>
+
+            {projects.length === 0 && !showCreate ? (
+              <div className="rounded-md border border-dashed border-hair bg-offwhite p-5 text-[13px] text-muted">
+                No projects yet. Click <strong className="text-ink">+ New</strong>{" "}
+                to create one.
+              </div>
+            ) : (
+              <ul className="space-y-2">
+                {projects.map((p) => {
+                  const isOpen = openedId === p.id;
+                  const isActive = currentProjectId === p.id;
+                  return (
+                    <li key={p.id}>
+                      <div
+                        className={`group relative rounded-lg border p-3 transition ${
+                          isOpen
+                            ? "border-orange bg-orange-tint/50"
+                            : "border-hair bg-paper hover:border-orange"
+                        }`}
+                      >
+                        <button
+                          onClick={() => setOpenedId(p.id)}
+                          className="block w-full pr-8 text-left"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="truncate text-[14px] font-medium text-ink">
+                              {p.name}
+                            </div>
+                            {isActive && (
+                              <span className="rounded-full bg-orange-tint px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-orange-ink">
+                                Active
+                              </span>
+                            )}
+                          </div>
+                          {p.description && (
+                            <div className="mt-0.5 line-clamp-2 text-[12px] text-muted">
+                              {p.description}
+                            </div>
+                          )}
+                        </button>
+                        <button
+                          onClick={() => remove(p)}
+                          className="absolute right-2 top-2 rounded p-1 text-muted opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100"
+                          aria-label="Delete project"
+                          title="Delete"
+                        >
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                            <path
+                              d="M6 6l12 12M6 18L18 6"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          {/* RIGHT: opened project detail */}
+          <div className="flex min-h-0 flex-col overflow-y-auto px-7 py-6">
+            {opened ? (
+              <>
+                <div className="label">Project</div>
+                <h3 className="mt-1 font-serif text-2xl text-ink">
+                  {opened.name}
+                </h3>
+                {opened.description && (
+                  <p className="mt-2 text-[14px] text-body">
+                    {opened.description}
+                  </p>
+                )}
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <button
+                    onClick={() => startInProject(opened)}
+                    className="btn-primary text-[13px]"
+                  >
+                    + New chat in this project
+                  </button>
+                  {currentProjectId !== opened.id && (
+                    <button
+                      onClick={() => useAsContext(opened)}
+                      className="btn-ghost text-[13px]"
+                    >
+                      Use as current context
+                    </button>
+                  )}
+                </div>
+
+                <div className="label mt-7 mb-2">Conversations</div>
+                {convsLoading ? (
+                  <div className="text-[13px] text-muted">Loading…</div>
+                ) : convs.length === 0 ? (
+                  <div className="rounded-md border border-dashed border-hair bg-offwhite p-4 text-[13px] text-muted">
+                    No chats in this project yet.
+                  </div>
+                ) : (
+                  <ul className="divide-y divide-hair">
+                    {convs.map((c) => (
+                      <li key={c.id}>
+                        <a
+                          href={`/chat?conversation=${encodeURIComponent(
+                            c.id
+                          )}&project=${encodeURIComponent(opened.id)}`}
+                          className="block py-3 text-[14px] hover:text-orange"
+                        >
+                          <div className="text-ink">{c.title}</div>
+                          <div className="mt-0.5 text-[11px] text-muted">
+                            {new Date(c.updatedAt).toLocaleString()}
+                          </div>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            ) : (
+              <div className="m-auto max-w-xs text-center">
+                <div className="mb-3 text-[36px]">📁</div>
+                <p className="text-[13px] text-muted">
+                  Pick a project on the left to see its chats, or create a new
+                  one.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

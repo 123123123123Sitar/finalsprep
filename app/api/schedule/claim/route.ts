@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getAuthedUser } from "@/lib/authGuard";
 import { isAdminConfigured, getAdminDb } from "@/lib/firebaseAdmin";
-import { addToTokenBank } from "@/lib/tokenBank";
+import { addToTokenBank, getTokenBank } from "@/lib/tokenBank";
 import { logEvent } from "@/lib/events";
-import { DAILY_CLAIM_TOKENS, engagementTokens, ymdLocal } from "@/lib/schedule";
+import { reloadReward, ymdLocal } from "@/lib/schedule";
 
 export const runtime = "nodejs";
 
@@ -45,7 +45,14 @@ export async function POST(req: Request) {
     }
   } catch {}
 
-  const credited = minutes > 0 ? engagementTokens(minutes) : DAILY_CLAIM_TOKENS;
+  // Pull current bonus-bank balance so we can scale the reward by how
+  // depleted the user actually is. A student who's burned through their
+  // bonus pool gets a bigger reload than one sitting on unused tokens.
+  const bank = await getTokenBank(user.uid);
+  const { amount: credited, base, multiplier } = reloadReward(
+    minutes,
+    bank.balance
+  );
 
   let claimed = false;
   let reason: string | undefined;
@@ -81,9 +88,23 @@ export async function POST(req: Request) {
       kind: "chat.send", // reuse for now; add "schedule.claim" later
       uid: user.uid,
       email: user.email,
-      meta: { kind: "schedule.claim", tokens: credited, minutes },
+      meta: {
+        kind: "schedule.claim",
+        tokens: credited,
+        minutes,
+        base,
+        multiplier,
+        priorBalance: bank.balance,
+      },
     });
-    return NextResponse.json({ ok: true, credited, minutes });
+    return NextResponse.json({
+      ok: true,
+      credited,
+      minutes,
+      base,
+      multiplier,
+      priorBalance: bank.balance,
+    });
   }
 
   return NextResponse.json(

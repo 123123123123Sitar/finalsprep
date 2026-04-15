@@ -128,12 +128,15 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: trimmed, source: "landing" }),
       });
-      if (!res.ok) throw new Error("Server error");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || "Server error");
+      }
       setCaptured("ok");
       setCaptureMsg("Sent. If you don't see it in a minute, check your spam folder.");
-    } catch {
+    } catch (e: any) {
       setCaptured("err");
-      setCaptureMsg("Couldn't send right now. Try again in a moment?");
+      setCaptureMsg(e?.message || "Couldn't send right now. Try again in a moment?");
     }
   }
 

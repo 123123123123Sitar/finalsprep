@@ -29,29 +29,49 @@ export async function POST(req: Request) {
     console.log("[capture]", row);
   }
 
-  // Optional: forward to Resend broadcast list
   const resendKey = process.env.RESEND_API_KEY;
-  if (resendKey) {
-    try {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "FinalsPrep <hello@finalsprep.com>",
-          to: [email],
-          subject: "Your Algebra 2 Final Cheat Sheet",
-          html: `<p>Here it is - the one-page cheat sheet of the formulas your teacher expects you to know cold for your Algebra 2 final.</p>
-<p><a href="${process.env.NEXT_PUBLIC_SITE_URL}/cheatsheet.pdf">Download the cheat sheet (PDF)</a></p>
-<p>If you want the full thing - the 15 topics that actually show up on finals, unlimited practice, and step-by-step explanations on any problem - it's <a href="${process.env.NEXT_PUBLIC_SITE_URL}">here for $19</a>. One time, lifetime access.</p>
-<p>Good luck on your final. You got this.</p>`,
-        }),
-      });
-    } catch (e) {
-      console.error("resend fail", e);
+  const fromAddress = process.env.CAPTURE_FROM_EMAIL || "FinalsPrep <hello@finalsprep.com>";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://finalsprep.com";
+
+  if (!resendKey) {
+    console.error("[capture] RESEND_API_KEY is not set — email not sent");
+    return NextResponse.json(
+      { error: "Email delivery is not configured yet. Please try again later." },
+      { status: 503 }
+    );
+  }
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: fromAddress,
+        to: [email],
+        subject: "Your FinalsPrep formula sheet",
+        html: `<p>Here it is — the one-page sheet of the ~40 formulas from algebra through calculus every student should know cold before an exam.</p>
+<p><a href="${siteUrl}/formula-sheet.pdf">Download the formula sheet (PDF)</a></p>
+<p>If you want step-by-step walkthroughs on your actual homework — algebra through calc, physics, bio, chem, CS, history — Pro is <a href="${siteUrl}/#price">$11 for the first month with code SCORE5</a>.</p>
+<p>Good luck on finals. You got this.</p>`,
+      }),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      console.error("[capture] resend error", res.status, text);
+      return NextResponse.json(
+        { error: "Couldn't send the email. Please try again in a minute." },
+        { status: 502 }
+      );
     }
+  } catch (e) {
+    console.error("[capture] resend fetch failed", e);
+    return NextResponse.json(
+      { error: "Couldn't reach the email service. Please try again." },
+      { status: 502 }
+    );
   }
 
   return NextResponse.json({ ok: true });

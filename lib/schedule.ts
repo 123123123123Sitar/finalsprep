@@ -43,6 +43,13 @@ export const DEFAULT_SCHEDULE: Schedule = {
 
 export const DAILY_CLAIM_TOKENS = 50;
 
+/** Balance at which the depletion bonus starts dropping to zero. */
+export const RELOAD_FULL_BALANCE = 2000;
+/** Maximum extra multiplier applied to a fully-depleted user. */
+export const RELOAD_MAX_BONUS = 1.5; // → up to 2.5× base
+/** Hard ceiling on a single claim regardless of inputs. */
+export const RELOAD_REWARD_CAP = 400;
+
 /**
  * Token reward for a completed study session based on engagement.
  *
@@ -56,6 +63,38 @@ export function engagementTokens(minutes: number): number {
   const base = Math.round(capped);
   const bonus = capped >= 45 ? Math.round(capped * 0.25) : 0;
   return Math.min(base + bonus, 150);
+}
+
+/**
+ * Scale a claim reward by how depleted the user's token bank is, so a
+ * student who has actually been burning through tokens gets a bigger
+ * reload than someone sitting on a pile of unused rewards.
+ *
+ *   depletion = clamp(1 - balance / RELOAD_FULL_BALANCE, 0, 1)
+ *   multiplier = 1 + RELOAD_MAX_BONUS · depletion
+ *
+ * Examples (base = 100):
+ *   balance 0    → 2.5× →  250
+ *   balance 500  → 2.125× → 213
+ *   balance 1000 → 1.75× → 175
+ *   balance 2000 → 1.0×  → 100
+ */
+export function reloadReward(
+  minutes: number,
+  currentBalance: number
+): { amount: number; base: number; multiplier: number } {
+  const base = minutes > 0 ? engagementTokens(minutes) : DAILY_CLAIM_TOKENS;
+  const safeBalance = Math.max(0, currentBalance || 0);
+  const depletion = Math.max(
+    0,
+    Math.min(1, 1 - safeBalance / RELOAD_FULL_BALANCE)
+  );
+  const multiplier = 1 + RELOAD_MAX_BONUS * depletion;
+  const amount = Math.min(
+    Math.round(base * multiplier),
+    RELOAD_REWARD_CAP
+  );
+  return { amount, base, multiplier };
 }
 
 export function blocksOnDay(blocks: StudyBlock[], day: number): StudyBlock[] {
