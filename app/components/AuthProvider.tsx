@@ -9,10 +9,12 @@ import {
 } from "react";
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
   reload,
   sendEmailVerification,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut as fbSignOut,
   type User,
 } from "firebase/auth";
@@ -36,6 +38,7 @@ type AuthContextValue = {
   getIdToken: () => Promise<string | null>;
   signUp: (email: string, password: string) => Promise<AuthResult>;
   signIn: (email: string, password: string) => Promise<AuthResult>;
+  signInWithGoogle: () => Promise<AuthResult>;
   signOut: () => Promise<void>;
   resendVerification: () => Promise<AuthResult>;
   refresh: () => Promise<User | null>;
@@ -153,6 +156,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  async function signInWithGoogle() {
+    const auth = getFirebaseAuth();
+    if (!auth) {
+      return { ok: false, message: "Auth is not configured on this server." };
+    }
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      await signInWithPopup(auth, provider);
+      return { ok: true };
+    } catch (e: any) {
+      const code = e?.code as string | undefined;
+      if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
+        return { ok: false, code, message: "Sign-in popup was closed." };
+      }
+      return { ok: false, ...formatFirebaseError(e) };
+    }
+  }
+
   async function signOut() {
     const auth = getFirebaseAuth();
     if (!auth) return;
@@ -190,6 +212,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       getIdToken,
       signUp,
       signIn,
+      signInWithGoogle,
       signOut,
       resendVerification,
       refresh,
