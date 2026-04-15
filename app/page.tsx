@@ -706,7 +706,7 @@ export default function Home() {
               ["Does it work on my phone?", "Yes. The solver works fine on mobile. The diagrams can be a little cramped on small screens - we're working on it."],
               ["Can I use my school Google account?", "Yes. Checkout is standard Stripe, so any email works. School email sometimes routes receipts to spam."],
               ["Is this cheating?", "If you paste a problem in, read the explanation, and then do the problem again on your own, no. If you paste it in and copy the answer without reading, that's on you."],
-              ["What if the tutor gets something wrong?", "Tell it in the next message and it will correct itself. If you hit a problem in scope where the explanation was genuinely bad, email support@finalsprep.com and we'll refund the purchase."],
+              ["What if the tutor gets something wrong?", "Tell it in the next message and it will correct itself. If you hit a problem in scope where the explanation was genuinely bad, email finalsprephelp@gmail.com and we'll refund the purchase."],
               ["What if I want a refund?", "Reply to your receipt within 7 days. No questions asked."],
               ["How does this compare to a human tutor?", "$16/month is less than one hour with a human tutor, and a real tutor isn't available at 11pm the night before your exam. Use a real tutor for big conceptual gaps; use this for getting unstuck on homework."],
             ].map(([q, a]) => (
@@ -751,7 +751,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-5xl flex-col gap-2 px-6 py-10 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
           <div>© {new Date().getFullYear()} FinalsPrep, Inc.</div>
           <div className="flex gap-4">
-            <a href="mailto:support@finalsprep.com" className="hover:text-ink">support@finalsprep.com</a>
+            <a href="mailto:finalsprephelp@gmail.com" className="hover:text-ink">finalsprephelp@gmail.com</a>
             <a href="/study" className="hover:text-ink">Study tool</a>
             <a href="#price" className="hover:text-ink">Pricing</a>
             <a href="/privacy" className="hover:text-ink">Privacy</a>

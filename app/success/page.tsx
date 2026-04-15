@@ -25,7 +25,7 @@ export default function Success() {
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
           <a href="/study" className="btn-primary">Open the study tool</a>
-          <a href="mailto:help@finalsprep.com" className="btn-ghost">
+          <a href="mailto:finalsprephelp@gmail.com" className="btn-ghost">
             Email if something breaks
           </a>
         </div>

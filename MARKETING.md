@@ -457,7 +457,7 @@ Use these as canned replies to Reddit comments, Twitter questions, and cold-emai
 > The free tier uses a Claude-style sliding 5-hour token window. That works out to ~5-8 real chat messages per 5 hours. Enough to try it on your actual homework problem tonight. Not enough to grind through a full problem set. The goal is to let you verify it actually helps before you pay.
 
 **Objection 5: "What if the AI gets something wrong?"**
-> It will. Tell it in the next message and it'll correct itself. If you hit a problem that's in scope and it's still wrong, email us (support@finalsprep.com) and we'll refund that week's payment. The system prompt is constantly being improved based on actual wrong answers we hear about.
+> It will. Tell it in the next message and it'll correct itself. If you hit a problem that's in scope and it's still wrong, email us (finalsprephelp@gmail.com) and we'll refund that week's payment. The system prompt is constantly being improved based on actual wrong answers we hear about.
 
 **Objection 6: "Can I share my account with my friend?"**
 > Technically yes, but the 5-hour token budget is shared across the account, so you'll hit the Pro ceiling faster. If two serious students are both using it for exam prep, it's cheaper to get two $9/month accounts than one and stagger your usage.

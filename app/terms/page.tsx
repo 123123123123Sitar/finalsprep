@@ -76,8 +76,8 @@ export default function TermsPage() {
           <p>
             Refunds: if you're unhappy within 7 days of your first
             payment, email{" "}
-            <a className="text-orange underline" href="mailto:support@finalsprep.com">
-              support@finalsprep.com
+            <a className="text-orange underline" href="mailto:finalsprephelp@gmail.com">
+              finalsprephelp@gmail.com
             </a>{" "}
             and we will refund the last charge, no questions asked. After
             that, you can cancel to stop future charges but we don't
@@ -134,8 +134,8 @@ export default function TermsPage() {
 
           <h2 className="mt-10 font-serif text-2xl text-ink">10. Contact</h2>
           <p>
-            <a className="text-orange underline" href="mailto:support@finalsprep.com">
-              support@finalsprep.com
+            <a className="text-orange underline" href="mailto:finalsprephelp@gmail.com">
+              finalsprephelp@gmail.com
             </a>
           </p>
         </div>
