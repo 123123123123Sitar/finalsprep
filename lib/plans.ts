@@ -1,18 +1,20 @@
-export type PlanTier = "free" | "regular" | "pro";
+export type PlanTier = "free" | "pro" | "premium";
 export type PaidPlanTier = Exclude<PlanTier, "free">;
 export type BillingInterval = "monthly" | "sixmonth";
 export type PaidCheckoutPlan = `${PaidPlanTier}-${BillingInterval}`;
 export type CheckoutPlan = "monthly" | "sixmonth" | PaidCheckoutPlan;
 
 export function normalizePlanTier(value: unknown): PlanTier {
-  return value === "regular" || value === "pro" ? value : "free";
+  if (value === "pro" || value === "premium") return value;
+  // Legacy: "regular" used to be the mid tier — coerce to "pro" now.
+  if (value === "regular") return "pro";
+  return "free";
 }
 
 export function normalizeBillingInterval(
   value: unknown
 ): BillingInterval | undefined {
   if (value === "monthly" || value === "sixmonth") return value;
-  // Legacy: treat "yearly" as sixmonth for backwards compat during pricing migration.
   if (value === "yearly") return "sixmonth";
   return undefined;
 }
@@ -23,10 +25,10 @@ export function isPaidPlan(plan: PlanTier | null | undefined): boolean {
 
 export function planLabel(plan: PlanTier): string {
   switch (plan) {
-    case "regular":
-      return "Regular";
     case "pro":
       return "Pro";
+    case "premium":
+      return "Premium";
     default:
       return "Free";
   }
@@ -39,18 +41,22 @@ export function parseCheckoutPlan(input: unknown): {
 } {
   const raw = typeof input === "string" ? input : "";
   switch (raw) {
+    case "premium-monthly":
+      return { key: "premium-monthly", tier: "premium", interval: "monthly" };
+    case "premium-sixmonth":
+    case "premium-yearly":
+      return { key: "premium-sixmonth", tier: "premium", interval: "sixmonth" };
     case "pro-monthly":
+    case "monthly":
+    case "regular-monthly":
       return { key: "pro-monthly", tier: "pro", interval: "monthly" };
     case "pro-sixmonth":
-    case "pro-yearly": // legacy alias
-      return { key: "pro-sixmonth", tier: "pro", interval: "sixmonth" };
-    case "regular-sixmonth":
+    case "pro-yearly":
     case "sixmonth":
-    case "regular-yearly": // legacy alias
-    case "yearly": // legacy alias
+    case "regular-sixmonth":
+    case "regular-yearly":
+    case "yearly":
       return { key: "pro-sixmonth", tier: "pro", interval: "sixmonth" };
-    case "regular-monthly":
-    case "monthly":
     default:
       return { key: "pro-monthly", tier: "pro", interval: "monthly" };
   }
@@ -65,13 +71,17 @@ export function checkoutDescription(
 }
 
 /** Display price in dollars for each checkout plan. Source of truth for the UI. */
-export function planPrice(plan: PaidCheckoutPlan): { amount: number; period: string; monthly: number } {
+export function planPrice(
+  plan: PaidCheckoutPlan
+): { amount: number; period: string; monthly: number } {
   switch (plan) {
     case "pro-monthly":
       return { amount: 16, period: "/ month", monthly: 16 };
     case "pro-sixmonth":
       return { amount: 90, period: "/ 6 months", monthly: 15 };
-    default:
-      return { amount: 16, period: "/ month", monthly: 16 };
+    case "premium-monthly":
+      return { amount: 29, period: "/ month", monthly: 29 };
+    case "premium-sixmonth":
+      return { amount: 160, period: "/ 6 months", monthly: 27 };
   }
 }

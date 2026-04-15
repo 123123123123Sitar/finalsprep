@@ -126,13 +126,12 @@ function resolvePriceId(plan: PaidCheckoutPlan): string | undefined {
       return (
         process.env.STRIPE_PRICE_PRO_SIXMONTH ||
         process.env.STRIPE_PRICE_SIXMONTH ||
-        process.env.STRIPE_PRICE_YEARLY // legacy fallback
+        process.env.STRIPE_PRICE_YEARLY
       );
-    default:
-      return (
-        process.env.STRIPE_PRICE_PRO_MONTHLY ||
-        process.env.STRIPE_PRICE_MONTHLY
-      );
+    case "premium-monthly":
+      return process.env.STRIPE_PRICE_PREMIUM_MONTHLY;
+    case "premium-sixmonth":
+      return process.env.STRIPE_PRICE_PREMIUM_SIXMONTH;
   }
 }
 
@@ -142,7 +141,9 @@ function missingPriceMessage(plan: PaidCheckoutPlan): string {
       return "Set STRIPE_PRICE_PRO_MONTHLY in your environment.";
     case "pro-sixmonth":
       return "Set STRIPE_PRICE_PRO_SIXMONTH in your environment.";
-    default:
-      return "Set STRIPE_PRICE_PRO_MONTHLY in your environment.";
+    case "premium-monthly":
+      return "Set STRIPE_PRICE_PREMIUM_MONTHLY in your environment.";
+    case "premium-sixmonth":
+      return "Set STRIPE_PRICE_PREMIUM_SIXMONTH in your environment.";
   }
 }

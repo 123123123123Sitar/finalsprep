@@ -25,14 +25,29 @@ function jsonError(status: number, body: Record<string, unknown>) {
   });
 }
 
+const ALLOWED_MODELS: Record<string, string> = {
+  haiku: "claude-haiku-4-5-20251001",
+  sonnet: "claude-sonnet-4-6",
+  opus: "claude-opus-4-6",
+};
+const DEFAULT_MODEL_ID = ALLOWED_MODELS.sonnet;
+
+function pickModel(
+  requested: unknown,
+  plan: string,
+  bringsOwnKey: boolean
+): string {
+  if (typeof requested !== "string") return DEFAULT_MODEL_ID;
+  const id = ALLOWED_MODELS[requested];
+  if (!id) return DEFAULT_MODEL_ID;
+  // Free and Pro always get Sonnet. Premium can pick any, or anyone bringing
+  // their own API key (since they're paying for it directly).
+  if (plan === "premium" || bringsOwnKey) return id;
+  return DEFAULT_MODEL_ID;
+}
+
 export async function POST(req: Request) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return jsonError(500, {
-      error: "Chat requires ANTHROPIC_API_KEY to be set on the server.",
-      limitReached: true,
-    });
-  }
+  const serverKey = process.env.ANTHROPIC_API_KEY;
 
   // Require signed-in user (unless admin SDK isn't configured yet, for dev).
   const adminOn = isAdminConfigured();
@@ -79,8 +94,25 @@ export async function POST(req: Request) {
   const tier = planToRateTier(userPlan);
   const plan = userPlan?.plan ?? "free";
 
+  // Premium users can bring their own Anthropic API key and pick a model.
+  // When they do, we don't rate-limit them since it's their wallet.
+  const clientApiKey =
+    plan === "premium" && typeof body?.anthropicApiKey === "string"
+      ? body.anthropicApiKey.trim()
+      : "";
+  const bringsOwnKey = clientApiKey.startsWith("sk-ant-");
+  const apiKey = bringsOwnKey ? clientApiKey : serverKey;
+  if (!apiKey) {
+    return jsonError(500, {
+      error: "Chat requires ANTHROPIC_API_KEY to be set on the server.",
+      limitReached: true,
+    });
+  }
+
   const key = userKey(user?.uid, req);
-  const r = reserve(key, tier);
+  const r = bringsOwnKey
+    ? { ok: true as const, tier, tokensRemaining: Infinity, messagesRemaining: Infinity }
+    : reserve(key, tier);
   if (!r.ok) {
     return jsonError(429, {
       error: "Rate limited",
@@ -95,7 +127,48 @@ export async function POST(req: Request) {
   }
 
   const client = new Anthropic({ apiKey });
-  const model = "claude-sonnet-4-6";
+  const model = pickModel(body?.model, plan, bringsOwnKey);
+
+  // Image uploads: Pro and Premium only. Attach to the last user message.
+  const rawImages = Array.isArray(body?.images) ? body.images : [];
+  const allowImages = plan === "pro" || plan === "premium" || bringsOwnKey;
+  const validImages = allowImages
+    ? rawImages
+        .filter(
+          (img: any) =>
+            img &&
+            typeof img.mediaType === "string" &&
+            /^image\/(png|jpeg|jpg|gif|webp)$/i.test(img.mediaType) &&
+            typeof img.data === "string" &&
+            img.data.length > 0 &&
+            img.data.length < 10_000_000 // ~7.5MB decoded
+        )
+        .slice(0, 5)
+    : [];
+
+  const anthMessages: Anthropic.MessageParam[] = messages.map((m, i) => {
+    const isLastUser =
+      i === messages.length - 1 && m.role === "user" && validImages.length > 0;
+    if (!isLastUser) return { role: m.role, content: m.content };
+    const content: any[] = validImages.map((img: any) => ({
+      type: "image",
+      source: {
+        type: "base64",
+        media_type: img.mediaType as
+          | "image/png"
+          | "image/jpeg"
+          | "image/gif"
+          | "image/webp",
+        data: img.data,
+      },
+    }));
+    if (m.content.trim().length > 0) {
+      content.push({ type: "text", text: m.content });
+    } else {
+      content.push({ type: "text", text: "Please help me with the work in this image." });
+    }
+    return { role: "user" as const, content };
+  });
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -108,7 +181,7 @@ export async function POST(req: Request) {
           model,
           max_tokens: 1200,
           system: CHAT_SYSTEM_PROMPT,
-          messages,
+          messages: anthMessages,
         });
 
         for await (const event of response) {
@@ -139,7 +212,8 @@ export async function POST(req: Request) {
           capturedInput + capturedOutput ||
           estimateTokens(messages.map((m) => m.content).join("\n")) +
             estimateTokens(accumulated);
-        record(key, totalTokens);
+        // Only charge the shared budget if we used our own server key.
+        if (!bringsOwnKey) record(key, totalTokens);
         if (user?.uid) {
           void recordAiHistory({
             uid: user.uid,
@@ -163,7 +237,7 @@ export async function POST(req: Request) {
         const est =
           estimateTokens(messages.map((m) => m.content).join("\n")) +
           estimateTokens(accumulated);
-        if (est > 0) record(key, est);
+        if (!bringsOwnKey && est > 0) record(key, est);
         controller.close();
       }
     },

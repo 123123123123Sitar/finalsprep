@@ -10,8 +10,8 @@
  *
  * Three tiers:
  *   FREE    - tight budget, enough to test the tutor
- *   REGULAR - noticeably larger budget for active students
- *   PRO     - largest budget for heavy daily use
+ *   PRO     - larger budget for active students, includes image uploads
+ *   PREMIUM - largest budget, model chooser, custom API key option
  *
  * All tiers also enforce a message-count safety cap so that a
  * low-token spammer can't hammer the API with hundreds of one-word
@@ -24,7 +24,7 @@
  *   Firestore - this file is the single place to swap the backend.
  */
 
-export type Tier = "free" | "regular" | "pro";
+export type Tier = "free" | "pro" | "premium";
 
 export const LIMITS = {
   WINDOW_MS: 5 * 60 * 60 * 1000, // 5-hour sliding window
@@ -37,13 +37,13 @@ export const LIMITS = {
     tokens: 4000, // ~5-8 real chat exchanges per 5h
     messages: 10,
   },
-  regular: {
-    tokens: 18000,
-    messages: 40,
-  },
   pro: {
-    tokens: 60000,
-    messages: 120,
+    tokens: 30000,
+    messages: 80,
+  },
+  premium: {
+    tokens: 120000,
+    messages: 250,
   },
 } as const;
 
@@ -83,21 +83,21 @@ function humanReset(minutes: number): string {
 
 function tierLabel(tier: Tier): string {
   switch (tier) {
-    case "regular":
-      return "regular plan";
     case "pro":
-      return "pro plan";
+      return "Pro plan";
+    case "premium":
+      return "Premium plan";
     default:
-      return "free plan";
+      return "Free plan";
   }
 }
 
 function tierUpgradeHint(tier: Tier): string {
   switch (tier) {
     case "free":
-      return " Upgrade for more AI budget.";
-    case "regular":
-      return " Upgrade to Pro for the largest AI budget.";
+      return " Upgrade to Pro or Premium for more AI budget.";
+    case "pro":
+      return " Upgrade to Premium for the largest AI budget.";
     default:
       return "";
   }

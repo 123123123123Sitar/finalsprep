@@ -14,7 +14,17 @@ import {
   updateConversation,
   type StoredConversation,
 } from "@/lib/chatStore";
+import { doc, getDoc } from "firebase/firestore";
+import { getDb } from "@/lib/firebase";
 
+type ModelKey = "haiku" | "sonnet" | "opus";
+const MODEL_OPTIONS: { key: ModelKey; label: string }[] = [
+  { key: "haiku", label: "Haiku (fast)" },
+  { key: "sonnet", label: "Sonnet (default)" },
+  { key: "opus", label: "Opus (strongest)" },
+];
+
+type UploadImage = { mediaType: string; data: string; thumb: string };
 type Msg = { role: "user" | "assistant"; content: string; streaming?: boolean };
 
 function formatMinutes(mins: number): string {
@@ -58,6 +68,10 @@ function ChatInner() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [conversations, setConversations] = useState<StoredConversation[]>([]);
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
+  const [modelKey, setModelKey] = useState<ModelKey>("sonnet");
+  const [customApiKey, setCustomApiKey] = useState<string>("");
+  const [pendingImages, setPendingImages] = useState<UploadImage[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -70,6 +84,21 @@ function ChatInner() {
     if (!user) return;
     listConversations(user.uid).then(setConversations).catch(() => {});
   }, [user]);
+
+  // Load premium prefs (model + custom API key) from Firestore
+  useEffect(() => {
+    if (!user || plan !== "premium") return;
+    const db = getDb();
+    if (!db) return;
+    getDoc(doc(db, "users", user.uid, "profile", "prefs"))
+      .then((snap) => {
+        const d = snap.data() as any;
+        if (d?.preferredModel) setModelKey(d.preferredModel);
+        if (typeof d?.anthropicApiKey === "string")
+          setCustomApiKey(d.anthropicApiKey);
+      })
+      .catch(() => {});
+  }, [user, plan]);
 
   // Smooth auto-scroll on new content
   useEffect(() => {
@@ -113,17 +142,52 @@ function ChatInner() {
     }
   }
 
+  async function handleImagePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    e.target.value = ""; // allow re-selecting the same file
+    if (plan === "free") {
+      setError("Image uploads are a Pro feature. Upgrade to attach photos.");
+      return;
+    }
+    for (const file of files) {
+      if (!file.type.startsWith("image/")) continue;
+      if (file.size > 5 * 1024 * 1024) {
+        setError(`${file.name} is over 5MB. Try a smaller image.`);
+        continue;
+      }
+      const data = await new Promise<string>((resolve) => {
+        const r = new FileReader();
+        r.onload = () => resolve((r.result as string).split(",")[1] || "");
+        r.readAsDataURL(file);
+      });
+      const thumb = `data:${file.type};base64,${data}`;
+      setPendingImages((imgs) => [
+        ...imgs,
+        { mediaType: file.type, data, thumb },
+      ]);
+    }
+  }
+
+  function removeImage(idx: number) {
+    setPendingImages((imgs) => imgs.filter((_, i) => i !== idx));
+  }
+
   async function send(text?: string) {
     const content = (text ?? input).trim();
-    if (!content || loading || streaming) return;
+    if ((!content && pendingImages.length === 0) || loading || streaming) return;
 
-    const withUser: Msg[] = [...messages, { role: "user", content }];
+    const imagesForMessage = pendingImages;
+    const visibleContent = content + (imagesForMessage.length > 0
+      ? `\n\n[${imagesForMessage.length} image${imagesForMessage.length === 1 ? "" : "s"} attached]`
+      : "");
+    const withUser: Msg[] = [...messages, { role: "user", content: visibleContent || "[image]" }];
     const withPlaceholder: Msg[] = [
       ...withUser,
       { role: "assistant", content: "", streaming: true },
     ];
     setMessages(withPlaceholder);
     setInput("");
+    setPendingImages([]);
     setLoading(true);
     setError("");
     setLimitHit(false);
@@ -136,7 +200,19 @@ function ChatInner() {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ messages: withUser }),
+        body: JSON.stringify({
+          messages: withUser,
+          ...(plan === "premium" ? { model: modelKey } : {}),
+          ...(plan === "premium" && customApiKey ? { anthropicApiKey: customApiKey } : {}),
+          ...(pendingImages.length > 0
+            ? {
+                images: pendingImages.map((i) => ({
+                  mediaType: i.mediaType,
+                  data: i.data,
+                })),
+              }
+            : {}),
+        }),
       });
 
       if (!res.ok) {
@@ -291,7 +367,13 @@ function ChatInner() {
     };
   }, []);
 
-  async function buy(planKind: "monthly" | "yearly" = "monthly") {
+  async function buy(
+    checkoutPlan:
+      | "pro-monthly"
+      | "pro-sixmonth"
+      | "premium-monthly"
+      | "premium-sixmonth" = "pro-monthly"
+  ) {
     const token = await getIdToken();
     const res = await fetch("/api/checkout", {
       method: "POST",
@@ -299,7 +381,7 @@ function ChatInner() {
         "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify({ plan: planKind }),
+      body: JSON.stringify({ plan: checkoutPlan }),
     });
     const { url, error } = await res.json();
     if (url) window.location.href = url;
@@ -447,8 +529,8 @@ function ChatInner() {
               >
                 <div>{error}</div>
                 {limitHit && plan === "free" && (
-                  <button onClick={() => buy("monthly")} className="btn-link mt-2">
-                    Start Regular - $9/month →
+                  <button onClick={() => buy("pro-monthly")} className="btn-link mt-2">
+                    Upgrade to Pro - $16/month →
                   </button>
                 )}
               </div>
@@ -459,6 +541,31 @@ function ChatInner() {
         {/* COMPOSER */}
         <div className="bg-white pb-6 pt-4">
           <div className="mx-auto max-w-3xl px-6">
+            {pendingImages.length > 0 && (
+              <div className="mb-2 flex flex-wrap gap-2 rounded-lg border border-hair bg-offwhite p-2">
+                {pendingImages.map((img, i) => (
+                  <div
+                    key={i}
+                    className="relative h-16 w-16 overflow-hidden rounded border border-hair"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={img.thumb}
+                      alt={`attachment ${i + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      aria-label="Remove image"
+                      className="absolute right-0.5 top-0.5 grid h-4 w-4 place-items-center rounded-full bg-black/60 text-[10px] text-white hover:bg-black/80"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             <div
               className={`animate-fadeUp relative flex items-center gap-2.5 rounded-[28px] border border-white/10 bg-[#1f1f22] px-3.5 py-3 shadow-[0_16px_50px_-16px_rgba(0,0,0,0.45)] transition-all focus-within:border-white/20 focus-within:shadow-[0_18px_60px_-16px_rgba(0,0,0,0.6)] ${
                 loading || streaming ? "opacity-95" : ""
@@ -475,6 +582,36 @@ function ChatInner() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                 </svg>
+              </button>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImagePick}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (plan === "free") {
+                    setError("Image uploads are a Pro feature. Upgrade to attach photos of your work.");
+                    return;
+                  }
+                  fileInputRef.current?.click();
+                }}
+                disabled={streaming || loading}
+                aria-label="Attach image"
+                title={plan === "free" ? "Upload images (Pro feature)" : "Attach an image"}
+                className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-40"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M21 12.5 12.5 21a5.5 5.5 0 0 1-7.8-7.8L13 5a4 4 0 1 1 5.7 5.7l-8.5 8.5a2.5 2.5 0 1 1-3.5-3.5L14 8.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {plan === "free" && (
+                  <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-amber-500" />
+                )}
               </button>
 
               <textarea
@@ -528,9 +665,34 @@ function ChatInner() {
                 )}
               </button>
             </div>
-            <div className="mt-2 flex items-center justify-center gap-2 px-2 text-center text-[11px] text-muted">
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-2 px-2 text-center text-[11px] text-muted">
               <span>{planStatus(plan)}</span>
-              {tokensRemaining !== null && (
+              {plan === "premium" && (
+                <>
+                  <span className="text-dim">·</span>
+                  <label className="inline-flex items-center gap-1">
+                    <span className="text-amber-600">Model:</span>
+                    <select
+                      value={modelKey}
+                      onChange={(e) => setModelKey(e.target.value as ModelKey)}
+                      className="rounded border border-hair bg-white px-1 py-0.5 text-[11px] text-ink"
+                    >
+                      {MODEL_OPTIONS.map((m) => (
+                        <option key={m.key} value={m.key}>
+                          {m.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  {customApiKey && (
+                    <>
+                      <span className="text-dim">·</span>
+                      <span className="text-amber-600">Using your key</span>
+                    </>
+                  )}
+                </>
+              )}
+              {tokensRemaining !== null && !customApiKey && (
                 <>
                   <span className="text-dim">·</span>
                   <span>
@@ -595,9 +757,9 @@ function Message({
 
 function planStatus(plan: PlanTier): string {
   switch (plan) {
-    case "regular":
-      return `${planLabel(plan)} plan · larger budget refills every 5h`;
     case "pro":
+      return `${planLabel(plan)} plan · larger budget refills every 5h`;
+    case "premium":
       return `${planLabel(plan)} plan · largest budget refills every 5h`;
     default:
       return `${planLabel(plan)} plan · starter budget refills every 5h`;

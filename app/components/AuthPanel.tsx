@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "./AuthProvider";
 
-type Mode = "signin" | "signup";
+type Mode = "signin" | "signup" | "reset";
 
 /**
  * Sign-in / sign-up form. Used by AuthGate (inline) and the dedicated
@@ -22,6 +22,7 @@ export default function AuthPanel({
     signIn,
     signInWithGoogle,
     resendVerification,
+    sendPasswordReset,
     signOut,
     refresh,
     user,
@@ -59,6 +60,19 @@ export default function AuthPanel({
       onSuccess();
     }
     if (mode === "signup" && res.ok) setPassword("");
+  }
+
+  async function doReset(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim()) {
+      setMsg({ kind: "err", text: "Enter the email you signed up with." });
+      return;
+    }
+    setBusy(true);
+    setMsg(null);
+    const r = await sendPasswordReset(email);
+    setBusy(false);
+    setMsg({ kind: r.ok ? "ok" : "err", text: r.message || "" });
   }
 
   async function doGoogle() {
@@ -99,9 +113,15 @@ export default function AuthPanel({
   return (
     <div className="mx-auto max-w-md animate-scaleIn">
       <div className="label mb-3">
-        {pendingUser ? "Verify your email" : mode === "signup" ? "Create account" : "Sign in"}
+        {pendingUser
+          ? "Verify your email"
+          : mode === "reset"
+          ? "Reset password"
+          : mode === "signup"
+          ? "Create account"
+          : "Sign in"}
       </div>
-      {!pendingUser && (
+      {!pendingUser && mode !== "reset" && (
         <div className="mb-5 inline-flex rounded-full border border-hair bg-white p-1 text-sm">
           <button
             type="button"
@@ -132,6 +152,8 @@ export default function AuthPanel({
       <h2 className="font-serif text-3xl font-normal text-ink">
         {pendingUser
           ? "Check your inbox."
+          : mode === "reset"
+          ? "Forgot your password?"
           : mode === "signup"
           ? "Create a free account."
           : "Welcome back."}
@@ -139,6 +161,8 @@ export default function AuthPanel({
       <p className="mt-3 text-sm text-muted">
         {pendingUser
           ? "We sent a verification link to your email. Click it, then come back and hit the button below."
+          : mode === "reset"
+          ? "Enter your email and we'll send you a link to set a new one."
           : "Your chat history is saved to your account so you can pick up where you left off. Email verification is required."}
       </p>
 
@@ -165,6 +189,36 @@ export default function AuthPanel({
             Use a different account
           </button>
         </div>
+      ) : mode === "reset" ? (
+        <form onSubmit={doReset} className="mt-8 space-y-3">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@school.edu"
+            className="focus-ring h-12 w-full rounded-md border border-hair bg-white px-4 text-ink placeholder-dim"
+            aria-label="Email"
+            autoComplete="email"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            className="btn-primary h-12 w-full justify-center disabled:opacity-50"
+          >
+            {busy ? "Sending…" : "Send reset link"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMode("signin");
+              setMsg(null);
+            }}
+            className="w-full text-center text-xs text-muted hover:text-ink"
+          >
+            ← Back to sign in
+          </button>
+        </form>
       ) : (
         <>
           <button
@@ -213,6 +267,20 @@ export default function AuthPanel({
               aria-label="Password"
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
             />
+            {mode === "signin" && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("reset");
+                    setMsg(null);
+                  }}
+                  className="text-xs text-muted hover:text-orange hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
             <button
               type="submit"
               disabled={busy}

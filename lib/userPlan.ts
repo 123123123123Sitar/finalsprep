@@ -4,8 +4,8 @@
  *
  * Shape:
  *   users/{uid}/profile/billing = {
- *     plan: "free" | "regular" | "pro",
- *     billingInterval?: "monthly" | "yearly",
+ *     plan: "free" | "pro" | "premium",
+ *     billingInterval?: "monthly" | "sixmonth",
  *     status?: string,
  *     stripeCustomerId?: string,
  *     stripeSubscriptionId?: string,
@@ -99,10 +99,10 @@ export function isPaid(plan: UserPlan | null | undefined): boolean {
 
 export function planToRateTier(plan: UserPlan | null | undefined): Tier {
   switch (plan?.plan) {
-    case "regular":
-      return "regular";
     case "pro":
       return "pro";
+    case "premium":
+      return "premium";
     default:
       return "free";
   }

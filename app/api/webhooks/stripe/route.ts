@@ -161,8 +161,8 @@ export async function POST(req: Request) {
  * derive from the authoritative priceId on the subscription.
  */
 function resolvePlanTier(priceId: string | undefined): PlanTier {
+  if (priceId && PREMIUM_PRICE_IDS.has(priceId)) return "premium";
   if (priceId && PRO_PRICE_IDS.has(priceId)) return "pro";
-  if (priceId && REGULAR_PRICE_IDS.has(priceId)) return "regular";
   // Unknown price → default to free to avoid accidentally granting paid access.
   return "free";
 }
@@ -186,29 +186,29 @@ function resolveBillingInterval(
 
 // Authoritative price ID sets. Configure via env and NEVER read tier from
 // client-supplied metadata.
-const REGULAR_PRICE_IDS = new Set(
+const PRO_PRICE_IDS = new Set(
   [
-    process.env.STRIPE_PRICE_REGULAR_MONTHLY,
-    process.env.STRIPE_PRICE_REGULAR_SIXMONTH,
-    process.env.STRIPE_PRICE_REGULAR_YEARLY, // legacy
+    process.env.STRIPE_PRICE_PRO_MONTHLY,
+    process.env.STRIPE_PRICE_PRO_SIXMONTH,
+    process.env.STRIPE_PRICE_PRO_YEARLY, // legacy
     process.env.STRIPE_PRICE_MONTHLY, // legacy
     process.env.STRIPE_PRICE_YEARLY, // legacy
     process.env.STRIPE_PRICE_SIXMONTH, // legacy alt
   ].filter(Boolean)
 );
 
-const PRO_PRICE_IDS = new Set(
+const PREMIUM_PRICE_IDS = new Set(
   [
-    process.env.STRIPE_PRICE_PRO_MONTHLY,
-    process.env.STRIPE_PRICE_PRO_SIXMONTH,
-    process.env.STRIPE_PRICE_PRO_YEARLY, // legacy
+    process.env.STRIPE_PRICE_PREMIUM_MONTHLY,
+    process.env.STRIPE_PRICE_PREMIUM_SIXMONTH,
+    process.env.STRIPE_PRICE_PREMIUM_YEARLY, // legacy
   ].filter(Boolean)
 );
 
 const SIXMONTH_PRICE_IDS = new Set(
   [
-    process.env.STRIPE_PRICE_REGULAR_SIXMONTH,
     process.env.STRIPE_PRICE_PRO_SIXMONTH,
+    process.env.STRIPE_PRICE_PREMIUM_SIXMONTH,
     process.env.STRIPE_PRICE_SIXMONTH, // legacy alt
   ].filter(Boolean)
 );

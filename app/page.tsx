@@ -77,13 +77,20 @@ export default function Home() {
     }
   }
 
-  async function buy(planKind: "monthly" | "sixmonth" = "monthly") {
+  async function buy(
+    checkoutPlan:
+      | "pro-monthly"
+      | "pro-sixmonth"
+      | "premium-monthly"
+      | "premium-sixmonth" = "pro-monthly"
+  ) {
     setLoading(true);
     try {
       const token = await getIdToken();
       if (!token) {
-        // Not signed in - send them through signin first
-        window.location.href = `/signin?next=${encodeURIComponent("/?plan=" + planKind)}`;
+        window.location.href = `/signin?next=${encodeURIComponent(
+          "/?plan=" + checkoutPlan
+        )}`;
         return;
       }
       const res = await fetch("/api/checkout", {
@@ -92,7 +99,7 @@ export default function Home() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ plan: planKind === "sixmonth" ? "pro-sixmonth" : "pro-monthly" }),
+        body: JSON.stringify({ plan: checkoutPlan }),
       });
       const { url, error } = await res.json();
       if (url) window.location.href = url;
@@ -137,7 +144,7 @@ export default function Home() {
         <a href="/study" className="nav-link">Study</a>
         <a href="#coverage" className="nav-link hidden sm:inline">Coverage</a>
         <a href="#price" className="nav-link hidden sm:inline">Pricing</a>
-        <button onClick={() => buy("monthly")} className="btn-primary">Get Pro - $16/mo</button>
+        <button onClick={() => buy("pro-monthly")} className="btn-primary">Get Pro - $16/mo</button>
       </SiteNav>
 
       {/* TOP BANNER - real urgency */}
@@ -164,7 +171,7 @@ export default function Home() {
             <strong className="text-ink">$90/6 months</strong> for unlimited.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            <button onClick={() => buy("monthly")} disabled={loading} className="btn-primary text-base">
+            <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary text-base">
               {loading ? "Opening checkout…" : "Start Pro - $16/month"}
             </button>
             <a href="#try" className="btn-ghost text-base">
@@ -310,7 +317,7 @@ export default function Home() {
               >
                 <div>{demoError}</div>
                 {demoLimitHit && (
-                  <button onClick={() => buy("monthly")} className="btn-link mt-2">
+                  <button onClick={() => buy("pro-monthly")} className="btn-link mt-2">
                     Unlock unlimited - $16/month →
                   </button>
                 )}
@@ -336,7 +343,7 @@ export default function Home() {
                 </div>
                 <pre className="whitespace-pre-wrap font-sans">{demoResult}</pre>
                 <div className="mt-5 text-sm">
-                  <button onClick={() => buy("monthly")} className="btn-link">
+                  <button onClick={() => buy("pro-monthly")} className="btn-link">
                     Like this? Unlock unlimited - $16/month →
                   </button>
                 </div>
@@ -558,7 +565,7 @@ export default function Home() {
         </div>
 
         <div className="mt-10 flex flex-wrap items-center gap-3">
-          <button onClick={() => buy("monthly")} disabled={loading} className="btn-primary text-base">
+          <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary text-base">
             {loading ? "Opening checkout…" : "Unlock all 16 courses - $16/mo"}
           </button>
           <a href="/study" className="btn-ghost text-base">
@@ -574,71 +581,204 @@ export default function Home() {
       <hr className="rule mx-auto max-w-5xl" />
 
       {/* PRICING */}
-      <section id="price" className="mx-auto max-w-5xl px-6 py-20">
+      <section id="price" className="mx-auto max-w-6xl px-6 py-20">
         <Reveal from="right">
         <div className="label mb-4">Pricing</div>
         <h2 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
-          Two plans. Cancel anytime.
+          Three plans. Cancel anytime.
         </h2>
         <p className="mt-4 max-w-2xl text-[17px] text-body">
-          The free tier gives you 3-5 chat messages every 5 hours - enough
-          to try the tutor on your actual homework. For unlimited access,
-          pick a plan:
+          Start free with a 5-hour chat budget. Upgrade to Pro for image
+          uploads and a larger budget, or Premium for the model chooser,
+          your own Claude API key, and the biggest budget we offer.
         </p>
 
-        <div className="mt-10 grid gap-5 md:grid-cols-2">
-          {/* Monthly */}
-          <div className="rounded-xl border border-hair bg-white p-7 transition-all hover:-translate-y-0.5 hover:border-rule hover:shadow-[0_14px_36px_-22px_rgba(10,10,10,0.22)]">
-            <div className="label">Monthly</div>
+        {/* THREE TIER CARDS */}
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {/* FREE */}
+          <div className="rounded-xl border border-hair bg-white p-7">
+            <div className="label">Free</div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="font-serif text-6xl font-normal text-ink">$0</span>
+              <span className="text-sm text-muted">forever</span>
+            </div>
+            <p className="mt-2 text-sm text-muted">
+              Test the tutor on your real homework. No card required.
+            </p>
+            <ul className="mt-6 space-y-2 text-[15px] text-body">
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>~5-8 AI chat exchanges every 5 hours</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Units 1-2 of every AP course, curated walkthroughs</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Graphing calc, physics sims, code sandbox</span></li>
+            </ul>
+            <a
+              href="/signin?mode=signup"
+              className="btn-ghost mt-7 w-full justify-center text-base"
+            >
+              Create free account
+            </a>
+          </div>
+
+          {/* PRO - recommended */}
+          <div className="relative rounded-xl border-2 border-ink bg-white p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]">
+            <span className="absolute right-4 top-4 rounded-full bg-orange px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+              Most popular
+            </span>
+            <div className="label">Pro</div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="font-serif text-6xl font-normal text-ink">$16</span>
               <span className="text-sm text-muted">/ month</span>
             </div>
             <p className="mt-2 text-sm text-muted">
-              Cancel anytime. Good for finals week or a single AP exam.
+              Or <strong className="text-ink">$90</strong> for 6 months ($15/mo).
+              Good for finals week.
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Unlimited AI walkthroughs on any problem</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Curriculum walkthroughs + practice for every unit</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Interactive tools: graphing, physics sims, code runners</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, one subscription</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Everything in Free</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Larger AI budget (~30k tokens / 5h)</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Upload images of handwritten work</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, every unit</span></li>
             </ul>
             <button
-              onClick={() => buy("monthly")}
+              onClick={() => buy("pro-monthly")}
               disabled={loading}
               className="btn-primary mt-7 w-full justify-center text-base disabled:opacity-50"
             >
-              {loading ? "Opening checkout…" : "Start monthly - $16"}
+              {loading ? "Opening checkout…" : "Start Pro - $16/mo"}
+            </button>
+            <button
+              onClick={() => buy("pro-sixmonth")}
+              disabled={loading}
+              className="mt-2 w-full text-center text-xs text-muted hover:text-ink"
+            >
+              or $90 for 6 months →
             </button>
           </div>
 
-          {/* 6-month - recommended */}
-          <div className="relative rounded-xl border-2 border-ink bg-white p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5">
-            <span className="absolute right-4 top-4 rounded-full bg-orange px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
-              Save $6
+          {/* PREMIUM */}
+          <div className="relative rounded-xl border border-hair bg-gradient-to-b from-amber-50 to-white p-7">
+            <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+              <CrownIcon className="h-3 w-3" /> Premium
             </span>
-            <div className="label">6 months</div>
+            <div className="label">Premium</div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-serif text-6xl font-normal text-ink">$90</span>
-              <span className="text-sm text-muted">/ 6 months</span>
+              <span className="font-serif text-6xl font-normal text-ink">$29</span>
+              <span className="text-sm text-muted">/ month</span>
             </div>
             <p className="mt-2 text-sm text-muted">
-              Works out to <strong className="text-ink">$15/month</strong>.
-              Covers a full semester of finals and AP exam prep.
+              Or <strong className="text-ink">$160</strong> for 6 months ($27/mo).
+              Heavy users and power students.
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Everything in Monthly</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Covers an entire semester</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Lock in the price for 6 months</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Cancel anytime, prorated refund</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Everything in Pro</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Biggest AI budget (~120k tokens / 5h)</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Model chooser (Haiku / Sonnet / Opus)</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Bring your own Anthropic API key</span></li>
             </ul>
             <button
-              onClick={() => buy("sixmonth")}
+              onClick={() => buy("premium-monthly")}
               disabled={loading}
-              className="btn-primary mt-7 w-full justify-center text-base disabled:opacity-50"
+              className="mt-7 w-full rounded-md bg-amber-500 px-4 py-3 text-center text-base font-medium text-white transition hover:bg-amber-600 disabled:opacity-50"
             >
-              {loading ? "Opening checkout…" : "Start 6 months - $90"}
+              {loading ? "Opening checkout…" : "Go Premium - $29/mo"}
             </button>
+            <button
+              onClick={() => buy("premium-sixmonth")}
+              disabled={loading}
+              className="mt-2 w-full text-center text-xs text-muted hover:text-ink"
+            >
+              or $160 for 6 months →
+            </button>
+          </div>
+        </div>
+
+        {/* COMPARISON TABLE */}
+        <div className="mt-16">
+          <div className="label mb-4">Compare plans</div>
+          <div className="overflow-x-auto rounded-xl border border-hair bg-white">
+            <table className="w-full min-w-[560px] text-left text-[14px]">
+              <thead>
+                <tr className="border-b border-hair bg-offwhite">
+                  <th className="py-4 pl-6 pr-3 font-normal text-muted">
+                    Feature
+                  </th>
+                  <th className="w-[110px] py-4 text-center font-semibold text-ink">
+                    Free
+                  </th>
+                  <th className="w-[110px] py-4 text-center font-semibold text-ink">
+                    Pro
+                  </th>
+                  <th className="w-[130px] py-4 text-center font-semibold text-ink">
+                    <span className="inline-flex items-center gap-1">
+                      <CrownIcon className="h-3.5 w-3.5 text-amber-500" />
+                      Premium
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-hair">
+                <FeatureRow
+                  label="AI chat tutor"
+                  free
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Token budget / 5h"
+                  values={{ free: "4k", pro: "30k", premium: "120k" }}
+                />
+                <FeatureRow
+                  label="Messages / 5h"
+                  values={{ free: "10", pro: "80", premium: "250" }}
+                />
+                <FeatureRow
+                  label="All 16 AP curriculum walkthroughs"
+                  values={{ free: "Units 1-2", pro: "All units", premium: "All units" }}
+                />
+                <FeatureRow
+                  label="Practice problems (every unit)"
+                  free
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Graphing calc, physics sim, code sandbox"
+                  free
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Chat history saved across sessions"
+                  free
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Image uploads (photos of handwritten work)"
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Priority rate limits"
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Model chooser (Haiku / Sonnet / Opus)"
+                  premiumOnly
+                  premium
+                />
+                <FeatureRow
+                  label="Bring your own Anthropic API key"
+                  premiumOnly
+                  premium
+                />
+                <FeatureRow
+                  label="Unlimited with your own key"
+                  premiumOnly
+                  premium
+                />
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -739,7 +879,7 @@ export default function Home() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="/study" className="btn-primary text-base">Open the solver</a>
-            <button onClick={() => buy("monthly")} disabled={loading} className="btn-ghost text-base">
+            <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-ghost text-base">
               Skip ahead - $16/mo
             </button>
           </div>
@@ -760,5 +900,70 @@ export default function Home() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function CrownIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M1.5 4.5 4 8l3-5 1 2 1-2 3 5 2.5-3.5L14 12H2L1.5 4.5Zm.8 9h11.4v1H2.3v-1Z" />
+    </svg>
+  );
+}
+
+type FeatureRowProps = {
+  label: string;
+  free?: boolean;
+  pro?: boolean;
+  premium?: boolean;
+  premiumOnly?: boolean;
+  values?: { free: string; pro: string; premium: string };
+};
+
+function FeatureRow({ label, free, pro, premium, premiumOnly, values }: FeatureRowProps) {
+  return (
+    <tr>
+      <td className="py-3 pl-6 pr-3 text-body">
+        {premiumOnly && (
+          <CrownIcon className="mr-1 inline h-3.5 w-3.5 text-amber-500" />
+        )}
+        {label}
+      </td>
+      <FeatureCell on={!!free} value={values?.free} />
+      <FeatureCell on={!!pro} value={values?.pro} />
+      <FeatureCell on={!!premium} value={values?.premium} />
+    </tr>
+  );
+}
+
+function FeatureCell({ on, value }: { on: boolean; value?: string }) {
+  if (value) {
+    return (
+      <td className="py-3 text-center font-medium text-ink">{value}</td>
+    );
+  }
+  return (
+    <td className="py-3 text-center">
+      {on ? (
+        <span
+          aria-label="Included"
+          className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-green-100 text-green-700"
+        >
+          ✓
+        </span>
+      ) : (
+        <span
+          aria-label="Not included"
+          className="inline-flex h-5 w-5 items-center justify-center text-muted"
+        >
+          ×
+        </span>
+      )}
+    </td>
   );
 }

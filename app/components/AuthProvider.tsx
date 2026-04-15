@@ -13,6 +13,7 @@ import {
   onAuthStateChanged,
   reload,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut as fbSignOut,
@@ -41,6 +42,7 @@ type AuthContextValue = {
   signInWithGoogle: () => Promise<AuthResult>;
   signOut: () => Promise<void>;
   resendVerification: () => Promise<AuthResult>;
+  sendPasswordReset: (email: string) => Promise<AuthResult>;
   refresh: () => Promise<User | null>;
 };
 
@@ -181,6 +183,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await fbSignOut(auth);
   }
 
+  async function sendPasswordReset(email: string) {
+    const auth = getFirebaseAuth();
+    if (!auth) {
+      return { ok: false, message: "Auth is not configured on this server." };
+    }
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+      return {
+        ok: true,
+        message:
+          "If an account exists for that email, a reset link is on its way. Check your inbox in the next couple minutes.",
+      };
+    } catch (e: any) {
+      return { ok: false, ...formatFirebaseError(e) };
+    }
+  }
+
   async function resendVerification() {
     const auth = getFirebaseAuth();
     if (!auth || !auth.currentUser) {
@@ -215,6 +234,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signInWithGoogle,
       signOut,
       resendVerification,
+      sendPasswordReset,
       refresh,
     }),
     [user, loading, configured, plan, getIdToken]
