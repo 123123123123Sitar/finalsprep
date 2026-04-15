@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getAuthedUser } from "@/lib/authGuard";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
-import { getPackById } from "@/lib/tokenBank";
+import { getPackById } from "@/lib/tokenPacks";
 import { logEvent } from "@/lib/events";
 
 export const runtime = "nodejs";

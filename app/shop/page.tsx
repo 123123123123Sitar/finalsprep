@@ -4,7 +4,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getDb } from "@/lib/firebase";
-import { TOKEN_PACKS } from "@/lib/tokenBank";
+import { TOKEN_PACKS } from "@/lib/tokenPacks";
 
 export default function ShopPage() {
   const { user, loading, getIdToken } = useAuth();
