@@ -58,11 +58,12 @@ export async function POST(req: Request) {
           const sub = await stripe.subscriptions.retrieve(subscriptionId);
           currentPeriodEnd = sub.current_period_end;
           const priceId = sub.items.data[0]?.price?.id;
-          const resolvedPlan = resolvePlanTier(session.metadata, sub.metadata, priceId);
+          const recurring = sub.items.data[0]?.price?.recurring;
+          const resolvedPlan = resolvePlanTier(priceId);
           const billingInterval = resolveBillingInterval(
-            session.metadata,
-            sub.metadata,
-            sub.items.data[0]?.price?.recurring?.interval
+            priceId,
+            recurring?.interval,
+            recurring?.interval_count
           );
           const customerId = typeof session.customer === "string"
             ? session.customer
@@ -83,12 +84,15 @@ export async function POST(req: Request) {
         const customerId = typeof session.customer === "string"
           ? session.customer
           : session.customer?.id;
-        await setPlan(uid, {
-          plan: resolvePlanTier(session.metadata, undefined, undefined),
-          stripeCustomerId: customerId,
-          stripeSubscriptionId: subscriptionId,
-          currentPeriodEnd,
-        });
+        // No subscription on the session: we can't derive a plan safely.
+        // Leave the user on whatever their current plan is (do nothing) —
+        // the subscription.created event will promote them correctly.
+        console.warn(
+          "[stripe-webhook] checkout.session.completed with no subscription for uid",
+          uid,
+          "customerId",
+          customerId
+        );
         break;
       }
 
@@ -102,15 +106,14 @@ export async function POST(req: Request) {
         const status = sub.status;
         const isActive = status === "active" || status === "trialing";
         const priceId = sub.items.data[0]?.price?.id;
-        const resolvedPlan = isActive
-          ? resolvePlanTier(undefined, sub.metadata, priceId)
-          : "free";
+        const recurring = sub.items.data[0]?.price?.recurring;
+        const resolvedPlan = isActive ? resolvePlanTier(priceId) : "free";
         await setPlan(uid, {
           plan: resolvedPlan,
           billingInterval: resolveBillingInterval(
-            undefined,
-            sub.metadata,
-            sub.items.data[0]?.price?.recurring?.interval
+            priceId,
+            recurring?.interval,
+            recurring?.interval_count
           ),
           status,
           stripeSubscriptionId: sub.id,
@@ -150,43 +153,62 @@ export async function POST(req: Request) {
   });
 }
 
-function resolvePlanTier(
-  sessionMetadata?: Stripe.Metadata | null,
-  subscriptionMetadata?: Stripe.Metadata | null,
-  priceId?: string
-): PlanTier {
-  const explicit =
-    readTier(subscriptionMetadata?.tier) || readTier(sessionMetadata?.tier);
-  if (explicit) return explicit;
+/**
+ * Resolve the plan tier STRICTLY from the Stripe priceId. We never trust
+ * client-supplied metadata (session or subscription metadata) because the
+ * client controls it via /api/checkout — an attacker could send
+ * `{checkoutPlan:"pro-yearly"}` while paying the regular price. Always
+ * derive from the authoritative priceId on the subscription.
+ */
+function resolvePlanTier(priceId: string | undefined): PlanTier {
   if (priceId && PRO_PRICE_IDS.has(priceId)) return "pro";
-  return "regular";
+  if (priceId && REGULAR_PRICE_IDS.has(priceId)) return "regular";
+  // Unknown price → default to free to avoid accidentally granting paid access.
+  return "free";
 }
 
+/**
+ * Derive billing interval from the Stripe price's recurring config.
+ * Never trust client metadata.
+ */
 function resolveBillingInterval(
-  sessionMetadata?: Stripe.Metadata | null,
-  subscriptionMetadata?: Stripe.Metadata | null,
-  recurringInterval?: Stripe.Price.Recurring.Interval | null
+  priceId: string | undefined,
+  recurringInterval: Stripe.Price.Recurring.Interval | null | undefined,
+  intervalCount?: number | null
 ): BillingInterval | undefined {
-  const explicit =
-    normalizeBillingInterval(subscriptionMetadata?.interval) ||
-    normalizeBillingInterval(sessionMetadata?.interval);
-  if (explicit) return explicit;
+  if (priceId && SIXMONTH_PRICE_IDS.has(priceId)) return "sixmonth";
+  if (recurringInterval === "month" && intervalCount && intervalCount >= 6)
+    return "sixmonth";
   if (recurringInterval === "month") return "monthly";
-  if (recurringInterval === "year") return "yearly";
-  const legacy =
-    normalizeBillingInterval(subscriptionMetadata?.plan) ||
-    normalizeBillingInterval(sessionMetadata?.plan);
-  return legacy;
+  if (recurringInterval === "year") return "sixmonth";
+  return undefined;
 }
 
-function readTier(value: string | null | undefined): PlanTier | null {
-  const tier = normalizePlanTier(value);
-  return tier === "free" ? null : tier;
-}
+// Authoritative price ID sets. Configure via env and NEVER read tier from
+// client-supplied metadata.
+const REGULAR_PRICE_IDS = new Set(
+  [
+    process.env.STRIPE_PRICE_REGULAR_MONTHLY,
+    process.env.STRIPE_PRICE_REGULAR_SIXMONTH,
+    process.env.STRIPE_PRICE_REGULAR_YEARLY, // legacy
+    process.env.STRIPE_PRICE_MONTHLY, // legacy
+    process.env.STRIPE_PRICE_YEARLY, // legacy
+    process.env.STRIPE_PRICE_SIXMONTH, // legacy alt
+  ].filter(Boolean)
+);
 
 const PRO_PRICE_IDS = new Set(
   [
     process.env.STRIPE_PRICE_PRO_MONTHLY,
-    process.env.STRIPE_PRICE_PRO_YEARLY,
+    process.env.STRIPE_PRICE_PRO_SIXMONTH,
+    process.env.STRIPE_PRICE_PRO_YEARLY, // legacy
+  ].filter(Boolean)
+);
+
+const SIXMONTH_PRICE_IDS = new Set(
+  [
+    process.env.STRIPE_PRICE_REGULAR_SIXMONTH,
+    process.env.STRIPE_PRICE_PRO_SIXMONTH,
+    process.env.STRIPE_PRICE_SIXMONTH, // legacy alt
   ].filter(Boolean)
 );

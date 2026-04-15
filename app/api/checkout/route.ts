@@ -117,28 +117,32 @@ export async function POST(req: Request) {
 
 function resolvePriceId(plan: PaidCheckoutPlan): string | undefined {
   switch (plan) {
-    case "regular-yearly":
-      return process.env.STRIPE_PRICE_REGULAR_YEARLY || process.env.STRIPE_PRICE_YEARLY;
     case "pro-monthly":
-      return process.env.STRIPE_PRICE_PRO_MONTHLY;
-    case "pro-yearly":
-      return process.env.STRIPE_PRICE_PRO_YEARLY;
-    case "regular-monthly":
+      return (
+        process.env.STRIPE_PRICE_PRO_MONTHLY ||
+        process.env.STRIPE_PRICE_MONTHLY
+      );
+    case "pro-sixmonth":
+      return (
+        process.env.STRIPE_PRICE_PRO_SIXMONTH ||
+        process.env.STRIPE_PRICE_SIXMONTH ||
+        process.env.STRIPE_PRICE_YEARLY // legacy fallback
+      );
     default:
-      return process.env.STRIPE_PRICE_REGULAR_MONTHLY || process.env.STRIPE_PRICE_MONTHLY;
+      return (
+        process.env.STRIPE_PRICE_PRO_MONTHLY ||
+        process.env.STRIPE_PRICE_MONTHLY
+      );
   }
 }
 
 function missingPriceMessage(plan: PaidCheckoutPlan): string {
   switch (plan) {
-    case "regular-yearly":
-      return "Set STRIPE_PRICE_REGULAR_YEARLY or legacy STRIPE_PRICE_YEARLY in your environment.";
     case "pro-monthly":
       return "Set STRIPE_PRICE_PRO_MONTHLY in your environment.";
-    case "pro-yearly":
-      return "Set STRIPE_PRICE_PRO_YEARLY in your environment.";
-    case "regular-monthly":
+    case "pro-sixmonth":
+      return "Set STRIPE_PRICE_PRO_SIXMONTH in your environment.";
     default:
-      return "Set STRIPE_PRICE_REGULAR_MONTHLY or legacy STRIPE_PRICE_MONTHLY in your environment.";
+      return "Set STRIPE_PRICE_PRO_MONTHLY in your environment.";
   }
 }
