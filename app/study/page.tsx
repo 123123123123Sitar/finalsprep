@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
-import { doc, getDoc, setDoc, arrayUnion, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  onSnapshot,
+  runTransaction,
+  serverTimestamp,
+} from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 import {
   CATEGORIES,
@@ -60,6 +65,16 @@ export default function Study() {
   );
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [tab, setTab] = useState<Tab>("curriculum");
+
+  // Always start on the Overview tab when the page first mounts or when the
+  // user switches to a unit without a lesson context. Prevents landing on
+  // "lesson" or "solver" from a stale prior state.
+  useEffect(() => {
+    if (!selectedLesson) setTab("curriculum");
+    // Only depend on the course/unit/lesson identifiers so we don't fight
+    // the user's manual tab clicks within a unit.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courseSlug, selectedUnit]);
   const [problem, setProblem] = useState("");
   const [explanation, setExplanation] = useState("");
   const [source, setSource] = useState<"curated" | "ai" | null>(null);
@@ -681,54 +696,79 @@ function LessonPanel({
   loadSample: () => void;
   onUpgrade: () => void;
 }) {
+  // null = not yet loaded for learner users; [] = loaded empty; [..] = loaded
   const [viewedSlugs, setViewedSlugs] = useState<string[] | null>(null);
-  const [recorded, setRecorded] = useState(false);
+  const [writeError, setWriteError] = useState<string | null>(null);
 
+  // Paid plans skip all of this and get immediate access.
+  const isPaid = plan !== "learner";
+
+  // Live subscription to the user's viewed lessons so the cap update is
+  // reflected immediately after a write.
   useEffect(() => {
-    if (!uid || plan !== "learner") {
+    if (isPaid || !uid) {
       setViewedSlugs(null);
       return;
     }
     const db = getDb();
     if (!db) return;
-    let cancelled = false;
-    (async () => {
-      const snap = await getDoc(doc(db, "users", uid, "profile", "lessons"));
-      if (cancelled) return;
-      const arr = (snap.data() as any)?.viewedSlugs;
-      setViewedSlugs(Array.isArray(arr) ? arr : []);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [uid, plan, lesson.slug]);
+    const unsub = onSnapshot(
+      doc(db, "users", uid, "profile", "lessons"),
+      (snap) => {
+        const arr = (snap.data() as any)?.viewedSlugs;
+        setViewedSlugs(Array.isArray(arr) ? arr : []);
+      },
+      () => setViewedSlugs([])
+    );
+    return () => unsub();
+  }, [uid, isPaid]);
 
-  // Whether this lesson is allowed for the current user.
-  const alreadyViewed = viewedSlugs?.includes(lesson.slug) ?? false;
-  const viewedCount = viewedSlugs?.length ?? 0;
-  const allowed =
-    plan !== "learner" || alreadyViewed || viewedCount < FREE_LESSON_LIMIT;
-
-  // Record the lesson view once (free users only, when allowed).
+  // Record this lesson view atomically (transaction) so two fast clicks
+  // can't push past the cap. Only runs for learner + uid + when the cap
+  // has room and the slug isn't already counted.
   useEffect(() => {
-    if (!allowed || recorded) return;
-    if (plan !== "learner") return;
-    if (alreadyViewed) return;
-    if (!uid) return;
+    if (isPaid || !uid) return;
+    if (viewedSlugs === null) return; // wait for live load
+    if (viewedSlugs.includes(lesson.slug)) return;
+    if (viewedSlugs.length >= FREE_LESSON_LIMIT) return;
     const db = getDb();
     if (!db) return;
-    setRecorded(true);
-    setDoc(
-      doc(db, "users", uid, "profile", "lessons"),
-      {
-        viewedSlugs: arrayUnion(lesson.slug),
-        updatedAt: serverTimestamp(),
-      },
-      { merge: true }
-    ).catch(() => {
-      /* ignore */
-    });
-  }, [allowed, alreadyViewed, plan, uid, lesson.slug, recorded]);
+    const ref = doc(db, "users", uid, "profile", "lessons");
+    runTransaction(db, async (tx) => {
+      const snap = await tx.get(ref);
+      const cur = (snap.data() as any)?.viewedSlugs;
+      const arr: string[] = Array.isArray(cur) ? cur : [];
+      if (arr.includes(lesson.slug)) return;
+      if (arr.length >= FREE_LESSON_LIMIT) return;
+      tx.set(
+        ref,
+        {
+          viewedSlugs: [...arr, lesson.slug],
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+    }).catch((e) => setWriteError(e?.message || "couldn't record"));
+  }, [isPaid, uid, viewedSlugs, lesson.slug]);
+
+  // Loading state: don't flash the lesson content before we know the cap.
+  if (!isPaid && viewedSlugs === null) {
+    return (
+      <div className="max-w-2xl rounded-md border border-hair bg-offwhite p-6 text-sm text-muted">
+        Loading your lesson access…
+      </div>
+    );
+  }
+
+  const rawViewedCount = viewedSlugs?.length ?? 0;
+  const alreadyViewed = viewedSlugs?.includes(lesson.slug) ?? false;
+  // Clamp the displayed count so we can never render "4/2".
+  const shownCount = Math.min(
+    alreadyViewed ? rawViewedCount : rawViewedCount + 1,
+    FREE_LESSON_LIMIT
+  );
+  const allowed =
+    isPaid || alreadyViewed || rawViewedCount < FREE_LESSON_LIMIT;
 
   if (!allowed) {
     return (
@@ -737,7 +777,7 @@ function LessonPanel({
           Free lesson limit
         </div>
         <h4 className="mt-2 font-serif text-2xl font-normal text-ink">
-          You've opened {viewedCount}/{FREE_LESSON_LIMIT} free lessons.
+          You've opened {FREE_LESSON_LIMIT}/{FREE_LESSON_LIMIT} free lessons.
         </h4>
         <p className="mt-3 max-w-xl text-[15px] text-body">
           Free accounts can preview {FREE_LESSON_LIMIT} lessons total across
@@ -758,9 +798,10 @@ function LessonPanel({
 
   return (
     <div className="max-w-2xl">
-      {plan === "learner" && (
+      {!isPaid && (
         <div className="mb-4 rounded-md border border-orange/30 bg-orange-tint/40 p-3 text-xs text-orange-ink">
-          Free preview · {Math.max(viewedCount, 1)}/{FREE_LESSON_LIMIT} lessons used
+          Free preview · {shownCount}/{FREE_LESSON_LIMIT} lessons used
+          {writeError && <span className="ml-2 text-red-600">({writeError})</span>}
         </div>
       )}
       <ul className="space-y-3 text-[16px]">

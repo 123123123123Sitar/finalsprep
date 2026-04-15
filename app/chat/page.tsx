@@ -420,21 +420,22 @@ function ChatInner() {
 
         {/* MESSAGES */}
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-4xl px-6 pb-8 pt-10">
-            {messages.length === 0 ? (
-              <div className="animate-slideInUp py-8">
+          {messages.length === 0 ? (
+            // Empty state: vertically + horizontally centered hero
+            <div className="mx-auto flex min-h-full max-w-3xl flex-col items-center justify-center px-6 py-16 text-center">
+              <div className="animate-slideInUp w-full">
                 <h1 className="font-serif text-4xl font-normal leading-[1.15] text-ink sm:text-5xl">
                   What are you stuck on?
                 </h1>
-                <p className="mt-3 max-w-xl text-muted">
+                <p className="mx-auto mt-4 max-w-xl text-muted">
                   Paste a problem, describe your confusion, or ask a
                   conceptual question. Math renders in LaTeX. Responses stream
-                  in real time. Your conversations are saved to your account.
+                  in real time.
                 </p>
-                <div className="mt-8 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
+                <div className="mt-10 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
                   Try one of these
                 </div>
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <div className="mx-auto mt-3 grid max-w-2xl gap-2 sm:grid-cols-2">
                   {STARTERS.map((s, i) => (
                     <button
                       key={s}
@@ -443,12 +444,14 @@ function ChatInner() {
                       className="animate-fadeUpSm group rounded-md border border-hair bg-white p-4 text-left text-sm text-body hover:-translate-y-0.5 hover:border-orange hover:bg-orange-tint hover:shadow-[0_2px_0_rgba(0,0,0,0.02),0_10px_24px_-10px_rgba(194,65,12,0.25)]"
                     >
                       <span className="text-muted group-hover:text-orange-ink">→</span>{" "}
-                      <MathRender>{s}</MathRender>
+                      <MathRender auto>{s}</MathRender>
                     </button>
                   ))}
                 </div>
               </div>
-            ) : (
+            </div>
+          ) : (
+            <div className="mx-auto max-w-4xl px-6 pb-8 pt-10">
               <div className="space-y-5">
                 {messages.map((m, i) => (
                   <Message
@@ -462,11 +465,13 @@ function ChatInner() {
                   />
                 ))}
               </div>
-            )}
+            </div>
+          )}
 
-            {error && (
+          {error && (
+            <div className="mx-auto max-w-4xl px-6 pb-6">
               <div
-                className={`animate-fadeUpSm mt-6 rounded-md border p-4 text-sm ${
+                className={`animate-fadeUpSm rounded-md border p-4 text-sm ${
                   limitHit
                     ? "border-orange/40 bg-orange-tint text-orange-ink"
                     : "border-red-200 bg-red-50 text-red-800"
@@ -479,8 +484,8 @@ function ChatInner() {
                   </button>
                 )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* COMPOSER */}
@@ -655,7 +660,9 @@ function Message({
     return (
       <div className="flex justify-end">
         <div className="animate-messageIn max-w-[80%] rounded-2xl rounded-tr-sm bg-ink px-4 py-3 text-[15px] text-white">
-          <div className="whitespace-pre-wrap">{content}</div>
+          <div className="whitespace-pre-wrap">
+            <MathRender auto>{content}</MathRender>
+          </div>
         </div>
       </div>
     );
@@ -675,7 +682,7 @@ function Message({
           </div>
         ) : (
           <>
-            <MathRender>{content}</MathRender>
+            <MathRender auto>{content}</MathRender>
             {streaming && <span className="stream-cursor" aria-hidden="true" />}
           </>
         )}
@@ -687,9 +694,9 @@ function Message({
 function planStatus(plan: PlanTier): string {
   switch (plan) {
     case "pro":
-      return `${planLabel(plan)} · 80k tokens / day`;
+      return `${planLabel(plan)} · 20k tokens / day`;
     case "hacker":
-      return `${planLabel(plan)} · 250k tokens / day · priority traffic`;
+      return `${planLabel(plan)} · 80k tokens / day · priority traffic`;
     default:
       return `${planLabel(plan)} · 10k tokens / day`;
   }
