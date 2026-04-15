@@ -7,6 +7,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
+import { subscribeSelectedCourses } from "@/lib/selectedCourses";
 import {
   CATEGORIES,
   COURSES,
@@ -49,11 +50,33 @@ type Tab =
 
 export default function Study() {
   const [category, setCategory] = useState<CourseCategory>("math");
-  const coursesInCategory = useMemo(
-    () => COURSES.filter((c) => c.category === category),
-    [category]
-  );
   const { user, getIdToken, plan } = useAuth();
+  const [selectedCourses, setSelectedCourses] = useState<string[] | null>(
+    null
+  );
+
+  // Subscribe to the user's chosen courses. null = still loading, empty
+  // array = "show everything" so new accounts aren't forced to pick
+  // before they can browse.
+  useEffect(() => {
+    if (!user) {
+      setSelectedCourses([]);
+      return;
+    }
+    const db = getDb();
+    if (!db) return;
+    const unsub = subscribeSelectedCourses(db, user.uid, setSelectedCourses);
+    return () => unsub();
+  }, [user]);
+
+  const effectiveSelected = selectedCourses ?? [];
+  const coursesInCategory = useMemo(
+    () =>
+      COURSES.filter((c) => c.category === category).filter((c) =>
+        effectiveSelected.length === 0 ? true : effectiveSelected.includes(c.slug)
+      ),
+    [category, effectiveSelected]
+  );
   const [courseSlug, setCourseSlug] = useState<CourseSlug>(COURSES[0].slug);
   const course = useMemo(
     () => COURSES.find((c) => c.slug === courseSlug)!,
@@ -113,8 +136,13 @@ export default function Study() {
   const curriculumUnit = curriculum
     ? getCurriculumUnit(courseSlug, selectedUnit)
     : undefined;
-  const locked = !isUnitUnlocked(selectedUnit, plan);
+  // Learners can read every unit's overview (CurriculumUnitView) but the
+  // deeper material — per-topic lessons, flashcards, practice, interactive
+  // tools — is Pro-only. The `locked` flag only forces the full upsell
+  // view when a learner is outside their selected-course allowance.
   const isPro = plan !== "learner";
+  const locked = false;
+  const learnerOverviewOnly = !isPro;
   const currentMembership = selectedLesson?.courses.find(
     (c) => c.courseSlug === courseSlug
   );
@@ -130,15 +158,27 @@ export default function Study() {
 
   const TABS: { key: Tab; label: string; show: boolean }[] = [
     { key: "curriculum", label: "Overview", show: !!curriculumUnit },
-    { key: "practice", label: "Practice", show: unitPractice.length > 0 },
-    { key: "tools", label: "Interactive", show: unitTools.length > 0 },
-    { key: "lesson", label: "Lesson", show: !!selectedLesson },
-    { key: "diagram", label: "Diagram", show: !!selectedLesson?.diagram },
-    { key: "cards", label: "Flashcards", show: !!selectedLesson },
+    {
+      key: "practice",
+      label: "Practice",
+      show: isPro && unitPractice.length > 0,
+    },
+    {
+      key: "tools",
+      label: "Interactive",
+      show: isPro && unitTools.length > 0,
+    },
+    { key: "lesson", label: "Lesson", show: isPro && !!selectedLesson },
+    {
+      key: "diagram",
+      label: "Diagram",
+      show: isPro && !!selectedLesson?.diagram,
+    },
+    { key: "cards", label: "Flashcards", show: isPro && !!selectedLesson },
     {
       key: "links",
       label: "Links",
-      show: !!selectedLesson && selectedLesson.links.length > 0,
+      show: isPro && !!selectedLesson && selectedLesson.links.length > 0,
     },
     { key: "solver", label: "Solver", show: true },
   ];
@@ -506,7 +546,13 @@ export default function Study() {
                   {tab === "curriculum" && curriculumUnit && (
                     <CurriculumUnitView
                       unit={curriculumUnit}
+                      courseSlug={courseSlug}
+                      unitTopics={
+                        units.find((u) => u.number === selectedUnit)?.topics ??
+                        []
+                      }
                       locked={locked}
+                      plan={plan}
                       onUpgrade={() => buy("pro-monthly")}
                     />
                   )}

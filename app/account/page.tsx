@@ -14,8 +14,8 @@ import {
   normalizeAiPrefs,
   type AiPrefs,
 } from "@/lib/aiPrefs";
-import { CATEGORIES, type CourseCategory } from "@/lib/topics";
-import { planLabel } from "@/lib/plans";
+import { CATEGORIES, COURSES, type CourseCategory } from "@/lib/topics";
+import { planLabel, getCourseLimit } from "@/lib/plans";
 
 type AccentKey = "orange" | "blue" | "green" | "plum";
 
@@ -30,12 +30,14 @@ type Prefs = AiPrefs & {
   defaultCategory: CourseCategory;
   accent: AccentKey;
   mathJaxRender: boolean;
+  selectedCourses: string[];
 };
 
 const DEFAULT_PREFS: Prefs = {
   defaultCategory: "math",
   accent: "orange",
   mathJaxRender: true,
+  selectedCourses: [],
   ...DEFAULT_AI_PREFS,
 };
 
@@ -99,9 +101,17 @@ export default function AccountPage() {
       const db = getDb();
       if (db) {
         const normalizedAiPrefs = normalizeAiPrefs(prefs);
+        const clampedCourses = Array.from(
+          new Set(prefs.selectedCourses ?? [])
+        ).slice(0, getCourseLimit(plan));
         await setDoc(
           doc(db, "users", user.uid, "profile", "prefs"),
-          { ...prefs, ...normalizedAiPrefs, updatedAt: serverTimestamp() },
+          {
+            ...prefs,
+            ...normalizedAiPrefs,
+            selectedCourses: clampedCourses,
+            updatedAt: serverTimestamp(),
+          },
           { merge: true }
         );
       }
@@ -197,6 +207,71 @@ export default function AccountPage() {
             </p>
           </div>
 
+          {/* Course selection */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <div className="label">Your AP courses</div>
+              <span className="text-[11px] text-muted">
+                {prefs.selectedCourses.length} / {getCourseLimit(plan)} ·{" "}
+                {planLabel(plan)} limit
+              </span>
+            </div>
+            <p className="mb-3 text-[13px] text-muted">
+              Pick the courses you're taking. {" "}
+              {plan === "learner"
+                ? "Free accounts get 3 courses and see the unit overview only — upgrade for unlimited lessons."
+                : plan === "pro"
+                ? "Pro unlocks 10 courses with full lessons and CED topic walkthroughs."
+                : "Hacker unlocks the full catalog."}
+            </p>
+            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+              {COURSES.map((c) => {
+                const selected = prefs.selectedCourses.includes(c.slug);
+                const limit = getCourseLimit(plan);
+                const atLimit =
+                  !selected && prefs.selectedCourses.length >= limit;
+                return (
+                  <button
+                    key={c.slug}
+                    onClick={() =>
+                      setPrefs((p) => {
+                        const curr = p.selectedCourses ?? [];
+                        if (curr.includes(c.slug)) {
+                          return {
+                            ...p,
+                            selectedCourses: curr.filter((s) => s !== c.slug),
+                          };
+                        }
+                        if (curr.length >= getCourseLimit(plan)) return p;
+                        return { ...p, selectedCourses: [...curr, c.slug] };
+                      })
+                    }
+                    disabled={atLimit}
+                    className={`flex items-center justify-between gap-2 rounded-md border px-3 py-2 text-left text-[13px] transition ${
+                      selected
+                        ? "border-orange bg-orange-tint text-ink"
+                        : atLimit
+                        ? "cursor-not-allowed border-hair bg-offwhite text-dim"
+                        : "border-hair bg-white text-body hover:border-orange"
+                    }`}
+                  >
+                    <span className="truncate">{c.title}</span>
+                    {selected && (
+                      <span aria-hidden="true" className="shrink-0 text-orange-ink">
+                        ✓
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            {prefs.selectedCourses.length >= getCourseLimit(plan) && plan !== "hacker" && (
+              <p className="mt-3 text-[12px] text-orange-ink">
+                You've hit your plan's course limit. Upgrade for more slots.
+              </p>
+            )}
+          </div>
+
           {/* Default course category */}
           <div>
             <div className="label mb-2">Default category on Study</div>
@@ -275,113 +350,16 @@ export default function AccountPage() {
           <div className="rounded-xl border border-hair bg-offwhite p-5">
             <div className="label mb-2">AI tutor behavior</div>
             <p className="text-[15px] text-body">
-              These settings apply to chat and instant explanations. The default
-              is brief so the tutor does not waste tokens on extra filler.
+              Response length, mode, personality, and custom instructions live
+              inside the chat now. Open chat and click the gear icon next to
+              your email in the sidebar footer to tweak them.
             </p>
-
-            <div className="mt-6">
-              <div className="label mb-2">Response length</div>
-              <div className="grid gap-2 sm:grid-cols-3">
-                {AI_VERBOSITY_OPTIONS.map((option) => (
-                  <button
-                    key={option.key}
-                    type="button"
-                    onClick={() =>
-                      setPrefs((p) => ({ ...p, aiVerbosity: option.key }))
-                    }
-                    className={`rounded-lg border p-3 text-left transition ${
-                      prefs.aiVerbosity === option.key
-                        ? "border-orange bg-orange-tint text-ink"
-                        : "border-hair bg-white text-body hover:border-orange"
-                    }`}
-                  >
-                    <div className="text-sm font-medium">{option.label}</div>
-                    <div className="mt-1 text-xs text-muted">
-                      {option.description}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <div className="label mb-2">Tutor mode</div>
-              <div className="grid gap-2 sm:grid-cols-3">
-                {AI_MODE_OPTIONS.map((option) => (
-                  <button
-                    key={option.key}
-                    type="button"
-                    onClick={() =>
-                      setPrefs((p) => ({ ...p, aiMode: option.key }))
-                    }
-                    className={`rounded-lg border p-3 text-left transition ${
-                      prefs.aiMode === option.key
-                        ? "border-orange bg-orange-tint text-ink"
-                        : "border-hair bg-white text-body hover:border-orange"
-                    }`}
-                  >
-                    <div className="text-sm font-medium">{option.label}</div>
-                    <div className="mt-1 text-xs text-muted">
-                      {option.description}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <div className="label mb-2">Personality</div>
-              <div className="grid gap-2 sm:grid-cols-3">
-                {AI_PERSONALITY_OPTIONS.map((option) => (
-                  <button
-                    key={option.key}
-                    type="button"
-                    onClick={() =>
-                      setPrefs((p) => ({ ...p, aiPersonality: option.key }))
-                    }
-                    className={`rounded-lg border p-3 text-left transition ${
-                      prefs.aiPersonality === option.key
-                        ? "border-orange bg-orange-tint text-ink"
-                        : "border-hair bg-white text-body hover:border-orange"
-                    }`}
-                  >
-                    <div className="text-sm font-medium">{option.label}</div>
-                    <div className="mt-1 text-xs text-muted">
-                      {option.description}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <label className="label mb-2 block">Custom instructions</label>
-              <textarea
-                value={prefs.aiCustomInstructions}
-                onChange={(e) =>
-                  setPrefs((p) => ({
-                    ...p,
-                    aiCustomInstructions: e.target.value.slice(
-                      0,
-                      AI_CUSTOM_INSTRUCTIONS_LIMIT
-                    ),
-                  }))
-                }
-                maxLength={AI_CUSTOM_INSTRUCTIONS_LIMIT}
-                rows={5}
-                placeholder="Examples: be tougher about algebra mistakes, keep answers under 5 bullets, use more worked examples when I seem lost."
-                className="w-full rounded-md border border-hair bg-white px-4 py-3 text-[15px] text-ink outline-none focus:border-orange"
-              />
-              <div className="mt-2 flex items-center justify-between gap-3 text-xs text-muted">
-                <span>
-                  Saved as a style preference. It will not override the tutor's
-                  core safety and teaching rules.
-                </span>
-                <span>
-                  {prefs.aiCustomInstructions.length}/{AI_CUSTOM_INSTRUCTIONS_LIMIT}
-                </span>
-              </div>
-            </div>
+            <a
+              href="/chat"
+              className="btn-ghost mt-4 inline-flex text-sm"
+            >
+              Open chat settings →
+            </a>
           </div>
 
           {/* Plan status */}

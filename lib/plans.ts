@@ -95,3 +95,27 @@ export function planPrice(
 /** AP-season promo: $5 off the first month. Used in the hero banner and checkout copy. */
 export const AP_SALE_ACTIVE = true;
 export const AP_SALE_FIRST_MONTH_OFF_USD = 5;
+
+/**
+ * How many AP courses a user is allowed to add to their selection by plan.
+ * Learners get a small sample (pick the three they care about), Pro gets
+ * most of a high-school workload (up to 10 concurrent courses), and
+ * Hacker unlocks the whole catalog.
+ */
+export const COURSE_LIMITS: Record<PlanTier, number> = {
+  learner: 3,
+  pro: 10,
+  hacker: 16,
+};
+
+export function getCourseLimit(plan: PlanTier): number {
+  return COURSE_LIMITS[plan];
+}
+
+/**
+ * Whether a plan can access per-unit lesson content (CED topics, flashcards,
+ * practice problems, etc.). Learners only see the unit overview section.
+ */
+export function canAccessUnitLessons(plan: PlanTier): boolean {
+  return plan === "pro" || plan === "hacker";
+}

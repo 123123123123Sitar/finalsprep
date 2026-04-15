@@ -66,10 +66,12 @@ function formatMinutes(mins: number): string {
 }
 
 const STARTERS = [
-  "Solve 2x^2 - 5x - 3 = 0 and show me the factoring trick",
-  "How do I set up a related rates problem? Use a ladder sliding down a wall.",
-  "Explain u-substitution on $\\int 2x(x^2+1)^3\\,dx$ step by step",
-  "A 5 kg box on a 30° incline with friction μ = 0.2 - find the acceleration",
+  "Solve 2x^2 - 5x - 3 = 0 by factoring and walk me through the reasoning.",
+  "Set up a related rates problem: a 5 m ladder slides down a wall at 0.2 m/s — how fast is the base moving when the top is 3 m high?",
+  "Walk me through u-substitution on the integral from 0 to 1 of 2x(x^2 + 1)^3 dx.",
+  "A 5 kg box on a 30 degree incline has friction coefficient 0.2. Find the acceleration down the incline.",
+  "Explain Hardy-Weinberg equilibrium and why the five assumptions usually fail in real populations.",
+  "How did the Columbian Exchange reshape both the Americas and Afro-Eurasia between 1450 and 1700?",
 ];
 
 export default function ChatPage() {
@@ -117,6 +119,7 @@ function ChatInner() {
   const [projectsOverlayOpen, setProjectsOverlayOpen] = useState(false);
   const [extensionOverlay, setExtensionOverlay] =
     useState<ChatExtensionKey | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   // Keep projects list fresh for the overlay.
   useEffect(() => {
@@ -527,6 +530,7 @@ function ChatInner() {
             collapse={() => setHistoryOpen(false)}
             onOpenProjects={() => setProjectsOverlayOpen(true)}
             onOpenExtension={(k) => setExtensionOverlay(k)}
+            onOpenSettings={() => setSettingsOpen(true)}
             currentProjectName={currentProjectName}
           />
         ) : (
@@ -815,68 +819,27 @@ function ChatInner() {
                 )}
               </button>
             </div>
-            <div className="mt-2 flex flex-wrap items-center justify-center gap-2 px-2 text-center text-[11px] text-muted">
-              <span>{planStatus(plan)}</span>
-              {plan !== "learner" && (
-                <>
-                  <span className="text-dim">·</span>
-                  <button
-                    type="button"
-                    onClick={() => setThinking((v) => !v)}
-                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] transition ${
-                      thinking
-                        ? "bg-amber-500 text-white"
-                        : "border border-hair bg-white text-muted hover:text-ink"
-                    }`}
-                    title={
-                      thinking
-                        ? "Thinking mode on — uses a stronger model, counts extra tokens"
-                        : "Turn on Thinking mode for hard problems"
-                    }
-                  >
-                    <span aria-hidden="true">{thinking ? "✨" : "○"}</span>
-                    Thinking {thinking ? "on" : "off"}
-                  </button>
-                </>
-              )}
-              {tokensRemaining !== null && (
-                <>
-                  <span className="text-dim">·</span>
-                  <span>
-                    {tokensRemaining.toLocaleString()} tokens left
-                    {resetMinutes && tokensRemaining === 0
-                      ? ` (resets in ${formatMinutes(resetMinutes)})`
-                      : ""}
-                  </span>
-                </>
-              )}
-              <>
-                <span className="text-dim">·</span>
-                <span>
-                  {labelFor(AI_VERBOSITY_OPTIONS, aiPrefs.aiVerbosity)} replies
-                </span>
-              </>
-              <>
-                <span className="text-dim">·</span>
-                <span>{labelFor(AI_MODE_OPTIONS, aiPrefs.aiMode)}</span>
-              </>
-              <>
-                <span className="text-dim">·</span>
-                <span>{labelFor(AI_PERSONALITY_OPTIONS, aiPrefs.aiPersonality)}</span>
-              </>
-              {aiPrefs.aiCustomInstructions && (
-                <>
-                  <span className="text-dim">·</span>
-                  <span>Custom instructions on</span>
-                </>
-              )}
-              <>
-                <span className="text-dim">·</span>
-                <a href="/account" className="hover:text-ink">
-                  Customize AI
-                </a>
-              </>
-            </div>
+            {plan !== "learner" && (
+              <div className="mt-2 flex items-center justify-center">
+                <button
+                  type="button"
+                  onClick={() => setThinking((v) => !v)}
+                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] transition ${
+                    thinking
+                      ? "bg-amber-500 text-white"
+                      : "border border-hair bg-paper text-muted hover:text-ink"
+                  }`}
+                  title={
+                    thinking
+                      ? "Thinking mode on — uses a stronger model, counts extra tokens"
+                      : "Turn on Thinking mode for hard problems"
+                  }
+                >
+                  <span aria-hidden="true">{thinking ? "✨" : "○"}</span>
+                  Thinking {thinking ? "on" : "off"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -897,6 +860,15 @@ function ChatInner() {
         <ChatExtensionOverlay
           ext={extensionOverlay}
           onClose={() => setExtensionOverlay(null)}
+        />
+      )}
+
+      {settingsOpen && (
+        <AiSettingsOverlay
+          uid={user?.uid ?? null}
+          initial={aiPrefs}
+          onClose={() => setSettingsOpen(false)}
+          onSaved={(next) => setAiPrefs(next)}
         />
       )}
     </div>
@@ -1011,6 +983,7 @@ function ExpandedSidebar({
   collapse,
   onOpenProjects,
   onOpenExtension,
+  onOpenSettings,
   currentProjectName,
 }: {
   userEmail: string | null | undefined;
@@ -1024,6 +997,7 @@ function ExpandedSidebar({
   collapse: () => void;
   onOpenProjects: () => void;
   onOpenExtension: (key: ChatExtensionKey) => void;
+  onOpenSettings: () => void;
   currentProjectName: string | null;
 }) {
   return (
@@ -1202,18 +1176,42 @@ function ExpandedSidebar({
         </div>
       </div>
 
-      {/* Footer: account */}
+      {/* Footer: account + AI settings */}
       <div className="mt-auto border-t border-hair px-3 py-3">
-        <a
-          href="/account"
-          className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] text-muted hover:bg-white/60 hover:text-ink"
-          title={userEmail || ""}
-        >
-          <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-orange-tint text-[10px] font-medium text-orange-ink">
-            {(userEmail || "?").charAt(0).toUpperCase()}
-          </div>
-          <span className="truncate">{userEmail || "Account"}</span>
-        </a>
+        <div className="flex items-center gap-1">
+          <a
+            href="/account"
+            className="flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] text-muted hover:bg-white/60 hover:text-ink"
+            title={userEmail || ""}
+          >
+            <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-orange-tint text-[10px] font-medium text-orange-ink">
+              {(userEmail || "?").charAt(0).toUpperCase()}
+            </div>
+            <span className="truncate">{userEmail || "Account"}</span>
+          </a>
+          <button
+            onClick={onOpenSettings}
+            className="shrink-0 rounded-lg p-1.5 text-muted hover:bg-white/60 hover:text-ink"
+            aria-label="AI settings"
+            title="AI settings"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              />
+              <path
+                d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.56V21a2 2 0 1 1-4 0v-.11a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1H3a2 2 0 1 1 0-4h.11a1.7 1.7 0 0 0 1.56-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.56V3a2 2 0 1 1 4 0v.11a1.7 1.7 0 0 0 1 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.56 1H21a2 2 0 1 1 0 4h-.11a1.7 1.7 0 0 0-1.56 1z"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -1720,6 +1718,195 @@ function ChatExtensionOverlay({
           title={meta.title}
           className="flex-1 border-0 bg-paper"
         />
+      </div>
+    </div>
+  );
+}
+
+function AiSettingsOverlay({
+  uid,
+  initial,
+  onClose,
+  onSaved,
+}: {
+  uid: string | null;
+  initial: AiPrefs;
+  onClose: () => void;
+  onSaved: (next: AiPrefs) => void;
+}) {
+  const [prefs, setPrefs] = useState<AiPrefs>(initial);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  async function save() {
+    if (!uid) return;
+    setSaving(true);
+    setMsg(null);
+    try {
+      const db = getDb();
+      if (db) {
+        const { setDoc, serverTimestamp } = await import(
+          "firebase/firestore"
+        );
+        await setDoc(
+          doc(db, "users", uid, "profile", "prefs"),
+          { ...prefs, updatedAt: serverTimestamp() },
+          { merge: true }
+        );
+      }
+      onSaved(prefs);
+      setMsg("Saved. Active on your next message.");
+    } catch (e: any) {
+      setMsg(e?.message || "Couldn't save.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div
+      className="animate-fadeIn fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="AI settings"
+    >
+      <div
+        className="animate-scaleIn relative flex h-[min(88vh,720px)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-hair bg-paper shadow-[0_40px_120px_-20px_rgba(0,0,0,0.5)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-4 border-b border-hair px-7 py-5">
+          <div>
+            <div className="label">Chat settings</div>
+            <h2 className="mt-1 font-serif text-2xl font-normal text-ink">
+              Customize the AI tutor
+            </h2>
+            <p className="mt-1 max-w-lg text-[13px] text-muted">
+              How the tutor talks to you — verbosity, tone, focus — and any
+              standing instructions you want to apply to every chat.
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="shrink-0 rounded-full p-1.5 text-muted hover:bg-offwhite hover:text-ink"
+            aria-label="Close"
+          >
+            <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor">
+              <path d="M3.28 3.28a.75.75 0 0 1 1.06 0L8 6.94l3.66-3.66a.75.75 0 1 1 1.06 1.06L9.06 8l3.66 3.66a.75.75 0 1 1-1.06 1.06L8 9.06l-3.66 3.66a.75.75 0 0 1-1.06-1.06L6.94 8 3.28 4.34a.75.75 0 0 1 0-1.06Z" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex-1 space-y-6 overflow-y-auto px-7 py-6">
+          <PrefRadioGroup
+            label="Reply length"
+            value={prefs.aiVerbosity}
+            options={AI_VERBOSITY_OPTIONS}
+            onChange={(v) => setPrefs({ ...prefs, aiVerbosity: v })}
+          />
+          <PrefRadioGroup
+            label="Mode"
+            value={prefs.aiMode}
+            options={AI_MODE_OPTIONS}
+            onChange={(v) => setPrefs({ ...prefs, aiMode: v })}
+          />
+          <PrefRadioGroup
+            label="Personality"
+            value={prefs.aiPersonality}
+            options={AI_PERSONALITY_OPTIONS}
+            onChange={(v) => setPrefs({ ...prefs, aiPersonality: v })}
+          />
+          <div>
+            <div className="label mb-2">Custom instructions</div>
+            <textarea
+              value={prefs.aiCustomInstructions ?? ""}
+              onChange={(e) =>
+                setPrefs({ ...prefs, aiCustomInstructions: e.target.value })
+              }
+              rows={4}
+              maxLength={1000}
+              placeholder="e.g. 'I'm studying for AP Calc BC finals — always connect problems back to series convergence tests.'"
+              className="focus-ring w-full rounded-md border border-hair bg-offwhite px-3 py-2 text-[14px] text-ink outline-none"
+            />
+            <div className="mt-1 text-[11px] text-muted">
+              Applied to every chat. Leave blank to turn off.
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 border-t border-hair px-7 py-4">
+          <div className="text-[12px] text-muted">{msg ?? ""}</div>
+          <div className="flex gap-2">
+            <button onClick={onClose} className="btn-ghost text-sm">
+              Cancel
+            </button>
+            <button
+              onClick={save}
+              disabled={saving || !uid}
+              className="btn-primary text-sm disabled:opacity-50"
+            >
+              {saving ? "Saving…" : "Save"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PrefRadioGroup<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: T;
+  options: readonly { key: T; label: string; description?: string }[];
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div>
+      <div className="label mb-2">{label}</div>
+      <div className="grid gap-2 sm:grid-cols-2">
+        {options.map((opt) => {
+          const selected = value === opt.key;
+          return (
+            <button
+              key={opt.key}
+              onClick={() => onChange(opt.key)}
+              className={`rounded-lg border px-3 py-2.5 text-left transition ${
+                selected
+                  ? "border-orange bg-orange-tint/40"
+                  : "border-hair bg-paper hover:border-orange/60"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  className={`h-3 w-3 rounded-full border ${
+                    selected ? "border-orange bg-orange" : "border-hair"
+                  }`}
+                />
+                <span className="text-[13px] font-medium text-ink">
+                  {opt.label}
+                </span>
+              </div>
+              {opt.description && (
+                <div className="mt-1 text-[11px] text-muted">
+                  {opt.description}
+                </div>
+              )}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
