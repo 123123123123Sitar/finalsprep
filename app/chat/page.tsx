@@ -487,6 +487,24 @@ function ChatInner() {
         c.title.toLowerCase().includes(convSearch.trim().toLowerCase())
       )
     : conversations;
+  const activeConversation =
+    currentConvId
+      ? conversations.find((c) => c.id === currentConvId) ?? null
+      : null;
+  const draftTitle = titleFromFirstMessage(
+    messages.map(({ role, content }) => ({ role, content }))
+  );
+  const chatTitle = activeConversation?.title?.trim() || draftTitle || "New chat";
+  const chatStatus = currentConvId
+    ? "Saved chat"
+    : messages.length > 0
+      ? "Draft chat"
+      : "New chat";
+  const chatSubtitle = currentProjectName
+    ? "This conversation stays inside the current project context."
+    : messages.length > 0
+      ? "Keep the thread going or start a fresh one from the sidebar."
+      : "Ask a question, paste a problem, or attach an image to get started.";
 
   return (
     <div className="flex flex-1 overflow-hidden">
@@ -523,35 +541,78 @@ function ChatInner() {
 
       {/* Main chat column */}
       <div className="flex flex-1 flex-col">
-        {/* Top navbar: context on the left, shared nav actions on the right */}
-        <div className="flex items-center justify-between gap-4 border-b border-hair bg-paper/85 px-6 py-3 backdrop-blur">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-              <svg
-                viewBox="0 0 24 24"
-                className="h-3.5 w-3.5"
-                fill="none"
-                aria-hidden
+        <div className="border-b border-hair bg-paper px-4 py-3 sm:px-6">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+              <a
+                href="/"
+                className="inline-flex shrink-0 items-center gap-2.5 text-ink"
+                title="FinalsPrep home"
               >
-                <path
-                  d="M7 8h10M7 12h7M7 16h10"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M4 4h16v16H4z"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span>{currentConvId ? "Saved chat" : "New chat"}</span>
+                <LogoMark size={24} className="text-ink" />
+                <span className="hidden items-baseline gap-1 sm:inline-flex">
+                  <span className="text-sm font-semibold">FinalsPrep</span>
+                  <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-muted">
+                    Chat
+                  </span>
+                </span>
+              </a>
+              <div className="hidden h-5 w-px bg-hair md:block" />
+              <div className="hidden items-center gap-4 text-sm md:flex">
+                <a href="/" className="nav-link" title="FinalsPrep home">
+                  Home
+                </a>
+                <a href="/study" className="nav-link" title="Study tool">
+                  Study
+                </a>
+              </div>
             </div>
+
+            <div className="flex shrink-0 items-center gap-3 text-sm sm:gap-4">
+              <ThemePicker />
+              <BuyProButton />
+              <NavUserArea />
+            </div>
+          </div>
+        </div>
+
+        <div className="border-b border-hair bg-offwhite/60 px-4 py-5 sm:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
+                <div className="flex items-center gap-2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-3.5 w-3.5"
+                    fill="none"
+                    aria-hidden
+                  >
+                    <path
+                      d="M7 8h10M7 12h7M7 16h10"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M4 4h16v16H4z"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>{chatStatus}</span>
+                </div>
+              </div>
+              <h1 className="mt-2 max-w-3xl break-words font-serif text-2xl font-normal leading-tight text-ink sm:text-[2rem]">
+                {chatTitle}
+              </h1>
+              <p className="mt-1 max-w-2xl text-sm text-muted">{chatSubtitle}</p>
+            </div>
+
             {currentProjectName && (
               <button
                 onClick={() => setProjectsOverlayOpen(true)}
-                className="animate-fadeUp inline-flex min-w-0 max-w-[240px] items-center gap-1.5 truncate rounded-full border border-orange/40 bg-orange-tint px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-orange-ink hover:border-orange hover:bg-orange/20"
+                className="animate-fadeUp inline-flex min-w-0 max-w-full items-center gap-1.5 self-start rounded-full border border-orange/40 bg-orange-tint px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-orange-ink hover:border-orange hover:bg-orange/20 sm:max-w-[260px]"
                 title={`Project: ${currentProjectName}`}
               >
                 <svg
@@ -567,26 +628,6 @@ function ChatInner() {
                 </span>
               </button>
             )}
-          </div>
-
-          <div className="flex shrink-0 items-center gap-4 text-sm">
-            <a
-              href="/"
-              className="nav-link hidden md:inline"
-              title="FinalsPrep home"
-            >
-              Home
-            </a>
-            <a
-              href="/study"
-              className="nav-link hidden md:inline"
-              title="Study tool"
-            >
-              Study
-            </a>
-            <ThemePicker />
-            <BuyProButton />
-            <NavUserArea />
           </div>
         </div>
 
