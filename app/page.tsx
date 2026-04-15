@@ -77,7 +77,7 @@ export default function Home() {
     }
   }
 
-  async function buy(planKind: "monthly" | "yearly" = "monthly") {
+  async function buy(planKind: "monthly" | "sixmonth" = "monthly") {
     setLoading(true);
     try {
       const token = await getIdToken();
@@ -92,7 +92,7 @@ export default function Home() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ plan: planKind }),
+        body: JSON.stringify({ plan: planKind === "sixmonth" ? "pro-sixmonth" : "pro-monthly" }),
       });
       const { url, error } = await res.json();
       if (url) window.location.href = url;
@@ -137,7 +137,7 @@ export default function Home() {
         <a href="/study" className="nav-link">Study</a>
         <a href="#coverage" className="nav-link hidden sm:inline">Coverage</a>
         <a href="#price" className="nav-link hidden sm:inline">Pricing</a>
-        <button onClick={() => buy("monthly")} className="btn-primary">Get Pro - $9/mo</button>
+        <button onClick={() => buy("monthly")} className="btn-primary">Get Pro - $16/mo</button>
       </SiteNav>
 
       {/* TOP BANNER - real urgency */}
@@ -160,12 +160,12 @@ export default function Home() {
             Instant walkthroughs for algebra, calculus, physics, biology,
             chemistry, computer science, and history - the concept, the
             reasoning, and the common mistakes, not just the final answer.
-            Free to try. <strong className="text-ink">$9/month</strong> or{" "}
-            <strong className="text-ink">$50/year</strong> for unlimited.
+            Free to try. <strong className="text-ink">$16/month</strong> or{" "}
+            <strong className="text-ink">$90/6 months</strong> for unlimited.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-3">
             <button onClick={() => buy("monthly")} disabled={loading} className="btn-primary text-base">
-              {loading ? "Opening checkout…" : "Start Pro - $9/month"}
+              {loading ? "Opening checkout…" : "Start Pro - $16/month"}
             </button>
             <a href="#try" className="btn-ghost text-base">
               Try 3 free right here ↓
@@ -311,7 +311,7 @@ export default function Home() {
                 <div>{demoError}</div>
                 {demoLimitHit && (
                   <button onClick={() => buy("monthly")} className="btn-link mt-2">
-                    Unlock unlimited - $9/month →
+                    Unlock unlimited - $16/month →
                   </button>
                 )}
               </div>
@@ -337,7 +337,7 @@ export default function Home() {
                 <pre className="whitespace-pre-wrap font-sans">{demoResult}</pre>
                 <div className="mt-5 text-sm">
                   <button onClick={() => buy("monthly")} className="btn-link">
-                    Like this? Unlock unlimited - $9/month →
+                    Like this? Unlock unlimited - $16/month →
                   </button>
                 </div>
               </div>
@@ -389,11 +389,11 @@ export default function Home() {
               Whatever you're taking is already in here.
             </p>
             <p className="mt-5">
-              <strong className="text-ink">It's not expensive.</strong>{" "}
-              $9/month is less than one hour with a human tutor, less than a
-              Barron's prep book, and less than two Chipotle orders. The
-              yearly plan works out to $4.17/month - cheaper than one
-              Starbucks drink.
+              <strong className="text-ink">It's less than a single tutoring
+              session.</strong>{" "}
+              $16/month is less than one hour with a human tutor and much
+              less than a Barron's prep book. The 6-month plan works out to
+              $15/month and covers an entire semester of finals.
             </p>
           </div>
         </div>
@@ -559,7 +559,7 @@ export default function Home() {
 
         <div className="mt-10 flex flex-wrap items-center gap-3">
           <button onClick={() => buy("monthly")} disabled={loading} className="btn-primary text-base">
-            {loading ? "Opening checkout…" : "Unlock all 16 courses - $9/mo"}
+            {loading ? "Opening checkout…" : "Unlock all 16 courses - $16/mo"}
           </button>
           <a href="/study" className="btn-ghost text-base">
             Browse free lessons →
@@ -591,7 +591,7 @@ export default function Home() {
           <div className="rounded-xl border border-hair bg-white p-7 transition-all hover:-translate-y-0.5 hover:border-rule hover:shadow-[0_14px_36px_-22px_rgba(10,10,10,0.22)]">
             <div className="label">Monthly</div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-serif text-6xl font-normal text-ink">$9</span>
+              <span className="font-serif text-6xl font-normal text-ink">$16</span>
               <span className="text-sm text-muted">/ month</span>
             </div>
             <p className="mt-2 text-sm text-muted">
@@ -599,45 +599,45 @@ export default function Home() {
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Unlimited AI walkthroughs on any problem</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, lessons, flashcards</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Chat history saved across sessions</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>LaTeX rendering + voice input</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Curriculum walkthroughs + practice for every unit</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Interactive tools: graphing, physics sims, code runners</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, one subscription</span></li>
             </ul>
             <button
               onClick={() => buy("monthly")}
               disabled={loading}
               className="btn-primary mt-7 w-full justify-center text-base disabled:opacity-50"
             >
-              {loading ? "Opening checkout…" : "Start monthly - $9"}
+              {loading ? "Opening checkout…" : "Start monthly - $16"}
             </button>
           </div>
 
-          {/* Yearly - recommended */}
+          {/* 6-month - recommended */}
           <div className="relative rounded-xl border-2 border-ink bg-white p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5">
             <span className="absolute right-4 top-4 rounded-full bg-orange px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
-              Save 54%
+              Save $6
             </span>
-            <div className="label">Yearly</div>
+            <div className="label">6 months</div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-serif text-6xl font-normal text-ink">$50</span>
-              <span className="text-sm text-muted">/ year</span>
+              <span className="font-serif text-6xl font-normal text-ink">$90</span>
+              <span className="text-sm text-muted">/ 6 months</span>
             </div>
             <p className="mt-2 text-sm text-muted">
-              Works out to <strong className="text-ink">$4.17/month</strong>.
-              $58 cheaper than monthly over a year.
+              Works out to <strong className="text-ink">$15/month</strong>.
+              Covers a full semester of finals and AP exam prep.
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Everything in Monthly</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Covers the entire school year</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Lock in the price - no renewals at a higher rate</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Covers an entire semester</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Lock in the price for 6 months</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Cancel anytime, prorated refund</span></li>
             </ul>
             <button
-              onClick={() => buy("yearly")}
+              onClick={() => buy("sixmonth")}
               disabled={loading}
               className="btn-primary mt-7 w-full justify-center text-base disabled:opacity-50"
             >
-              {loading ? "Opening checkout…" : "Start yearly - $50"}
+              {loading ? "Opening checkout…" : "Start 6 months - $90"}
             </button>
           </div>
         </div>
@@ -708,7 +708,7 @@ export default function Home() {
               ["Is this cheating?", "If you paste a problem in, read the explanation, and then do the problem again on your own, no. If you paste it in and copy the answer without reading, that's on you."],
               ["What if the tutor gets something wrong?", "Tell it in the next message and it will correct itself. If you hit a problem in scope where the explanation was genuinely bad, email support@finalsprep.com and we'll refund the purchase."],
               ["What if I want a refund?", "Reply to your receipt within 7 days. No questions asked."],
-              ["How does this compare to a human tutor?", "$9/month is less than one hour with a human tutor, and a real tutor isn't available at 11pm the night before your exam. Use a real tutor for big conceptual gaps; use this for getting unstuck on homework."],
+              ["How does this compare to a human tutor?", "$16/month is less than one hour with a human tutor, and a real tutor isn't available at 11pm the night before your exam. Use a real tutor for big conceptual gaps; use this for getting unstuck on homework."],
             ].map(([q, a]) => (
               <details key={q} className="group border-b border-hair pb-4">
                 <summary className="flex cursor-pointer items-center justify-between py-2 text-ink">
@@ -734,13 +734,13 @@ export default function Home() {
           </h2>
           <p className="mt-5 text-[17px] text-body">
             It takes less time to paste a problem in than to read the rest
-            of this page. Try the free tier first. If it helps, $9/month
+            of this page. Try the free tier first. If it helps, $16/month
             is one click away.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="/study" className="btn-primary text-base">Open the solver</a>
             <button onClick={() => buy("monthly")} disabled={loading} className="btn-ghost text-base">
-              Skip ahead - $9/mo
+              Skip ahead - $16/mo
             </button>
           </div>
         </div>
