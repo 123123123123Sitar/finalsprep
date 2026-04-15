@@ -2,17 +2,24 @@ import { getApps, initializeApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 
-// Prefer the public site URL as the auth domain so the Google OAuth
-// consent screen shows "www.finalsprep.com" rather than the default
-// "<project>.firebaseapp.com". next.config.js rewrites /__/auth/* to
-// the real Firebase handler so the OAuth dance still works.
+// Default to the Firebase-managed auth domain so Google OAuth works
+// without extra Google Cloud Console setup. If you want the consent
+// screen to show your own domain instead, set
+// NEXT_PUBLIC_FIREBASE_USE_CUSTOM_AUTH_DOMAIN=1 AND add your custom
+// `https://<site>/__/auth/handler` to the OAuth client's Authorized
+// redirect URIs, otherwise Google will reject the request with
+// `redirect_uri_mismatch`.
 function resolveAuthDomain(): string | undefined {
-  const site = process.env.NEXT_PUBLIC_SITE_URL;
-  if (site) {
-    try {
-      return new URL(site).host;
-    } catch {
-      /* fall through */
+  const useCustom =
+    process.env.NEXT_PUBLIC_FIREBASE_USE_CUSTOM_AUTH_DOMAIN === "1";
+  if (useCustom) {
+    const site = process.env.NEXT_PUBLIC_SITE_URL;
+    if (site) {
+      try {
+        return new URL(site).host;
+      } catch {
+        /* fall through */
+      }
     }
   }
   return process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
