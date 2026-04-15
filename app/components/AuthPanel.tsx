@@ -30,6 +30,7 @@ export default function AuthPanel({
   const [mode, setMode] = useState<Mode>(initialMode);
   const [email, setEmail] = useState(user?.email ?? "");
   const [password, setPassword] = useState("");
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
@@ -43,6 +44,13 @@ export default function AuthPanel({
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "signup" && !ageConfirmed) {
+      setMsg({
+        kind: "err",
+        text: "You must confirm you're at least 13 and accept the terms to create an account.",
+      });
+      return;
+    }
     setBusy(true);
     setMsg(null);
     const fn = mode === "signup" ? signUp : signIn;
@@ -76,6 +84,13 @@ export default function AuthPanel({
   }
 
   async function doGoogle() {
+    if (mode === "signup" && !ageConfirmed) {
+      setMsg({
+        kind: "err",
+        text: "You must confirm you're at least 13 and accept the terms to create an account.",
+      });
+      return;
+    }
     setBusy(true);
     setMsg(null);
     const r = await signInWithGoogle();
@@ -281,9 +296,41 @@ export default function AuthPanel({
                 </button>
               </div>
             )}
+            {mode === "signup" && (
+              <label className="flex cursor-pointer items-start gap-2 pt-1 text-[12px] leading-snug text-body">
+                <input
+                  type="checkbox"
+                  checked={ageConfirmed}
+                  onChange={(e) => setAgeConfirmed(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-orange"
+                  aria-label="Age and terms confirmation"
+                />
+                <span>
+                  I'm at least 13 years old and I agree to the{" "}
+                  <a
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-orange hover:underline"
+                  >
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-orange hover:underline"
+                  >
+                    Privacy Policy
+                  </a>
+                  .
+                </span>
+              </label>
+            )}
             <button
               type="submit"
-              disabled={busy}
+              disabled={busy || (mode === "signup" && !ageConfirmed)}
               className="btn-primary h-12 w-full justify-center disabled:opacity-50"
             >
               {busy ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}
