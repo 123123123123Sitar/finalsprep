@@ -4,12 +4,18 @@ import "./globals.css";
 import { AuthProvider } from "@/app/components/AuthProvider";
 import { ThemeProvider } from "@/app/components/ThemeProvider";
 
-// Runs before React hydrates so we don't flash the wrong theme.
-const themeBootstrap = `
+// Runs before React hydrates so we don't flash the wrong theme or a
+// full SiteNav on pages that are embedded in a chat-extension overlay
+// (the chat sidebar iframes these pages with ?embed=1).
+const bootstrap = `
 try {
   var t = localStorage.getItem('fp-theme');
   if (t === 'dark' || t === 'sepia' || t === 'light') {
     document.documentElement.setAttribute('data-theme', t);
+  }
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('embed') === '1') {
+    document.documentElement.setAttribute('data-embed', '1');
   }
 } catch (e) {}
 `;
@@ -31,8 +37,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <script
-          id="fp-theme-bootstrap"
-          dangerouslySetInnerHTML={{ __html: themeBootstrap }}
+          id="fp-bootstrap"
+          dangerouslySetInnerHTML={{ __html: bootstrap }}
         />
       </head>
       <body className="min-h-screen bg-paper text-body antialiased">

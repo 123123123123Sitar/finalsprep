@@ -35,6 +35,24 @@ import {
 type UploadImage = { mediaType: string; data: string; thumb: string };
 type Msg = { role: "user" | "assistant"; content: string; streaming?: boolean };
 
+type ChatExtensionKey =
+  | "interactives"
+  | "review"
+  | "insights"
+  | "schedule"
+  | "shop";
+
+const CHAT_EXTENSIONS: Record<
+  ChatExtensionKey,
+  { title: string; path: string }
+> = {
+  interactives: { title: "Interactives", path: "/interactives" },
+  review: { title: "Review bank", path: "/review" },
+  insights: { title: "Insights", path: "/insights" },
+  schedule: { title: "Schedule", path: "/schedule" },
+  shop: { title: "Shop tokens", path: "/shop" },
+};
+
 function formatMinutes(mins: number): string {
   if (mins < 60) return `${mins}m`;
   const h = Math.floor(mins / 60);
@@ -92,6 +110,8 @@ function ChatInner() {
   const [currentProjectName, setCurrentProjectName] = useState<string | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectsOverlayOpen, setProjectsOverlayOpen] = useState(false);
+  const [extensionOverlay, setExtensionOverlay] =
+    useState<ChatExtensionKey | null>(null);
 
   // Keep projects list fresh for the overlay.
   useEffect(() => {
@@ -483,6 +503,7 @@ function ChatInner() {
             removeConversation={removeConversation}
             collapse={() => setHistoryOpen(false)}
             onOpenProjects={() => setProjectsOverlayOpen(true)}
+            onOpenExtension={(k) => setExtensionOverlay(k)}
             currentProjectName={currentProjectName}
           />
         ) : (
@@ -490,6 +511,7 @@ function ChatInner() {
             startNewChat={startNewChat}
             expand={() => setHistoryOpen(true)}
             onOpenProjects={() => setProjectsOverlayOpen(true)}
+            onOpenExtension={(k) => setExtensionOverlay(k)}
           />
         )}
       </aside>
@@ -775,6 +797,13 @@ function ChatInner() {
           onClose={() => setProjectsOverlayOpen(false)}
         />
       )}
+
+      {extensionOverlay && (
+        <ChatExtensionOverlay
+          ext={extensionOverlay}
+          onClose={() => setExtensionOverlay(null)}
+        />
+      )}
     </div>
   );
 }
@@ -886,6 +915,7 @@ function ExpandedSidebar({
   removeConversation,
   collapse,
   onOpenProjects,
+  onOpenExtension,
   currentProjectName,
 }: {
   userEmail: string | null | undefined;
@@ -898,6 +928,7 @@ function ExpandedSidebar({
   removeConversation: (c: StoredConversation) => void;
   collapse: () => void;
   onOpenProjects: () => void;
+  onOpenExtension: (key: ChatExtensionKey) => void;
   currentProjectName: string | null;
 }) {
   return (
@@ -982,7 +1013,7 @@ function ExpandedSidebar({
           )}
         </button>
         <SidebarItem
-          href="/interactives"
+          onClick={() => onOpenExtension("interactives")}
           icon={
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M3 17l4-4 4 4 6-6 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -993,7 +1024,7 @@ function ExpandedSidebar({
           label="Interactives"
         />
         <SidebarItem
-          href="/review"
+          onClick={() => onOpenExtension("review")}
           icon={
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
@@ -1003,7 +1034,7 @@ function ExpandedSidebar({
           label="Review bank"
         />
         <SidebarItem
-          href="/insights"
+          onClick={() => onOpenExtension("insights")}
           icon={
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M4 20V10m6 10V4m6 16v-8m6 8v-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -1012,7 +1043,7 @@ function ExpandedSidebar({
           label="Insights"
         />
         <SidebarItem
-          href="/schedule"
+          onClick={() => onOpenExtension("schedule")}
           icon={
             <svg viewBox="0 0 24 24" fill="none">
               <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
@@ -1022,7 +1053,7 @@ function ExpandedSidebar({
           label="Schedule"
         />
         <SidebarItem
-          href="/shop"
+          onClick={() => onOpenExtension("shop")}
           icon={
             <svg viewBox="0 0 24 24" fill="none">
               <path d="M5 7h14l-1.5 11a2 2 0 0 1-2 1.8h-7a2 2 0 0 1-2-1.8L5 7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
@@ -1097,10 +1128,12 @@ function CollapsedSidebar({
   startNewChat,
   expand,
   onOpenProjects,
+  onOpenExtension,
 }: {
   startNewChat: () => void;
   expand: () => void;
   onOpenProjects: () => void;
+  onOpenExtension: (key: ChatExtensionKey) => void;
 }) {
   return (
     <div className="flex h-full w-14 flex-col items-center gap-3 py-4">
@@ -1135,24 +1168,37 @@ function CollapsedSidebar({
           <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
         </svg>
       </button>
-      <a
-        href="/interactives"
+      <button
+        onClick={() => onOpenExtension("interactives")}
         className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
         title="Interactives"
+        aria-label="Interactives"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
           <path d="M3 17l4-4 4 4 6-6 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-      </a>
-      <a
-        href="/review"
+      </button>
+      <button
+        onClick={() => onOpenExtension("review")}
         className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
         title="Review bank"
+        aria-label="Review bank"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
           <path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
         </svg>
-      </a>
+      </button>
+      <button
+        onClick={() => onOpenExtension("schedule")}
+        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        title="Schedule"
+        aria-label="Schedule"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      </button>
     </div>
   );
 }
@@ -1382,9 +1428,11 @@ function ProjectsOverlay({
                     <li key={p.id}>
                       <div
                         className={`group relative rounded-lg border p-3 transition ${
-                          isOpen
+                          isActive
                             ? "border-orange bg-orange-tint/50"
-                            : "border-hair bg-paper hover:border-orange"
+                            : isOpen
+                            ? "border-ink/30 bg-offwhite"
+                            : "border-hair bg-paper hover:border-orange/60"
                         }`}
                       >
                         <button
@@ -1498,6 +1546,85 @@ function ProjectsOverlay({
             )}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ChatExtensionOverlay({
+  ext,
+  onClose,
+}: {
+  ext: ChatExtensionKey;
+  onClose: () => void;
+}) {
+  const meta = CHAT_EXTENSIONS[ext];
+  // Cache-bust the src so switching between extensions re-renders the iframe.
+  const src = `${meta.path}?embed=1`;
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="animate-fadeIn fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={meta.title}
+    >
+      <div
+        className="animate-scaleIn relative flex h-[min(90vh,820px)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-hair bg-paper shadow-[0_40px_120px_-20px_rgba(0,0,0,0.5)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-hair px-5 py-3">
+          <div className="flex items-center gap-2">
+            <div className="label">Chat extension</div>
+            <span className="text-dim">·</span>
+            <div className="font-serif text-lg text-ink">{meta.title}</div>
+          </div>
+          <div className="flex items-center gap-1">
+            <a
+              href={meta.path}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded p-1.5 text-muted hover:bg-offwhite hover:text-ink"
+              title="Open in new tab"
+              aria-label="Open in new tab"
+            >
+              <svg viewBox="0 0 16 16" className="h-4 w-4" fill="none">
+                <path
+                  d="M6 3H3v10h10v-3M10 3h3v3M13 3 7.5 8.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
+            <button
+              onClick={onClose}
+              className="rounded-full p-1.5 text-muted hover:bg-offwhite hover:text-ink"
+              aria-label="Close"
+              title="Close"
+            >
+              <svg viewBox="0 0 16 16" className="h-4 w-4" fill="currentColor">
+                <path d="M3.28 3.28a.75.75 0 0 1 1.06 0L8 6.94l3.66-3.66a.75.75 0 1 1 1.06 1.06L9.06 8l3.66 3.66a.75.75 0 1 1-1.06 1.06L8 9.06l-3.66 3.66a.75.75 0 0 1-1.06-1.06L6.94 8 3.28 4.34a.75.75 0 0 1 0-1.06Z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <iframe
+          key={ext}
+          src={src}
+          title={meta.title}
+          className="flex-1 border-0 bg-paper"
+        />
       </div>
     </div>
   );

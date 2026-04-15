@@ -58,6 +58,17 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
+/* Chat-extension embed mode: the chat page iframes these routes with
+   ?embed=1 so SiteNav and any top banners collapse, leaving just the
+   page body inside the overlay. */
+html[data-embed="1"] [data-site-nav],
+html[data-embed="1"] [data-embed-hide] {
+  display: none !important;
+}
+html[data-embed="1"] body {
+  background: rgb(var(--paper));
+}
+
 html { scroll-behavior: smooth; }
 
 ::selection { background: rgb(var(--orange-tint)); color: rgb(var(--orange-ink)); }
