@@ -150,9 +150,9 @@ button, a, input, textarea, details, summary, [role="button"] {
   to { opacity: 1; transform: scale(1); }
 }
 @keyframes heroReveal {
-  0% { opacity: 0; transform: translateY(40px); clip-path: inset(0 0 100% 0); }
+  0% { opacity: 0; transform: translateY(40px); clip-path: inset(0 -5% 100% -5%); }
   60% { opacity: 1; }
-  100% { opacity: 1; transform: translateY(0); clip-path: inset(0 0 0% 0); }
+  100% { opacity: 1; transform: translateY(0); clip-path: inset(-5% -5% -12% -5%); }
 }
 @keyframes float {
   0%, 100% { transform: translateY(0) translateX(0); }

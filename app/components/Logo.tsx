@@ -69,7 +69,7 @@ export function LogoMark({
 }
 
 export default function Logo({
-  size = 22,
+  size = 30,
   className = "",
 }: {
   size?: number;
@@ -78,16 +78,16 @@ export default function Logo({
   return (
     <Link
       href="/"
-      className={`group inline-flex items-center gap-2 text-ink ${className}`}
+      className={`group inline-flex items-center gap-2.5 text-ink ${className}`}
       aria-label="FinalsPrep home"
     >
       <LogoMark
-        size={size + 6}
+        size={size + 10}
         className="text-ink transition-transform duration-300 group-hover:-translate-y-[1px] group-hover:scale-[1.02]"
       />
-      <span className="flex items-baseline gap-px text-[15px] tracking-[0.01em]">
+      <span className="flex items-baseline gap-px text-[19px] tracking-[0.01em]">
         <span className="font-semibold">Finals</span>
-        <span className="font-serif text-[16px] italic text-orange-ink">Prep</span>
+        <span className="font-serif text-[20px] italic text-orange-ink">Prep</span>
       </span>
     </Link>
   );

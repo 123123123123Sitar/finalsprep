@@ -171,7 +171,7 @@ export default function Home() {
 
         <div className="relative max-w-3xl">
           <div className="label animate-fadeUp mb-6">For high school students</div>
-          <h1 className="animate-heroReveal font-serif text-[52px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[76px]">
+          <h1 className="animate-heroReveal font-serif text-[52px] font-normal leading-[1.1] tracking-tightest text-ink pb-2 sm:text-[76px]">
             Step-by-step answers<br />
             for <span className="italic gradient-text">every</span> math problem.
           </h1>
