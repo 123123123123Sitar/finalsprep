@@ -36,13 +36,24 @@ function AuthMenu() {
 
   if (user && user.emailVerified) {
     return (
-      <button
-        onClick={() => signOut()}
-        className="nav-link"
-        title={user.email || undefined}
-      >
-        Sign out
-      </button>
+      <>
+        <a
+          href="/account"
+          className="nav-link"
+          title={user.email || undefined}
+        >
+          Account
+        </a>
+        <button
+          onClick={async () => {
+            await signOut();
+            window.location.href = "/";
+          }}
+          className="nav-link"
+        >
+          Sign out
+        </button>
+      </>
     );
   }
 
