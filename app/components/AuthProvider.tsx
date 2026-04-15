@@ -262,7 +262,12 @@ function prettyFirebaseError(
     case "auth/operation-not-allowed":
       return "Email/Password sign-in isn't enabled in Firebase. Enable it in the Firebase console.";
     case "auth/app-not-authorized":
+    case "auth/unauthorized-domain":
       return "This domain isn't authorized for Firebase auth. Add it under Firebase Authentication -> Settings -> Authorized domains.";
+    case "auth/popup-blocked":
+      return "Your browser blocked the sign-in popup. Allow popups for this site and try again.";
+    case "auth/account-exists-with-different-credential":
+      return "An account with this email already exists using a different sign-in method. Try the other method first.";
     case "auth/configuration-not-found":
       return "Firebase auth isn't fully configured for this project yet. Check the web app config and enabled sign-in methods.";
     case "auth/invalid-api-key":
