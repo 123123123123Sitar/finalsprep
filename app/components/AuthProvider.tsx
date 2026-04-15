@@ -22,6 +22,7 @@ import {
 import { doc, onSnapshot } from "firebase/firestore";
 import { getDb, getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
 import { normalizePlanTier, type PlanTier } from "@/lib/plans";
+import type { StreakDoc } from "@/lib/streaks";
 
 export type ClientPlan = PlanTier;
 export type AuthResult = {
@@ -35,6 +36,7 @@ type AuthContextValue = {
   loading: boolean;
   configured: boolean;
   plan: ClientPlan;
+  streak: StreakDoc | null;
   /** Returns an ID token for the current user, or null if not signed in. */
   getIdToken: () => Promise<string | null>;
   signUp: (email: string, password: string) => Promise<AuthResult>;
@@ -52,6 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [plan, setPlan] = useState<ClientPlan>("free");
+  const [streak, setStreak] = useState<StreakDoc | null>(null);
   const configured = isFirebaseConfigured();
 
   useEffect(() => {
@@ -66,6 +69,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     return () => unsub();
   }, []);
+
+  // Subscribe to the streak doc so the nav badge updates live.
+  useEffect(() => {
+    if (!user) {
+      setStreak(null);
+      return;
+    }
+    const db = getDb();
+    if (!db) return;
+    const ref = doc(db, "users", user.uid, "profile", "streak");
+    const unsub = onSnapshot(
+      ref,
+      (snap) => {
+        const d = snap.data() as Partial<StreakDoc> | undefined;
+        setStreak(
+          d
+            ? {
+                current: typeof d.current === "number" ? d.current : 0,
+                longest: typeof d.longest === "number" ? d.longest : 0,
+                lastActiveDate:
+                  typeof d.lastActiveDate === "string" ? d.lastActiveDate : "",
+              }
+            : null
+        );
+      },
+      () => setStreak(null)
+    );
+    return () => unsub();
+  }, [user]);
 
   // Subscribe to the user's billing doc so the plan updates in real-time
   // when the Stripe webhook promotes them.
@@ -228,6 +260,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading,
       configured,
       plan,
+      streak,
       getIdToken,
       signUp,
       signIn,
@@ -237,7 +270,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       sendPasswordReset,
       refresh,
     }),
-    [user, loading, configured, plan, getIdToken]
+    [user, loading, configured, plan, streak, getIdToken]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

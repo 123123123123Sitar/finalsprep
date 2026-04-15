@@ -104,6 +104,24 @@ function UnlockedUnitView({ unit }: { unit: CurriculumUnit }) {
           ))}
         </ul>
       </Section>
+
+      {/* Pro Notes — deeper, opinionated synthesis */}
+      <div className="rounded-xl border-2 border-orange/30 bg-orange-tint/40 p-5">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="rounded-full bg-orange px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+            Pro notes
+          </span>
+          <span className="text-xs text-muted">What actually shows up on the exam</span>
+        </div>
+        <p className="text-[15px] leading-relaxed text-body">
+          <strong className="text-ink">If you only study one thing in this unit,</strong>{" "}
+          memorize the {unit.essentials[0]?.heading.toLowerCase() || "core idea"} and
+          understand why each common mistake above is a trap. Graders see the same
+          wrong answer on thousands of exams — {unit.commonMistakes[0] || "watch the signs"}
+          {" "}is the #1 one. When you hit practice problems, do the hard one first;
+          if you can do it, the easy ones are free.
+        </p>
+      </div>
     </div>
   );
 }
@@ -117,58 +135,54 @@ function LockedUnitView({
 }) {
   return (
     <div className="max-w-3xl">
-      <div>
-        <div className="meta">
+      <div className="flex items-center gap-2">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
           Unit {unit.unitNumber} · Exam weight: {unit.examWeight}
-        </div>
-        <h3 className="mt-1 font-serif text-3xl font-normal text-ink">
-          {unit.title}
-        </h3>
-        <p className="mt-3 text-[16px] text-body">
-          <MathRender auto>{unit.overview}</MathRender>
-        </p>
+        </span>
+        <span className="rounded bg-orange text-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider">
+          Locked
+        </span>
       </div>
+      <h3 className="mt-2 font-serif text-3xl font-normal text-ink">
+        {unit.title}
+      </h3>
 
-      <div className="mt-6 rounded-md border border-dashed border-hair bg-offwhite p-4">
-        <div className="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink">
-          Preview · first big idea
+      <div className="mt-6 rounded-xl border-2 border-orange/40 bg-orange-tint p-8">
+        <div className="flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-orange-ink">
+            <path d="M6 10V7a6 6 0 0 1 12 0v3M5 10h14v10H5z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="text-[11px] font-medium uppercase tracking-[0.14em] text-orange-ink">
+            Pro content
+          </span>
         </div>
-        <p className="mt-2 text-[15px] text-body">
-          <MathRender auto>{unit.bigIdeas[0] ?? ""}</MathRender>
-        </p>
-      </div>
-
-      <div className="mt-6 rounded-xl border-2 border-orange/40 bg-orange-tint p-6">
-        <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-orange-ink">
-          Pro content
-        </div>
-        <h4 className="mt-2 font-serif text-2xl font-normal text-ink">
-          Unlock the rest of Unit {unit.unitNumber} and every other unit.
+        <h4 className="mt-3 font-serif text-2xl font-normal text-ink">
+          Unlock every unit with Pro.
         </h4>
         <p className="mt-3 max-w-xl text-[15px] text-body">
-          The full unit walkthrough includes {unit.essentials.length}{" "}
+          Free users get Units 1 and 2 as a sample. Pro unlocks the full
+          walkthrough for this unit (overview, {unit.essentials.length}{" "}
           essential-knowledge sections, {unit.commonMistakes.length} common
-          mistakes graders watch for, an exam strategy paragraph, and{" "}
-          {unit.studyTips.length} concrete study actions — all written to match
-          the College Board CED. Free users get Units 1 and 2 of every course
-          as a sample.
+          mistakes graders watch for, Pro Notes, full practice sets,
+          flashcards, and interactive tools) plus every other unit in all
+          16 AP courses.
         </p>
         <ul className="mt-4 space-y-1.5 text-[13.5px] text-body">
           <li className="flex gap-2">
             <span className="mt-[9px] h-1 w-1 rounded-full bg-orange" />
-            <span>Big ideas, key facts, and exam strategy for every unit</span>
+            <span>All 27+ units per course, every walkthrough</span>
           </li>
           <li className="flex gap-2">
             <span className="mt-[9px] h-1 w-1 rounded-full bg-orange" />
-            <span>Common mistakes and graders' pet peeves called out by unit</span>
+            <span>Practice problems with solutions, Pro Notes, flashcards</span>
           </li>
           <li className="flex gap-2">
             <span className="mt-[9px] h-1 w-1 rounded-full bg-orange" />
-            <span>Unlimited AI walkthroughs on any problem you paste</span>
+            <span>Image uploads (photo your handwritten work)</span>
           </li>
           <li className="flex gap-2">
             <span className="mt-[9px] h-1 w-1 rounded-full bg-orange" />
-            <span>All 16 AP courses covered — one subscription</span>
+            <span>Larger AI chat budget — 8x what Free gets</span>
           </li>
         </ul>
         <div className="mt-6 flex flex-wrap gap-3">
@@ -177,10 +191,10 @@ function LockedUnitView({
             className="btn-primary text-sm"
             data-testid="unit-upgrade-button"
           >
-            Unlock Pro — $9/month
+            Unlock Pro — $16/month
           </button>
           <a href="/#price" className="btn-ghost text-sm">
-            See yearly ($50) →
+            Or $90 for 6 months →
           </a>
         </div>
       </div>

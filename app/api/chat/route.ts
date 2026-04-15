@@ -208,10 +208,16 @@ export async function POST(req: Request) {
           } catch {}
         }
 
-        const totalTokens =
+        const rawTokens =
           capturedInput + capturedOutput ||
           estimateTokens(messages.map((m) => m.content).join("\n")) +
             estimateTokens(accumulated);
+        // Thinking models (Opus) charge 2x against the rate-limit budget.
+        // They're slower and more expensive per token, and the reasoning
+        // chain consumes extra latent tokens we don't get billed for in
+        // "usage" — so double-booking keeps incentives aligned.
+        const isThinking = model === ALLOWED_MODELS.opus;
+        const totalTokens = isThinking ? rawTokens * 2 : rawTokens;
         // Only charge the shared budget if we used our own server key.
         if (!bringsOwnKey) record(key, totalTokens);
         if (user?.uid) {

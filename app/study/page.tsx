@@ -21,6 +21,7 @@ import Flashcards from "@/app/components/Flashcards";
 import SiteNav from "@/app/components/SiteNav";
 import MathRender from "@/app/components/Math";
 import CurriculumUnitView from "@/app/components/CurriculumUnitView";
+import HighlightTooltip from "@/app/components/HighlightTooltip";
 import PracticeProblems from "@/app/components/PracticeProblems";
 import GraphingCalculator from "@/app/components/GraphingCalculator";
 import Graph3D from "@/app/components/Graph3D";
@@ -83,8 +84,8 @@ export default function Study() {
     [courseSlug, selectedUnit]
   );
 
-  const TABS: { key: Tab; label: string; show: boolean }[] = [
-    { key: "curriculum", label: "Curriculum", show: !!curriculumUnit },
+  const TABS: { key: Tab; label: string; show: boolean; proOnly?: boolean }[] = [
+    { key: "curriculum", label: "Overview", show: !!curriculumUnit },
     {
       key: "practice",
       label: "Practice",
@@ -95,17 +96,19 @@ export default function Study() {
       label: "Interactive",
       show: unitTools.length > 0,
     },
-    { key: "lesson", label: "Lesson", show: !!selectedLesson },
+    { key: "lesson", label: "Lesson", show: !!selectedLesson, proOnly: true },
     {
       key: "diagram",
       label: "Diagram",
       show: !!selectedLesson?.diagram,
+      proOnly: true,
     },
-    { key: "cards", label: "Flashcards", show: !!selectedLesson },
+    { key: "cards", label: "Flashcards", show: !!selectedLesson, proOnly: true },
     {
       key: "links",
       label: "Links",
       show: !!selectedLesson && selectedLesson.links.length > 0,
+      proOnly: true,
     },
     { key: "solver", label: "Solver", show: true },
   ];
@@ -142,13 +145,19 @@ export default function Study() {
     setError("");
   }
 
-  async function buy(planKind: "monthly" | "yearly" = "monthly") {
+  async function buy(
+    checkoutPlan:
+      | "pro-monthly"
+      | "pro-sixmonth"
+      | "premium-monthly"
+      | "premium-sixmonth" = "pro-monthly"
+  ) {
     setBuyLoading(true);
     try {
       const token = await getIdToken();
       if (!token) {
         window.location.href = `/signin?next=${encodeURIComponent(
-          "/study?plan=" + planKind
+          "/study?plan=" + checkoutPlan
         )}`;
         return;
       }
@@ -158,7 +167,7 @@ export default function Study() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ plan: planKind }),
+        body: JSON.stringify({ plan: checkoutPlan }),
       });
       const { url, error } = await res.json();
       if (url) window.location.href = url;
@@ -234,7 +243,7 @@ export default function Study() {
                 unlock everything.
               </span>
               <button
-                onClick={() => buy("monthly")}
+                onClick={() => buy("pro-monthly")}
                 disabled={buyLoading}
                 className="btn-link text-orange-ink underline"
                 data-testid="banner-upgrade-button"
@@ -430,21 +439,30 @@ export default function Study() {
                 )}
 
                 <div className="mt-4 flex flex-wrap gap-6 border-b border-hair">
-                  {TABS.filter((t) => t.show).map((t) => (
-                    <button
-                      key={t.key}
-                      onClick={() => setTab(t.key)}
-                      className={`relative -mb-px border-b-2 px-0 py-3 text-sm font-medium transition-colors ${
-                        tab === t.key
-                          ? "border-orange text-ink"
-                          : "border-transparent text-muted hover:text-ink"
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
+                  {TABS.filter((t) => t.show).map((t) => {
+                    const needsPro = t.proOnly && plan === "free";
+                    return (
+                      <button
+                        key={t.key}
+                        onClick={() => setTab(t.key)}
+                        className={`relative -mb-px flex items-center gap-1.5 border-b-2 px-0 py-3 text-sm font-medium transition-colors ${
+                          tab === t.key
+                            ? "border-orange text-ink"
+                            : "border-transparent text-muted hover:text-ink"
+                        }`}
+                      >
+                        {t.label}
+                        {needsPro && (
+                          <span className="rounded bg-orange/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-orange-ink">
+                            Pro
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
 
+                <HighlightTooltip>
                 <div
                   key={`${courseSlug}-${selectedUnit}-${selectedLesson?.slug ?? ""}-${tab}`}
                   className="mt-8 animate-fadeUp"
@@ -453,7 +471,7 @@ export default function Study() {
                     <CurriculumUnitView
                       unit={curriculumUnit}
                       locked={locked}
-                      onUpgrade={() => buy("monthly")}
+                      onUpgrade={() => buy("pro-monthly")}
                     />
                   )}
 
@@ -463,10 +481,15 @@ export default function Study() {
                         <LockedTabTeaser
                           label="practice problems"
                           count={unitPractice.length}
-                          onUpgrade={() => buy("monthly")}
+                          onUpgrade={() => buy("pro-monthly")}
                         />
                       ) : (
-                        <PracticeProblems problems={unitPractice} />
+                        <PracticeProblems
+                          problems={unitPractice}
+                          courseSlug={courseSlug}
+                          unitNumber={selectedUnit}
+                          courseTitle={course.title}
+                        />
                       )}
                     </>
                   )}
@@ -477,7 +500,7 @@ export default function Study() {
                         <LockedTabTeaser
                           label="interactive tools"
                           count={unitTools.length}
-                          onUpgrade={() => buy("monthly")}
+                          onUpgrade={() => buy("pro-monthly")}
                         />
                       ) : (
                         <ToolsPanel tools={unitTools} />
@@ -486,29 +509,37 @@ export default function Study() {
                   )}
 
                   {tab === "lesson" && selectedLesson && (
-                    <div className="max-w-2xl">
-                      <ul className="space-y-3 text-[16px]">
-                        {selectedLesson.keyIdeas.map((k) => (
-                          <li key={k} className="flex gap-3 text-body">
-                            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-orange" />
-                            <span>
-                              <MathRender auto>{k}</MathRender>
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="mt-8 rounded-md border border-hair bg-offwhite p-5">
-                        <div className="meta">Worked example</div>
-                        <div className="mt-1 text-[15px] text-ink">
-                          <MathRender auto>
-                            {selectedLesson.sampleProblem}
-                          </MathRender>
+                    plan === "free" ? (
+                      <LockedTabTeaser
+                        label="full lesson walkthrough"
+                        count={selectedLesson.keyIdeas.length}
+                        onUpgrade={() => buy("pro-monthly")}
+                      />
+                    ) : (
+                      <div className="max-w-2xl">
+                        <ul className="space-y-3 text-[16px]">
+                          {selectedLesson.keyIdeas.map((k) => (
+                            <li key={k} className="flex gap-3 text-body">
+                              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-orange" />
+                              <span>
+                                <MathRender auto>{k}</MathRender>
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-8 rounded-md border border-hair bg-offwhite p-5">
+                          <div className="meta">Worked example</div>
+                          <div className="mt-1 text-[15px] text-ink">
+                            <MathRender auto>
+                              {selectedLesson.sampleProblem}
+                            </MathRender>
+                          </div>
+                          <button onClick={loadSample} className="btn-link mt-3">
+                            Show the full walkthrough →
+                          </button>
                         </div>
-                        <button onClick={loadSample} className="btn-link mt-3">
-                          Show the full walkthrough →
-                        </button>
                       </div>
-                    </div>
+                    )
                   )}
 
                   {tab === "diagram" && selectedLesson?.diagram && (
@@ -525,16 +556,24 @@ export default function Study() {
                   )}
 
                   {tab === "cards" && selectedLesson && (
-                    <div className="max-w-2xl">
-                      <Flashcards
-                        cards={selectedLesson.flashcards}
-                        storageKey={selectedLesson.slug}
+                    plan === "free" ? (
+                      <LockedTabTeaser
+                        label="flashcards"
+                        count={selectedLesson.flashcards.length}
+                        onUpgrade={() => buy("pro-monthly")}
                       />
-                      <p className="mt-4 text-xs text-muted">
-                        Progress is stored locally in your browser. Clearing site
-                        data will reset your "known" marks.
-                      </p>
-                    </div>
+                    ) : (
+                      <div className="max-w-2xl">
+                        <Flashcards
+                          cards={selectedLesson.flashcards}
+                          storageKey={selectedLesson.slug}
+                        />
+                        <p className="mt-4 text-xs text-muted">
+                          Progress is stored locally in your browser. Clearing site
+                          data will reset your "known" marks.
+                        </p>
+                      </div>
+                    )
                   )}
 
                   {tab === "links" && selectedLesson && (
@@ -581,6 +620,7 @@ export default function Study() {
                     />
                   )}
                 </div>
+                </HighlightTooltip>
               </>
             )}
           </div>

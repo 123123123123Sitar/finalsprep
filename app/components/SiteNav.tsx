@@ -29,7 +29,7 @@ export default function SiteNav({
 }
 
 function AuthMenu() {
-  const { user, loading, configured, signOut } = useAuth();
+  const { user, loading, configured, signOut, streak } = useAuth();
 
   // Don't flash sign-in/sign-out before we know the auth state.
   if (!configured || loading) return null;
@@ -37,6 +37,16 @@ function AuthMenu() {
   if (user && user.emailVerified) {
     return (
       <>
+        {streak && streak.current > 0 && (
+          <a
+            href="/account"
+            title={`${streak.current}-day streak · longest ${streak.longest}`}
+            className="flex items-center gap-1 rounded-full bg-orange-tint px-2 py-0.5 text-xs font-medium text-orange-ink hover:bg-orange/20"
+          >
+            <span aria-hidden="true">🔥</span>
+            <span>{streak.current}</span>
+          </a>
+        )}
         <a
           href="/account"
           className="nav-link"

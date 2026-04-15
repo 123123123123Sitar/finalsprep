@@ -16,6 +16,7 @@ import {
 } from "@/lib/chatStore";
 import { doc, getDoc } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
+import { bumpStreak } from "@/lib/streaks";
 
 type ModelKey = "haiku" | "sonnet" | "opus";
 const MODEL_OPTIONS: { key: ModelKey; label: string }[] = [
@@ -58,7 +59,17 @@ export default function ChatPage() {
 function ChatInner() {
   const { user, getIdToken, plan } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const url = new URL(window.location.href);
+    const q = url.searchParams.get("q");
+    if (q) {
+      url.searchParams.delete("q");
+      window.history.replaceState(null, "", url.toString());
+      return q;
+    }
+    return "";
+  });
   const [loading, setLoading] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState("");
@@ -176,6 +187,7 @@ function ChatInner() {
     const content = (text ?? input).trim();
     if ((!content && pendingImages.length === 0) || loading || streaming) return;
 
+    if (user?.uid) void bumpStreak(user.uid);
     const imagesForMessage = pendingImages;
     const visibleContent = content + (imagesForMessage.length > 0
       ? `\n\n[${imagesForMessage.length} image${imagesForMessage.length === 1 ? "" : "s"} attached]`
@@ -571,19 +583,6 @@ function ChatInner() {
                 loading || streaming ? "opacity-95" : ""
               }`}
             >
-              <button
-                type="button"
-                onClick={startNewChat}
-                disabled={streaming || loading || messages.length === 0}
-                aria-label="Start a new chat"
-                title="New chat"
-                className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-white/70"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </button>
-
               <input
                 ref={fileInputRef}
                 type="file"

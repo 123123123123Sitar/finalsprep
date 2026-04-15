@@ -1,13 +1,30 @@
 "use client";
 import { useState } from "react";
 import type { PracticeProblem } from "@/lib/practice/types";
+import { addToWrongBank } from "@/lib/wrongBank";
+import { useAuth } from "./AuthProvider";
 import MathRender from "./Math";
 
 export default function PracticeProblems({
   problems,
+  courseSlug,
+  unitNumber,
+  courseTitle,
 }: {
   problems: PracticeProblem[];
+  courseSlug: string;
+  unitNumber: number;
+  courseTitle?: string;
 }) {
+  const { user, plan } = useAuth();
+  const canWrongBank = !!user && plan !== "free";
+
+  function generateMore() {
+    const subject = courseTitle || courseSlug;
+    const prompt = `Generate 4 new AP-style practice problems for ${subject}, unit ${unitNumber}, in this format for each one:\n- difficulty: easy/medium/hard\n- prompt\n- hint\n- answer\n- 3-5 sentence explanation\n\nMake them distinct from standard textbook examples. Match the difficulty mix: easy, medium, medium, hard.`;
+    window.location.href = `/chat?q=${encodeURIComponent(prompt)}`;
+  }
+
   if (!problems || problems.length === 0) {
     return (
       <div className="rounded-md border border-dashed border-hair bg-offwhite p-6 text-sm text-muted">
@@ -17,11 +34,39 @@ export default function PracticeProblems({
   }
   return (
     <div className="max-w-3xl space-y-6">
-      <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-        Practice problems ({problems.length})
+      <div className="flex items-center justify-between">
+        <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
+          Practice problems ({problems.length})
+        </div>
+        <button
+          onClick={generateMore}
+          className="rounded-md border border-orange/40 bg-orange-tint px-3 py-1 text-xs font-medium text-orange-ink hover:border-orange"
+          title="Ask the AI tutor to generate more problems like these"
+        >
+          ✨ Generate more →
+        </button>
       </div>
       {problems.map((p, i) => (
-        <ProblemCard key={i} problem={p} index={i} />
+        <ProblemCard
+          key={i}
+          problem={p}
+          index={i}
+          canWrongBank={canWrongBank}
+          onSaveWrong={
+            canWrongBank && user
+              ? async () => {
+                  await addToWrongBank(user.uid, {
+                    courseSlug,
+                    unitNumber,
+                    prompt: p.prompt,
+                    answer: p.answer,
+                    explanation: p.explanation,
+                    difficulty: p.difficulty,
+                  });
+                }
+              : undefined
+          }
+        />
       ))}
     </div>
   );
@@ -30,13 +75,18 @@ export default function PracticeProblems({
 function ProblemCard({
   problem,
   index,
+  canWrongBank,
+  onSaveWrong,
 }: {
   problem: PracticeProblem;
   index: number;
+  canWrongBank: boolean;
+  onSaveWrong?: () => Promise<void>;
 }) {
   const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [showExplain, setShowExplain] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const diffColor =
     problem.difficulty === "easy"
@@ -79,6 +129,23 @@ function ProblemCard({
         >
           {showExplain ? "Hide solution" : "Solution"}
         </button>
+        {canWrongBank && onSaveWrong && (
+          <button
+            onClick={async () => {
+              if (saved) return;
+              await onSaveWrong();
+              setSaved(true);
+            }}
+            className={`rounded-md border px-3 py-1 text-xs transition ${
+              saved
+                ? "border-red-300 bg-red-50 text-red-700"
+                : "border-hair bg-offwhite text-ink hover:border-red-400"
+            }`}
+            title="Save for later review"
+          >
+            {saved ? "✓ Saved for review" : "Save for review"}
+          </button>
+        )}
       </div>
       {showHint && problem.hint && (
         <div className="mt-3 rounded-md border border-orange/30 bg-orange-tint p-3 text-[13px] text-orange-ink">
