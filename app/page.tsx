@@ -144,7 +144,6 @@ export default function Home() {
         <a href="/study" className="nav-link">Study</a>
         <a href="#coverage" className="nav-link hidden sm:inline">Coverage</a>
         <a href="#price" className="nav-link hidden sm:inline">Pricing</a>
-        <button onClick={() => buy("pro-monthly")} className="btn-primary">Get Pro - $11 first month</button>
       </SiteNav>
 
       {/* TOP BANNER - AP sale urgency */}
@@ -154,7 +153,7 @@ export default function Home() {
           <span className="font-semibold">AP sale:</span>
           <span>
             $5 off your first month. Code{" "}
-            <code className="rounded bg-white/60 px-1 font-mono text-[11px]">APPREP</code>{" "}
+            <code className="rounded bg-white/60 px-1 font-mono text-[11px]">SCORE5</code>{" "}
             at checkout.
           </span>
         </div>
@@ -163,7 +162,7 @@ export default function Home() {
       {/* HERO */}
       <section className="mx-auto max-w-5xl px-6 pt-20 pb-24 sm:pt-28">
         <div className="max-w-3xl">
-          <div className="label mb-6">For high school &amp; college students</div>
+          <div className="label mb-6">For high school students</div>
           <h1 className="font-serif text-[52px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[76px]">
             Step-by-step answers<br />
             for <span className="italic">every</span> math problem.
@@ -639,7 +638,7 @@ export default function Home() {
             </div>
             <p className="mt-2 text-sm text-muted">
               <span className="text-dim line-through">$16</span>{" "}
-              with <code className="font-mono text-[11px] text-ink">APPREP</code>,
+              with <code className="font-mono text-[11px] text-ink">SCORE5</code>,
               then $16/mo. Or <strong className="text-ink">$90</strong>{" "}
               for 6 months.
             </p>
@@ -679,7 +678,7 @@ export default function Home() {
             </div>
             <p className="mt-2 text-sm text-muted">
               <span className="text-dim line-through">$29</span>{" "}
-              with <code className="font-mono text-[11px] text-ink">APPREP</code>,
+              with <code className="font-mono text-[11px] text-ink">SCORE5</code>,
               then $29/mo. Or <strong className="text-ink">$160</strong>{" "}
               for 6 months.
             </p>

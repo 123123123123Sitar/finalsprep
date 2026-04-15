@@ -10,6 +10,7 @@ import {
   serverTimestamp,
   setDoc,
   Timestamp,
+  where,
 } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 
@@ -18,6 +19,7 @@ export type StoredConversation = {
   id: string;
   title: string;
   messages: StoredMsg[];
+  projectId?: string | null;
   createdAt: number;
   updatedAt: number;
 };
@@ -35,12 +37,14 @@ function toPlain(m: StoredMsg): StoredMsg {
 export async function createConversation(
   uid: string,
   title: string,
-  messages: StoredMsg[]
+  messages: StoredMsg[],
+  projectId?: string | null
 ): Promise<string> {
   const col = conversationsCol(uid);
   const ref = await addDoc(col, {
     title: title.slice(0, 120) || "Untitled chat",
     messages: messages.map(toPlain),
+    projectId: projectId ?? null,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
@@ -78,16 +82,35 @@ export async function listConversations(
   const col = conversationsCol(uid);
   const q = query(col, orderBy("updatedAt", "desc"), limit(max));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => {
-    const data = d.data() as any;
-    return {
-      id: d.id,
-      title: data.title || "Untitled chat",
-      messages: Array.isArray(data.messages) ? (data.messages as StoredMsg[]) : [],
-      createdAt: tsToMillis(data.createdAt),
-      updatedAt: tsToMillis(data.updatedAt),
-    };
-  });
+  return snap.docs.map(fromDoc);
+}
+
+export async function listConversationsInProject(
+  uid: string,
+  projectId: string,
+  max = 50
+): Promise<StoredConversation[]> {
+  const col = conversationsCol(uid);
+  const q = query(
+    col,
+    where("projectId", "==", projectId),
+    orderBy("updatedAt", "desc"),
+    limit(max)
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(fromDoc);
+}
+
+function fromDoc(d: any): StoredConversation {
+  const data = d.data() as any;
+  return {
+    id: d.id,
+    title: data.title || "Untitled chat",
+    messages: Array.isArray(data.messages) ? (data.messages as StoredMsg[]) : [],
+    projectId: data.projectId ?? null,
+    createdAt: tsToMillis(data.createdAt),
+    updatedAt: tsToMillis(data.updatedAt),
+  };
 }
 
 function tsToMillis(t: any): number {

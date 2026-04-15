@@ -66,6 +66,12 @@ function ChatInner() {
   const [historyOpen, setHistoryOpen] = useState(true);
   const [conversations, setConversations] = useState<StoredConversation[]>([]);
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    const url = new URL(window.location.href);
+    const p = url.searchParams.get("project");
+    return p && /^[A-Za-z0-9_-]{6,64}$/.test(p) ? p : null;
+  });
   const [thinking, setThinking] = useState(false);
   const [pendingImages, setPendingImages] = useState<UploadImage[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -107,7 +113,8 @@ function ChatInner() {
         const id = await createConversation(
           user.uid,
           titleFromFirstMessage(next),
-          next
+          next,
+          currentProjectId
         );
         setCurrentConvId(id);
       } else {
@@ -811,24 +818,24 @@ function ExpandedSidebar({
 
       <nav className="flex flex-col gap-0.5 px-2">
         <SidebarItem
-          href="/study"
+          href="/projects"
           icon={
             <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 5a2 2 0 0 1 2-2h10l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-              <path d="M8 13h8M8 17h6M8 9h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
             </svg>
           }
-          label="Study"
+          label="Projects"
         />
         <SidebarItem
-          href="/study?tab=cards"
+          href="/interactives"
           icon={
             <svg viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" />
-              <path d="M7 2h10M5 4h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              <path d="M3 17l4-4 4 4 6-6 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="7" cy="13" r="1.5" fill="currentColor" />
+              <circle cx="17" cy="11" r="1.5" fill="currentColor" />
             </svg>
           }
-          label="Flashcards"
+          label="Interactives"
         />
         <SidebarItem
           href="/review"
@@ -962,12 +969,21 @@ function CollapsedSidebar({
         </svg>
       </button>
       <a
-        href="/study"
+        href="/projects"
         className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
-        title="Study"
+        title="Projects"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <path d="M4 5a2 2 0 0 1 2-2h10l4 4v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+          <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+        </svg>
+      </a>
+      <a
+        href="/interactives"
+        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        title="Interactives"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M3 17l4-4 4 4 6-6 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </a>
       <a

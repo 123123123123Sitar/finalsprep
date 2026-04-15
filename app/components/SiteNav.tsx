@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Logo from "@/app/components/Logo";
 import { useAuth } from "@/app/components/AuthProvider";
 
@@ -21,10 +22,51 @@ export default function SiteNav({
         <Logo />
         <div className="flex items-center gap-5 text-sm">
           {children}
+          <BuyProButton />
           <AuthMenu />
         </div>
       </div>
     </nav>
+  );
+}
+
+function BuyProButton() {
+  const { getIdToken, plan } = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  if (plan && plan !== "learner") return null;
+
+  async function buy() {
+    setLoading(true);
+    try {
+      const token = await getIdToken();
+      if (!token) {
+        window.location.href = `/signin?next=${encodeURIComponent(
+          "/?plan=pro-monthly"
+        )}`;
+        return;
+      }
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ plan: "pro-monthly" }),
+      });
+      const data = await res.json();
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <button onClick={buy} disabled={loading} className="btn-primary">
+      {loading ? "Opening…" : "Get Pro - $11 first month"}
+    </button>
   );
 }
 
