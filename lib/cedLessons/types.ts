@@ -1,10 +1,15 @@
 /**
  * Per-CED-topic lesson content. Every topic in lib/apUnits/*.ts has a
  * matching CedLesson with a full walkthrough, key ideas, a worked
- * example, common mistakes, and (for topics that benefit from it) an
- * inline SVG diagram. Pro users unlock the full catalog; free users
- * see the first two units of each course as a sample.
+ * example, flashcards, common mistakes, and (for topics that benefit
+ * from it) an inline SVG diagram. Pro users unlock the full catalog;
+ * free users see the first two units of each course as a sample.
  */
+
+export type CedFlashcard = {
+  q: string;
+  a: string;
+};
 
 export type CedLesson = {
   /** Matches the topic id in apUnits (e.g. "1.1", "3.14"). */
@@ -26,6 +31,8 @@ export type CedLesson = {
     prompt: string;
     solution: string;
   };
+  /** Optional: 3-5 quick review cards for spaced repetition. */
+  flashcards?: CedFlashcard[];
   /** 2-4 traps graders see on this topic. */
   commonMistakes: string[];
   /**

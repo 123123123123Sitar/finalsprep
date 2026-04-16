@@ -5,6 +5,7 @@ import type { ApTopic } from "@/lib/topics";
 import type { PlanTier } from "@/lib/plans";
 import { getCedLesson, type CedLesson } from "@/lib/cedLessons";
 import MathRender from "./Math";
+import Flashcards from "./Flashcards";
 
 type Props = {
   unit: CurriculumUnit;
@@ -248,6 +249,7 @@ function CedTopicsSection({
           return (
             <CedTopicCard
               key={t.id}
+              courseSlug={courseSlug}
               topicId={t.id}
               title={t.title}
               lesson={lesson}
@@ -262,12 +264,14 @@ function CedTopicsSection({
 }
 
 function CedTopicCard({
+  courseSlug,
   topicId,
   title,
   lesson,
   locked,
   onUpgrade,
 }: {
+  courseSlug: string;
   topicId: string;
   title: string;
   lesson?: CedLesson;
@@ -370,6 +374,20 @@ function CedTopicCard({
                 <div className="mt-2">
                   <MathRender auto>{lesson.workedExample.solution}</MathRender>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {lesson.flashcards && lesson.flashcards.length > 0 && (
+            <div>
+              <div className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-muted">
+                Flashcards
+              </div>
+              <div className="mt-2">
+                <Flashcards
+                  cards={lesson.flashcards}
+                  storageKey={`ced:${courseSlug}:${topicId}`}
+                />
               </div>
             </div>
           )}
