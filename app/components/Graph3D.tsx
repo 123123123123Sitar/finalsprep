@@ -355,7 +355,7 @@ export default function Graph3D({
   }
 
   return (
-    <div className="rounded-xl border border-hair bg-white p-4">
+    <div className="rounded-xl border border-hair bg-paper p-4">
       <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
         3D Surface Plotter
       </div>

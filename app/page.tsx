@@ -3,6 +3,8 @@ import { useState } from "react";
 import SiteNav from "@/app/components/SiteNav";
 import Reveal from "@/app/components/Reveal";
 import { useAuth } from "@/app/components/AuthProvider";
+import Dashboard from "@/app/components/Dashboard";
+import PageLoader from "@/app/components/PageLoader";
 
 function formatMinutes(mins: number): string {
   if (mins < 60) return `${mins}m`;
@@ -18,7 +20,31 @@ const DEMO_EXAMPLES = [
   { label: "u-sub", problem: "Evaluate integral of 2x · (x^2 + 1)^3 dx." },
 ];
 
+/**
+ * Home route. Auth-aware: while Firebase is still resolving we render a
+ * minimal shell (same nav, no content) to avoid a marketing→dashboard flash.
+ * Once auth is resolved, signed-in verified users see the Dashboard; everyone
+ * else sees the marketing page. All marketing hooks live inside MarketingHome
+ * so hook order stays stable across auth states.
+ */
 export default function Home() {
+  const { user, loading } = useAuth();
+
+  if (loading) return <HomeLoading />;
+  if (user && user.emailVerified) return <Dashboard />;
+  return <MarketingHome />;
+}
+
+function HomeLoading() {
+  return (
+    <main className="bg-paper text-body">
+      <SiteNav sticky />
+      <PageLoader />
+    </main>
+  );
+}
+
+function MarketingHome() {
   const { user, configured: authConfigured, getIdToken, plan } = useAuth();
   const isSignedIn = !!user && user.emailVerified;
   const [email, setEmail] = useState("");
@@ -143,8 +169,6 @@ export default function Home() {
   return (
     <main className="bg-paper text-body">
       <SiteNav sticky>
-        <a href="/chat" className="nav-link">Chat</a>
-        <a href="/study" className="nav-link">Study</a>
         <a href="#coverage" className="nav-link hidden sm:inline">Coverage</a>
         <a href="#price" className="nav-link hidden sm:inline">Pricing</a>
       </SiteNav>
@@ -156,7 +180,7 @@ export default function Home() {
           <span className="font-semibold">AP sale:</span>
           <span>
             $5 off your first month. Code{" "}
-            <code className="rounded bg-white/60 px-1 font-mono text-[11px]">SCORE5</code>{" "}
+            <code className="rounded bg-paper/60 px-1 font-mono text-[11px]">SCORE5</code>{" "}
             at checkout.
           </span>
         </div>
@@ -281,7 +305,7 @@ export default function Home() {
                       key={ex.label}
                       onClick={() => runDemo(ex.problem)}
                       disabled={demoLoading}
-                      className="rounded-full border border-hair bg-white px-3 py-1 text-xs text-ink transition-colors hover:border-orange hover:bg-orange-tint hover:text-orange-ink disabled:opacity-50"
+                      className="rounded-full border border-hair bg-paper px-3 py-1 text-xs text-ink transition-colors hover:border-orange hover:bg-orange-tint hover:text-orange-ink disabled:opacity-50"
                     >
                       {ex.label}
                     </button>
@@ -297,7 +321,7 @@ export default function Home() {
                   onChange={(e) => setDemoProblem(e.target.value)}
                   rows={3}
                   placeholder="Paste any math or physics problem..."
-                  className="focus-ring w-full rounded-lg border border-hair bg-white px-5 py-4 font-mono text-[14px] leading-6 text-ink placeholder-dim"
+                  className="focus-ring w-full rounded-lg border border-hair bg-paper px-5 py-4 font-mono text-[14px] leading-6 text-ink placeholder-dim"
                 />
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   <button
@@ -558,7 +582,7 @@ export default function Home() {
           ].map((group) => (
             <div
               key={group.label}
-              className="card-hover rounded-lg border border-hair bg-white p-6"
+              className="card-hover rounded-lg border border-hair bg-paper p-6"
             >
               <div className="label">{group.label}</div>
               <ul className="mt-3 space-y-2">
@@ -606,7 +630,7 @@ export default function Home() {
         {/* THREE TIER CARDS */}
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {/* LEARNER */}
-          <div className="card-hover rounded-xl border border-hair bg-white p-7">
+          <div className="card-hover rounded-xl border border-hair bg-paper p-7">
             <div className="label">Learner</div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="font-serif text-6xl font-normal text-ink">$0</span>
@@ -630,7 +654,7 @@ export default function Home() {
           </div>
 
           {/* PRO - recommended */}
-          <div className="card-hover relative rounded-xl border-2 border-ink bg-white p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]">
+          <div className="card-hover relative rounded-xl border-2 border-ink bg-paper p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]">
             <span className="absolute right-4 top-4 animate-bounceIn rounded-full bg-orange px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
               Most popular
             </span>
@@ -712,7 +736,7 @@ export default function Home() {
         {/* COMPARISON TABLE */}
         <div className="mt-16">
           <div className="label mb-4">Compare plans</div>
-          <div className="overflow-x-auto rounded-xl border border-hair bg-white">
+          <div className="overflow-x-auto rounded-xl border border-hair bg-paper">
             <table className="w-full min-w-[560px] text-left text-[14px]">
               <thead>
                 <tr className="border-b border-hair bg-offwhite">
@@ -847,7 +871,7 @@ export default function Home() {
                 if (captured !== "idle") setCaptured("idle");
               }}
               placeholder="you@school.edu"
-              className="focus-ring h-12 w-full rounded-md border border-hair bg-white px-4 text-ink placeholder-dim"
+              className="focus-ring h-12 w-full rounded-md border border-hair bg-paper px-4 text-ink placeholder-dim"
               aria-label="Email address"
               aria-invalid={captured === "err"}
             />

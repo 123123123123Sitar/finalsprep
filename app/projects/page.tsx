@@ -12,6 +12,7 @@ import {
   listConversationsInProject,
   type StoredConversation,
 } from "@/lib/chatStore";
+import PageLoader from "@/app/components/PageLoader";
 
 export default function ProjectsPage() {
   const { user, loading } = useAuth();
@@ -90,12 +91,8 @@ export default function ProjectsPage() {
     return (
       <main className="bg-paper">
         <SiteNav>
-          <a href="/chat" className="nav-link">Chat</a>
-          <a href="/study" className="nav-link">Study</a>
         </SiteNav>
-        <section className="mx-auto max-w-4xl px-6 py-20 text-center text-muted">
-          Loading…
-        </section>
+        <PageLoader />
       </main>
     );
   }
@@ -103,8 +100,6 @@ export default function ProjectsPage() {
   return (
     <main className="bg-paper text-body">
       <SiteNav>
-        <a href="/chat" className="nav-link">Chat</a>
-        <a href="/study" className="nav-link">Study</a>
       </SiteNav>
       <section className="mx-auto max-w-5xl px-6 py-12">
         <div className="label mb-3">Projects</div>
@@ -131,21 +126,21 @@ export default function ProjectsPage() {
         </div>
 
         {showCreate && (
-          <div className="mt-5 rounded-xl border border-hair bg-white p-5">
+          <div className="mt-5 rounded-xl border border-hair bg-paper p-5">
             <div className="label mb-2">New project</div>
             <input
               type="text"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Name (e.g. APUSH DBQ practice)"
-              className="w-full rounded-md border border-hair bg-white px-4 py-3 text-[15px] text-ink outline-none focus:border-orange"
+              className="w-full rounded-md border border-hair bg-paper px-4 py-3 text-[15px] text-ink outline-none focus:border-orange"
               maxLength={120}
             />
             <textarea
               value={newDesc}
               onChange={(e) => setNewDesc(e.target.value)}
               placeholder="What is this project for? (optional)"
-              className="mt-3 w-full rounded-md border border-hair bg-white px-4 py-3 text-[14px] text-ink outline-none focus:border-orange"
+              className="mt-3 w-full rounded-md border border-hair bg-paper px-4 py-3 text-[14px] text-ink outline-none focus:border-orange"
               rows={3}
               maxLength={500}
             />
@@ -177,7 +172,7 @@ export default function ProjectsPage() {
                       className={`group relative rounded-lg border p-4 transition ${
                         opened?.id === p.id
                           ? "border-orange bg-orange-tint/50"
-                          : "border-hair bg-white hover:border-orange"
+                          : "border-hair bg-paper hover:border-orange"
                       }`}
                     >
                       <button
@@ -211,7 +206,7 @@ export default function ProjectsPage() {
           {/* RIGHT: opened project detail */}
           <div>
             {opened ? (
-              <div className="rounded-xl border border-hair bg-white p-6">
+              <div className="rounded-xl border border-hair bg-paper p-6">
                 <div className="label mb-2">Project</div>
                 <h2 className="font-serif text-2xl font-normal text-ink">
                   {opened.name}

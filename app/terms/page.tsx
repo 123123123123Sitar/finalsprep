@@ -10,7 +10,6 @@ export default function TermsPage() {
     <main className="bg-paper text-body">
       <SiteNav>
         <a href="/study" className="nav-link">Study</a>
-        <a href="/" className="nav-link">Home</a>
       </SiteNav>
 
       <article className="mx-auto max-w-3xl px-6 py-16">

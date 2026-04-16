@@ -4,6 +4,7 @@ import { updateProfile } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
+import PageLoader from "@/app/components/PageLoader";
 import { getDb, getFirebaseAuth } from "@/lib/firebase";
 import {
   AI_CUSTOM_INSTRUCTIONS_LIMIT,
@@ -14,8 +15,7 @@ import {
   normalizeAiPrefs,
   type AiPrefs,
 } from "@/lib/aiPrefs";
-import { CATEGORIES, COURSES, type CourseCategory } from "@/lib/topics";
-import { planLabel, getCourseLimit } from "@/lib/plans";
+import { planLabel } from "@/lib/plans";
 
 type AccentKey = "orange" | "blue" | "green" | "plum";
 
@@ -27,14 +27,12 @@ const ACCENTS: { key: AccentKey; label: string; swatch: string }[] = [
 ];
 
 type Prefs = AiPrefs & {
-  defaultCategory: CourseCategory;
   accent: AccentKey;
   mathJaxRender: boolean;
   selectedCourses: string[];
 };
 
 const DEFAULT_PREFS: Prefs = {
-  defaultCategory: "math",
   accent: "orange",
   mathJaxRender: true,
   selectedCourses: [],
@@ -101,15 +99,15 @@ export default function AccountPage() {
       const db = getDb();
       if (db) {
         const normalizedAiPrefs = normalizeAiPrefs(prefs);
-        const clampedCourses = Array.from(
-          new Set(prefs.selectedCourses ?? [])
-        ).slice(0, getCourseLimit(plan));
+        // `selectedCourses` is owned by the Study page picker now — strip it
+        // from the write so a stale-in-state copy can't stomp a concurrent
+        // edit made there.
+        const { selectedCourses: _ignored, ...rest } = prefs;
         await setDoc(
           doc(db, "users", user.uid, "profile", "prefs"),
           {
-            ...prefs,
+            ...rest,
             ...normalizedAiPrefs,
-            selectedCourses: clampedCourses,
             updatedAt: serverTimestamp(),
           },
           { merge: true }
@@ -136,7 +134,6 @@ export default function AccountPage() {
       <main className="bg-paper text-body">
         <SiteNav>
           <a href="/study" className="nav-link">Study</a>
-          <a href="/" className="nav-link">Home</a>
         </SiteNav>
         <section className="mx-auto max-w-xl px-6 py-24 text-center">
           <div className="label mb-3">Auth not configured</div>
@@ -157,16 +154,8 @@ export default function AccountPage() {
     return (
       <main className="bg-paper text-body">
         <SiteNav>
-          <a href="/study" className="nav-link">Study</a>
-          <a href="/" className="nav-link">Home</a>
         </SiteNav>
-        <section className="mx-auto max-w-2xl px-6 py-24">
-          <div className="flex h-40 items-center justify-center text-muted">
-            <div className="typing-dots" aria-label="Loading">
-              <span /> <span /> <span />
-            </div>
-          </div>
-        </section>
+        <PageLoader />
       </main>
     );
   }
@@ -175,8 +164,6 @@ export default function AccountPage() {
     <main className="bg-paper text-body">
       <SiteNav>
         <a href="/study" className="nav-link">Study</a>
-        <a href="/chat" className="nav-link">Chat</a>
-        <a href="/" className="nav-link">Home</a>
       </SiteNav>
 
       <section className="mx-auto max-w-2xl px-6 py-16">
@@ -198,102 +185,12 @@ export default function AccountPage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="What should we call you?"
-              className="w-full rounded-md border border-hair bg-white px-4 py-3 text-[15px] text-ink outline-none focus:border-orange"
+              className="w-full rounded-md border border-hair bg-paper px-4 py-3 text-[15px] text-ink outline-none focus:border-orange"
               maxLength={60}
             />
             <p className="mt-2 text-xs text-muted">
               Shown on the top of chat replies. Private — never sent to other
               users.
-            </p>
-          </div>
-
-          {/* Course selection */}
-          <div>
-            <div className="mb-2 flex items-center justify-between">
-              <div className="label">Your AP courses</div>
-              <span className="text-[11px] text-muted">
-                {prefs.selectedCourses.length} / {getCourseLimit(plan)} ·{" "}
-                {planLabel(plan)} limit
-              </span>
-            </div>
-            <p className="mb-3 text-[13px] text-muted">
-              Pick the courses you're taking. {" "}
-              {plan === "learner"
-                ? "Free accounts get 3 courses and see the unit overview only — upgrade for unlimited lessons."
-                : plan === "pro"
-                ? "Pro unlocks 10 courses with full lessons and CED topic walkthroughs."
-                : "Hacker unlocks the full catalog."}
-            </p>
-            <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-              {COURSES.map((c) => {
-                const selected = prefs.selectedCourses.includes(c.slug);
-                const limit = getCourseLimit(plan);
-                const atLimit =
-                  !selected && prefs.selectedCourses.length >= limit;
-                return (
-                  <button
-                    key={c.slug}
-                    onClick={() =>
-                      setPrefs((p) => {
-                        const curr = p.selectedCourses ?? [];
-                        if (curr.includes(c.slug)) {
-                          return {
-                            ...p,
-                            selectedCourses: curr.filter((s) => s !== c.slug),
-                          };
-                        }
-                        if (curr.length >= getCourseLimit(plan)) return p;
-                        return { ...p, selectedCourses: [...curr, c.slug] };
-                      })
-                    }
-                    disabled={atLimit}
-                    className={`flex items-center justify-between gap-2 rounded-md border px-3 py-2 text-left text-[13px] transition ${
-                      selected
-                        ? "border-orange bg-orange-tint text-ink"
-                        : atLimit
-                        ? "cursor-not-allowed border-hair bg-offwhite text-dim"
-                        : "border-hair bg-white text-body hover:border-orange"
-                    }`}
-                  >
-                    <span className="truncate">{c.title}</span>
-                    {selected && (
-                      <span aria-hidden="true" className="shrink-0 text-orange-ink">
-                        ✓
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-            {prefs.selectedCourses.length >= getCourseLimit(plan) && plan !== "hacker" && (
-              <p className="mt-3 text-[12px] text-orange-ink">
-                You've hit your plan's course limit. Upgrade for more slots.
-              </p>
-            )}
-          </div>
-
-          {/* Default course category */}
-          <div>
-            <div className="label mb-2">Default category on Study</div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c.key}
-                  onClick={() =>
-                    setPrefs((p) => ({ ...p, defaultCategory: c.key }))
-                  }
-                  className={`rounded-md border px-3 py-2 text-sm transition ${
-                    prefs.defaultCategory === c.key
-                      ? "border-orange bg-orange-tint text-ink"
-                      : "border-hair bg-white text-body hover:border-orange"
-                  }`}
-                >
-                  {c.label}
-                </button>
-              ))}
-            </div>
-            <p className="mt-2 text-xs text-muted">
-              Which category the Study page opens to when you land there.
             </p>
           </div>
 

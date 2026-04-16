@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
+import PageLoader from "@/app/components/PageLoader";
 
 type AdminData = {
   planCounts: Record<string, number>;
@@ -51,11 +52,8 @@ export default function AdminPage() {
     return (
       <main className="bg-paper">
         <SiteNav>
-          <a href="/study" className="nav-link">Study</a>
         </SiteNav>
-        <section className="mx-auto max-w-4xl px-6 py-20 text-center text-muted">
-          Loading…
-        </section>
+        <PageLoader />
       </main>
     );
   }
@@ -63,8 +61,6 @@ export default function AdminPage() {
   return (
     <main className="bg-paper text-body">
       <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-        <a href="/chat" className="nav-link">Chat</a>
       </SiteNav>
       <section className="mx-auto max-w-5xl px-6 py-12">
         <div className="label mb-3">Admin</div>
@@ -99,7 +95,7 @@ export default function AdminPage() {
             </div>
 
             {/* Plan distribution */}
-            <div className="mt-8 rounded-lg border border-hair bg-white p-5">
+            <div className="mt-8 rounded-lg border border-hair bg-paper p-5">
               <div className="label mb-3">Plan distribution</div>
               <div className="grid gap-2 text-sm">
                 <PlanRow
@@ -121,7 +117,7 @@ export default function AdminPage() {
             </div>
 
             {/* Event breakdown */}
-            <div className="mt-8 rounded-lg border border-hair bg-white p-5">
+            <div className="mt-8 rounded-lg border border-hair bg-paper p-5">
               <div className="label mb-3">Events last 24h</div>
               <div className="grid gap-1 text-sm">
                 {Object.entries(data.byKind24h)
@@ -139,7 +135,7 @@ export default function AdminPage() {
             </div>
 
             {/* Recent events */}
-            <div className="mt-8 rounded-lg border border-hair bg-white">
+            <div className="mt-8 rounded-lg border border-hair bg-paper">
               <div className="border-b border-hair px-5 py-3 label">
                 Recent events (200)
               </div>
@@ -185,7 +181,7 @@ export default function AdminPage() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-lg border border-hair bg-white p-4">
+    <div className="rounded-lg border border-hair bg-paper p-4">
       <div className="text-[10px] uppercase tracking-wider text-muted">
         {label}
       </div>

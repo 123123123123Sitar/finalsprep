@@ -4,32 +4,46 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { doc, onSnapshot, setDoc, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getDb } from "@/lib/firebase";
 
-export type Theme = "light" | "dark" | "sepia";
-export const THEMES: Theme[] = ["light", "dark", "sepia"];
+export type Theme = "light" | "dark" | "sepia" | "auto";
+export type EffectiveTheme = "light" | "dark" | "sepia";
+export const THEMES: Theme[] = ["light", "dark", "sepia", "auto"];
 const STORAGE_KEY = "fp-theme";
 
 function isTheme(v: unknown): v is Theme {
   return typeof v === "string" && (THEMES as string[]).includes(v);
 }
 
+/** Light during the day (6:00–18:00 local), dark otherwise. */
+export function resolveAutoTheme(now: Date = new Date()): EffectiveTheme {
+  const h = now.getHours();
+  return h >= 6 && h < 18 ? "light" : "dark";
+}
+
+function effective(theme: Theme): EffectiveTheme {
+  return theme === "auto" ? resolveAutoTheme() : theme;
+}
+
 type Ctx = {
   theme: Theme;
+  effectiveTheme: EffectiveTheme;
   setTheme: (t: Theme) => void;
+  /** Retained for backwards compat — themes are universal now, so this is always true. */
   canUseThemes: boolean;
 };
 
 const ThemeContext = createContext<Ctx | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { user, plan } = useAuth();
-  const canUseThemes = plan === "pro" || plan === "hacker";
+  const { user } = useAuth();
   const [theme, setThemeState] = useState<Theme>("light");
+  const [autoTick, setAutoTick] = useState(0);
 
   // Hydrate from localStorage on mount. An inline script in layout.tsx
   // has already applied data-theme to <html> before paint to avoid flash.
@@ -39,9 +53,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (isTheme(saved)) setThemeState(saved);
   }, []);
 
-  // For authed users on a paid plan, sync with Firestore prefs.
+  // For any signed-in user, sync theme with Firestore prefs so it follows
+  // them across devices. Dark mode is universal, no plan check.
   useEffect(() => {
-    if (!user || !canUseThemes) return;
+    if (!user) return;
     const db = getDb();
     if (!db) return;
     const ref = doc(db, "users", user.uid, "profile", "prefs");
@@ -58,19 +73,31 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       () => {}
     );
     return () => unsub();
-  }, [user, canUseThemes]);
+  }, [user]);
 
-  // Apply to <html>. Non-pro users always render "light" regardless of
-  // any stored preference (so downgrade works cleanly).
+  // In auto mode, re-evaluate every 5 minutes so the UI transitions
+  // around 6am / 6pm without a page reload.
+  useEffect(() => {
+    if (theme !== "auto") return;
+    const id = window.setInterval(() => setAutoTick((n) => n + 1), 5 * 60 * 1000);
+    return () => window.clearInterval(id);
+  }, [theme]);
+
+  const effectiveTheme = useMemo<EffectiveTheme>(
+    () => effective(theme),
+    // autoTick intentionally in deps so `effective()` re-runs on the interval.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [theme, autoTick]
+  );
+
+  // Apply the resolved theme to <html>.
   useEffect(() => {
     if (typeof document === "undefined") return;
-    const effective: Theme = canUseThemes ? theme : "light";
-    document.documentElement.setAttribute("data-theme", effective);
-  }, [theme, canUseThemes]);
+    document.documentElement.setAttribute("data-theme", effectiveTheme);
+  }, [effectiveTheme]);
 
   const setTheme = useCallback(
     (t: Theme) => {
-      if (!canUseThemes) return;
       setThemeState(t);
       if (typeof window !== "undefined")
         window.localStorage.setItem(STORAGE_KEY, t);
@@ -85,11 +112,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         }
       }
     },
-    [user, canUseThemes]
+    [user]
   );
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, canUseThemes }}>
+    <ThemeContext.Provider
+      value={{ theme, effectiveTheme, setTheme, canUseThemes: true }}
+    >
       {children}
     </ThemeContext.Provider>
   );

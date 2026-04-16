@@ -10,8 +10,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
  */
 export default function HighlightTooltip({
   children,
+  onHighlight,
+  enabled = true,
 }: {
   children: React.ReactNode;
+  onHighlight?: (text: string) => void;
+  enabled?: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<
@@ -26,7 +30,11 @@ export default function HighlightTooltip({
   }, []);
 
   useEffect(() => {
-    function onSelection() {
+    if (!enabled) {
+      setState({ visible: false });
+      return;
+    }
+    function updateFromSelection() {
       const sel = window.getSelection();
       if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
         setState({ visible: false });
@@ -47,29 +55,45 @@ export default function HighlightTooltip({
       }
       const rect = range.getBoundingClientRect();
       if (rect.width === 0 && rect.height === 0) return;
+      // Viewport-relative coords because we render with `position: fixed`.
       setState({
         visible: true,
         text,
-        x: rect.left + rect.width / 2 + window.scrollX,
-        y: rect.top + window.scrollY,
+        x: rect.left + rect.width / 2,
+        y: rect.top,
       });
     }
 
+    function onMouseUp(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-highlight-toolbar]")) return;
+      // Defer so the browser's own selection settles before we read it.
+      setTimeout(updateFromSelection, 0);
+    }
+
     function onMouseDown(e: MouseEvent) {
-      // If the user clicks outside the toolbar, hide it (unless they're
-      // actually clicking a toolbar button, which we let handle itself).
       const target = e.target as HTMLElement;
       if (target.closest("[data-highlight-toolbar]")) return;
       setState({ visible: false });
     }
 
-    document.addEventListener("selectionchange", onSelection);
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setState({ visible: false });
+      // Arrow / shift-arrow keyboard selection: refresh once key lifts.
+      if (e.key.startsWith("Arrow") && e.shiftKey) {
+        setTimeout(updateFromSelection, 0);
+      }
+    }
+
+    document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("keyup", onKey);
     return () => {
-      document.removeEventListener("selectionchange", onSelection);
+      document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("keyup", onKey);
     };
-  }, []);
+  }, [enabled]);
 
   function copy() {
     if (!state.visible) return;
@@ -81,6 +105,13 @@ export default function HighlightTooltip({
     if (!state.visible) return;
     const q = encodeURIComponent(state.text);
     window.location.href = `/chat?q=${q}`;
+  }
+
+  function highlight() {
+    if (!state.visible || !onHighlight) return;
+    onHighlight(state.text);
+    window.getSelection()?.removeAllRanges();
+    hide();
   }
 
   function define() {
@@ -108,7 +139,7 @@ export default function HighlightTooltip({
             top: state.y - 44,
             transform: "translateX(-50%)",
           }}
-          className="z-50 flex items-center gap-0.5 rounded-lg border border-ink/20 bg-ink px-1 py-1 text-xs text-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)]"
+          className="z-50 flex items-center gap-0.5 rounded-lg border border-ink/20 bg-ink px-1 py-1 text-xs text-paper shadow-[0_10px_30px_-10px_rgba(0,0,0,0.45)]"
           onMouseDown={(e) => e.preventDefault()}
         >
           <button
@@ -119,6 +150,19 @@ export default function HighlightTooltip({
             <span aria-hidden="true">✨</span>
             <span>Ask AI</span>
           </button>
+          {onHighlight && (
+            <>
+              <span className="h-4 w-px bg-white/20" />
+              <button
+                onClick={highlight}
+                className="flex items-center gap-1 rounded px-2 py-1 hover:bg-white/15"
+                title="Save as highlight"
+              >
+                <span aria-hidden="true">🖍</span>
+                <span>Highlight</span>
+              </button>
+            </>
+          )}
           <span className="h-4 w-px bg-white/20" />
           <button
             onClick={copy}

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
   doc,
   onSnapshot,
@@ -9,11 +9,9 @@ import {
 import { getDb } from "@/lib/firebase";
 import { subscribeSelectedCourses } from "@/lib/selectedCourses";
 import {
-  CATEGORIES,
   COURSES,
   LESSONS,
   unitsForCourse,
-  type CourseCategory,
   type CourseSlug,
   type Lesson,
 } from "@/lib/topics";
@@ -36,7 +34,12 @@ import Graph3D from "@/app/components/Graph3D";
 import PhysicsSim from "@/app/components/PhysicsSim";
 import CodeSandbox from "@/app/components/CodeSandbox";
 import BookmarkButton from "@/app/components/BookmarkButton";
+import CoursePicker from "@/app/components/CoursePicker";
+import PageLoader from "@/app/components/PageLoader";
+import LessonAnnotationsPanel from "@/app/components/LessonAnnotations";
+import InlineHighlights from "@/app/components/InlineHighlights";
 import { useAuth } from "@/app/components/AuthProvider";
+import type { PlanTier } from "@/lib/plans";
 
 type Tab =
   | "curriculum"
@@ -49,16 +52,17 @@ type Tab =
   | "solver";
 
 export default function Study() {
-  const [category, setCategory] = useState<CourseCategory>("math");
   const { user, getIdToken, plan } = useAuth();
+  // null = auth/Firestore still resolving; [] = loaded, user has added none.
+  // We deliberately don't fall back to "show everything" — that was leaking
+  // unassigned courses on first paint and for users who never picked any.
   const [selectedCourses, setSelectedCourses] = useState<string[] | null>(
     null
   );
 
-  // Subscribe to the user's chosen courses. null = still loading, empty
-  // array = "show everything" so new accounts aren't forced to pick
-  // before they can browse.
   useEffect(() => {
+    // Signed-out visitors have no assignments; mark as loaded with empty set
+    // so the empty state can render instead of a permanent spinner.
     if (!user) {
       setSelectedCourses([]);
       return;
@@ -69,14 +73,18 @@ export default function Study() {
     return () => unsub();
   }, [user]);
 
-  const effectiveSelected = selectedCourses ?? [];
-  const coursesInCategory = useMemo(
+  // Single source of truth for "what the user can see on /study". Derived
+  // strictly from the added list — no hardcoded defaults, no fallback.
+  const coursesLoading = selectedCourses === null;
+  const addedCourses = useMemo(
     () =>
-      COURSES.filter((c) => c.category === category).filter((c) =>
-        effectiveSelected.length === 0 ? true : effectiveSelected.includes(c.slug)
-      ),
-    [category, effectiveSelected]
+      selectedCourses
+        ? COURSES.filter((c) => selectedCourses.includes(c.slug))
+        : [],
+    [selectedCourses]
   );
+  // Lazy default: the first added course, not COURSES[0]. Reconciled below
+  // whenever the added list changes.
   const [courseSlug, setCourseSlug] = useState<CourseSlug>(COURSES[0].slug);
   const course = useMemo(
     () => COURSES.find((c) => c.slug === courseSlug)!,
@@ -90,18 +98,42 @@ export default function Study() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [tab, setTab] = useState<Tab>("curriculum");
 
-  // Deep-link from /bookmarks or external links: ?course=slug&lesson=slug
+  // Keep the active course pinned to something the user has actually added.
+  // Runs whenever the added list changes; no-op if the current slug is
+  // still valid, so it doesn't fight with explicit user clicks.
   useEffect(() => {
+    if (coursesLoading) return;
+    if (addedCourses.length === 0) return;
+    if (addedCourses.some((c) => c.slug === courseSlug)) return;
+    const next = addedCourses[0];
+    setCourseSlug(next.slug);
+    const nextUnits = unitsForCourse(next.slug);
+    setSelectedUnit(nextUnits[0]?.number ?? 1);
+    setSelectedLesson(null);
+    setTab("curriculum");
+  }, [coursesLoading, addedCourses, courseSlug]);
+
+  // Deep-link from /bookmarks or external links: ?course=slug&lesson=slug.
+  // Only honor the deep link if the target course is actually in the added
+  // list — otherwise we'd re-introduce the "unassigned lessons on screen" bug
+  // through the back door. We wait until the added list has resolved so a
+  // signed-in user's assignments are considered before accepting the param.
+  const [deepLinkHandled, setDeepLinkHandled] = useState(false);
+  useEffect(() => {
+    if (deepLinkHandled) return;
+    if (coursesLoading) return;
     if (typeof window === "undefined") return;
+    setDeepLinkHandled(true);
     const params = new URLSearchParams(window.location.search);
     const courseParam = params.get("course") as CourseSlug | null;
     const lessonParam = params.get("lesson");
-    if (courseParam && COURSES.some((c) => c.slug === courseParam)) {
+    const courseIsAdded =
+      !!courseParam && addedCourses.some((c) => c.slug === courseParam);
+    if (courseIsAdded && courseParam) {
       setCourseSlug(courseParam);
-      const courseCat = COURSES.find((c) => c.slug === courseParam)?.category;
-      if (courseCat) setCategory(courseCat);
+      setView("course");
     }
-    if (lessonParam) {
+    if (lessonParam && courseIsAdded) {
       const l = LESSONS.find((x) => x.slug === lessonParam);
       if (l) {
         setSelectedLesson(l);
@@ -110,11 +142,11 @@ export default function Study() {
         );
         if (m) setSelectedUnit(m.unitNumber);
         setTab("lesson");
+        setView("course");
       }
     }
-    // Run once on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [coursesLoading, addedCourses]);
 
   // Always start on the Overview tab when the page first mounts or when the
   // user switches to a unit without a lesson context. Prevents landing on
@@ -132,6 +164,43 @@ export default function Study() {
   const [error, setError] = useState("");
   const [limitReached, setLimitReached] = useState(false);
   const [buyLoading, setBuyLoading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  // "home" = course grid with progress; "course" = the actual study workspace.
+  // Starts on home so users always land on the overview, not a half-remembered
+  // course from last session.
+  const [view, setView] = useState<"home" | "course">("home");
+
+  // Progress tracking — subscribes to the user's `viewedSlugs` doc so we can
+  // compute per-course completion %. We piggyback on the existing doc the
+  // learner cap writes to, but now every plan reads and writes to it.
+  const [viewedSlugsAll, setViewedSlugsAll] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    if (!user) {
+      setViewedSlugsAll(new Set());
+      return;
+    }
+    const db = getDb();
+    if (!db) return;
+    const unsub = onSnapshot(
+      doc(db, "users", user.uid, "profile", "lessons"),
+      (snap) => {
+        const arr = (snap.data() as any)?.viewedSlugs;
+        setViewedSlugsAll(new Set(Array.isArray(arr) ? arr : []));
+      },
+      () => setViewedSlugsAll(new Set())
+    );
+    return () => unsub();
+  }, [user]);
+
+  // <InlineHighlights /> exposes the addHighlight hook so the text-selection
+  // tooltip can push new highlights into Firestore (and then render them in
+  // place on the lesson text).
+  const highlightsApiRef = useRef<{ addHighlight: (text: string) => void } | null>(
+    null
+  );
+  const handleHighlight = useCallback((text: string) => {
+    highlightsApiRef.current?.addHighlight(text);
+  }, []);
 
   const curriculumUnit = curriculum
     ? getCurriculumUnit(courseSlug, selectedUnit)
@@ -198,10 +267,14 @@ export default function Study() {
     setTab("curriculum");
   }
 
-  function switchCategory(cat: CourseCategory) {
-    setCategory(cat);
-    const firstCourse = COURSES.find((c) => c.category === cat);
-    if (firstCourse) switchCourse(firstCourse.slug);
+  function openCourse(slug: CourseSlug) {
+    switchCourse(slug);
+    setView("course");
+  }
+
+  function goHome() {
+    setView("home");
+    setSelectedLesson(null);
   }
 
   function switchCourse(slug: CourseSlug) {
@@ -284,91 +357,65 @@ export default function Study() {
     setTab("solver");
   }
 
+  // Gate rendering on the assignment list so we never show placeholder or
+  // unassigned courses, even for a single frame. All hooks above have
+  // already run, so returning early here is safe.
+  if (coursesLoading) return <StudyLoading />;
+  if (addedCourses.length === 0) return <StudyEmpty signedIn={!!user} plan={plan} />;
+
   return (
     <main className="bg-paper text-body">
       <SiteNav maxWidth="max-w-6xl">
-        <a href="/chat" className="nav-link">Chat</a>
-        <a href="/" className="nav-link">Home</a>
       </SiteNav>
 
       <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="max-w-3xl">
-          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-            Study tool · {COURSES.length} AP courses ·{" "}
-            {isPro ? "Pro access" : `free preview (Units 1-${FREE_UNIT_LIMIT})`}
-          </div>
-          <h1 className="mt-3 font-serif text-[42px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[56px]">
-            Pick your AP course.
+        {view === "home" ? (
+          <StudyHome
+            courses={addedCourses}
+            viewedSlugs={viewedSlugsAll}
+            onOpen={openCourse}
+            onEdit={() => setPickerOpen(true)}
+            isPro={isPro}
+            buyLoading={buyLoading}
+            onBuy={() => buy("pro-monthly")}
+          />
+        ) : (
+          <>
+        <button
+          onClick={goHome}
+          className="inline-flex items-center gap-1 text-[13px] text-muted hover:text-ink"
+        >
+          <span aria-hidden="true">←</span>
+          <span>All courses</span>
+        </button>
+        <div className="mt-3 flex flex-wrap items-baseline justify-between gap-3">
+          <h1 className="font-serif text-[42px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[48px]">
+            {course.title}
           </h1>
-          <p className="mt-4 max-w-xl text-[17px] text-body">
-            Every course is organized by the official College Board unit
-            numbering. Units 1 and 2 of every course are free. Pro users unlock
-            curriculum walkthroughs for every unit plus unlimited AI problem
-            explanations.
-          </p>
-          {!isPro && (
-            <div className="mt-5 inline-flex items-center gap-3 rounded-lg border border-orange/30 bg-orange-tint px-4 py-2 text-[13px] text-orange-ink">
-              <span>
-                You're on the free plan — Units 1 and 2 unlocked. Upgrade to
-                unlock everything.
-              </span>
-              <button
-                onClick={() => buy("pro-monthly")}
-                disabled={buyLoading}
-                className="btn-link text-orange-ink underline"
-                data-testid="banner-upgrade-button"
-              >
-                Unlock Pro
-              </button>
-            </div>
-          )}
+          <div className="text-[12px] text-muted">
+            {courseProgressLabel(courseSlug, viewedSlugsAll)}
+          </div>
         </div>
-
-        {/* Category tabs */}
-        <div className="mt-10 flex flex-wrap gap-6 border-b border-hair">
-          {CATEGORIES.map((c) => {
-            const active = c.key === category;
-            const count = COURSES.filter((x) => x.category === c.key).length;
-            return (
-              <button
-                key={c.key}
-                onClick={() => switchCategory(c.key)}
-                className={`relative -mb-px border-b-2 px-0 py-3 text-sm font-medium transition-colors ${
-                  active
-                    ? "border-orange text-ink"
-                    : "border-transparent text-muted hover:text-ink"
-                }`}
-              >
-                {c.label}{" "}
-                <span className="ml-1 text-xs text-dim">{count}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Course picker */}
-        <div className="mt-6 flex flex-wrap gap-2">
-          {coursesInCategory.map((c) => {
-            const active = c.slug === courseSlug;
-            return (
-              <button
-                key={c.slug}
-                onClick={() => switchCourse(c.slug)}
-                className={`rounded-full border px-4 py-2 text-sm transition-all ${
-                  active
-                    ? "border-ink bg-ink text-white shadow-[0_4px_16px_-8px_rgba(0,0,0,0.3)]"
-                    : "border-hair bg-white text-body hover:-translate-y-0.5 hover:border-rule hover:bg-offwhite"
-                }`}
-              >
-                {c.title}
-              </button>
-            );
-          })}
-        </div>
-        <p className="mt-4 max-w-2xl text-sm text-muted">{course.subtitle}</p>
+        <p className="mt-3 max-w-2xl text-[15px] text-body">{course.subtitle}</p>
+        {!isPro && (
+          <div className="mt-5 inline-flex items-center gap-3 rounded-lg border border-orange/30 bg-orange-tint px-4 py-2 text-[13px] text-orange-ink">
+            <span>
+              You're on the free plan — Units 1 and 2 unlocked. Upgrade to
+              unlock everything.
+            </span>
+            <button
+              onClick={() => buy("pro-monthly")}
+              disabled={buyLoading}
+              className="btn-link text-orange-ink underline"
+              data-testid="banner-upgrade-button"
+            >
+              Unlock Pro
+            </button>
+          </div>
+        )}
 
         {curriculum && (
-          <div className="mt-6 rounded-lg border border-hair bg-white p-5">
+          <div className="mt-6 rounded-lg border border-hair bg-paper p-5">
             <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
               Exam at a glance
             </div>
@@ -522,6 +569,19 @@ export default function Study() {
                   </div>
                 )}
 
+                {(selectedLesson || curriculumUnit) && (
+                  <LessonAnnotationsPanel
+                    key={
+                      selectedLesson?.slug ??
+                      `unit:${courseSlug}:${selectedUnit}`
+                    }
+                    lessonSlug={
+                      selectedLesson?.slug ??
+                      `unit:${courseSlug}:${selectedUnit}`
+                    }
+                  />
+                )}
+
                 <div className="mt-4 flex flex-wrap gap-6 border-b border-hair">
                   {TABS.filter((t) => t.show).map((t) => (
                     <button
@@ -538,7 +598,20 @@ export default function Study() {
                   ))}
                 </div>
 
-                <HighlightTooltip>
+                <HighlightTooltip
+                  onHighlight={handleHighlight}
+                  enabled={tab === "curriculum" || tab === "lesson"}
+                >
+                <InlineHighlights
+                  key={`hl:${selectedLesson?.slug ?? `unit:${courseSlug}:${selectedUnit}`}`}
+                  lessonSlug={
+                    selectedLesson?.slug ??
+                    `unit:${courseSlug}:${selectedUnit}`
+                  }
+                  onReady={(api) => {
+                    highlightsApiRef.current = api;
+                  }}
+                >
                 <div
                   key={`${courseSlug}-${selectedUnit}-${selectedLesson?.slug ?? ""}-${tab}`}
                   className="mt-8 animate-fadeUp"
@@ -601,7 +674,7 @@ export default function Study() {
                   )}
 
                   {tab === "diagram" && selectedLesson?.diagram && (
-                    <div className="max-w-2xl rounded-md border border-hair bg-white p-4">
+                    <div className="max-w-2xl rounded-md border border-hair bg-paper p-4">
                       <div
                         dangerouslySetInnerHTML={{
                           __html: selectedLesson.diagram,
@@ -670,12 +743,26 @@ export default function Study() {
                     />
                   )}
                 </div>
+                </InlineHighlights>
                 </HighlightTooltip>
               </>
             )}
           </div>
         </section>
+          </>
+        )}
       </div>
+
+      {pickerOpen && (
+        <CoursePicker
+          selected={selectedCourses ?? []}
+          plan={plan}
+          variant="dialog"
+          heading="Your AP courses"
+          subheading="Toggle the courses you're studying. Saves as you go."
+          onClose={() => setPickerOpen(false)}
+        />
+      )}
     </main>
   );
 }
@@ -811,13 +898,11 @@ function LessonPanel({
   }, [uid, isPaid]);
 
   // Record this lesson view atomically (transaction) so two fast clicks
-  // can't push past the cap. Only runs for learner + uid + when the cap
-  // has room and the slug isn't already counted.
+  // can't push past the learner cap. Paid plans also write so the Study
+  // homepage progress bar fills up for everyone — the cap check is
+  // skipped for them.
   useEffect(() => {
-    if (isPaid || !uid) return;
-    if (viewedSlugs === null) return; // wait for live load
-    if (viewedSlugs.includes(lesson.slug)) return;
-    if (viewedSlugs.length >= FREE_LESSON_LIMIT) return;
+    if (!uid) return;
     const db = getDb();
     if (!db) return;
     const ref = doc(db, "users", uid, "profile", "lessons");
@@ -826,7 +911,7 @@ function LessonPanel({
       const cur = (snap.data() as any)?.viewedSlugs;
       const arr: string[] = Array.isArray(cur) ? cur : [];
       if (arr.includes(lesson.slug)) return;
-      if (arr.length >= FREE_LESSON_LIMIT) return;
+      if (!isPaid && arr.length >= FREE_LESSON_LIMIT) return;
       tx.set(
         ref,
         {
@@ -836,7 +921,7 @@ function LessonPanel({
         { merge: true }
       );
     }).catch((e) => setWriteError(e?.message || "couldn't record"));
-  }, [isPaid, uid, viewedSlugs, lesson.slug]);
+  }, [isPaid, uid, lesson.slug]);
 
   // Loading state: don't flash the lesson content before we know the cap.
   if (!isPaid && viewedSlugs === null) {
@@ -930,6 +1015,196 @@ function EmptyCourseView({ courseTitle }: { courseTitle: string }) {
   );
 }
 
+/**
+ * Rendered while the user's added-courses list is still being fetched.
+ * Matches the SiteNav + main container geometry so the hand-off to the real
+ * page doesn't shift layout.
+ */
+// Count of lessons in a course (lessons can belong to multiple courses, so
+// we check each lesson's `courses` membership list).
+function courseLessonSlugs(slug: CourseSlug): string[] {
+  return LESSONS.filter((l) =>
+    l.courses.some((c) => c.courseSlug === slug)
+  ).map((l) => l.slug);
+}
+
+function courseProgress(
+  slug: CourseSlug,
+  viewed: Set<string>
+): { done: number; total: number; pct: number } {
+  const slugs = courseLessonSlugs(slug);
+  const total = slugs.length;
+  const done = slugs.reduce((n, s) => (viewed.has(s) ? n + 1 : n), 0);
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  return { done, total, pct };
+}
+
+function courseProgressLabel(slug: CourseSlug, viewed: Set<string>): string {
+  const { done, total, pct } = courseProgress(slug, viewed);
+  if (total === 0) return "";
+  return `${pct}% · ${done}/${total} lessons`;
+}
+
+/**
+ * Landing view for /study — shows every added course as a card with a
+ * completion bar. Clicking a card opens that course's workspace.
+ */
+function StudyHome({
+  courses,
+  viewedSlugs,
+  onOpen,
+  onEdit,
+  isPro,
+  buyLoading,
+  onBuy,
+}: {
+  courses: typeof COURSES;
+  viewedSlugs: Set<string>;
+  onOpen: (slug: CourseSlug) => void;
+  onEdit: () => void;
+  isPro: boolean;
+  buyLoading: boolean;
+  onBuy: () => void;
+}) {
+  return (
+    <>
+      <div className="max-w-3xl">
+        <h1 className="mt-3 font-serif text-[42px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[56px]">
+          Your courses.
+        </h1>
+        <p className="mt-4 max-w-xl text-[17px] text-body">
+          Pick up where you left off. Each card tracks how many lessons
+          you've opened so you can see your progress at a glance.
+        </p>
+        {!isPro && (
+          <div className="mt-5 inline-flex items-center gap-3 rounded-lg border border-orange/30 bg-orange-tint px-4 py-2 text-[13px] text-orange-ink">
+            <span>
+              You're on the free plan — Units 1 and 2 unlocked. Upgrade to
+              unlock everything.
+            </span>
+            <button
+              onClick={onBuy}
+              disabled={buyLoading}
+              className="btn-link text-orange-ink underline"
+            >
+              Unlock Pro
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {courses.map((c) => {
+          const { done, total, pct } = courseProgress(c.slug, viewedSlugs);
+          return (
+            <button
+              key={c.slug}
+              onClick={() => onOpen(c.slug)}
+              className="group flex flex-col rounded-xl border border-hair bg-paper p-5 text-left transition hover:-translate-y-0.5 hover:border-orange hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.25)]"
+            >
+              <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
+                {c.slug.replace(/^ap-/, "AP ").replace(/-/g, " ")}
+              </div>
+              <div className="mt-2 font-serif text-xl text-ink group-hover:text-orange">
+                {c.title}
+              </div>
+              <p className="mt-2 line-clamp-3 text-[13px] text-muted">
+                {c.subtitle}
+              </p>
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-[11px] text-muted">
+                  <span>
+                    {total === 0
+                      ? "No lessons yet"
+                      : `${done}/${total} lessons`}
+                  </span>
+                  <span className="font-medium text-ink">{pct}%</span>
+                </div>
+                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-offwhite">
+                  <div
+                    className="h-full rounded-full bg-orange transition-all"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </div>
+            </button>
+          );
+        })}
+        <button
+          onClick={onEdit}
+          className="flex min-h-[180px] flex-col items-center justify-center rounded-xl border border-dashed border-hair bg-offwhite p-5 text-center text-sm text-muted transition hover:border-orange hover:text-orange-ink"
+        >
+          <div className="text-2xl leading-none">+</div>
+          <div className="mt-1">Edit courses</div>
+        </button>
+      </div>
+    </>
+  );
+}
+
+function StudyLoading() {
+  return (
+    <main className="bg-paper text-body">
+      <SiteNav maxWidth="max-w-6xl">
+      </SiteNav>
+      <PageLoader />
+    </main>
+  );
+}
+
+/**
+ * Rendered when the added-courses list is loaded but empty. This is the
+ * state that replaces the old "show every course as a fallback" behavior —
+ * users without assignments now see a clear CTA to pick courses instead of
+ * a wall of unassigned content.
+ *
+ * Signed-in users get the picker inline (saves directly to Firestore; the
+ * parent's subscription will re-render Study with real content on the next
+ * snapshot). Signed-out users get a sign-in CTA since we have nowhere to
+ * persist their selection.
+ */
+function StudyEmpty({ signedIn, plan }: { signedIn: boolean; plan: PlanTier }) {
+  return (
+    <main className="bg-paper text-body">
+      <SiteNav maxWidth="max-w-6xl">
+      </SiteNav>
+      <div className="mx-auto max-w-2xl px-6 py-16">
+        <div className="label mb-3">Study</div>
+        <h1 className="font-serif text-[40px] font-normal leading-[1.1] tracking-tightest text-ink sm:text-[48px]">
+          Pick your AP courses.
+        </h1>
+        <p className="mt-4 max-w-xl text-[15px] text-muted">
+          {signedIn
+            ? "Choose the courses you're studying and they'll show up here. You can change this anytime from this page."
+            : "Sign in to pick the AP courses you're studying. Your selection is saved to your account."}
+        </p>
+        {signedIn ? (
+          <div className="mt-8 rounded-xl border border-hair bg-paper p-6">
+            <CoursePicker
+              selected={[]}
+              plan={plan}
+              heading="Your AP courses"
+              subheading="Saves as you go."
+            />
+          </div>
+        ) : (
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href={`/signin?next=${encodeURIComponent("/study")}`}
+              className="btn-primary"
+            >
+              Sign in to pick courses
+            </a>
+            <a href="/" className="btn-ghost">
+              Back home
+            </a>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
+
 function SolverPanel({
   problem,
   setProblem,
@@ -965,7 +1240,7 @@ function SolverPanel({
         onChange={(e) => setProblem(e.target.value)}
         rows={4}
         placeholder="e.g. Find dy/dx if y = (3x^2 + 1)^5"
-        className="focus-ring mt-3 w-full rounded-lg border border-hair bg-white px-5 py-4 font-mono text-[14px] leading-6 text-ink placeholder-dim"
+        className="focus-ring mt-3 w-full rounded-lg border border-hair bg-paper px-5 py-4 font-mono text-[14px] leading-6 text-ink placeholder-dim"
       />
       <div className="mt-3 flex items-center gap-3">
         <button

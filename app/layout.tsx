@@ -10,6 +10,10 @@ import { ThemeProvider } from "@/app/components/ThemeProvider";
 const bootstrap = `
 try {
   var t = localStorage.getItem('fp-theme');
+  if (t === 'auto') {
+    var h = new Date().getHours();
+    t = (h >= 6 && h < 18) ? 'light' : 'dark';
+  }
   if (t === 'dark' || t === 'sepia' || t === 'light') {
     document.documentElement.setAttribute('data-theme', t);
   }

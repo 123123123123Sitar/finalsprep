@@ -137,7 +137,7 @@ export default function AuthPanel({
           : "Sign in"}
       </div>
       {!pendingUser && mode !== "reset" && (
-        <div className="mb-5 inline-flex rounded-full border border-hair bg-white p-1 text-sm">
+        <div className="mb-5 inline-flex rounded-full border border-hair bg-paper p-1 text-sm">
           <button
             type="button"
             onClick={() => {
@@ -145,7 +145,7 @@ export default function AuthPanel({
               setMsg(null);
             }}
             className={`rounded-full px-3 py-1.5 ${
-              mode === "signin" ? "bg-ink text-white" : "text-muted hover:text-ink"
+              mode === "signin" ? "bg-ink text-paper" : "text-muted hover:text-ink"
             }`}
           >
             Sign in
@@ -157,7 +157,7 @@ export default function AuthPanel({
               setMsg(null);
             }}
             className={`rounded-full px-3 py-1.5 ${
-              mode === "signup" ? "bg-ink text-white" : "text-muted hover:text-ink"
+              mode === "signup" ? "bg-ink text-paper" : "text-muted hover:text-ink"
             }`}
           >
             Create account
@@ -212,7 +212,7 @@ export default function AuthPanel({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@school.edu"
-            className="focus-ring h-12 w-full rounded-md border border-hair bg-white px-4 text-ink placeholder-dim"
+            className="focus-ring h-12 w-full rounded-md border border-hair bg-paper px-4 text-ink placeholder-dim"
             aria-label="Email"
             autoComplete="email"
           />
@@ -240,7 +240,7 @@ export default function AuthPanel({
             type="button"
             onClick={doGoogle}
             disabled={busy}
-            className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-md border border-hair bg-white text-[15px] font-medium text-ink transition hover:border-ink disabled:opacity-50"
+            className="mt-8 flex h-12 w-full items-center justify-center gap-3 rounded-md border border-hair bg-paper text-[15px] font-medium text-ink transition hover:border-ink disabled:opacity-50"
           >
             <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
@@ -267,7 +267,7 @@ export default function AuthPanel({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@school.edu"
-              className="focus-ring h-12 w-full rounded-md border border-hair bg-white px-4 text-ink placeholder-dim"
+              className="focus-ring h-12 w-full rounded-md border border-hair bg-paper px-4 text-ink placeholder-dim"
               aria-label="Email"
               autoComplete="email"
             />
@@ -278,7 +278,7 @@ export default function AuthPanel({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password (6+ characters)"
-              className="focus-ring h-12 w-full rounded-md border border-hair bg-white px-4 text-ink placeholder-dim"
+              className="focus-ring h-12 w-full rounded-md border border-hair bg-paper px-4 text-ink placeholder-dim"
               aria-label="Password"
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
             />

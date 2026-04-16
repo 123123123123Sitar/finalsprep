@@ -5,11 +5,7 @@ import MathRender from "@/app/components/Math";
 import { LogoMark } from "@/app/components/Logo";
 import AuthGate from "@/app/components/AuthGate";
 import { useAuth } from "@/app/components/AuthProvider";
-import {
-  BuyProButton,
-  NavUserArea,
-  ThemePicker,
-} from "@/app/components/SiteNav";
+import SiteNav from "@/app/components/SiteNav";
 import {
   AI_MODE_OPTIONS,
   AI_PERSONALITY_OPTIONS,
@@ -67,16 +63,15 @@ function formatMinutes(mins: number): string {
 
 const STARTERS = [
   "Solve 2x^2 - 5x - 3 = 0 by factoring and walk me through the reasoning.",
-  "Set up a related rates problem: a 5 m ladder slides down a wall at 0.2 m/s — how fast is the base moving when the top is 3 m high?",
   "Walk me through u-substitution on the integral from 0 to 1 of 2x(x^2 + 1)^3 dx.",
   "A 5 kg box on a 30 degree incline has friction coefficient 0.2. Find the acceleration down the incline.",
-  "Explain Hardy-Weinberg equilibrium and why the five assumptions usually fail in real populations.",
   "How did the Columbian Exchange reshape both the Americas and Afro-Eurasia between 1450 and 1700?",
 ];
 
 export default function ChatPage() {
   return (
-    <main className="flex h-screen bg-paper text-body">
+    <main className="flex h-screen flex-col bg-paper text-body">
+      <SiteNav maxWidth="max-w-none" sticky={false} />
       <AuthGate>
         <ChatInner />
       </AuthGate>
@@ -85,7 +80,7 @@ export default function ChatPage() {
 }
 
 function ChatInner() {
-  const { user, getIdToken, plan } = useAuth();
+  const { user, getIdToken, plan, planLoading } = useAuth();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [aiPrefs, setAiPrefs] = useState<AiPrefs>(DEFAULT_AI_PREFS);
   const [input, setInput] = useState(() => {
@@ -503,17 +498,12 @@ function ChatInner() {
     : messages.length > 0
       ? "Draft chat"
       : "New chat";
-  const chatSubtitle = currentProjectName
-    ? "This conversation stays inside the current project context."
-    : messages.length > 0
-      ? "Keep the thread going or start a fresh one from the sidebar."
-      : "Ask a question, paste a problem, or attach an image to get started.";
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex min-h-0 flex-1 overflow-hidden">
       {/* LEFT SIDEBAR — persistent ChatGPT-style nav */}
       <aside
-        className={`shrink-0 border-r border-hair bg-[#f5f3ed] transition-all duration-200 ease-out ${
+        className={`shrink-0 border-r border-hair bg-offwhite transition-all duration-200 ease-out ${
           historyOpen ? "w-64" : "w-14"
         } overflow-hidden`}
       >
@@ -544,42 +534,7 @@ function ChatInner() {
       </aside>
 
       {/* Main chat column */}
-      <div className="flex flex-1 flex-col">
-        <div className="border-b border-hair bg-paper px-4 py-3 sm:px-6">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-              <a
-                href="/"
-                className="inline-flex shrink-0 items-center gap-2.5 text-ink"
-                title="FinalsPrep home"
-              >
-                <LogoMark size={24} className="text-ink" />
-                <span className="hidden items-baseline gap-1 sm:inline-flex">
-                  <span className="text-sm font-semibold">FinalsPrep</span>
-                  <span className="text-[10px] font-medium uppercase tracking-[0.16em] text-muted">
-                    Chat
-                  </span>
-                </span>
-              </a>
-              <div className="hidden h-5 w-px bg-hair md:block" />
-              <div className="hidden items-center gap-4 text-sm md:flex">
-                <a href="/" className="nav-link" title="FinalsPrep home">
-                  Home
-                </a>
-                <a href="/study" className="nav-link" title="Study tool">
-                  Study
-                </a>
-              </div>
-            </div>
-
-            <div className="flex shrink-0 items-center gap-3 text-sm sm:gap-4">
-              <ThemePicker />
-              <BuyProButton />
-              <NavUserArea />
-            </div>
-          </div>
-        </div>
-
+      <div className="flex min-w-0 flex-1 flex-col">
         <div className="border-b border-hair bg-offwhite/60 px-4 py-5 sm:px-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
@@ -610,7 +565,6 @@ function ChatInner() {
               <h1 className="mt-2 max-w-3xl break-words font-serif text-2xl font-normal leading-tight text-ink sm:text-[2rem]">
                 {chatTitle}
               </h1>
-              <p className="mt-1 max-w-2xl text-sm text-muted">{chatSubtitle}</p>
             </div>
 
             {currentProjectName && (
@@ -658,7 +612,7 @@ function ChatInner() {
                       key={s}
                       onClick={() => send(s)}
                       style={{ animationDelay: `${80 + i * 60}ms` }}
-                      className="animate-fadeUpSm group rounded-md border border-hair bg-white p-4 text-left text-sm text-body hover:-translate-y-0.5 hover:border-orange hover:bg-orange-tint hover:shadow-[0_2px_0_rgba(0,0,0,0.02),0_10px_24px_-10px_rgba(194,65,12,0.25)]"
+                      className="animate-fadeUpSm group rounded-md border border-hair bg-paper p-4 text-left text-sm text-body hover:-translate-y-0.5 hover:border-orange hover:bg-orange-tint hover:shadow-[0_2px_0_rgba(0,0,0,0.02),0_10px_24px_-10px_rgba(194,65,12,0.25)]"
                     >
                       <span className="text-muted group-hover:text-orange-ink">→</span>{" "}
                       <MathRender auto>{s}</MathRender>
@@ -695,7 +649,7 @@ function ChatInner() {
                 }`}
               >
                 <div>{error}</div>
-                {limitHit && plan === "learner" && (
+                {limitHit && !planLoading && plan === "learner" && (
                   <button onClick={() => buy("pro-monthly")} className="btn-link mt-2">
                     Upgrade to Pro - $16/month →
                   </button>
@@ -706,7 +660,7 @@ function ChatInner() {
         </div>
 
         {/* COMPOSER */}
-        <div className="bg-white pb-6 pt-4">
+        <div className="bg-paper pb-6 pt-4">
           <div className="mx-auto max-w-3xl px-6">
             {pendingImages.length > 0 && (
               <div className="mb-2 flex flex-wrap gap-2 rounded-lg border border-hair bg-offwhite p-2">
@@ -749,7 +703,7 @@ function ChatInner() {
               <button
                 type="button"
                 onClick={() => {
-                  if (plan === "learner") {
+                  if (!planLoading && plan === "learner") {
                     setError("Image uploads are a Pro feature. Upgrade to attach photos of your work.");
                     return;
                   }
@@ -757,13 +711,13 @@ function ChatInner() {
                 }}
                 disabled={streaming || loading}
                 aria-label="Attach image"
-                title={plan === "learner" ? "Upload images (Pro feature)" : "Attach an image"}
+                title={!planLoading && plan === "learner" ? "Upload images (Pro feature)" : "Attach an image"}
                 className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-40"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M21 12.5 12.5 21a5.5 5.5 0 0 1-7.8-7.8L13 5a4 4 0 1 1 5.7 5.7l-8.5 8.5a2.5 2.5 0 1 1-3.5-3.5L14 8.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                {plan === "learner" && (
+                {!planLoading && plan === "learner" && (
                   <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-amber-500" />
                 )}
               </button>
@@ -819,7 +773,7 @@ function ChatInner() {
                 )}
               </button>
             </div>
-            {plan !== "learner" && (
+            {!planLoading && plan !== "learner" && (
               <div className="mt-2 flex items-center justify-center">
                 <button
                   type="button"
@@ -889,7 +843,7 @@ function Message({
   if (role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="animate-messageIn max-w-[80%] rounded-2xl rounded-tr-sm bg-ink px-4 py-3 text-[15px] text-white">
+        <div className="animate-messageIn max-w-[80%] rounded-2xl rounded-tr-sm bg-ink px-4 py-3 text-[15px] text-paper">
           <div className="whitespace-pre-wrap">
             <MathRender auto>{content}</MathRender>
           </div>
@@ -902,7 +856,7 @@ function Message({
       <div className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full border border-orange/40 bg-orange-tint text-orange-ink">
         <LogoMark size={15} className="text-orange-ink" />
       </div>
-      <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-hair bg-white px-5 py-4 text-[15.5px] leading-relaxed text-body">
+      <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-hair bg-paper px-5 py-4 text-[15.5px] leading-relaxed text-body">
         {isLastAssistantEmpty ? (
           <div className="flex items-center gap-2 text-muted">
             <span className="typing-dots">
@@ -953,7 +907,7 @@ function SidebarItem({
   active?: boolean;
 }) {
   const cls = `flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition-colors ${
-    active ? "bg-white text-ink" : "text-body hover:bg-white/60 hover:text-ink"
+    active ? "bg-paper text-ink" : "text-body hover:bg-paper/60 hover:text-ink"
   }`;
   if (href) {
     return (
@@ -1014,7 +968,7 @@ function ExpandedSidebar({
         </a>
         <button
           onClick={collapse}
-          className="rounded p-1 text-muted hover:bg-white/60 hover:text-ink"
+          className="rounded p-1 text-muted hover:bg-paper/60 hover:text-ink"
           title="Collapse sidebar"
           aria-label="Collapse sidebar"
         >
@@ -1028,7 +982,7 @@ function ExpandedSidebar({
       <div className="px-2">
         <button
           onClick={startNewChat}
-          className="mb-2 flex w-full items-center gap-3 rounded-lg border border-hair bg-white px-3 py-2 text-[14px] font-medium text-ink hover:border-orange"
+          className="mb-2 flex w-full items-center gap-3 rounded-lg border border-hair bg-paper px-3 py-2 text-[14px] font-medium text-ink hover:border-orange"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="text-muted">
             <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -1049,7 +1003,7 @@ function ExpandedSidebar({
             value={convSearch}
             onChange={(e) => setConvSearch(e.target.value)}
             placeholder="Search chats"
-            className="w-full rounded-lg border border-hair bg-white px-7 py-1.5 text-[13px] text-ink placeholder-dim outline-none focus:border-orange"
+            className="w-full rounded-lg border border-hair bg-paper px-7 py-1.5 text-[13px] text-ink placeholder-dim outline-none focus:border-orange"
           />
         </div>
       </div>
@@ -1059,8 +1013,8 @@ function ExpandedSidebar({
           onClick={onOpenProjects}
           className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[14px] transition-colors ${
             currentProjectName
-              ? "bg-white text-ink"
-              : "text-body hover:bg-white/60 hover:text-ink"
+              ? "bg-paper text-ink"
+              : "text-body hover:bg-paper/60 hover:text-ink"
           }`}
           title={currentProjectName ? `Current: ${currentProjectName}` : "Projects"}
         >
@@ -1152,8 +1106,8 @@ function ExpandedSidebar({
                       onClick={() => openConversation(c)}
                       className={`flex-1 truncate rounded-lg px-3 py-1.5 text-left text-[13px] ${
                         currentConvId === c.id
-                          ? "bg-white font-medium text-ink"
-                          : "text-body hover:bg-white/60 hover:text-ink"
+                          ? "bg-paper font-medium text-ink"
+                          : "text-body hover:bg-paper/60 hover:text-ink"
                       }`}
                     >
                       {c.title}
@@ -1181,7 +1135,7 @@ function ExpandedSidebar({
         <div className="flex items-center gap-1">
           <a
             href="/account"
-            className="flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] text-muted hover:bg-white/60 hover:text-ink"
+            className="flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] text-muted hover:bg-paper/60 hover:text-ink"
             title={userEmail || ""}
           >
             <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-orange-tint text-[10px] font-medium text-orange-ink">
@@ -1191,7 +1145,7 @@ function ExpandedSidebar({
           </a>
           <button
             onClick={onOpenSettings}
-            className="shrink-0 rounded-lg p-1.5 text-muted hover:bg-white/60 hover:text-ink"
+            className="shrink-0 rounded-lg p-1.5 text-muted hover:bg-paper/60 hover:text-ink"
             aria-label="AI settings"
             title="AI settings"
           >
@@ -1232,7 +1186,7 @@ function CollapsedSidebar({
     <div className="flex h-full w-14 flex-col items-center gap-3 py-4">
       <button
         onClick={expand}
-        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        className="rounded p-2 text-muted hover:bg-paper/60 hover:text-ink"
         title="Expand sidebar"
         aria-label="Expand sidebar"
       >
@@ -1243,7 +1197,7 @@ function CollapsedSidebar({
       </button>
       <button
         onClick={startNewChat}
-        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        className="rounded p-2 text-muted hover:bg-paper/60 hover:text-ink"
         title="New chat"
         aria-label="New chat"
       >
@@ -1253,7 +1207,7 @@ function CollapsedSidebar({
       </button>
       <button
         onClick={onOpenProjects}
-        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        className="rounded p-2 text-muted hover:bg-paper/60 hover:text-ink"
         title="Projects"
         aria-label="Projects"
       >
@@ -1263,7 +1217,7 @@ function CollapsedSidebar({
       </button>
       <button
         onClick={() => onOpenExtension("interactives")}
-        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        className="rounded p-2 text-muted hover:bg-paper/60 hover:text-ink"
         title="Interactives"
         aria-label="Interactives"
       >
@@ -1273,7 +1227,7 @@ function CollapsedSidebar({
       </button>
       <button
         onClick={() => onOpenExtension("review")}
-        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        className="rounded p-2 text-muted hover:bg-paper/60 hover:text-ink"
         title="Review bank"
         aria-label="Review bank"
       >
@@ -1283,7 +1237,7 @@ function CollapsedSidebar({
       </button>
       <button
         onClick={() => onOpenExtension("schedule")}
-        className="rounded p-2 text-muted hover:bg-white/60 hover:text-ink"
+        className="rounded p-2 text-muted hover:bg-paper/60 hover:text-ink"
         title="Schedule"
         aria-label="Schedule"
       >
@@ -1461,7 +1415,7 @@ function ProjectsOverlay({
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="Project name"
-                  className="w-full rounded border border-hair bg-white px-3 py-2 text-[13px] text-ink outline-none focus:border-orange"
+                  className="w-full rounded border border-hair bg-paper px-3 py-2 text-[13px] text-ink outline-none focus:border-orange"
                   maxLength={120}
                   autoFocus
                 />
@@ -1469,7 +1423,7 @@ function ProjectsOverlay({
                   value={newDesc}
                   onChange={(e) => setNewDesc(e.target.value)}
                   placeholder="What is this project for? (optional)"
-                  className="mt-2 w-full resize-none rounded border border-hair bg-white px-3 py-2 text-[13px] text-ink outline-none focus:border-orange"
+                  className="mt-2 w-full resize-none rounded border border-hair bg-paper px-3 py-2 text-[13px] text-ink outline-none focus:border-orange"
                   rows={3}
                   maxLength={500}
                 />

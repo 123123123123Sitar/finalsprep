@@ -75,8 +75,21 @@ export default function BookmarkButton(props: {
       }
       aria-pressed={saved}
     >
-      <span aria-hidden="true">{saved ? "★" : "☆"}</span>
-      <span>{saved ? "Saved" : "Save"}</span>
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill={saved ? "currentColor" : "none"}
+        aria-hidden="true"
+      >
+        <path
+          d="M6 3.75A1.75 1.75 0 0 1 7.75 2h8.5A1.75 1.75 0 0 1 18 3.75v17.19a.5.5 0 0 1-.79.4L12 17.35l-5.21 3.99a.5.5 0 0 1-.79-.4V3.75Z"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <span>{saved ? "Bookmarked" : "Bookmark"}</span>
     </button>
   );
 }

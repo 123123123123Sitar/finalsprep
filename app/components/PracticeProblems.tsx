@@ -96,7 +96,7 @@ function ProblemCard({
       : "bg-red-100 text-red-800";
 
   return (
-    <div className="rounded-lg border border-hair bg-white p-5">
+    <div className="rounded-lg border border-hair bg-paper p-5">
       <div className="flex items-start justify-between">
         <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
           Problem {index + 1}

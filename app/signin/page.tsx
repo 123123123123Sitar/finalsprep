@@ -30,7 +30,6 @@ function SignInPageInner() {
     <main className="bg-paper text-body">
       <SiteNav>
         <a href="/study" className="nav-link">Study</a>
-        <a href="/" className="nav-link">Home</a>
       </SiteNav>
 
       <section className="mx-auto max-w-5xl px-6 py-16">
@@ -102,7 +101,6 @@ function SignInPageSkeleton() {
     <main className="bg-paper text-body">
       <SiteNav>
         <a href="/study" className="nav-link">Study</a>
-        <a href="/" className="nav-link">Home</a>
       </SiteNav>
 
       <section className="mx-auto max-w-5xl px-6 py-16">

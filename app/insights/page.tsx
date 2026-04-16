@@ -5,6 +5,7 @@ import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getDb } from "@/lib/firebase";
 import { listWrongBank } from "@/lib/wrongBank";
+import PageLoader from "@/app/components/PageLoader";
 
 type HistoryEntry = {
   kind: string;
@@ -52,11 +53,8 @@ export default function InsightsPage() {
     return (
       <main className="bg-paper">
         <SiteNav>
-          <a href="/study" className="nav-link">Study</a>
         </SiteNav>
-        <section className="mx-auto max-w-4xl px-6 py-20 text-center text-muted">
-          Loading…
-        </section>
+        <PageLoader />
       </main>
     );
   }
@@ -65,8 +63,6 @@ export default function InsightsPage() {
     return (
       <main className="bg-paper text-body">
         <SiteNav>
-          <a href="/study" className="nav-link">Study</a>
-          <a href="/chat" className="nav-link">Chat</a>
         </SiteNav>
         <section className="mx-auto max-w-xl px-6 py-20">
           <div className="label mb-3">Insights</div>
@@ -94,8 +90,6 @@ export default function InsightsPage() {
   return (
     <main className="bg-paper text-body">
       <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-        <a href="/chat" className="nav-link">Chat</a>
       </SiteNav>
       <section className="mx-auto max-w-3xl px-6 py-12">
         <div className="label mb-3">Insights</div>
@@ -118,7 +112,7 @@ export default function InsightsPage() {
           <Stat label="Tokens, 7d" value={tokens7.toLocaleString()} />
         </div>
 
-        <div className="mt-8 rounded-lg border border-hair bg-white p-5">
+        <div className="mt-8 rounded-lg border border-hair bg-paper p-5">
           <div className="label mb-3">Wrong-answer bank</div>
           <p className="text-[15px] text-body">
             You have{" "}
@@ -130,7 +124,7 @@ export default function InsightsPage() {
           </p>
         </div>
 
-        <div className="mt-8 rounded-lg border border-hair bg-white p-5">
+        <div className="mt-8 rounded-lg border border-hair bg-paper p-5">
           <div className="label mb-3">Recent chats</div>
           {loaded && history.length === 0 ? (
             <div className="text-sm text-muted">
@@ -178,7 +172,7 @@ function Stat({
   suffix?: string;
 }) {
   return (
-    <div className="rounded-lg border border-hair bg-white p-4">
+    <div className="rounded-lg border border-hair bg-paper p-4">
       <div className="text-[10px] uppercase tracking-wider text-muted">
         {label}
       </div>

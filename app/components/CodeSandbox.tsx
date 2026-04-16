@@ -230,7 +230,7 @@ export default function CodeSandbox({
     expectedOutput && output.trim() === expectedOutput.trim();
 
   return (
-    <div className="rounded-xl border border-hair bg-white p-4">
+    <div className="rounded-xl border border-hair bg-paper p-4">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
@@ -280,7 +280,7 @@ export default function CodeSandbox({
               className={`mt-2 rounded border p-2 text-[11px] ${
                 outputMatchesExpected
                   ? "border-green-300 bg-green-50 text-green-800"
-                  : "border-hair bg-white text-muted"
+                  : "border-hair bg-paper text-muted"
               }`}
             >
               <div className="font-semibold">Expected:</div>

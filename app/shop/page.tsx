@@ -5,6 +5,7 @@ import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getDb } from "@/lib/firebase";
 import { TOKEN_PACKS } from "@/lib/tokenPacks";
+import PageLoader from "@/app/components/PageLoader";
 
 export default function ShopPage() {
   const { user, loading, getIdToken } = useAuth();
@@ -72,12 +73,8 @@ export default function ShopPage() {
     return (
       <main className="bg-paper">
         <SiteNav>
-          <a href="/study" className="nav-link">Study</a>
-          <a href="/chat" className="nav-link">Chat</a>
         </SiteNav>
-        <section className="mx-auto max-w-4xl px-6 py-20 text-center text-muted">
-          Loading…
-        </section>
+        <PageLoader />
       </main>
     );
   }
@@ -85,8 +82,6 @@ export default function ShopPage() {
   return (
     <main className="bg-paper text-body">
       <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-        <a href="/chat" className="nav-link">Chat</a>
       </SiteNav>
       <section className="mx-auto max-w-4xl px-6 py-12">
         <div className="label mb-3">Shop</div>
@@ -99,7 +94,7 @@ export default function ShopPage() {
           never expire.
         </p>
 
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-hair bg-white px-4 py-2 text-sm">
+        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-hair bg-paper px-4 py-2 text-sm">
           <span className="text-muted">Your bonus balance:</span>
           <strong className="font-mono text-ink">
             {balance === null ? "…" : balance.toLocaleString()}
@@ -117,7 +112,7 @@ export default function ShopPage() {
           {TOKEN_PACKS.map((pack, i) => (
             <div
               key={pack.id}
-              className={`rounded-xl border bg-white p-6 ${
+              className={`rounded-xl border bg-paper p-6 ${
                 i === 1
                   ? "border-2 border-ink shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]"
                   : "border-hair"
@@ -148,8 +143,8 @@ export default function ShopPage() {
                 disabled={buying !== null}
                 className={`mt-5 w-full rounded-md px-4 py-3 text-center text-base font-medium transition disabled:opacity-50 ${
                   i === 1
-                    ? "bg-ink text-white hover:bg-ink/90"
-                    : "border border-hair bg-white text-ink hover:border-ink"
+                    ? "bg-ink text-paper hover:bg-ink/90"
+                    : "border border-hair bg-paper text-ink hover:border-ink"
                 }`}
               >
                 {buying === pack.id ? "Opening checkout…" : `Buy ${pack.label}`}

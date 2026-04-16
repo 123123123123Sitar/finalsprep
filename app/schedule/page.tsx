@@ -10,6 +10,7 @@ import {
 import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getDb } from "@/lib/firebase";
+import PageLoader from "@/app/components/PageLoader";
 import {
   DAILY_CLAIM_TOKENS,
   DEFAULT_SCHEDULE,
@@ -219,12 +220,8 @@ export default function SchedulePage() {
     return (
       <main className="bg-paper">
         <SiteNav>
-          <a href="/study" className="nav-link">Study</a>
-          <a href="/chat" className="nav-link">Chat</a>
         </SiteNav>
-        <section className="mx-auto max-w-2xl px-6 py-20 text-center text-muted">
-          Loading…
-        </section>
+        <PageLoader />
       </main>
     );
   }
@@ -235,8 +232,6 @@ export default function SchedulePage() {
   return (
     <main className="bg-paper text-body">
       <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-        <a href="/chat" className="nav-link">Chat</a>
       </SiteNav>
       <section className="mx-auto max-w-5xl px-6 py-12">
         <div className="label mb-3">Study schedule</div>
@@ -250,7 +245,7 @@ export default function SchedulePage() {
           bonus tokens. Longer, deeper sessions earn a focus bonus.
         </p>
 
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-hair bg-white px-4 py-2 text-sm">
+        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-hair bg-paper px-4 py-2 text-sm">
           <span className="text-muted">Bonus balance:</span>
           <strong className="font-mono text-ink">
             {bankBalance.toLocaleString()}
@@ -299,7 +294,7 @@ export default function SchedulePage() {
                     return (
                       <li
                         key={b.id}
-                        className={`flex items-center justify-between gap-3 rounded-lg border bg-white px-4 py-3 transition-all duration-200 ${
+                        className={`flex items-center justify-between gap-3 rounded-lg border bg-paper px-4 py-3 transition-all duration-200 ${
                           on ? "border-orange shadow-[0_0_0_4px_rgba(194,65,12,0.08)]" : "border-hair"
                         }`}
                       >
@@ -370,7 +365,7 @@ export default function SchedulePage() {
         </div>
 
         {/* ADD-SESSION FORM */}
-        <div className="mt-8 rounded-xl border border-hair bg-white p-6">
+        <div className="mt-8 rounded-xl border border-hair bg-paper p-6">
           <div className="label mb-3">Add a study block</div>
           <div className="grid gap-3 sm:grid-cols-[1.4fr_1fr_1fr_1fr_auto]">
             <input
@@ -380,14 +375,14 @@ export default function SchedulePage() {
                 setNewBlock((n) => ({ ...n, subject: e.target.value }))
               }
               placeholder="AP Java"
-              className="focus-ring rounded-md border border-hair bg-white px-3 py-2 text-sm"
+              className="focus-ring rounded-md border border-hair bg-paper px-3 py-2 text-sm"
             />
             <select
               value={newBlock.day}
               onChange={(e) =>
                 setNewBlock((n) => ({ ...n, day: parseInt(e.target.value, 10) }))
               }
-              className="focus-ring rounded-md border border-hair bg-white px-3 py-2 text-sm"
+              className="focus-ring rounded-md border border-hair bg-paper px-3 py-2 text-sm"
             >
               {WEEKDAYS.map((w) => (
                 <option key={w.n} value={w.n}>
@@ -401,7 +396,7 @@ export default function SchedulePage() {
               onChange={(e) =>
                 setNewBlock((n) => ({ ...n, start: e.target.value }))
               }
-              className="focus-ring rounded-md border border-hair bg-white px-3 py-2 text-sm"
+              className="focus-ring rounded-md border border-hair bg-paper px-3 py-2 text-sm"
             />
             <input
               type="time"
@@ -409,7 +404,7 @@ export default function SchedulePage() {
               onChange={(e) =>
                 setNewBlock((n) => ({ ...n, end: e.target.value }))
               }
-              className="focus-ring rounded-md border border-hair bg-white px-3 py-2 text-sm"
+              className="focus-ring rounded-md border border-hair bg-paper px-3 py-2 text-sm"
             />
             <button onClick={addBlock} className="btn-primary">
               Add
@@ -471,7 +466,7 @@ function WeekGrid({
   const hours = Array.from({ length: totalHours + 1 }, (_, i) => START_HOUR + i);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-hair bg-white shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-hair bg-paper shadow-sm">
       {/* header row */}
       <div className="grid grid-cols-[56px_repeat(7,1fr)] border-b border-hair bg-offwhite">
         <div />
@@ -549,7 +544,7 @@ function WeekGrid({
                       </div>
                       <button
                         onClick={() => onRemove(b.id)}
-                        className="rounded p-0.5 text-orange-ink/60 opacity-0 transition-opacity hover:bg-white/60 hover:text-orange-ink group-hover:opacity-100"
+                        className="rounded p-0.5 text-orange-ink/60 opacity-0 transition-opacity hover:bg-paper/60 hover:text-orange-ink group-hover:opacity-100"
                         aria-label="Remove block"
                       >
                         <svg viewBox="0 0 16 16" className="h-3 w-3" fill="currentColor">
@@ -627,7 +622,7 @@ function ClaimCelebration({
       </div>
 
       <div
-        className="animate-bounceIn relative max-w-md rounded-2xl border border-hair bg-white px-8 pb-8 pt-16 text-center shadow-[0_40px_120px_-20px_rgba(0,0,0,0.5)]"
+        className="animate-bounceIn relative max-w-md rounded-2xl border border-hair bg-paper px-8 pb-8 pt-16 text-center shadow-[0_40px_120px_-20px_rgba(0,0,0,0.5)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Treasure chest */}

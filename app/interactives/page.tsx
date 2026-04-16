@@ -6,6 +6,7 @@ import GraphingCalculator from "@/app/components/GraphingCalculator";
 import Graph3D from "@/app/components/Graph3D";
 import PhysicsSim, { type SimKind } from "@/app/components/PhysicsSim";
 import CodeSandbox from "@/app/components/CodeSandbox";
+import PageLoader from "@/app/components/PageLoader";
 
 type Spec = {
   kind: "graph2d" | "graph3d" | "physics-sim" | "code-java" | "code-pseudo";
@@ -73,12 +74,8 @@ export default function InteractivesPage() {
     return (
       <main className="bg-paper">
         <SiteNav>
-          <a href="/chat" className="nav-link">Chat</a>
-          <a href="/study" className="nav-link">Study</a>
         </SiteNav>
-        <section className="mx-auto max-w-3xl px-6 py-20 text-center text-muted">
-          Loading…
-        </section>
+        <PageLoader />
       </main>
     );
   }
@@ -95,8 +92,6 @@ export default function InteractivesPage() {
     return (
       <main className="bg-paper text-body">
         <SiteNav>
-          <a href="/chat" className="nav-link">Chat</a>
-          <a href="/study" className="nav-link">Study</a>
         </SiteNav>
         <section className="mx-auto max-w-2xl px-6 py-20">
           <div className="label mb-3">Interactives</div>
@@ -128,8 +123,6 @@ export default function InteractivesPage() {
   return (
     <main className="bg-paper text-body">
       <SiteNav>
-        <a href="/chat" className="nav-link">Chat</a>
-        <a href="/study" className="nav-link">Study</a>
       </SiteNav>
       <section className="mx-auto max-w-4xl px-6 py-12">
         <div className="label mb-3">Interactives</div>
@@ -142,7 +135,7 @@ export default function InteractivesPage() {
           with your parameters.
         </p>
 
-        <div className="mt-8 rounded-xl border border-hair bg-white p-5">
+        <div className="mt-8 rounded-xl border border-hair bg-paper p-5">
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
@@ -183,7 +176,7 @@ export default function InteractivesPage() {
         )}
 
         {spec && (
-          <div className="mt-8 rounded-xl border border-hair bg-white p-6">
+          <div className="mt-8 rounded-xl border border-hair bg-paper p-6">
             <div className="label mb-2">{spec.kind}</div>
             <h2 className="font-serif text-2xl font-normal text-ink">
               {spec.title}

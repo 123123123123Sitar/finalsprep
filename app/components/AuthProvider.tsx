@@ -27,6 +27,26 @@ import { normalizePlanTier, type PlanTier } from "@/lib/plans";
 import type { StreakDoc } from "@/lib/streaks";
 
 export type ClientPlan = PlanTier;
+
+const PLAN_CACHE_KEY = "fp-plan";
+
+function readCachedPlan(): PlanTier {
+  if (typeof window === "undefined") return "learner";
+  try {
+    return normalizePlanTier(window.localStorage.getItem(PLAN_CACHE_KEY));
+  } catch {
+    return "learner";
+  }
+}
+
+function writeCachedPlan(plan: PlanTier) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(PLAN_CACHE_KEY, plan);
+  } catch {
+    /* ignore */
+  }
+}
 export type AuthResult = {
   ok: boolean;
   code?: string;
@@ -38,6 +58,13 @@ type AuthContextValue = {
   loading: boolean;
   configured: boolean;
   plan: ClientPlan;
+  /**
+   * True while we're still waiting on the first Firestore billing snapshot
+   * for the current user. `plan` may be a cached value during this window;
+   * gate any paywalled UI on `!planLoading` to avoid flashing the learner
+   * state at a paid user.
+   */
+  planLoading: boolean;
   streak: StreakDoc | null;
   /** Returns an ID token for the current user, or null if not signed in. */
   getIdToken: () => Promise<string | null>;
@@ -55,7 +82,11 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [plan, setPlan] = useState<ClientPlan>("learner");
+  const [plan, setPlan] = useState<ClientPlan>(() => readCachedPlan());
+  // True until the first billing-doc snapshot returns for the current user.
+  // Starts true because the auth check is still pending on first mount —
+  // we don't yet know whether there's a user whose plan we need to load.
+  const [planLoading, setPlanLoading] = useState(true);
   const [streak, setStreak] = useState<StreakDoc | null>(null);
   const configured = isFirebaseConfigured();
 
@@ -107,13 +138,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Subscribe to the user's billing doc so the plan updates in real-time
   // when the Stripe webhook promotes them.
+  //
+  // Plan resolution is layered to avoid flicker:
+  //   1. Initial render: `plan` starts from localStorage cache (fast, warm).
+  //   2. If no user is present once auth resolves, plan is definitively
+  //      "learner" and `planLoading` flips to false.
+  //   3. If there is a user, we hold `planLoading = true` until the first
+  //      Firestore snapshot returns, at which point plan is authoritative.
+  // Firestore is the single source of truth; the cache only exists to keep
+  // the first paint accurate for returning paid subscribers.
   useEffect(() => {
-    if (!user) {
-      setPlan("learner");
+    if (loading) {
+      // Auth state not resolved yet — we can't know which plan to fetch.
       return;
     }
+    if (!user) {
+      setPlan("learner");
+      writeCachedPlan("learner");
+      setPlanLoading(false);
+      return;
+    }
+    setPlanLoading(true);
     const db = getDb();
-    if (!db) return;
+    if (!db) {
+      setPlanLoading(false);
+      return;
+    }
     const ref = doc(db, "users", user.uid, "profile", "billing");
     const unsub = onSnapshot(
       ref,
@@ -121,18 +171,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const data = snap.data() as any;
         if (!data) {
           setPlan("learner");
+          writeCachedPlan("learner");
+          setPlanLoading(false);
           return;
         }
         const nowSec = Math.floor(Date.now() / 1000);
         const expired =
           data.currentPeriodEnd && data.currentPeriodEnd < nowSec;
         const nextPlan = normalizePlanTier(data.plan);
-        setPlan(nextPlan !== "learner" && !expired ? nextPlan : "learner");
+        const resolved: PlanTier =
+          nextPlan !== "learner" && !expired ? nextPlan : "learner";
+        setPlan(resolved);
+        writeCachedPlan(resolved);
+        setPlanLoading(false);
       },
-      () => setPlan("learner")
+      () => {
+        setPlan("learner");
+        setPlanLoading(false);
+      }
     );
     return () => unsub();
-  }, [user]);
+  }, [user, loading]);
 
   const getIdToken = useCallback(async () => {
     const auth = getFirebaseAuth();
@@ -286,6 +345,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading,
       configured,
       plan,
+      planLoading,
       streak,
       getIdToken,
       signUp,
@@ -296,7 +356,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       sendPasswordReset,
       refresh,
     }),
-    [user, loading, configured, plan, streak, getIdToken]
+    [user, loading, configured, plan, planLoading, streak, getIdToken]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

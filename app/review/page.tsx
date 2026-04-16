@@ -8,6 +8,7 @@ import {
   removeFromWrongBank,
   type WrongBankEntry,
 } from "@/lib/wrongBank";
+import PageLoader from "@/app/components/PageLoader";
 
 export default function ReviewPage() {
   const { user, loading, plan } = useAuth();
@@ -37,12 +38,8 @@ export default function ReviewPage() {
     return (
       <main className="bg-paper">
         <SiteNav>
-          <a href="/study" className="nav-link">Study</a>
-          <a href="/chat" className="nav-link">Chat</a>
         </SiteNav>
-        <section className="mx-auto max-w-2xl px-6 py-20 text-center text-muted">
-          Loading…
-        </section>
+        <PageLoader />
       </main>
     );
   }
@@ -50,8 +47,6 @@ export default function ReviewPage() {
   return (
     <main className="bg-paper text-body">
       <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-        <a href="/chat" className="nav-link">Chat</a>
       </SiteNav>
       <section className="mx-auto max-w-3xl px-6 py-16">
         <div className="label mb-3">Review</div>
@@ -98,7 +93,7 @@ function ReviewCard({
 }) {
   const [showAnswer, setShowAnswer] = useState(false);
   return (
-    <div className="rounded-lg border border-hair bg-white p-5">
+    <div className="rounded-lg border border-hair bg-paper p-5">
       <div className="flex items-center justify-between">
         <div className="text-[11px] uppercase tracking-wider text-muted">
           {entry.courseSlug} · unit {entry.unitNumber} · {entry.difficulty}

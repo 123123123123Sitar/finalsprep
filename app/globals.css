@@ -117,6 +117,14 @@ button, a, input, textarea, details, summary, [role="button"] {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
+@keyframes logoPulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+.animate-logo-pulse {
+  animation: logoPulse 1.4s ease-in-out infinite;
+  transform-origin: center;
+}
 @keyframes shimmerLine {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -207,7 +215,7 @@ button, a, input, textarea, details, summary, [role="button"] {
 /* ——— Components ——— */
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md border border-ink bg-ink px-5 py-2.5 text-sm font-medium text-white;
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-ink bg-ink px-5 py-2.5 text-sm font-medium text-paper;
     position: relative;
     overflow: hidden;
     box-shadow: 0 1px 0 rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
@@ -243,7 +251,7 @@ button, a, input, textarea, details, summary, [role="button"] {
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-md border border-hair bg-white px-4 py-2 text-sm font-medium text-ink;
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-hair bg-paper px-4 py-2 text-sm font-medium text-ink;
   }
   .btn-ghost:hover {
     @apply border-rule bg-offwhite;
