@@ -36,7 +36,7 @@ const EXAMPLES = [
 ];
 
 export default function InteractivesPage() {
-  const { user, loading, plan, getIdToken } = useAuth();
+  const { user, loading, plan, planLoading, getIdToken } = useAuth();
   const [prompt, setPrompt] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,6 +85,18 @@ export default function InteractivesPage() {
       window.location.href = "/signin?next=/interactives";
     }
     return null;
+  }
+
+  // Hold the loader until the billing-doc snapshot resolves so paid users
+  // never flash the learner paywall on reload.
+  if (planLoading) {
+    return (
+      <main className="bg-paper">
+        <SiteNav>
+        </SiteNav>
+        <PageLoader />
+      </main>
+    );
   }
 
   // Pro wall for learners.

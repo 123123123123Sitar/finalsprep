@@ -15,7 +15,7 @@ type HistoryEntry = {
 };
 
 export default function InsightsPage() {
-  const { user, loading, plan, streak } = useAuth();
+  const { user, loading, plan, planLoading, streak } = useAuth();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [wrongCount, setWrongCount] = useState(0);
   const [loaded, setLoaded] = useState(false);
@@ -49,7 +49,10 @@ export default function InsightsPage() {
     })();
   }, [user]);
 
-  if (loading || !user) {
+  // Keep the shell in a loader state until BOTH auth AND the billing-doc
+  // snapshot resolve. Otherwise a paid user would briefly see the "learner"
+  // upsell below while their cached plan is still the default.
+  if (loading || !user || planLoading) {
     return (
       <main className="bg-paper">
         <SiteNav>

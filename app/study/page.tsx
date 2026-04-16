@@ -52,26 +52,41 @@ type Tab =
   | "solver";
 
 export default function Study() {
-  const { user, getIdToken, plan } = useAuth();
-  // null = auth/Firestore still resolving; [] = loaded, user has added none.
-  // We deliberately don't fall back to "show everything" — that was leaking
-  // unassigned courses on first paint and for users who never picked any.
+  const { user, loading: authLoading, getIdToken, plan, planLoading } = useAuth();
+  // Enrollment state machine:
+  //   null  = unresolved (auth or Firestore still pending)
+  //   []    = resolved, user has selected no courses → show picker
+  //   [..]  = resolved, render the dashboard
+  // Crucially we do NOT collapse "auth loading" into "signed out", because
+  // that used to flash the "Pick your AP courses" screen for a frame on
+  // reload before the Firestore snapshot arrived.
   const [selectedCourses, setSelectedCourses] = useState<string[] | null>(
     null
   );
 
   useEffect(() => {
-    // Signed-out visitors have no assignments; mark as loaded with empty set
-    // so the empty state can render instead of a permanent spinner.
+    // Hold the loading sentinel until auth resolves — otherwise a signed-in
+    // user's first render would see `!user` and flip the state to `[]`,
+    // triggering the empty-state UI before we even know who they are.
+    if (authLoading) {
+      setSelectedCourses(null);
+      return;
+    }
     if (!user) {
       setSelectedCourses([]);
       return;
     }
     const db = getDb();
-    if (!db) return;
+    if (!db) {
+      setSelectedCourses([]);
+      return;
+    }
+    // Reset to the loading sentinel when the user identity changes so the
+    // previous user's snapshot doesn't briefly render for the new user.
+    setSelectedCourses(null);
     const unsub = subscribeSelectedCourses(db, user.uid, setSelectedCourses);
     return () => unsub();
-  }, [user]);
+  }, [user, authLoading]);
 
   // Single source of truth for "what the user can see on /study". Derived
   // strictly from the added list — no hardcoded defaults, no fallback.

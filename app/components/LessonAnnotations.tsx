@@ -19,7 +19,7 @@ export default function LessonAnnotationsPanel({
 }: {
   lessonSlug: string;
 }) {
-  const { user, plan } = useAuth();
+  const { user, plan, planLoading } = useAuth();
   const canUse = plan === "pro" || plan === "hacker";
   const [annotations, setAnnotations] = useState<Annotations>(EMPTY_ANNOTATIONS);
   const [loaded, setLoaded] = useState(false);
@@ -68,6 +68,11 @@ export default function LessonAnnotationsPanel({
   }, [noteDraft, noteDirty, lessonSlug, user, canUse]);
 
   if (!user) return null;
+
+  // Don't render anything — neither the panel nor the upsell — while the
+  // plan is still resolving. Otherwise a paid user reloading the page
+  // briefly sees the "Pro feature" upsell before their plan loads.
+  if (planLoading) return null;
 
   if (!canUse) {
     return (
