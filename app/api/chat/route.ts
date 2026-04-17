@@ -21,6 +21,11 @@ import {
   getTokenBank,
   deductFromTokenBank,
 } from "@/lib/tokenBank";
+import {
+  isGeminiBlocked,
+  isGeminiRateLimit,
+  markGeminiBlocked,
+} from "@/lib/geminiStatus";
 import type { PlanTier } from "@/lib/plans";
 
 export const runtime = "nodejs";
@@ -37,11 +42,16 @@ function jsonError(status: number, body: Record<string, unknown>) {
 /**
  * Model routing (cost-controlled, invisible to the user):
  *
- *   Learner         → Gemini 2.5 Flash (cheapest; Thinking disabled)
- *   Pro (default)   → Gemini 2.5 Flash
- *   Pro (thinking)  → Claude Haiku 4.5       · 2x token cost
- *   Hacker (default)→ Claude Haiku 4.5
- *   Hacker (think)  → Claude Sonnet 4.6      · 3x token cost
+ *   Learner (Gemini OK)    → Gemini 2.5 Flash     · 1x cost
+ *   Learner (Gemini 429)   → Claude Haiku 4.5     · 1x cost (auto-fallback)
+ *   Pro (default)          → Claude Haiku 4.5     · 1x cost
+ *   Pro (thinking)         → Claude Sonnet 4.6    · 3x cost
+ *   Hacker (default)       → Claude Haiku 4.5     · 1x cost
+ *   Hacker (thinking)      → Claude Sonnet 4.6    · 3x cost
+ *
+ * Pro and Hacker always use Claude. Learners try Gemini first; when Gemini
+ * is globally rate-limited (flag set in Firestore by the fallback path
+ * below) we route them to Claude Haiku instead.
  *
  * "thinking" is a client boolean. We never expose model names in the UI.
  */
@@ -56,18 +66,20 @@ const GEMINI_MODEL = "gemini-2.5-flash";
 const HAIKU_MODEL = "claude-haiku-4-5-20251001";
 const SONNET_MODEL = "claude-sonnet-4-6";
 
-function pickModel(plan: PlanTier, thinking: boolean): ModelPick {
-  if (plan === "hacker") {
+function pickModel(
+  plan: PlanTier,
+  thinking: boolean,
+  geminiBlocked: boolean
+): ModelPick {
+  if (plan === "hacker" || plan === "pro") {
     return thinking
       ? { provider: "anthropic", model: SONNET_MODEL, costMultiplier: 3 }
       : { provider: "anthropic", model: HAIKU_MODEL, costMultiplier: 1 };
   }
-  if (plan === "pro") {
-    return thinking
-      ? { provider: "anthropic", model: HAIKU_MODEL, costMultiplier: 2 }
-      : { provider: "gemini", model: GEMINI_MODEL, costMultiplier: 1 };
+  // Learner: prefer Gemini, fall back to Claude when Gemini is rate-limited.
+  if (geminiBlocked) {
+    return { provider: "anthropic", model: HAIKU_MODEL, costMultiplier: 1 };
   }
-  // Learner: always Gemini Flash, thinking disallowed.
   return { provider: "gemini", model: GEMINI_MODEL, costMultiplier: 1 };
 }
 
@@ -128,7 +140,11 @@ export async function POST(req: Request) {
   // Thinking mode: only Pro/Hacker users can enable it. Learners ignored.
   const thinking =
     (plan === "pro" || plan === "hacker") && body?.thinking === true;
-  const picked = pickModel(plan, thinking);
+  // Cheap pre-check so learners hit Claude immediately when Gemini is
+  // globally rate-limited; the in-stream fallback below still handles a
+  // 429 racing past this check.
+  const geminiBlocked = plan === "learner" ? await isGeminiBlocked() : false;
+  const picked = pickModel(plan, thinking, geminiBlocked);
 
   // Gate on the right API key.
   const needAnthropic = picked.provider === "anthropic";
@@ -226,99 +242,125 @@ export async function POST(req: Request) {
       let capturedInput = 0;
       let capturedOutput = 0;
       let accumulated = "";
+
+      const runAnthropic = async (modelId: string) => {
+        const client = new Anthropic({ apiKey: anthropicKey! });
+        const anthMessages: Anthropic.MessageParam[] = messages.map(
+          (m, i) => {
+            const isLastUser =
+              i === messages.length - 1 &&
+              m.role === "user" &&
+              validImages.length > 0;
+            if (!isLastUser) return { role: m.role, content: m.content };
+            const content: any[] = validImages.map((img: any) => ({
+              type: "image",
+              source: {
+                type: "base64",
+                media_type: img.mediaType,
+                data: img.data,
+              },
+            }));
+            if (m.content.trim().length > 0) {
+              content.push({ type: "text", text: m.content });
+            } else {
+              content.push({
+                type: "text",
+                text: "Please help me with the work in this image.",
+              });
+            }
+            return { role: "user" as const, content };
+          }
+        );
+        const response = client.messages.stream({
+          model: modelId,
+          max_tokens: outputTokenLimit,
+          system: systemPrompt,
+          messages: anthMessages,
+        });
+        for await (const event of response) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            accumulated += event.delta.text;
+            controller.enqueue(enc.encode(event.delta.text));
+          } else if (event.type === "message_start") {
+            const u = (event as any).message?.usage;
+            if (u?.input_tokens) capturedInput = u.input_tokens;
+          } else if (event.type === "message_delta") {
+            const u = (event as any).usage;
+            if (u?.output_tokens) capturedOutput = u.output_tokens;
+          }
+        }
+        if (!capturedInput || !capturedOutput) {
+          try {
+            const final = await response.finalMessage();
+            if (!capturedInput)
+              capturedInput = final.usage?.input_tokens ?? 0;
+            if (!capturedOutput)
+              capturedOutput = final.usage?.output_tokens ?? 0;
+          } catch {}
+        }
+      };
+
+      const runGemini = async () => {
+        const genAi = new GoogleGenerativeAI(geminiKey!);
+        const model = genAi.getGenerativeModel({
+          model: picked.model,
+          systemInstruction: systemPrompt,
+          generationConfig: {
+            maxOutputTokens: outputTokenLimit,
+          },
+        });
+        const history = messages.slice(0, -1).map((m) => ({
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: m.content }],
+        }));
+        const last = messages[messages.length - 1]?.content || "";
+        const chat = model.startChat({ history });
+        const result = await chat.sendMessageStream(last);
+        for await (const chunk of result.stream) {
+          const t = chunk.text();
+          if (t) {
+            accumulated += t;
+            controller.enqueue(enc.encode(t));
+          }
+        }
+        try {
+          const agg = await result.response;
+          const usage = (agg as any).usageMetadata;
+          if (usage) {
+            capturedInput = usage.promptTokenCount || 0;
+            capturedOutput = usage.candidatesTokenCount || 0;
+          }
+        } catch {}
+      };
+
       try {
         if (picked.provider === "anthropic") {
-          const client = new Anthropic({ apiKey: anthropicKey! });
-          const anthMessages: Anthropic.MessageParam[] = messages.map(
-            (m, i) => {
-              const isLastUser =
-                i === messages.length - 1 &&
-                m.role === "user" &&
-                validImages.length > 0;
-              if (!isLastUser) return { role: m.role, content: m.content };
-              const content: any[] = validImages.map((img: any) => ({
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: img.mediaType,
-                  data: img.data,
-                },
-              }));
-              if (m.content.trim().length > 0) {
-                content.push({ type: "text", text: m.content });
-              } else {
-                content.push({
-                  type: "text",
-                  text: "Please help me with the work in this image.",
-                });
-              }
-              return { role: "user" as const, content };
-            }
-          );
-          const response = client.messages.stream({
-            model: picked.model,
-            max_tokens: outputTokenLimit,
-            system: systemPrompt,
-            messages: anthMessages,
-          });
-          for await (const event of response) {
-            if (
-              event.type === "content_block_delta" &&
-              event.delta.type === "text_delta"
-            ) {
-              accumulated += event.delta.text;
-              controller.enqueue(enc.encode(event.delta.text));
-            } else if (event.type === "message_start") {
-              const u = (event as any).message?.usage;
-              if (u?.input_tokens) capturedInput = u.input_tokens;
-            } else if (event.type === "message_delta") {
-              const u = (event as any).usage;
-              if (u?.output_tokens) capturedOutput = u.output_tokens;
-            }
-          }
-          if (!capturedInput || !capturedOutput) {
-            try {
-              const final = await response.finalMessage();
-              if (!capturedInput)
-                capturedInput = final.usage?.input_tokens ?? 0;
-              if (!capturedOutput)
-                capturedOutput = final.usage?.output_tokens ?? 0;
-            } catch {}
-          }
+          await runAnthropic(picked.model);
         } else {
-          // Gemini path — simple streaming text. Images are supported in
-          // the Pro/Hacker Anthropic path; Gemini is text-only here for now.
-          const genAi = new GoogleGenerativeAI(geminiKey!);
-          const model = genAi.getGenerativeModel({
-            model: picked.model,
-            systemInstruction: systemPrompt,
-            generationConfig: {
-              maxOutputTokens: outputTokenLimit,
-            },
-          });
-          const history = messages.slice(0, -1).map((m) => ({
-            role: m.role === "assistant" ? "model" : "user",
-            parts: [{ text: m.content }],
-          }));
-          const last = messages[messages.length - 1]?.content || "";
-          const chat = model.startChat({ history });
-          const result = await chat.sendMessageStream(last);
-          for await (const chunk of result.stream) {
-            const t = chunk.text();
-            if (t) {
-              accumulated += t;
-              controller.enqueue(enc.encode(t));
+          try {
+            await runGemini();
+          } catch (e) {
+            // Learner-tier fallback: Gemini hit a rate limit. Flip the
+            // global flag so the next request routes to Claude immediately,
+            // then retry this request on Claude — but only if we haven't
+            // already streamed any tokens to the client.
+            if (
+              isGeminiRateLimit(e) &&
+              accumulated.length === 0 &&
+              anthropicKey
+            ) {
+              void markGeminiBlocked((e as any)?.message);
+              picked.provider = "anthropic";
+              picked.model = HAIKU_MODEL;
+              picked.costMultiplier = 1;
+              await runAnthropic(HAIKU_MODEL);
+            } else {
+              throw e;
             }
           }
-          // Gemini reports usage on the aggregated response.
-          try {
-            const agg = await result.response;
-            const usage = (agg as any).usageMetadata;
-            if (usage) {
-              capturedInput = usage.promptTokenCount || 0;
-              capturedOutput = usage.candidatesTokenCount || 0;
-            }
-          } catch {}
         }
 
         const rawTokens =

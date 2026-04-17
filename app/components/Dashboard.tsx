@@ -6,6 +6,16 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 import { listConversations, type StoredConversation } from "@/lib/chatStore";
 import { planLabel } from "@/lib/plans";
+import {
+  COURSES,
+  LESSONS,
+  type Course,
+  type CourseSlug,
+  type Lesson,
+} from "@/lib/topics";
+import { subscribeSelectedCourses } from "@/lib/selectedCourses";
+import { examCountdownLabel } from "@/lib/examDates";
+import { subscribeCompletedSlugs } from "@/lib/progress";
 
 type QuickAction = {
   href: string;
@@ -34,10 +44,16 @@ const QUICK_ACTIONS: QuickAction[] = [
  * charts, etc.) without reshuffling the top-level grid.
  */
 export default function Dashboard() {
-  const { user, plan, planLoading, streak } = useAuth();
+  const { user, loading: authLoading, plan, planLoading, streak } = useAuth();
   const [bonusBalance, setBonusBalance] = useState<number | null>(null);
   const [recent, setRecent] = useState<StoredConversation[] | null>(null);
   const [recentError, setRecentError] = useState(false);
+  // Same three-state machine as /study so the course-cards section never
+  // flashes an empty state during the auth → Firestore resolution window.
+  const [selectedCourses, setSelectedCourses] = useState<string[] | null>(
+    null
+  );
+  const [completedSlugs, setCompletedSlugs] = useState<Set<string>>(new Set());
 
   const displayName = useMemo(() => {
     const dn = user?.displayName?.trim();
@@ -76,6 +92,50 @@ export default function Dashboard() {
       cancelled = true;
     };
   }, [user]);
+
+  // Enrollment: hold `null` while auth is still loading so a signed-in user's
+  // first render never collapses to the "no courses" state.
+  useEffect(() => {
+    if (authLoading) {
+      setSelectedCourses(null);
+      return;
+    }
+    if (!user) {
+      setSelectedCourses([]);
+      return;
+    }
+    const db = getDb();
+    if (!db) {
+      setSelectedCourses([]);
+      return;
+    }
+    setSelectedCourses(null);
+    const unsub = subscribeSelectedCourses(db, user.uid, setSelectedCourses);
+    return () => unsub();
+  }, [user, authLoading]);
+
+  // Completion progress — reads the same `completedSlugs` field the study
+  // page's "Mark complete" button writes, so the progress bar here only
+  // advances when a lesson is explicitly finished.
+  useEffect(() => {
+    if (!user) {
+      setCompletedSlugs(new Set());
+      return;
+    }
+    const db = getDb();
+    if (!db) return;
+    const unsub = subscribeCompletedSlugs(db, user.uid, setCompletedSlugs);
+    return () => unsub();
+  }, [user]);
+
+  const addedCourses = useMemo<Course[]>(
+    () =>
+      selectedCourses
+        ? COURSES.filter((c) => selectedCourses.includes(c.slug))
+        : [],
+    [selectedCourses]
+  );
+  const coursesLoading = selectedCourses === null;
 
   return (
     <main className="bg-paper text-body">
@@ -123,6 +183,42 @@ export default function Dashboard() {
             cta={{ href: "/shop", label: "Top up" }}
           />
         </div>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-6 pt-8 pb-2">
+        <div className="mb-4 flex items-baseline justify-between">
+          <h2 className="label">Your courses</h2>
+          <a href="/study" className="text-xs text-muted hover:text-ink">
+            Open study →
+          </a>
+        </div>
+        {coursesLoading ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="h-[168px] animate-pulse rounded-xl border border-hair bg-offwhite"
+              />
+            ))}
+          </div>
+        ) : addedCourses.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-hair bg-offwhite p-6 text-sm text-muted">
+            No courses added yet.{" "}
+            <a href="/study" className="text-orange hover:underline">
+              Pick your AP courses →
+            </a>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {addedCourses.map((c) => (
+              <CourseCard
+                key={c.slug}
+                course={c}
+                completedSlugs={completedSlugs}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mx-auto max-w-5xl px-6 py-8">
@@ -235,6 +331,85 @@ function SummaryTile({
         </a>
       )}
     </div>
+  );
+}
+
+function CourseCard({
+  course,
+  completedSlugs,
+}: {
+  course: Course;
+  completedSlugs: Set<string>;
+}) {
+  // Lessons are already in curriculum order within LESSONS, so the first
+  // uncompleted one is the natural "current lesson" to resume.
+  const courseLessons = useMemo<Lesson[]>(
+    () =>
+      LESSONS.filter((l) =>
+        l.courses.some((m) => m.courseSlug === course.slug)
+      ),
+    [course.slug]
+  );
+  const total = courseLessons.length;
+  const done = courseLessons.reduce(
+    (n, l) => (completedSlugs.has(l.slug) ? n + 1 : n),
+    0
+  );
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const nextLesson = courseLessons.find((l) => !completedSlugs.has(l.slug));
+  const resumeLesson = nextLesson ?? courseLessons[courseLessons.length - 1];
+  const countdown = examCountdownLabel(course.slug as CourseSlug);
+  const href =
+    resumeLesson != null
+      ? `/study?course=${encodeURIComponent(
+          course.slug
+        )}&lesson=${encodeURIComponent(resumeLesson.slug)}`
+      : `/study?course=${encodeURIComponent(course.slug)}`;
+
+  return (
+    <a
+      href={href}
+      className="group flex flex-col rounded-xl border border-hair bg-paper p-5 transition hover:-translate-y-0.5 hover:border-orange hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.25)]"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 font-serif text-xl text-ink group-hover:text-orange">
+          {course.title}
+        </div>
+        {countdown && (
+          <span className="shrink-0 rounded-full border border-orange/30 bg-orange-tint px-2 py-1 text-[10px] font-medium text-orange-ink">
+            {countdown}
+          </span>
+        )}
+      </div>
+
+      <div className="mt-4">
+        <div className="flex items-center justify-between text-[11px] text-muted">
+          <span>
+            {total === 0
+              ? "No lessons yet"
+              : `${done}/${total} lessons`}
+          </span>
+          <span className="font-medium text-ink">{pct}%</span>
+        </div>
+        <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-offwhite">
+          <div
+            className="h-full rounded-full bg-orange transition-all"
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 border-t border-hair pt-3 text-[12px]">
+        <div className="label mb-1">
+          {nextLesson ? "Current lesson" : "Last lesson"}
+        </div>
+        <div className="line-clamp-2 text-ink group-hover:text-orange">
+          {resumeLesson
+            ? resumeLesson.title
+            : "Curriculum coming soon"}
+        </div>
+      </div>
+    </a>
   );
 }
 

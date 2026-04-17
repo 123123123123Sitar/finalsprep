@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import MathRender from "@/app/components/Math";
+import Markdown from "@/app/components/Markdown";
 import { LogoMark } from "@/app/components/Logo";
 import AuthGate from "@/app/components/AuthGate";
 import { useAuth } from "@/app/components/AuthProvider";
@@ -232,9 +233,7 @@ function ChatInner() {
     }
   }
 
-  async function handleImagePick(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files || []);
-    e.target.value = ""; // allow re-selecting the same file
+  async function ingestImageFiles(files: File[]) {
     if (plan === "learner") {
       setError("Image uploads are a Pro feature. Upgrade to attach photos.");
       return;
@@ -242,7 +241,7 @@ function ChatInner() {
     for (const file of files) {
       if (!file.type.startsWith("image/")) continue;
       if (file.size > 5 * 1024 * 1024) {
-        setError(`${file.name} is over 5MB. Try a smaller image.`);
+        setError(`${file.name || "Pasted image"} is over 5MB. Try a smaller image.`);
         continue;
       }
       const data = await new Promise<string>((resolve) => {
@@ -256,6 +255,29 @@ function ChatInner() {
         { mediaType: file.type, data, thumb },
       ]);
     }
+  }
+
+  async function handleImagePick(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+    e.target.value = ""; // allow re-selecting the same file
+    await ingestImageFiles(files);
+  }
+
+  // Pasted screenshots arrive as items on the clipboard. We pull every image
+  // item, drop them into pendingImages, and call preventDefault so the
+  // textarea doesn't try to insert a base64 string as text.
+  async function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const items = Array.from(e.clipboardData?.items || []);
+    const imageFiles: File[] = [];
+    for (const it of items) {
+      if (it.kind === "file" && it.type.startsWith("image/")) {
+        const f = it.getAsFile();
+        if (f) imageFiles.push(f);
+      }
+    }
+    if (imageFiles.length === 0) return;
+    e.preventDefault();
+    await ingestImageFiles(imageFiles);
   }
 
   function removeImage(idx: number) {
@@ -493,11 +515,6 @@ function ChatInner() {
     messages.map(({ role, content }) => ({ role, content }))
   );
   const chatTitle = activeConversation?.title?.trim() || draftTitle || "New chat";
-  const chatStatus = currentConvId
-    ? "Saved chat"
-    : messages.length > 0
-      ? "Draft chat"
-      : "New chat";
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -525,44 +542,22 @@ function ChatInner() {
           />
         ) : (
           <CollapsedSidebar
+            userEmail={user?.email}
             startNewChat={startNewChat}
             expand={() => setHistoryOpen(true)}
             onOpenProjects={() => setProjectsOverlayOpen(true)}
             onOpenExtension={(k) => setExtensionOverlay(k)}
+            onOpenSettings={() => setSettingsOpen(true)}
           />
         )}
       </aside>
 
       {/* Main chat column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="border-b border-hair bg-offwhite/60 px-4 py-5 sm:px-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="border-b border-hair bg-offwhite/60 px-4 py-2.5 sm:px-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-                <div className="flex items-center gap-2">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-3.5 w-3.5"
-                    fill="none"
-                    aria-hidden
-                  >
-                    <path
-                      d="M7 8h10M7 12h7M7 16h10"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M4 4h16v16H4z"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span>{chatStatus}</span>
-                </div>
-              </div>
-              <h1 className="mt-2 max-w-3xl break-words font-serif text-2xl font-normal leading-tight text-ink sm:text-[2rem]">
+              <h1 className="max-w-3xl truncate font-serif text-base font-normal leading-tight text-ink sm:text-lg">
                 {chatTitle}
               </h1>
             </div>
@@ -598,11 +593,6 @@ function ChatInner() {
                 <h1 className="font-serif text-4xl font-normal leading-[1.15] text-ink sm:text-5xl">
                   What are you stuck on?
                 </h1>
-                <p className="mx-auto mt-4 max-w-xl text-muted">
-                  Paste a problem, describe your confusion, or ask a
-                  conceptual question. Math renders in LaTeX. Responses stream
-                  in real time.
-                </p>
                 <div className="mt-10 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
                   Try one of these
                 </div>
@@ -727,6 +717,7 @@ function ChatInner() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onKey}
+                onPaste={handlePaste}
                 rows={1}
                 placeholder="Ask anything…"
                 className="flex-1 resize-none self-center overflow-y-auto bg-transparent px-2 py-2.5 font-sans text-[15.5px] leading-6 text-white placeholder-white/40 outline-none"
@@ -866,7 +857,7 @@ function Message({
           </div>
         ) : (
           <>
-            <MathRender auto>{content}</MathRender>
+            <Markdown>{content}</Markdown>
             {streaming && <span className="stream-cursor" aria-hidden="true" />}
           </>
         )}
@@ -959,12 +950,7 @@ function ExpandedSidebar({
       {/* Logo + collapse */}
       <div className="flex items-center justify-between px-3 py-4">
         <a href="/" className="flex items-center gap-2 px-1 text-sm font-medium text-ink">
-          <svg width="20" height="18" viewBox="0 0 44 32" fill="none" className="text-ink">
-            <path d="M6 7.5C9.6 5.2 13.8 4 18.6 4C20.4 4 21.8 5.4 21.8 7.2V27.5C17.2 27.5 12.2 28.7 6 31V7.5Z" fill="currentColor" fillOpacity="0.08" />
-            <path d="M38 7.5C34.4 5.2 30.2 4 25.4 4C23.6 4 22.2 5.4 22.2 7.2V27.5C26.8 27.5 31.8 28.7 38 31V7.5Z" fill="currentColor" fillOpacity="0.08" />
-            <path d="M6 7.5C9.6 5.2 13.8 4 18.6 4C20.4 4 21.8 5.4 21.8 7.2V27.5C17.2 27.5 12.2 28.7 6 31V7.5Z M38 7.5C34.4 5.2 30.2 4 25.4 4C23.6 4 22.2 5.4 22.2 7.2V27.5C26.8 27.5 31.8 28.7 38 31V7.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-          </svg>
-          <span>FinalsPrep</span>
+          <span>FinalsPrep AI Tutor</span>
         </a>
         <button
           onClick={collapse}
@@ -1047,35 +1033,6 @@ function ExpandedSidebar({
           label="Interactives"
         />
         <SidebarItem
-          onClick={() => onOpenExtension("review")}
-          icon={
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4V4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-              <path d="M8 10h8M8 14h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
-          }
-          label="Review bank"
-        />
-        <SidebarItem
-          onClick={() => onOpenExtension("insights")}
-          icon={
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M4 20V10m6 10V4m6 16v-8m6 8v-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
-          }
-          label="Insights"
-        />
-        <SidebarItem
-          onClick={() => onOpenExtension("schedule")}
-          icon={
-            <svg viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" strokeWidth="1.8" />
-              <path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
-          }
-          label="Schedule"
-        />
-        <SidebarItem
           onClick={() => onOpenExtension("shop")}
           icon={
             <svg viewBox="0 0 24 24" fill="none">
@@ -1114,12 +1071,18 @@ function ExpandedSidebar({
                     </button>
                     <button
                       onClick={() => removeConversation(c)}
-                      className="opacity-0 transition-opacity hover:text-red-600 group-hover:opacity-100"
-                      aria-label="Delete"
-                      title="Delete"
+                      className="shrink-0 rounded p-1 text-muted opacity-0 transition-opacity hover:bg-paper hover:text-red-600 group-hover:opacity-100"
+                      aria-label="Delete chat"
+                      title="Delete chat"
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                        <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m-7 0v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V7M10 11v6M14 11v6"
+                          stroke="currentColor"
+                          strokeWidth="1.6"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -1172,15 +1135,19 @@ function ExpandedSidebar({
 }
 
 function CollapsedSidebar({
+  userEmail,
   startNewChat,
   expand,
   onOpenProjects,
   onOpenExtension,
+  onOpenSettings,
 }: {
+  userEmail?: string | null;
   startNewChat: () => void;
   expand: () => void;
   onOpenProjects: () => void;
   onOpenExtension: (key: ChatExtensionKey) => void;
+  onOpenSettings: () => void;
 }) {
   return (
     <div className="flex h-full w-14 flex-col items-center gap-3 py-4">
@@ -1246,6 +1213,40 @@ function CollapsedSidebar({
           <path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
       </button>
+
+      {/* Footer: account + AI settings, mirrors the expanded sidebar */}
+      <div className="mt-auto flex flex-col items-center gap-2">
+        <button
+          onClick={onOpenSettings}
+          className="rounded p-2 text-muted hover:bg-paper/60 hover:text-ink"
+          aria-label="AI settings"
+          title="AI settings"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle
+              cx="12"
+              cy="12"
+              r="3"
+              stroke="currentColor"
+              strokeWidth="1.8"
+            />
+            <path
+              d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.56V21a2 2 0 1 1-4 0v-.11a1.7 1.7 0 0 0-1.11-1.56 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.56-1H3a2 2 0 1 1 0-4h.11a1.7 1.7 0 0 0 1.56-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1-1.56V3a2 2 0 1 1 4 0v.11a1.7 1.7 0 0 0 1 1.56 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.56 1H21a2 2 0 1 1 0 4h-.11a1.7 1.7 0 0 0-1.56 1z"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+        <a
+          href="/account"
+          title={userEmail || "Account"}
+          aria-label={userEmail || "Account"}
+          className="grid h-7 w-7 place-items-center rounded-full bg-orange-tint text-[11px] font-medium text-orange-ink hover:opacity-90"
+        >
+          {(userEmail || "?").charAt(0).toUpperCase()}
+        </a>
+      </div>
     </div>
   );
 }

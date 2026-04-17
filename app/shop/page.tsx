@@ -152,12 +152,6 @@ export default function ShopPage() {
             </div>
           ))}
         </div>
-
-        <p className="mt-8 text-xs text-muted">
-          Checkout runs through Stripe. Tokens credit to your account within
-          a few seconds of the payment clearing. One-time purchase — no
-          subscription, no auto-renew.
-        </p>
       </section>
     </main>
   );

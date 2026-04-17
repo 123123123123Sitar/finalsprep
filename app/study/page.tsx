@@ -38,6 +38,11 @@ import CoursePicker from "@/app/components/CoursePicker";
 import PageLoader from "@/app/components/PageLoader";
 import LessonAnnotationsPanel from "@/app/components/LessonAnnotations";
 import InlineHighlights from "@/app/components/InlineHighlights";
+import { examCountdownLabel } from "@/lib/examDates";
+import {
+  setLessonCompleted,
+  subscribeCompletedSlugs,
+} from "@/lib/progress";
 import { useAuth } from "@/app/components/AuthProvider";
 import type { PlanTier } from "@/lib/plans";
 
@@ -185,25 +190,20 @@ export default function Study() {
   // course from last session.
   const [view, setView] = useState<"home" | "course">("home");
 
-  // Progress tracking — subscribes to the user's `viewedSlugs` doc so we can
-  // compute per-course completion %. We piggyback on the existing doc the
-  // learner cap writes to, but now every plan reads and writes to it.
-  const [viewedSlugsAll, setViewedSlugsAll] = useState<Set<string>>(new Set());
+  // Progress tracking — subscribes to the user's `completedSlugs` field so
+  // course progress only advances after the user explicitly marks a lesson
+  // complete, not just when they open it.
+  const [completedSlugsAll, setCompletedSlugsAll] = useState<Set<string>>(
+    new Set()
+  );
   useEffect(() => {
     if (!user) {
-      setViewedSlugsAll(new Set());
+      setCompletedSlugsAll(new Set());
       return;
     }
     const db = getDb();
     if (!db) return;
-    const unsub = onSnapshot(
-      doc(db, "users", user.uid, "profile", "lessons"),
-      (snap) => {
-        const arr = (snap.data() as any)?.viewedSlugs;
-        setViewedSlugsAll(new Set(Array.isArray(arr) ? arr : []));
-      },
-      () => setViewedSlugsAll(new Set())
-    );
+    const unsub = subscribeCompletedSlugs(db, user.uid, setCompletedSlugsAll);
     return () => unsub();
   }, [user]);
 
@@ -387,7 +387,7 @@ export default function Study() {
         {view === "home" ? (
           <StudyHome
             courses={addedCourses}
-            viewedSlugs={viewedSlugsAll}
+            completedSlugs={completedSlugsAll}
             onOpen={openCourse}
             onEdit={() => setPickerOpen(true)}
             isPro={isPro}
@@ -408,7 +408,7 @@ export default function Study() {
             {course.title}
           </h1>
           <div className="text-[12px] text-muted">
-            {courseProgressLabel(courseSlug, viewedSlugsAll)}
+            {courseProgressLabel(courseSlug, completedSlugsAll)}
           </div>
         </div>
         <p className="mt-3 max-w-2xl text-[15px] text-body">{course.subtitle}</p>
@@ -888,6 +888,10 @@ function LessonPanel({
   // null = not yet loaded for learner users; [] = loaded empty; [..] = loaded
   const [viewedSlugs, setViewedSlugs] = useState<string[] | null>(null);
   const [writeError, setWriteError] = useState<string | null>(null);
+  // Separate completion state — drives the progress bars. Starts false,
+  // gets reconciled from the `completedSlugs` field on the same doc.
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [completing, setCompleting] = useState(false);
 
   // Paid plans skip all of this and get immediate access.
   const isPaid = plan !== "learner";
@@ -937,6 +941,39 @@ function LessonPanel({
       );
     }).catch((e) => setWriteError(e?.message || "couldn't record"));
   }, [isPaid, uid, lesson.slug]);
+
+  // Subscribe to the `completedSlugs` field so the Mark-complete toggle
+  // reflects prior completion when the user returns to a lesson.
+  useEffect(() => {
+    if (!uid) {
+      setIsCompleted(false);
+      return;
+    }
+    const db = getDb();
+    if (!db) return;
+    const unsub = subscribeCompletedSlugs(db, uid, (slugs) => {
+      setIsCompleted(slugs.has(lesson.slug));
+    });
+    return () => unsub();
+  }, [uid, lesson.slug]);
+
+  async function toggleComplete() {
+    if (!uid) return;
+    const db = getDb();
+    if (!db) return;
+    setCompleting(true);
+    // Optimistic: flip locally, then persist. The subscription will reconcile.
+    const next = !isCompleted;
+    setIsCompleted(next);
+    try {
+      await setLessonCompleted(db, uid, lesson.slug, next);
+    } catch (e: any) {
+      setIsCompleted(!next);
+      setWriteError(e?.message || "couldn't save");
+    } finally {
+      setCompleting(false);
+    }
+  }
 
   // Loading state: don't flash the lesson content before we know the cap.
   if (!isPaid && viewedSlugs === null) {
@@ -1010,6 +1047,30 @@ function LessonPanel({
           Show the full walkthrough →
         </button>
       </div>
+
+      {uid && (
+        <div className="mt-8 flex items-center justify-between gap-3 rounded-lg border border-hair bg-paper p-4">
+          <div>
+            <div className="label">Lesson progress</div>
+            <div className="mt-1 text-[13px] text-muted">
+              {isCompleted
+                ? "Marked complete. This lesson counts toward your course progress."
+                : "Finish the lesson, then mark it complete to advance your progress."}
+            </div>
+          </div>
+          <button
+            onClick={toggleComplete}
+            disabled={completing}
+            className={
+              isCompleted
+                ? "shrink-0 rounded-md border border-green-600/40 bg-green-50 px-3 py-2 text-[13px] font-medium text-green-700 hover:bg-green-100 disabled:opacity-60"
+                : "shrink-0 rounded-md bg-ink px-3 py-2 text-[13px] font-medium text-paper hover:bg-ink/90 disabled:opacity-60"
+            }
+          >
+            {isCompleted ? "✓ Completed" : "Mark complete"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -1045,17 +1106,20 @@ function courseLessonSlugs(slug: CourseSlug): string[] {
 
 function courseProgress(
   slug: CourseSlug,
-  viewed: Set<string>
+  completed: Set<string>
 ): { done: number; total: number; pct: number } {
   const slugs = courseLessonSlugs(slug);
   const total = slugs.length;
-  const done = slugs.reduce((n, s) => (viewed.has(s) ? n + 1 : n), 0);
+  const done = slugs.reduce((n, s) => (completed.has(s) ? n + 1 : n), 0);
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
   return { done, total, pct };
 }
 
-function courseProgressLabel(slug: CourseSlug, viewed: Set<string>): string {
-  const { done, total, pct } = courseProgress(slug, viewed);
+function courseProgressLabel(
+  slug: CourseSlug,
+  completed: Set<string>
+): string {
+  const { done, total, pct } = courseProgress(slug, completed);
   if (total === 0) return "";
   return `${pct}% · ${done}/${total} lessons`;
 }
@@ -1066,7 +1130,7 @@ function courseProgressLabel(slug: CourseSlug, viewed: Set<string>): string {
  */
 function StudyHome({
   courses,
-  viewedSlugs,
+  completedSlugs,
   onOpen,
   onEdit,
   isPro,
@@ -1074,7 +1138,7 @@ function StudyHome({
   onBuy,
 }: {
   courses: typeof COURSES;
-  viewedSlugs: Set<string>;
+  completedSlugs: Set<string>;
   onOpen: (slug: CourseSlug) => void;
   onEdit: () => void;
   isPro: boolean;
@@ -1110,18 +1174,22 @@ function StudyHome({
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {courses.map((c) => {
-          const { done, total, pct } = courseProgress(c.slug, viewedSlugs);
+          const { done, total, pct } = courseProgress(c.slug, completedSlugs);
           return (
             <button
               key={c.slug}
               onClick={() => onOpen(c.slug)}
               className="group flex flex-col rounded-xl border border-hair bg-paper p-5 text-left transition hover:-translate-y-0.5 hover:border-orange hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.25)]"
             >
-              <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-                {c.slug.replace(/^ap-/, "AP ").replace(/-/g, " ")}
-              </div>
-              <div className="mt-2 font-serif text-xl text-ink group-hover:text-orange">
-                {c.title}
+              <div className="flex items-start justify-between gap-3">
+                <div className="font-serif text-xl text-ink group-hover:text-orange">
+                  {c.title}
+                </div>
+                {examCountdownLabel(c.slug) && (
+                  <span className="shrink-0 rounded-full border border-orange/30 bg-orange-tint px-2 py-1 text-[10px] font-medium text-orange-ink">
+                    {examCountdownLabel(c.slug)}
+                  </span>
+                )}
               </div>
               <p className="mt-2 line-clamp-3 text-[13px] text-muted">
                 {c.subtitle}

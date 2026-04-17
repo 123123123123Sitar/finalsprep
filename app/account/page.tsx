@@ -307,8 +307,7 @@ export default function AccountPage() {
             ) : (
               <p className="text-[15px] text-body">
                 You're on the <strong className="text-ink">{planLabel(plan)}</strong>{" "}
-                plan. To cancel or change billing, use the link in your most
-                recent Stripe receipt email.
+                plan.
               </p>
             )}
           </div>

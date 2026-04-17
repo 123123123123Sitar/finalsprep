@@ -839,7 +839,7 @@ function MarketingHome() {
         </div>
 
         <p className="mt-6 text-xs text-muted">
-          Stripe handles checkout. Cancel from your receipt email in one
+           Cancel from your receipt email in one
           click. Free plan stays free - no credit card required to try.
         </p>
         </Reveal>
