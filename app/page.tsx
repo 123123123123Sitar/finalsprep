@@ -179,31 +179,33 @@ function MarketingHome() {
         <div className="hero-blob animate-float -right-10 bottom-20 h-60 w-60 rounded-full bg-orange/10" aria-hidden />
 
         <div className="relative max-w-3xl">
-          <div className="label animate-fadeUp mb-6">For high school students</div>
+          <div className="label animate-fadeUp mb-6">For AP students</div>
           <h1 className="animate-heroReveal font-serif text-[52px] font-normal leading-[1.1] tracking-tightest text-ink pb-2 sm:text-[76px]">
-            Step-by-step answers<br />
-            for <span className="italic gradient-text">every</span> math problem.
+            A tutor for <span className="italic gradient-text">every</span>{" "}
+            AP class.<br />
+            Open 24 hours.
           </h1>
           <p className="animate-fadeUp delay-300 mt-8 max-w-2xl text-[19px] leading-relaxed text-body">
-            Instant walkthroughs for algebra, calculus, physics, biology,
-            chemistry, computer science, and history - the concept, the
-            reasoning, and the common mistakes, not just the final answer.
-            Free to try. <strong className="text-ink">$16/month</strong> or{" "}
-            <strong className="text-ink">$90/6 months</strong> for unlimited.
+            A real AI tutor that walks you through math, physics, chemistry,
+            bio, CS, and history — the concept and reasoning, not just the
+            answer. Curriculum overviews for all 16 AP courses, interactive
+            tools, a Book-Mode reading view, and a chat that remembers what
+            you asked yesterday. <strong className="text-ink">$16/month</strong>,{" "}
+            or free forever with a daily token budget.
           </p>
           <div className="animate-fadeUp delay-500 mt-10 flex flex-wrap items-center gap-3">
             <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary animate-glowPulse text-base">
               {loading ? "Opening checkout…" : "Start Pro - $11 first month"}
             </button>
             <a href="#try" className="btn-ghost text-base">
-              Try 3 free right here ↓
+              Try the tutor free ↓
             </a>
           </div>
           <p className="animate-fadeUp delay-700 mt-4 max-w-xl text-sm text-muted">
-            All curated walkthroughs are free. Plus{" "}
-            <strong className="text-ink">10,000 AI tokens per day</strong>{" "}
-            on the Learner tier — enough to run the tutor on your real
-            homework with no signup.
+            Free tier is real:{" "}
+            <strong className="text-ink">10,000 AI tokens per day</strong>,
+            every day. Enough to run the tutor on your real homework without
+            ever paying a cent.
           </p>
         </div>
 
@@ -212,9 +214,9 @@ function MarketingHome() {
         <div className="mt-16 border-y border-hair py-6">
           <div className="grid gap-4 text-center sm:grid-cols-4">
             {[
-              { n: "21", l: "Worked problems, free" },
-              { n: "4", l: "Subjects covered" },
-              { n: "<10s", l: "Average walkthrough" },
+              { n: "16", l: "AP courses covered" },
+              { n: "10k", l: "Free tokens / day" },
+              { n: "8", l: "Reading themes" },
               { n: "7 days", l: "No-questions refund" },
             ].map((s, i) => (
               <div
@@ -241,10 +243,10 @@ function MarketingHome() {
           <div>
             <div className="label">Try it right here</div>
             <p className="mt-3 text-sm text-muted">
-              A real explanation, right now, with no signup. Pick an example
-              or type your own. Our curated problems are always free. New
-              problems pull from a daily token budget — 10,000 tokens a day
-              on the Learner tier.
+              A real explanation, right now. Pick an example or type your
+              own. Curated walkthroughs are free. New problems pull from
+              your daily token budget — <strong>10,000 tokens a day</strong>{" "}
+              on the Learner tier, on a rolling 24-hour window.
             </p>
             <div className="mt-4 text-xs text-muted">
               {demoTokensRemaining === null
@@ -255,7 +257,7 @@ function MarketingHome() {
                       ? ` · resets in ${formatMinutes(demoResetMinutes)}`
                       : ""
                   }`
-                : `${demoTokensRemaining.toLocaleString()} tokens left this 5h window`}
+                : `${demoTokensRemaining.toLocaleString()} tokens left this 24h window`}
             </div>
           </div>
 
@@ -354,7 +356,7 @@ function MarketingHome() {
                     )}
                     {demoTokensRemaining !== null && demoSource === "ai" && (
                       <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
-                        · {demoTokensRemaining.toLocaleString()} tokens left this 5h
+                        · {demoTokensRemaining.toLocaleString()} tokens left today
                       </span>
                     )}
                   </div>
@@ -423,6 +425,85 @@ function MarketingHome() {
           </div>
         </div>
         </Reveal>
+      </section>
+
+      <hr className="rule mx-auto max-w-5xl" />
+
+      {/* FEATURE PREVIEWS - visual mockups of what's actually in the app */}
+      <section id="features" className="relative mx-auto max-w-6xl overflow-hidden px-6 py-20">
+        <Reveal from="up">
+          <div className="label mb-3">What's actually inside</div>
+          <h2 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
+            A tutor, a textbook, and a lab bench.<br />
+            In one tab.
+          </h2>
+          <p className="mt-4 max-w-2xl text-[17px] text-body">
+            Every screen below is a real page in the app. Sign in free and
+            all six are unlocked immediately.
+          </p>
+        </Reveal>
+
+        <div className="mt-14 grid gap-8 lg:grid-cols-2">
+          <FeaturePreview
+            delay={0}
+            from="left"
+            eyebrow="Chat tutor"
+            title="Ask anything. It remembers what you asked yesterday."
+            blurb="Full chat with message history, image uploads for handwritten work, and a settings popup for response length and tone. Math renders in KaTeX automatically."
+            cta={{ href: "/chat", label: "Open the tutor →" }}
+            mock={<ChatMock />}
+          />
+
+          <FeaturePreview
+            delay={100}
+            from="right"
+            eyebrow="Book Mode"
+            title="Read a lesson like a real book. No scroll."
+            blurb="Toggle Book Mode on any lesson and content paginates across viewport-sized pages. Flip with arrow keys, click the page edge, or tap forward. Eight reading themes."
+            cta={{ href: "/study", label: "See Book Mode →" }}
+            mock={<BookMock />}
+          />
+
+          <FeaturePreview
+            delay={0}
+            from="left"
+            eyebrow="Per-unit curriculum"
+            title="Every AP unit, structured like the College Board organizes it."
+            blurb="Exam guide, big ideas, essential knowledge, key facts, and CED sublesson walkthroughs. Progress tracked per topic — mark complete, see your course bar fill."
+            cta={{ href: "/study", label: "Browse units →" }}
+            mock={<StudyMock />}
+          />
+
+          <FeaturePreview
+            delay={100}
+            from="right"
+            eyebrow="Interactive tools"
+            title="Graphing calc, 3D plots, physics sims, live code."
+            blurb="Drop into any unit and play with the concept: a 2D/3D graphing calculator, nine physics simulations, and a Java / pseudocode sandbox with trace output."
+            cta={{ href: "/study", label: "Try the tools →" }}
+            mock={<ToolsMock />}
+          />
+
+          <FeaturePreview
+            delay={0}
+            from="left"
+            eyebrow="Review & insights"
+            title="Every problem you got wrong — spaced and re-served."
+            blurb="Miss a practice problem? It lands in your review bank. The Insights dashboard shows your 7-day token usage, streak, and the topics you keep tripping on."
+            cta={{ href: "/review", label: "Open review →" }}
+            mock={<ReviewMock />}
+          />
+
+          <FeaturePreview
+            delay={100}
+            from="right"
+            eyebrow="Study scheduler"
+            title="Schedule sessions. Finish them. Earn bonus tokens."
+            blurb="Set a daily study goal. Every session you complete stacks bonus tokens on top of your plan's daily budget — they never expire, so grinding pays off."
+            cta={{ href: "/schedule", label: "Open scheduler →" }}
+            mock={<ScheduleMock />}
+          />
+        </div>
       </section>
 
       <hr className="rule mx-auto max-w-5xl" />
@@ -519,80 +600,106 @@ function MarketingHome() {
       {/* COVERAGE - every AP we cover, organized by category */}
       <section id="coverage" className="mx-auto max-w-5xl px-6 py-16">
         <Reveal from="up">
-        <div className="label mb-4">Every AP covered</div>
-        <h2 className="font-serif text-3xl font-normal leading-tight text-ink sm:text-4xl">
-          16 AP courses. One price.
-        </h2>
-        <p className="mt-4 max-w-2xl text-[17px] text-body">
-          Whatever you're taking, it's in here. Math, science, computer
-          science, history - every lesson structured around the official
-          College Board unit numbering so you always know where you are.
-        </p>
+          <div className="label mb-4">Every AP covered</div>
+          <h2 className="font-serif text-3xl font-normal leading-tight text-ink sm:text-4xl">
+            16 AP courses. One subscription.
+          </h2>
+          <p className="mt-4 max-w-2xl text-[17px] text-body">
+            Every AP has a full curriculum overview — units, big ideas,
+            essential knowledge, skills, exam weighting — laid out the way
+            the College Board organizes it. The AI tutor and all interactive
+            tools work across every course from day one.
+          </p>
+          <p className="mt-3 max-w-2xl text-[14px] text-muted">
+            <strong className="text-ink">Content depth is rolling out.</strong>{" "}
+            AP Precalculus has the deepest CED sublesson walkthroughs today.
+            The rest of the catalog has the full unit structure, exam guide,
+            and tutor access — we're publishing more written lessons every
+            week.
+          </p>
+        </Reveal>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2">
           {[
             {
               label: "Math",
               courses: [
-                "AP Precalculus",
-                "AP Calculus AB",
-                "AP Calculus BC",
-                "AP Statistics",
+                { name: "AP Precalculus", depth: "Deep CED lessons" },
+                { name: "AP Calculus AB", depth: "Structured overview" },
+                { name: "AP Calculus BC", depth: "Structured overview" },
+                { name: "AP Statistics", depth: "Structured overview" },
               ],
             },
             {
               label: "Science",
               courses: [
-                "AP Physics 1",
-                "AP Physics 2",
-                "AP Physics C: Mechanics",
-                "AP Physics C: Electricity & Magnetism",
-                "AP Biology",
-                "AP Chemistry",
-                "AP Environmental Science",
+                { name: "AP Physics 1", depth: "Structured overview" },
+                { name: "AP Physics 2", depth: "Structured overview" },
+                { name: "AP Physics C: Mechanics", depth: "Structured overview" },
+                { name: "AP Physics C: E & M", depth: "Structured overview" },
+                { name: "AP Biology", depth: "Structured overview" },
+                { name: "AP Chemistry", depth: "Structured overview" },
+                { name: "AP Environmental Science", depth: "Structured overview" },
               ],
             },
             {
               label: "Computer Science",
-              courses: ["AP Computer Science A", "AP Computer Science Principles"],
+              courses: [
+                { name: "AP Computer Science A", depth: "Structured overview" },
+                { name: "AP Computer Science Principles", depth: "Structured overview" },
+              ],
             },
             {
               label: "History",
               courses: [
-                "AP United States History",
-                "AP World History: Modern",
-                "AP European History",
+                { name: "AP United States History", depth: "Structured overview" },
+                { name: "AP World History: Modern", depth: "Structured overview" },
+                { name: "AP European History", depth: "Structured overview" },
               ],
             },
-          ].map((group) => (
-            <div
+          ].map((group, i) => (
+            <Reveal
               key={group.label}
-              className="card-hover rounded-lg border border-hair bg-paper p-6"
+              from={i % 2 === 0 ? "left" : "right"}
+              delay={i * 120}
             >
-              <div className="label">{group.label}</div>
-              <ul className="mt-3 space-y-2">
-                {group.courses.map((c) => (
-                  <li key={c} className="flex items-start gap-2 text-[15px] text-body">
-                    <span className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-orange" />
-                    <span>{c}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <div className="card-hover h-full rounded-lg border border-hair bg-paper p-6">
+                <div className="label">{group.label}</div>
+                <ul className="mt-3 space-y-2">
+                  {group.courses.map((c) => (
+                    <li
+                      key={c.name}
+                      className="flex items-start gap-2 text-[15px] text-body"
+                    >
+                      <span className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-orange" />
+                      <span className="flex-1">
+                        {c.name}
+                        {c.depth === "Deep CED lessons" && (
+                          <span className="ml-2 inline-flex items-center rounded-full bg-orange-tint px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-orange-ink">
+                            Deep lessons
+                          </span>
+                        )}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
           ))}
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center gap-3">
-          <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary text-base">
-            {loading ? "Opening checkout…" : "Unlock all 16 courses - $16/mo"}
-          </button>
-          <a href="/study" className="btn-ghost text-base">
-            Browse free lessons →
-          </a>
-        </div>
-        <p className="mt-3 text-xs text-muted">
-          Free to try. Cancel anytime. Every AP, one subscription.
-        </p>
+        <Reveal from="up" delay={200}>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary text-base">
+              {loading ? "Opening checkout…" : "Unlock all 16 courses - $16/mo"}
+            </button>
+            <a href="/study" className="btn-ghost text-base">
+              Browse free lessons →
+            </a>
+          </div>
+          <p className="mt-3 text-xs text-muted">
+            Free to try. Cancel anytime. Every AP, one subscription.
+          </p>
         </Reveal>
       </section>
 
@@ -600,22 +707,25 @@ function MarketingHome() {
 
       {/* PRICING */}
       <section id="price" className="mx-auto max-w-6xl px-6 py-20">
-        <Reveal from="right">
-        <div className="label mb-4">Pricing</div>
-        <h2 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
-          Three plans. Cancel anytime.
-        </h2>
-        <p className="mt-4 max-w-2xl text-[17px] text-body">
-          Learner is free forever — 10,000 AI tokens a day, every day. Pro
-          doubles that with image uploads, FRQs, diagnostic quizzes, and a
-          smarter thinking mode. Hacker quadruples it again with priority
-          traffic and the strongest reasoning model on demand.
-        </p>
+        <Reveal from="up">
+          <div className="label mb-4">Pricing</div>
+          <h2 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
+            Three plans. Cancel anytime.
+          </h2>
+          <p className="mt-4 max-w-2xl text-[17px] text-body">
+            Learner is free forever — 10,000 AI tokens a day, every day. Pro
+            doubles that with image uploads, the full curriculum for every
+            AP course, the Insights dashboard, and a smarter thinking mode.
+            Hacker quadruples tokens again with priority traffic and the
+            strongest reasoning model on demand.
+          </p>
+        </Reveal>
 
         {/* THREE TIER CARDS */}
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {/* LEARNER */}
-          <div className="card-hover rounded-xl border border-hair bg-paper p-7">
+          <Reveal from="left" delay={0}>
+          <div className="card-hover h-full rounded-xl border border-hair bg-paper p-7">
             <div className="label">Learner</div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="font-serif text-6xl font-normal text-ink">$0</span>
@@ -626,10 +736,11 @@ function MarketingHome() {
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span><strong className="text-ink">10,000 AI tokens / day</strong></span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Smart AI model</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Smart AI model + full chat history</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Units 1-2 of every AP course + 2 free lessons</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Up to 3 courses added to your study list</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Graphing calc, physics sims, code sandbox</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>1 diagnostic quiz per month</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Book Mode + 8 reading themes</span></li>
             </ul>
             <a
               href="/signin?mode=signup"
@@ -638,9 +749,11 @@ function MarketingHome() {
               Create free account
             </a>
           </div>
+          </Reveal>
 
           {/* PRO - recommended */}
-          <div className="card-hover relative rounded-xl border-2 border-ink bg-paper p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]">
+          <Reveal from="up" delay={120}>
+          <div className="card-hover relative h-full rounded-xl border-2 border-ink bg-paper p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]">
             <span className="absolute right-4 top-4 animate-bounceIn rounded-full bg-orange px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
               Most popular
             </span>
@@ -659,9 +772,10 @@ function MarketingHome() {
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Everything in Learner</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span><strong className="text-ink">20,000 AI tokens / day</strong></span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Smart + Thinking model for hard problems</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, every unit + unlimited lessons</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Image uploads, FRQ practice, Insights</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>5 diagnostic quizzes per month</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, every unit, unlimited lessons</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Up to 10 courses added + all interactive tools</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Image uploads, Insights dashboard, review bank</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Scheduler + bonus tokens for completed sessions</span></li>
             </ul>
             <button
               onClick={() => buy("pro-monthly")}
@@ -678,9 +792,11 @@ function MarketingHome() {
               or $90 for 6 months →
             </button>
           </div>
+          </Reveal>
 
           {/* HACKER */}
-          <div className="card-hover relative rounded-xl border border-hair bg-gradient-to-b from-amber-50 to-white p-7">
+          <Reveal from="right" delay={240}>
+          <div className="card-hover relative h-full rounded-xl border border-hair bg-gradient-to-b from-amber-50 to-white p-7">
             <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
               <CrownIcon className="h-3 w-3" /> Premium
             </span>
@@ -698,10 +814,10 @@ function MarketingHome() {
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Everything in Pro</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span><strong className="text-ink">80,000 AI tokens / day</strong></span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Priority AI traffic</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Advanced + Thinking models on demand, always</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Unlimited diagnostic quizzes</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Free image uploads</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Priority AI traffic (skip the queue at peak hours)</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Strongest reasoning model on demand, always</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>All 16 courses added, no course limit</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Free image uploads (no 2× token cost)</span></li>
             </ul>
             <button
               onClick={() => buy("hacker-monthly")}
@@ -718,9 +834,11 @@ function MarketingHome() {
               or $160 for 6 months →
             </button>
           </div>
+          </Reveal>
         </div>
 
         {/* COMPARISON TABLE */}
+        <Reveal from="up">
         <div className="mt-16">
           <div className="label mb-4">Compare plans</div>
           <div className="overflow-x-auto rounded-xl border border-hair bg-paper">
@@ -754,13 +872,17 @@ function MarketingHome() {
                   values={{ free: "Standard", pro: "Smarter + Thinking", premium: "Strongest + Thinking" }}
                 />
                 <FeatureRow
-                  label="AI chat tutor"
+                  label="Courses you can add"
+                  values={{ free: "3", pro: "10", premium: "All 16" }}
+                />
+                <FeatureRow
+                  label="AI chat tutor with persistent history"
                   free
                   pro
                   premium
                 />
                 <FeatureRow
-                  label="All 16 AP curriculum walkthroughs"
+                  label="Every AP curriculum overview"
                   values={{ free: "Units 1-2", pro: "All units", premium: "All units" }}
                 />
                 <FeatureRow
@@ -774,19 +896,25 @@ function MarketingHome() {
                   premium
                 />
                 <FeatureRow
-                  label="Graphing calc, physics sim, code sandbox"
+                  label="Graphing calc, 3D plot, physics sim, code sandbox"
                   free
                   pro
                   premium
                 />
                 <FeatureRow
-                  label="Flashcards + diagrams"
+                  label="Flashcards + hand-drawn diagrams"
                   free
                   pro
                   premium
                 />
                 <FeatureRow
-                  label="Chat history saved across sessions"
+                  label="Book Mode reading view + 8 themes"
+                  free
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Lesson highlights + bookmarks"
                   free
                   pro
                   premium
@@ -797,22 +925,23 @@ function MarketingHome() {
                   premium
                 />
                 <FeatureRow
-                  label="FRQ practice + quiz notes"
-                  pro
-                  premium
-                />
-                <FeatureRow
-                  label="Diagnostic quizzes per month"
-                  values={{ free: "1", pro: "5", premium: "Unlimited" }}
-                />
-                <FeatureRow
-                  label="Insights (usage dashboard)"
+                  label="Insights dashboard (tokens, streak, review bank)"
                   pro
                   premium
                 />
                 <FeatureRow
                   label="Wrong-answer review bank"
                   pro
+                  premium
+                />
+                <FeatureRow
+                  label="Scheduler + bonus tokens for completed sessions"
+                  pro
+                  premium
+                />
+                <FeatureRow
+                  label="Free image uploads (no 2× token cost)"
+                  premiumOnly
                   premium
                 />
                 <FeatureRow
@@ -832,48 +961,7 @@ function MarketingHome() {
         </Reveal>
       </section>
 
-      <hr className="rule mx-auto max-w-5xl" />
 
-      {/* EMAIL CAPTURE */}
-      <section className="mx-auto max-w-5xl px-6 py-16">
-        <Reveal from="left">
-        <div className="grid gap-8 md:grid-cols-[1fr_1.2fr]">
-          <div>
-            <div className="label mb-3">Free cheat sheet</div>
-            <h3 className="font-serif text-2xl font-normal leading-tight text-ink">
-              Not ready to buy? Grab the formulas sheet.
-            </h3>
-            <p className="mt-3 text-sm text-muted">
-              One-page PDF. The 40-ish formulas from algebra through calc
-              every student should know cold before an exam. No spam after -
-              at most one follow-up email two weeks before finals week.
-            </p>
-          </div>
-          <form onSubmit={capture} className="flex flex-col gap-3 self-end sm:flex-row">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (captured !== "idle") setCaptured("idle");
-              }}
-              placeholder="you@school.edu"
-              className="focus-ring h-12 w-full rounded-md border border-hair bg-paper px-4 text-ink placeholder-dim"
-              aria-label="Email address"
-              aria-invalid={captured === "err"}
-            />
-            <button type="submit" className="btn-primary h-12 whitespace-nowrap">
-              Send me the PDF
-            </button>
-          </form>
-        </div>
-        {captured !== "idle" && (
-          <p className={`mt-3 text-sm ${captured === "ok" ? "text-orange-ink" : "text-red-700"}`}>
-            {captureMsg}
-          </p>
-        )}
-        </Reveal>
-      </section>
 
       <hr className="rule mx-auto max-w-5xl" />
 
@@ -943,6 +1031,355 @@ function MarketingHome() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function FeaturePreview({
+  eyebrow,
+  title,
+  blurb,
+  cta,
+  mock,
+  from,
+  delay = 0,
+}: {
+  eyebrow: string;
+  title: string;
+  blurb: string;
+  cta: { href: string; label: string };
+  mock: React.ReactNode;
+  from: "left" | "right";
+  delay?: number;
+}) {
+  return (
+    <Reveal from={from} delay={delay}>
+      <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-hair bg-paper transition-all duration-500 hover:-translate-y-1 hover:border-orange/50 hover:shadow-[0_28px_70px_-30px_rgba(0,0,0,0.35)]">
+        <div className="relative aspect-[16/10] overflow-hidden border-b border-hair bg-offwhite">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(194,65,12,0.10),transparent_55%),radial-gradient(circle_at_bottom_right,rgba(0,0,0,0.04),transparent_60%)]" />
+          <div className="relative h-full w-full transition-transform duration-700 group-hover:scale-[1.02]">
+            {mock}
+          </div>
+        </div>
+        <div className="flex flex-1 flex-col p-6">
+          <div className="label">{eyebrow}</div>
+          <h3 className="mt-2 font-serif text-2xl font-normal leading-snug text-ink">
+            {title}
+          </h3>
+          <p className="mt-3 text-[15px] leading-relaxed text-body">{blurb}</p>
+          <a
+            href={cta.href}
+            className="mt-4 inline-flex w-fit items-center gap-1 text-sm font-medium text-orange underline decoration-orange/40 underline-offset-4 hover:decoration-orange"
+          >
+            {cta.label}
+          </a>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+function MockFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="absolute inset-4 flex flex-col overflow-hidden rounded-lg border border-hair bg-paper shadow-[0_10px_30px_-18px_rgba(0,0,0,0.4)]">
+      <div className="flex items-center gap-1.5 border-b border-hair bg-offwhite px-3 py-2">
+        <span className="h-2 w-2 rounded-full bg-red-400/70" />
+        <span className="h-2 w-2 rounded-full bg-amber-400/70" />
+        <span className="h-2 w-2 rounded-full bg-green-400/70" />
+      </div>
+      <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
+    </div>
+  );
+}
+
+function ChatMock() {
+  return (
+    <MockFrame>
+      <div className="flex h-full">
+        <div className="hidden w-28 shrink-0 flex-col gap-1 border-r border-hair bg-offwhite/60 p-2 text-[9px] text-muted sm:flex">
+          <div className="rounded bg-orange/15 px-1.5 py-1 text-orange-ink">
+            Projectile question
+          </div>
+          <div className="rounded px-1.5 py-1">Chain rule check</div>
+          <div className="rounded px-1.5 py-1">u-sub warm-up</div>
+          <div className="rounded px-1.5 py-1">Redox half-cells</div>
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <div className="space-y-2 overflow-hidden p-3">
+            <div className="max-w-[80%] rounded-lg bg-offwhite px-3 py-2 text-[10px] leading-snug text-body">
+              A ball is thrown up at 20 m/s. How high does it go?
+            </div>
+            <div className="ml-auto max-w-[85%] rounded-lg border-l-2 border-orange bg-paper px-3 py-2 text-[10px] leading-snug text-body">
+              Call up positive. At the peak, v = 0. Use{" "}
+              <span className="italic">v² = v₀² − 2gh</span> → h = v₀² / (2g)
+              = 400 / 20 = <strong className="text-ink">20 m</strong>.
+            </div>
+            <div className="ml-auto max-w-[70%] rounded-lg border-l-2 border-orange bg-paper px-3 py-2 text-[10px] leading-snug text-body">
+              <span className="inline-block h-2 w-2 animate-pulseSoft rounded-full bg-orange" />{" "}
+              <span className="ml-1">Want the full walkthrough?</span>
+            </div>
+          </div>
+          <div className="mt-auto border-t border-hair p-2">
+            <div className="flex items-center gap-1.5 rounded-md border border-hair bg-offwhite px-2 py-1.5 text-[10px] text-muted">
+              <span>Ask a follow-up…</span>
+              <span className="ml-auto rounded bg-ink/90 px-1.5 py-0.5 text-[9px] text-paper">
+                ↵
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </MockFrame>
+  );
+}
+
+function BookMock() {
+  return (
+    <MockFrame>
+      <div className="relative flex h-full items-stretch justify-center bg-gradient-to-b from-offwhite to-paper p-3">
+        <div className="relative flex aspect-[4/3] w-full max-w-[220px] flex-col rounded-sm border border-hair bg-paper shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)]">
+          <div className="absolute inset-y-1 -right-1 w-1.5 rounded-r-sm border border-hair border-l-0 bg-offwhite opacity-70" />
+          <div className="absolute inset-y-2 -right-2.5 w-1.5 rounded-r-sm border border-hair border-l-0 bg-offwhite opacity-40" />
+          <div className="border-b border-hair px-3 py-2 text-center">
+            <div className="text-[7px] uppercase tracking-[0.22em] text-muted">
+              AP Calc BC · Unit 6
+            </div>
+            <div className="mt-0.5 font-serif text-[13px] text-ink">
+              Integration by Parts
+            </div>
+          </div>
+          <div className="flex-1 space-y-1 px-4 py-3">
+            <div className="h-1.5 w-[85%] rounded-full bg-ink/10" />
+            <div className="h-1.5 w-[92%] rounded-full bg-ink/10" />
+            <div className="h-1.5 w-[78%] rounded-full bg-ink/10" />
+            <div className="my-2 rounded bg-offwhite px-2 py-1 text-center font-serif text-[10px] italic text-ink">
+              ∫ u dv = uv − ∫ v du
+            </div>
+            <div className="h-1.5 w-[88%] rounded-full bg-ink/10" />
+            <div className="h-1.5 w-[70%] rounded-full bg-ink/10" />
+          </div>
+          <div className="flex items-center justify-between border-t border-hair px-3 py-1.5 font-serif text-[8px] italic text-muted">
+            <span>← Previous</span>
+            <span>Page 3 of 7</span>
+            <span>Next →</span>
+          </div>
+        </div>
+      </div>
+    </MockFrame>
+  );
+}
+
+function StudyMock() {
+  return (
+    <MockFrame>
+      <div className="flex h-full">
+        <div className="w-[38%] shrink-0 border-r border-hair bg-offwhite/70 p-2 text-[9px]">
+          <div className="text-[7px] font-semibold uppercase tracking-[0.18em] text-orange-ink/80">
+            Unit 1
+          </div>
+          <div className="font-serif text-[11px] text-ink">Kinematics</div>
+          <div className="mt-2 space-y-0.5 border-l border-orange/40 pl-2">
+            <div className="flex items-center gap-1 text-orange">
+              <span className="h-1 w-1 rounded-full bg-orange" />
+              <span>1.1 Motion</span>
+            </div>
+            <div className="flex items-center gap-1 text-muted">
+              <span className="h-1 w-1 rounded-full bg-ink/30" />
+              <span>1.2 Vectors</span>
+            </div>
+            <div className="flex items-center gap-1 text-muted">
+              <span className="h-1 w-1 rounded-full bg-ink/30" />
+              <span>1.3 Projectile</span>
+              <span className="ml-auto text-green-700">✓</span>
+            </div>
+          </div>
+          <div className="mt-3 text-[7px] font-semibold uppercase tracking-[0.18em] text-orange-ink/80">
+            Unit 2
+          </div>
+          <div className="font-serif text-[11px] text-ink">Forces</div>
+        </div>
+        <div className="min-w-0 flex-1 p-3">
+          <div className="text-[7px] uppercase tracking-wider text-muted">
+            Unit 1 · Exam weight 12–18%
+          </div>
+          <div className="font-serif text-[12px] text-ink">
+            Kinematics in one dimension
+          </div>
+          <div className="mt-2 flex gap-3 border-b border-hair text-[9px]">
+            <span className="-mb-px border-b-2 border-orange py-1 text-ink">
+              Overview
+            </span>
+            <span className="py-1 text-muted">Practice</span>
+            <span className="py-1 text-muted">Interactive</span>
+          </div>
+          <div className="mt-2 space-y-1">
+            <div className="h-1.5 w-[95%] rounded-full bg-ink/10" />
+            <div className="h-1.5 w-[88%] rounded-full bg-ink/10" />
+            <div className="h-1.5 w-[72%] rounded-full bg-ink/10" />
+          </div>
+          <div className="mt-3 rounded border border-hair bg-offwhite p-2 text-[8.5px] text-body">
+            <span className="font-semibold text-ink">Big idea.</span> Position,
+            velocity, and acceleration are each the derivative of the last.
+          </div>
+        </div>
+      </div>
+    </MockFrame>
+  );
+}
+
+function ToolsMock() {
+  return (
+    <MockFrame>
+      <div className="flex h-full flex-col gap-2 p-3">
+        <div className="flex items-center gap-1.5 text-[9px] text-muted">
+          <span className="rounded border border-hair bg-offwhite px-1.5 py-0.5 text-ink">
+            Graph 2D
+          </span>
+          <span className="rounded border border-hair px-1.5 py-0.5">
+            3D
+          </span>
+          <span className="rounded border border-hair px-1.5 py-0.5">
+            Physics
+          </span>
+          <span className="rounded border border-hair px-1.5 py-0.5">
+            Java
+          </span>
+        </div>
+        <div className="relative flex-1 overflow-hidden rounded-md border border-hair bg-paper">
+          <svg
+            viewBox="0 0 200 120"
+            className="h-full w-full"
+            preserveAspectRatio="none"
+          >
+            <defs>
+              <pattern id="g" width="20" height="15" patternUnits="userSpaceOnUse">
+                <path d="M20 0H0V15" fill="none" stroke="rgb(var(--hair))" strokeWidth="0.5" />
+              </pattern>
+            </defs>
+            <rect width="200" height="120" fill="url(#g)" />
+            <line x1="0" y1="60" x2="200" y2="60" stroke="rgb(var(--rule))" strokeWidth="0.7" />
+            <line x1="100" y1="0" x2="100" y2="120" stroke="rgb(var(--rule))" strokeWidth="0.7" />
+            <path
+              d="M10 115 Q 100 -40 190 115"
+              fill="none"
+              stroke="rgb(var(--orange))"
+              strokeWidth="1.5"
+            />
+            <path
+              d="M10 60 C 40 30, 70 90, 100 60 S 160 30, 190 60"
+              fill="none"
+              stroke="#0ea5e9"
+              strokeWidth="1.2"
+              strokeDasharray="2 2"
+            />
+            <circle cx="100" cy="15" r="2.2" fill="rgb(var(--orange))" />
+          </svg>
+        </div>
+        <div className="flex items-center gap-2 rounded-md border border-hair bg-offwhite px-2 py-1.5 font-mono text-[9px] text-ink">
+          <span className="text-muted">f(x) =</span>
+          <span>-x² + 100</span>
+          <span className="ml-auto text-muted">g(x) = sin(x/20)·30 + 60</span>
+        </div>
+      </div>
+    </MockFrame>
+  );
+}
+
+function ReviewMock() {
+  return (
+    <MockFrame>
+      <div className="flex h-full flex-col p-3">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <div className="text-[8px] uppercase tracking-wider text-muted">
+              Token usage · last 7 days
+            </div>
+            <div className="font-serif text-[13px] text-ink">
+              42,180 tokens
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-[8px] uppercase tracking-wider text-muted">
+              Streak
+            </div>
+            <div className="font-serif text-[13px] text-orange">5 days</div>
+          </div>
+        </div>
+        <div className="mt-2 flex h-12 items-end gap-1">
+          {[8, 14, 11, 18, 9, 16, 22].map((h, i) => (
+            <div
+              key={i}
+              className="flex-1 rounded-t bg-orange/70"
+              style={{ height: `${(h / 22) * 100}%` }}
+            />
+          ))}
+        </div>
+        <div className="mt-3 text-[8px] uppercase tracking-wider text-muted">
+          Review bank · topics to revisit
+        </div>
+        <div className="mt-1 space-y-1">
+          <div className="flex items-center justify-between rounded border border-hair px-2 py-1 text-[10px] text-body">
+            <span>Related rates — ladder problem</span>
+            <span className="text-orange-ink">retry</span>
+          </div>
+          <div className="flex items-center justify-between rounded border border-hair px-2 py-1 text-[10px] text-body">
+            <span>Gibbs free energy sign convention</span>
+            <span className="text-orange-ink">retry</span>
+          </div>
+          <div className="flex items-center justify-between rounded border border-hair px-2 py-1 text-[10px] text-body">
+            <span>Projectile — range formula</span>
+            <span className="text-green-700">✓ fixed</span>
+          </div>
+        </div>
+      </div>
+    </MockFrame>
+  );
+}
+
+function ScheduleMock() {
+  return (
+    <MockFrame>
+      <div className="flex h-full flex-col p-3">
+        <div className="flex items-baseline justify-between">
+          <div>
+            <div className="text-[8px] uppercase tracking-wider text-muted">
+              Today · April 17
+            </div>
+            <div className="font-serif text-[13px] text-ink">
+              45 / 60 min studied
+            </div>
+          </div>
+          <div className="text-[10px] text-orange-ink">
+            <span className="font-semibold">+800</span> bonus tokens earned
+          </div>
+        </div>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-offwhite">
+          <div className="h-full rounded-full bg-orange" style={{ width: "75%" }} />
+        </div>
+        <div className="mt-3 space-y-1.5">
+          <div className="flex items-center gap-2 rounded border border-hair bg-offwhite px-2 py-1.5 text-[10px]">
+            <span className="h-4 w-4 rounded bg-green-100 text-center text-green-700">
+              ✓
+            </span>
+            <span className="text-muted line-through">Calc BC · 6.3 Integration</span>
+            <span className="ml-auto text-[9px] text-muted">20m</span>
+          </div>
+          <div className="flex items-center gap-2 rounded border border-hair bg-offwhite px-2 py-1.5 text-[10px]">
+            <span className="h-4 w-4 rounded bg-green-100 text-center text-green-700">
+              ✓
+            </span>
+            <span className="text-muted line-through">Physics 1 · review bank</span>
+            <span className="ml-auto text-[9px] text-muted">25m</span>
+          </div>
+          <div className="flex items-center gap-2 rounded border border-orange/40 bg-orange-tint px-2 py-1.5 text-[10px] text-orange-ink">
+            <span className="h-4 w-4 rounded border border-orange/40 bg-paper text-center">
+              ·
+            </span>
+            <span>Chem · FRQ warm-up</span>
+            <span className="ml-auto text-[9px]">15m</span>
+          </div>
+        </div>
+      </div>
+    </MockFrame>
   );
 }
 
