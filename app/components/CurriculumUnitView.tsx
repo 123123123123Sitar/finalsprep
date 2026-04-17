@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import type { CurriculumUnit } from "@/lib/curriculum";
 import type { ApTopic } from "@/lib/topics";
 import type { PlanTier } from "@/lib/plans";
@@ -8,8 +7,6 @@ import MathRender from "./Math";
 
 type Props = {
   unit: CurriculumUnit;
-  courseSlug?: string;
-  unitTopics?: ApTopic[];
   plan?: PlanTier;
   locked?: boolean;
   onUpgrade?: () => void;
@@ -17,39 +14,16 @@ type Props = {
 
 export default function CurriculumUnitView({
   unit,
-  courseSlug,
-  unitTopics,
-  plan,
   locked,
   onUpgrade,
 }: Props) {
   if (locked) {
     return <LockedUnitView unit={unit} onUpgrade={onUpgrade} />;
   }
-  return (
-    <UnlockedUnitView
-      unit={unit}
-      courseSlug={courseSlug}
-      unitTopics={unitTopics}
-      plan={plan}
-      onUpgrade={onUpgrade}
-    />
-  );
+  return <UnlockedUnitView unit={unit} />;
 }
 
-function UnlockedUnitView({
-  unit,
-  courseSlug,
-  unitTopics,
-  plan,
-  onUpgrade,
-}: {
-  unit: CurriculumUnit;
-  courseSlug?: string;
-  unitTopics?: ApTopic[];
-  plan?: PlanTier;
-  onUpgrade?: () => void;
-}) {
+function UnlockedUnitView({ unit }: { unit: CurriculumUnit }) {
   return (
     <div className="max-w-3xl space-y-8">
       <div>
@@ -107,15 +81,6 @@ function UnlockedUnitView({
         </Section>
       )}
 
-      {courseSlug && unitTopics && unitTopics.length > 0 && (
-        <CedTopicsSection
-          courseSlug={courseSlug}
-          topics={unitTopics}
-          plan={plan}
-          onUpgrade={onUpgrade}
-        />
-      )}
-
       <Section title="Common mistakes">
         <ul className="space-y-1.5 text-[14px]">
           {unit.commonMistakes.map((m, i) => (
@@ -148,7 +113,6 @@ function UnlockedUnitView({
         </ul>
       </Section>
 
-      {/* Pro Notes — deeper, opinionated synthesis */}
       <div className="rounded-xl border-2 border-orange/30 bg-orange-tint/40 p-5">
         <div className="mb-3 flex items-center gap-2">
           <span className="rounded-full bg-orange px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
@@ -175,239 +139,221 @@ function UnlockedUnitView({
   );
 }
 
-function CedTopicsSection({
+export function CedLessonsView({
   courseSlug,
+  unit,
+  lessonNumber,
+  lessonTitle,
   topics,
-  plan,
-  onUpgrade,
+  activeTopicId,
+  onSelectTopic,
+  completedTopicIds,
+  onToggleTopicComplete,
+  togglingTopicId,
 }: {
   courseSlug: string;
+  unit: CurriculumUnit;
+  lessonNumber: number;
+  lessonTitle: string;
   topics: ApTopic[];
-  plan?: PlanTier;
-  onUpgrade?: () => void;
+  activeTopicId: string;
+  onSelectTopic: (topicId: string) => void;
+  /** Subset of these topic ids the user has marked complete. */
+  completedTopicIds?: Set<string>;
+  /** When provided, renders a Mark-complete toggle for the active topic. */
+  onToggleTopicComplete?: (topicId: string, next: boolean) => void;
+  togglingTopicId?: string | null;
 }) {
-  const isPaid = plan === "pro" || plan === "hacker";
-
-  // Learners: show a single upsell card in place of the topic list, not
-  // per-topic placeholders. They already see the full unit overview
-  // above; this keeps the pro gate clean and obvious.
-  if (!isPaid) {
-    return (
-      <div>
-        <div className="mb-3 flex items-center justify-between">
-          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-            CED topics · {topics.length}
-          </div>
-          <span className="rounded-full bg-orange-tint px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-orange-ink">
-            Pro
-          </span>
-        </div>
-        <div className="rounded-xl border-2 border-orange/40 bg-orange-tint/50 p-5">
-          <div className="text-[12px] font-medium uppercase tracking-[0.14em] text-orange-ink">
-            Unlock every CED topic
-          </div>
-          <p className="mt-2 text-[14px] text-body">
-            Pro gets a full walkthrough for every College Board topic in this
-            unit — concept, diagram where it helps, worked example, and the
-            common traps graders watch for.
-          </p>
-          <ul className="mt-3 grid gap-1 text-[12px] text-muted sm:grid-cols-2">
-            {topics.slice(0, 8).map((t) => (
-              <li key={t.id} className="flex gap-2">
-                <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-orange" />
-                <span className="truncate">
-                  <span className="font-mono">{t.id}</span> {t.title}
-                </span>
-              </li>
-            ))}
-            {topics.length > 8 && (
-              <li className="text-dim">+ {topics.length - 8} more topics</li>
-            )}
-          </ul>
-          <button
-            onClick={onUpgrade}
-            className="btn-primary mt-4 text-sm"
-          >
-            Unlock Pro — $11 first month
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const active = topics.find((t) => t.id === activeTopicId) ?? topics[0];
+  if (!active) return null;
+  const lesson = getCedLesson(courseSlug, active.id);
+  const completed = completedTopicIds ?? new Set<string>();
+  const isActiveCompleted = completed.has(active.id);
+  const isToggling = togglingTopicId === active.id;
 
   return (
-    <div>
-      <div className="mb-3 flex items-center justify-between">
-        <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-          CED topics · {topics.length}
+    <div className="max-w-3xl space-y-6">
+      <div>
+        <div className="meta">
+          Unit {unit.unitNumber} · Lesson {lessonNumber}
         </div>
+        <h3 className="mt-1 font-serif text-3xl font-normal text-ink">
+          {lessonTitle}
+        </h3>
+        <div className="mt-1 text-[13px] text-muted">{unit.title}</div>
       </div>
-      <div className="space-y-2">
+
+      <div className="-mx-1 flex flex-wrap gap-1 border-b border-hair pb-0">
         {topics.map((t) => {
-          const lesson = getCedLesson(courseSlug, t.id);
+          const isActive = t.id === active.id;
+          const isDone = completed.has(t.id);
           return (
-            <CedTopicCard
+            <button
               key={t.id}
-              topicId={t.id}
-              title={t.title}
-              lesson={lesson}
-              locked={false}
-              onUpgrade={onUpgrade}
-            />
+              onClick={() => onSelectTopic(t.id)}
+              className={`-mb-px flex items-center gap-1.5 whitespace-nowrap rounded-t-md border-b-2 px-3 py-2 text-[12px] transition ${
+                isActive
+                  ? "border-orange bg-paper font-medium text-ink"
+                  : "border-transparent text-muted hover:text-ink"
+              }`}
+            >
+              <span className="font-mono text-[10.5px] text-dim">{t.id}</span>
+              <span>{t.title}</span>
+              {isDone && (
+                <span className="text-[11px] text-green-700">✓</span>
+              )}
+            </button>
           );
         })}
       </div>
+
+      <div>
+        <div className="flex items-baseline gap-2">
+          <span className="font-mono text-[12px] text-muted">{active.id}</span>
+          <h4 className="font-serif text-2xl font-normal text-ink">
+            {active.title}
+          </h4>
+        </div>
+        {lesson?.summary && (
+          <p className="mt-2 text-[14.5px] text-muted">
+            <MathRender auto>{lesson.summary}</MathRender>
+          </p>
+        )}
+      </div>
+
+      {lesson ? (
+        <LessonBody lesson={lesson} />
+      ) : (
+        <LessonFallback topicId={active.id} title={active.title} />
+      )}
+
+      {onToggleTopicComplete && (
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-hair bg-paper p-4">
+          <div>
+            <div className="label">Sublesson progress</div>
+            <div className="mt-1 text-[13px] text-muted">
+              {isActiveCompleted
+                ? "Marked complete. This sublesson counts toward your course progress."
+                : "Done with this sublesson? Mark it complete to advance your progress."}
+            </div>
+          </div>
+          <button
+            onClick={() =>
+              onToggleTopicComplete(active.id, !isActiveCompleted)
+            }
+            disabled={isToggling}
+            className={
+              isActiveCompleted
+                ? "shrink-0 rounded-md border border-green-600/40 bg-green-50 px-3 py-2 text-[13px] font-medium text-green-700 hover:bg-green-100 disabled:opacity-60"
+                : "shrink-0 rounded-md bg-ink px-3 py-2 text-[13px] font-medium text-paper hover:bg-ink/90 disabled:opacity-60"
+            }
+          >
+            {isActiveCompleted ? "✓ Completed" : "Mark complete"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
-function CedTopicCard({
+function LessonBody({ lesson }: { lesson: CedLesson }) {
+  return (
+    <div className="space-y-6">
+      <div className="prose-body text-[15px] leading-relaxed">
+        <MathRender auto>{lesson.lesson}</MathRender>
+      </div>
+
+      {lesson.diagram && (
+        <div
+          className="rounded-md border border-hair bg-paper p-3"
+          dangerouslySetInnerHTML={{ __html: lesson.diagram }}
+        />
+      )}
+
+      {lesson.keyIdeas.length > 0 && (
+        <Section title="Key ideas">
+          <ul className="space-y-1.5 text-[14px]">
+            {lesson.keyIdeas.map((k, i) => (
+              <li key={i} className="flex gap-2 text-body">
+                <span className="mt-[8px] h-1 w-1 shrink-0 rounded-full bg-orange" />
+                <span>
+                  <MathRender auto>{k}</MathRender>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
+      {lesson.workedExample && (
+        <div className="rounded-md border-l-2 border-orange bg-offwhite px-4 py-3">
+          <div className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-orange-ink">
+            Worked example
+          </div>
+          <div className="mt-2 text-[14px] text-body">
+            <div className="font-medium text-ink">
+              <MathRender auto>{lesson.workedExample.prompt}</MathRender>
+            </div>
+            <div className="mt-2">
+              <MathRender auto>{lesson.workedExample.solution}</MathRender>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {lesson.commonMistakes.length > 0 && (
+        <Section title="Common mistakes">
+          <ul className="space-y-1.5 text-[13.5px]">
+            {lesson.commonMistakes.map((m, i) => (
+              <li key={i} className="flex gap-2 text-body">
+                <span className="mt-[8px] h-1 w-1 shrink-0 rounded-full bg-red-400" />
+                <span>
+                  <MathRender auto>{m}</MathRender>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+    </div>
+  );
+}
+
+function LessonFallback({
   topicId,
   title,
-  lesson,
-  locked,
-  onUpgrade,
 }: {
   topicId: string;
   title: string;
-  lesson?: CedLesson;
-  locked: boolean;
-  onUpgrade?: () => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const hasContent = !!lesson;
-
+  const teach = `/chat?q=${encodeURIComponent(
+    `Teach me AP topic ${topicId}: ${title}. Give me the core concept, a worked example, and 2 common mistakes I should watch for.`
+  )}`;
+  const quiz = `/chat?q=${encodeURIComponent(
+    `Quiz me on AP topic ${topicId}: ${title}. Start with one MCQ, then a free-response that's exam-style.`
+  )}`;
   return (
-    <div
-      className={`overflow-hidden rounded-lg border transition ${
-        open ? "border-orange/50" : "border-hair"
-      } bg-paper`}
-    >
-      <button
-        onClick={() => {
-          if (locked) return;
-          if (!hasContent) return;
-          setOpen((o) => !o);
-        }}
-        className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left hover:bg-offwhite"
-        aria-expanded={open}
-        disabled={locked}
-      >
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="font-mono text-[11px] text-muted">
-              {topicId}
-            </span>
-            <span className="text-[14px] font-medium text-ink">{title}</span>
-            {locked && (
-              <span className="rounded-full bg-orange-tint px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-orange-ink">
-                Pro
-              </span>
-            )}
-            {!locked && !hasContent && (
-              <span className="rounded-full bg-hair/60 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-muted">
-                Coming soon
-              </span>
-            )}
-          </div>
-          {lesson?.summary && !open && (
-            <div className="mt-1 text-[12.5px] text-muted">
-              <MathRender auto>{lesson.summary}</MathRender>
-            </div>
-          )}
-        </div>
-        {!locked && hasContent && (
-          <span
-            aria-hidden="true"
-            className={`mt-1 shrink-0 text-muted transition-transform ${
-              open ? "rotate-90" : ""
-            }`}
-          >
-            ›
-          </span>
-        )}
-      </button>
-      {open && lesson && (
-        <div className="animate-fadeUpSm space-y-5 border-t border-hair bg-offwhite px-5 pb-6 pt-5">
-          <div className="prose-body text-[14.5px]">
-            <MathRender auto>{lesson.lesson}</MathRender>
-          </div>
-
-          {lesson.diagram && (
-            <div
-              className="rounded-md border border-hair bg-paper p-3"
-              dangerouslySetInnerHTML={{ __html: lesson.diagram }}
-            />
-          )}
-
-          {lesson.keyIdeas.length > 0 && (
-            <div>
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-muted">
-                Key ideas
-              </div>
-              <ul className="mt-2 space-y-1 text-[13.5px]">
-                {lesson.keyIdeas.map((k, i) => (
-                  <li key={i} className="flex gap-2 text-body">
-                    <span className="mt-[8px] h-1 w-1 shrink-0 rounded-full bg-orange" />
-                    <span>
-                      <MathRender auto>{k}</MathRender>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {lesson.workedExample && (
-            <div className="rounded-md border-l-2 border-orange bg-paper px-4 py-3">
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-orange-ink">
-                Worked example
-              </div>
-              <div className="mt-2 text-[13.5px] text-body">
-                <div className="font-medium text-ink">
-                  <MathRender auto>{lesson.workedExample.prompt}</MathRender>
-                </div>
-                <div className="mt-2">
-                  <MathRender auto>{lesson.workedExample.solution}</MathRender>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {lesson.commonMistakes.length > 0 && (
-            <div>
-              <div className="text-[10.5px] font-semibold uppercase tracking-[0.14em] text-muted">
-                Common mistakes
-              </div>
-              <ul className="mt-2 space-y-1 text-[13px]">
-                {lesson.commonMistakes.map((m, i) => (
-                  <li key={i} className="flex gap-2 text-body">
-                    <span className="mt-[8px] h-1 w-1 shrink-0 rounded-full bg-red-400" />
-                    <span>
-                      <MathRender auto>{m}</MathRender>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-      {locked && (
-        <div className="border-t border-hair bg-orange-tint/30 px-5 py-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="text-[12px] text-orange-ink">
-              Full walkthrough + diagram + worked example in Pro.
-            </div>
-            <button
-              onClick={onUpgrade}
-              className="rounded-md border border-orange bg-orange px-3 py-1 text-[11px] font-medium text-white hover:bg-orange-hover"
-            >
-              Unlock Pro
-            </button>
-          </div>
-        </div>
-      )}
+    <div className="rounded-md border border-hair bg-offwhite p-5">
+      <p className="text-[14.5px] leading-relaxed text-body">
+        A full written walkthrough for{" "}
+        <span className="font-medium text-ink">{title}</span> is still being
+        drafted. In the meantime the AI tutor can teach you this topic
+        step-by-step — with diagrams and worked examples tuned to your level.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <a
+          href={teach}
+          className="rounded-md border border-orange bg-orange px-3 py-1.5 text-[12px] font-medium text-white hover:bg-orange-hover"
+        >
+          Teach me this in chat →
+        </a>
+        <a
+          href={quiz}
+          className="rounded-md border border-hair bg-paper px-3 py-1.5 text-[12px] font-medium text-ink hover:bg-offwhite"
+        >
+          Quiz me on it
+        </a>
+      </div>
     </div>
   );
 }

@@ -17,6 +17,15 @@ import {
  * when they open it.
  */
 
+/**
+ * Slug used to track a CED sublesson's completion. Prefixed so it can't
+ * collide with a real LESSON slug when stored in the same `completedSlugs`
+ * Set, and so progress totals can recognize and count it.
+ */
+export function cedTopicSlug(courseSlug: string, topicId: string): string {
+  return `ced:${courseSlug}:${topicId}`;
+}
+
 export function subscribeCompletedSlugs(
   db: Firestore,
   uid: string,

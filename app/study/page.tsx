@@ -26,7 +26,13 @@ import { getUnitTools } from "@/lib/courseTools";
 import Flashcards from "@/app/components/Flashcards";
 import SiteNav from "@/app/components/SiteNav";
 import MathRender from "@/app/components/Math";
-import CurriculumUnitView from "@/app/components/CurriculumUnitView";
+import CurriculumUnitView, {
+  CedLessonsView,
+} from "@/app/components/CurriculumUnitView";
+import {
+  groupTopicsIntoLessons,
+  findLessonGroupFor,
+} from "@/lib/cedLessonGroups";
 import HighlightTooltip from "@/app/components/HighlightTooltip";
 import PracticeProblems from "@/app/components/PracticeProblems";
 import GraphingCalculator from "@/app/components/GraphingCalculator";
@@ -40,6 +46,7 @@ import LessonAnnotationsPanel from "@/app/components/LessonAnnotations";
 import InlineHighlights from "@/app/components/InlineHighlights";
 import { examCountdownLabel } from "@/lib/examDates";
 import {
+  cedTopicSlug,
   setLessonCompleted,
   subscribeCompletedSlugs,
 } from "@/lib/progress";
@@ -117,6 +124,7 @@ export default function Study() {
   );
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [tab, setTab] = useState<Tab>("curriculum");
+  const [viewedCedTopic, setViewedCedTopic] = useState<string | null>(null);
 
   // Keep the active course pinned to something the user has actually added.
   // Runs whenever the added list changes; no-op if the current slug is
@@ -207,6 +215,32 @@ export default function Study() {
     return () => unsub();
   }, [user]);
 
+  // CED sublesson completion uses the same `completedSlugs` field as LESSONS,
+  // but with a `ced:<courseSlug>:<topicId>` slug so the two namespaces don't
+  // collide. We track the in-flight topic id to disable its toggle button.
+  const [togglingCedTopicId, setTogglingCedTopicId] = useState<string | null>(
+    null
+  );
+  const toggleCedTopicComplete = useCallback(
+    async (topicId: string, next: boolean) => {
+      if (!user) return;
+      const db = getDb();
+      if (!db) return;
+      setTogglingCedTopicId(topicId);
+      try {
+        await setLessonCompleted(
+          db,
+          user.uid,
+          cedTopicSlug(courseSlug, topicId),
+          next
+        );
+      } finally {
+        setTogglingCedTopicId(null);
+      }
+    },
+    [user, courseSlug]
+  );
+
   // <InlineHighlights /> exposes the addHighlight hook so the text-selection
   // tooltip can push new highlights into Firestore (and then render them in
   // place on the lesson text).
@@ -272,6 +306,7 @@ export default function Study() {
     const m = l.courses.find((c) => c.courseSlug === courseSlug);
     if (m) setSelectedUnit(m.unitNumber);
     setTab("lesson");
+    setViewedCedTopic(null);
     setExplanation("");
     setError("");
   }
@@ -280,6 +315,14 @@ export default function Study() {
     setSelectedUnit(n);
     setSelectedLesson(null);
     setTab("curriculum");
+    setViewedCedTopic(null);
+  }
+
+  function selectTopic(unitNumber: number, topicId: string) {
+    setSelectedUnit(unitNumber);
+    setSelectedLesson(null);
+    setTab("curriculum");
+    setViewedCedTopic(topicId);
   }
 
   function openCourse(slug: CourseSlug) {
@@ -299,6 +342,7 @@ export default function Study() {
     setSelectedUnit(firstUnit);
     setSelectedLesson(null);
     setTab("curriculum");
+    setViewedCedTopic(null);
     setExplanation("");
     setError("");
   }
@@ -473,12 +517,12 @@ export default function Study() {
               const isActiveUnit =
                 selectedUnit === unit.number && !selectedLesson;
               return (
-                <div key={unit.number}>
+                <div key={unit.number} className="border-l-2 border-orange/40 pl-3">
                   <button
                     onClick={() => selectUnit(unit.number)}
                     className="group block w-full text-left"
                   >
-                    <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-muted">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-orange-ink/80">
                       Unit {unit.number}
                       {unitLocked && (
                         <span className="ml-2 rounded bg-orange/20 px-1.5 py-0.5 text-[9px] text-orange-ink">
@@ -487,7 +531,7 @@ export default function Study() {
                       )}
                     </div>
                     <div
-                      className={`mt-0.5 text-[13px] font-medium transition-colors ${
+                      className={`mt-0.5 font-serif text-[16px] leading-tight transition-colors ${
                         isActiveUnit
                           ? "text-orange"
                           : "text-ink group-hover:text-orange"
@@ -496,52 +540,167 @@ export default function Study() {
                       {unit.title}
                     </div>
                   </button>
-                  {unit.lessons.length > 0 && (
-                    <ul className="mt-2 space-y-0.5 border-l border-hair pl-3">
-                      {unit.lessons.map((l) => (
-                        <li key={l.slug}>
-                          <button
-                            onClick={() => selectLesson(l)}
-                            className={`flex w-full items-baseline gap-2 px-0 py-1 text-left text-[13px] transition-colors ${
-                              selectedLesson?.slug === l.slug
-                                ? "font-medium text-orange"
-                                : "text-body hover:text-ink"
-                            }`}
-                          >
-                            {selectedLesson?.slug === l.slug && (
-                              <span className="h-1.5 w-1.5 rounded-full bg-orange" />
-                            )}
-                            <span>{l.title}</span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {unit.topics && unit.topics.length > 0 && (
-                    <details className="group mt-2 pl-3">
-                      <summary className="cursor-pointer list-none text-[11px] uppercase tracking-[0.12em] text-muted hover:text-ink">
-                        <span className="inline-block w-3 transition-transform group-open:rotate-90">
-                          ›
-                        </span>
-                        <span className="ml-1">
-                          {unit.topics.length} CED topics
-                        </span>
-                      </summary>
-                      <ul className="mt-2 space-y-1 border-l border-hair pl-3">
-                        {unit.topics.map((t) => (
-                          <li
-                            key={t.id}
-                            className="flex items-start gap-2 text-[12px] leading-snug text-muted"
-                          >
-                            <span className="shrink-0 font-mono text-[11px] text-dim">
-                              {t.id}
-                            </span>
-                            <span>{t.title}</span>
-                          </li>
-                        ))}
+                  {(() => {
+                    const cedGroups =
+                      unit.topics && unit.topics.length > 0
+                        ? groupTopicsIntoLessons(
+                            courseSlug,
+                            unit.number,
+                            unit.topics
+                          )
+                        : [];
+                    const norm = (s: string) =>
+                      s.toLowerCase().replace(/[^a-z0-9]+/g, "");
+                    const lessonByTitle = new Map(
+                      unit.lessons.map((l) => [norm(l.title), l] as const)
+                    );
+
+                    if (cedGroups.length > 0) {
+                      return (
+                        <ul className="mt-3 space-y-2">
+                          {cedGroups.map((g) => {
+                            const matchedLesson = lessonByTitle.get(
+                              norm(g.title)
+                            );
+                            const isActiveLesson =
+                              !!matchedLesson &&
+                              selectedLesson?.slug ===
+                                matchedLesson.slug;
+                            const containsViewed =
+                              !!viewedCedTopic &&
+                              selectedUnit === unit.number &&
+                              g.topics.some(
+                                (t) => t.id === viewedCedTopic
+                              );
+                            const isActive =
+                              isActiveLesson || containsViewed;
+                            const lessonDone =
+                              !!matchedLesson &&
+                              completedSlugsAll.has(matchedLesson.slug);
+                            const allTopicsDone =
+                              g.topics.length > 0 &&
+                              g.topics.every((t) =>
+                                completedSlugsAll.has(
+                                  cedTopicSlug(courseSlug, t.id)
+                                )
+                              );
+                            const showLessonCheck =
+                              lessonDone || allTopicsDone;
+                            return (
+                              <li key={g.id}>
+                                <button
+                                  onClick={() => {
+                                    if (matchedLesson) {
+                                      selectLesson(matchedLesson);
+                                    } else {
+                                      selectTopic(
+                                        unit.number,
+                                        g.topics[0].id
+                                      );
+                                    }
+                                  }}
+                                  className={`flex w-full items-center gap-2 py-1 text-left text-[13.5px] transition-colors ${
+                                    isActive
+                                      ? "font-medium text-orange"
+                                      : "text-ink hover:text-orange"
+                                  }`}
+                                >
+                                  <span
+                                    className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${
+                                      isActive
+                                        ? "bg-orange"
+                                        : "bg-ink/40"
+                                    }`}
+                                  />
+                                  <span className="flex-1">{g.title}</span>
+                                  {showLessonCheck && (
+                                    <span className="shrink-0 text-[11px] text-green-700">
+                                      ✓
+                                    </span>
+                                  )}
+                                </button>
+                                <ul className="mt-0.5 space-y-0 border-l border-hair pl-3 ml-[3px]">
+                                  {g.topics.map((t) => {
+                                    const isTopicActive =
+                                      viewedCedTopic === t.id &&
+                                      selectedUnit === unit.number;
+                                    const topicDone =
+                                      completedSlugsAll.has(
+                                        cedTopicSlug(courseSlug, t.id)
+                                      );
+                                    return (
+                                      <li key={t.id}>
+                                        <button
+                                          onClick={() =>
+                                            selectTopic(
+                                              unit.number,
+                                              t.id
+                                            )
+                                          }
+                                          className={`flex w-full items-start gap-2 py-0.5 text-left text-[12px] leading-snug transition-colors ${
+                                            isTopicActive
+                                              ? "font-medium text-orange"
+                                              : "text-muted hover:text-ink"
+                                          }`}
+                                        >
+                                          <span className="shrink-0 font-mono text-[11px] text-dim">
+                                            {t.id}
+                                          </span>
+                                          <span className="flex-1">
+                                            {t.title}
+                                          </span>
+                                          {topicDone && (
+                                            <span className="shrink-0 text-[10px] text-green-700">
+                                              ✓
+                                            </span>
+                                          )}
+                                        </button>
+                                      </li>
+                                    );
+                                  })}
+                                </ul>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      );
+                    }
+
+                    if (unit.lessons.length === 0) return null;
+                    return (
+                      <ul className="mt-3 space-y-1">
+                        {unit.lessons.map((l) => {
+                          const isActive =
+                            selectedLesson?.slug === l.slug;
+                          const lessonDone = completedSlugsAll.has(l.slug);
+                          return (
+                            <li key={l.slug}>
+                              <button
+                                onClick={() => selectLesson(l)}
+                                className={`flex w-full items-center gap-2 py-1 text-left text-[13.5px] transition-colors ${
+                                  isActive
+                                    ? "font-medium text-orange"
+                                    : "text-ink hover:text-orange"
+                                }`}
+                              >
+                                <span
+                                  className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${
+                                    isActive ? "bg-orange" : "bg-ink/40"
+                                  }`}
+                                />
+                                <span className="flex-1">{l.title}</span>
+                                {lessonDone && (
+                                  <span className="shrink-0 text-[11px] text-green-700">
+                                    ✓
+                                  </span>
+                                )}
+                              </button>
+                            </li>
+                          );
+                        })}
                       </ul>
-                    </details>
-                  )}
+                    );
+                  })()}
                 </div>
               );
             })}
@@ -601,7 +760,10 @@ export default function Study() {
                   {TABS.filter((t) => t.show).map((t) => (
                     <button
                       key={t.key}
-                      onClick={() => setTab(t.key)}
+                      onClick={() => {
+                        setTab(t.key);
+                        setViewedCedTopic(null);
+                      }}
                       className={`relative -mb-px border-b-2 px-0 py-3 text-sm font-medium transition-colors ${
                         tab === t.key
                           ? "border-orange text-ink"
@@ -631,19 +793,60 @@ export default function Study() {
                   key={`${courseSlug}-${selectedUnit}-${selectedLesson?.slug ?? ""}-${tab}`}
                   className="mt-8 animate-fadeUp"
                 >
-                  {tab === "curriculum" && curriculumUnit && (
+                  {tab === "curriculum" && curriculumUnit && !viewedCedTopic && (
                     <CurriculumUnitView
                       unit={curriculumUnit}
-                      courseSlug={courseSlug}
-                      unitTopics={
-                        units.find((u) => u.number === selectedUnit)?.topics ??
-                        []
-                      }
                       locked={locked}
                       plan={plan}
                       onUpgrade={() => buy("pro-monthly")}
                     />
                   )}
+                  {tab === "curriculum" &&
+                    curriculumUnit &&
+                    viewedCedTopic &&
+                    (() => {
+                      const unitTopics =
+                        units.find((u) => u.number === selectedUnit)?.topics ??
+                        [];
+                      if (unitTopics.length === 0) return null;
+                      const groups = groupTopicsIntoLessons(
+                        courseSlug,
+                        selectedUnit,
+                        unitTopics
+                      );
+                      const activeGroup =
+                        findLessonGroupFor(groups, viewedCedTopic) ??
+                        groups[0];
+                      if (!activeGroup) return null;
+                      const completedTopicIds = new Set(
+                        activeGroup.topics
+                          .filter((t) =>
+                            completedSlugsAll.has(
+                              cedTopicSlug(courseSlug, t.id)
+                            )
+                          )
+                          .map((t) => t.id)
+                      );
+                      return (
+                        <CedLessonsView
+                          courseSlug={courseSlug}
+                          unit={curriculumUnit}
+                          lessonNumber={activeGroup.number}
+                          lessonTitle={activeGroup.title}
+                          topics={activeGroup.topics}
+                          activeTopicId={viewedCedTopic}
+                          onSelectTopic={(id) => setViewedCedTopic(id)}
+                          completedTopicIds={completedTopicIds}
+                          togglingTopicId={togglingCedTopicId}
+                          onToggleTopicComplete={
+                            user
+                              ? (topicId, next) =>
+                                  toggleCedTopicComplete(topicId, next)
+                              : undefined
+                          }
+                        />
+                      );
+                    })()}
 
                   {tab === "practice" && (
                     <>
@@ -1096,12 +1299,21 @@ function EmptyCourseView({ courseTitle }: { courseTitle: string }) {
  * Matches the SiteNav + main container geometry so the hand-off to the real
  * page doesn't shift layout.
  */
-// Count of lessons in a course (lessons can belong to multiple courses, so
-// we check each lesson's `courses` membership list).
+// All progress-eligible slugs for a course: hand-authored LESSONS plus every
+// CED sublesson in every unit. CED topics get a prefixed slug (see
+// `cedTopicSlug`) so they live in the same `completedSlugs` set without
+// colliding with LESSON slugs.
 function courseLessonSlugs(slug: CourseSlug): string[] {
-  return LESSONS.filter((l) =>
+  const lessonSlugs = LESSONS.filter((l) =>
     l.courses.some((c) => c.courseSlug === slug)
   ).map((l) => l.slug);
+  const cedSlugs: string[] = [];
+  for (const u of unitsForCourse(slug)) {
+    for (const t of u.topics ?? []) {
+      cedSlugs.push(cedTopicSlug(slug, t.id));
+    }
+  }
+  return [...lessonSlugs, ...cedSlugs];
 }
 
 function courseProgress(

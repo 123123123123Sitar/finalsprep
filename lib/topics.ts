@@ -782,7 +782,7 @@ export const COURSES: Course[] = [
     category: "math",
     subtitle:
       "Polynomial, rational, exponential, logarithmic, and trigonometric functions.",
-    units: cedUnits("quadratics", [
+    units: cedUnits("ap-precalc", [
       { number: 1, title: "Polynomial & Rational Functions" },
       { number: 2, title: "Exponential & Logarithmic Functions" },
       { number: 3, title: "Trigonometric & Polar Functions" },
