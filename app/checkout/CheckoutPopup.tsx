@@ -67,22 +67,36 @@ export default function CheckoutPopup(props: Props) {
       setStatus({ kind: "fallback" });
       return;
     }
-    // Open as a normal new tab (no popup=yes features). Ko-fi's checkout
-    // uses PayPal Smart Buttons, which silently refuse to initialise in
-    // restricted popup windows — a full tab gives them the capabilities
-    // they need while still leaving the FinalsPrep page intact underneath.
-    const popup = window.open(kofiUrl, "finalsprep_checkout");
-    if (!popup) {
-      setStatus({ kind: "fallback" });
+    // Try to open Ko-fi in a centered popup window so the buyer stays on
+    // FinalsPrep. If the browser blocks the popup (or returns a closed
+    // handle, which some blockers do silently), fall back to redirecting
+    // the main window to the Ko-fi URL — no dead-end for the buyer.
+    const width = 520;
+    const height = 720;
+    const left = Math.max(0, Math.floor((window.screen.availWidth - width) / 2));
+    const top = Math.max(0, Math.floor((window.screen.availHeight - height) / 2));
+    const features = `popup=yes,width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
+    let popup: Window | null = null;
+    try {
+      popup = window.open(kofiUrl, "finalsprep_checkout", features);
+    } catch {
+      popup = null;
+    }
+    if (!popup || popup.closed || typeof popup.focus !== "function") {
+      // Popup blocker tripped — send the main window itself to Ko-fi.
+      // The buyer will come back via Ko-fi's redirect URL (/success or
+      // /shop?status=ok), which still fires the webhook and grants access.
+      window.location.href = kofiUrl;
       return;
     }
-    popupRef.current = popup;
+    const opened: Window = popup;
+    popupRef.current = opened;
     setStatus({ kind: "waiting" });
-    try { popup.focus(); } catch {}
+    try { opened.focus(); } catch {}
     // Poll for close in case the postMessage never arrives (e.g. buyer
     // cancels, or Ko-fi doesn't redirect back to our domain).
     pollRef.current = window.setInterval(() => {
-      if (popup.closed) {
+      if (opened.closed) {
         stopPolling();
         setStatus((prev) => (prev.kind === "success" ? prev : { kind: "cancelled" }));
       }
@@ -128,7 +142,7 @@ export default function CheckoutPopup(props: Props) {
 
         {status.kind === "waiting" && (
           <p className="mt-3 text-center text-xs text-muted">
-            A new tab opened for secure checkout. If you closed it by accident,{" "}
+            Checkout opened in a popup. If you closed it by accident,{" "}
             <button onClick={openPopup} className="underline">
               reopen it
             </button>
@@ -137,11 +151,25 @@ export default function CheckoutPopup(props: Props) {
         )}
 
         {status.kind === "cancelled" && (
-          <p className="mt-3 rounded-md bg-orange-tint/60 p-3 text-sm text-orange-ink">
-            Looks like you closed the checkout before finishing. If you did pay,
-            give it a minute — your access will activate automatically from the
-            receipt.
-          </p>
+          <div className="mt-3 rounded-md bg-orange-tint/60 p-3 text-sm text-orange-ink">
+            <p>
+              Looks like you closed the checkout before finishing. If you did pay,
+              give it a minute — your access will activate automatically from the
+              receipt.
+            </p>
+            {kofiUrl && (
+              <p className="mt-2">
+                Popup blocked or stuck?{" "}
+                <button
+                  onClick={() => { window.location.href = kofiUrl; }}
+                  className="underline"
+                >
+                  Continue checkout in this tab
+                </button>
+                .
+              </p>
+            )}
+          </div>
         )}
       </div>
 
