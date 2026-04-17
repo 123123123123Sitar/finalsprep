@@ -20,8 +20,8 @@ export default function Success({
         </h1>
         <div className="prose-body mt-6">
           <p>
-            Your plan is active. A receipt is on its way from Ko-fi / PayPal. If you
-            paid with a school email, the receipt may land in spam.
+            Your plan is active. A receipt is on its way to your inbox. If
+            you paid with a school email, it may land in spam.
           </p>
           <p className="mt-4">
             Start with whatever topic you have a test on first. Most people

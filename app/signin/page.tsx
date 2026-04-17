@@ -35,16 +35,17 @@ function SignInPageInner() {
       <section className="mx-auto max-w-5xl px-6 py-16">
         {!configured ? (
           <div className="mx-auto max-w-xl text-center">
-            <div className="label mb-3">Auth not configured</div>
+            <div className="label mb-3">Sign-in unavailable</div>
             <h2 className="font-serif text-3xl text-ink">
-              Firebase isn't wired up yet.
+              Sign-in is temporarily unavailable.
             </h2>
             <p className="mt-4 text-muted">
-              Set the{" "}
-              <code className="font-mono text-ink">NEXT_PUBLIC_FIREBASE_*</code>{" "}
-              variables in{" "}
-              <code className="font-mono text-ink">.env.local</code>, restart
-              the dev server, and this page will show the sign-in form.
+              We're working on it. Please try again in a few minutes, or
+              email{" "}
+              <a className="underline" href="mailto:finalsprephelp@gmail.com">
+                finalsprephelp@gmail.com
+              </a>{" "}
+              if it persists.
             </p>
           </div>
         ) : loading ? (

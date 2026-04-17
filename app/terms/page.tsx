@@ -68,7 +68,7 @@ export default function TermsPage() {
             4. Subscriptions and refunds
           </h2>
           <p>
-            The free tier is free. Paid plans are sold as one-time PayPal
+            The free tier is free. Paid plans are sold as one-time
             purchases that unlock access for a fixed period (1 month or
             6 months). Access does not auto-renew — when the period ends
             you revert to the free tier until you choose to buy again.

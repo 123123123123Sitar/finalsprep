@@ -32,20 +32,20 @@ export default function PrivacyPage() {
           <ul className="ml-6 list-disc space-y-2">
             <li>
               <strong className="text-ink">Account info:</strong> the email
-              address you sign up with. We use Firebase Authentication to
-              store it.
+              address you sign up with, stored with our authentication
+              provider.
             </li>
             <li>
               <strong className="text-ink">Chat history:</strong> the
               messages you send to the AI tutor and the responses you get
-              back. These are stored in Firestore under your user ID so you
-              can access them across devices.
+              back. These are stored under your user ID so you can access
+              them across devices.
             </li>
             <li>
               <strong className="text-ink">Billing info:</strong> when you
-              buy a plan, PayPal handles the payment. We never see or store
-              your card number — we only receive a PayPal order ID and a
-              payment status.
+              buy a plan, our payment processor handles the transaction.
+              We never see or store your card number — we only receive an
+              order ID and a payment status.
             </li>
             <li>
               <strong className="text-ink">Technical data:</strong> basic
@@ -59,7 +59,12 @@ export default function PrivacyPage() {
           </h2>
           <ul className="ml-6 list-disc space-y-2">
             <li>Run the product - your account, your chat history, your billing.</li>
-            <li>Send chat prompts to Anthropic's Claude API to generate responses. Anthropic's data retention policy applies to those requests (see <a className="text-orange underline" href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener noreferrer">anthropic.com/legal/privacy</a>).</li>
+            <li>
+              Send chat prompts to upstream AI model providers to generate
+              responses. Those providers operate under their own data
+              retention policies, which prohibit training on customer
+              inputs by default.
+            </li>
             <li>Enforce per-user rate limits so one account can't drain the API budget for everyone.</li>
             <li>
               Send occasional product emails (at most once a month) if you
@@ -74,9 +79,9 @@ export default function PrivacyPage() {
           <ul className="ml-6 list-disc space-y-2">
             <li>We don't sell your data to anyone, ever.</li>
             <li>
-              We don't train AI models on your chat history. Anthropic's
-              API operates under the terms linked above and does not train
-              on API customer inputs by default.
+              We don't train AI models on your chat history. Our upstream
+              model providers don't either — their API terms prohibit
+              training on customer inputs by default.
             </li>
             <li>We don't show ads on the site.</li>
             <li>We don't use tracking pixels beyond basic, aggregated analytics.</li>
@@ -115,9 +120,11 @@ export default function PrivacyPage() {
             6. Where data lives
           </h2>
           <p>
-            User accounts and chat history live in Firebase (Google Cloud,
-            US region). Payment records live at PayPal. Chat prompts go to
-            Anthropic's API. No other third parties touch user data.
+            Account data and chat history are stored in a managed
+            cloud-hosted database in the US region. Payment records are
+            held by our payment processor. Chat prompts are sent to our
+            upstream AI model providers for inference. No other third
+            parties touch user data.
           </p>
 
           <h2 className="mt-10 font-serif text-2xl text-ink">

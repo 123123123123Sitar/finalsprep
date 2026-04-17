@@ -449,7 +449,7 @@ function MarketingHome() {
             from="left"
             eyebrow="Chat tutor"
             title="Ask anything. It remembers what you asked yesterday."
-            blurb="Full chat with message history, image uploads for handwritten work, and a settings popup for response length and tone. Math renders in KaTeX automatically."
+            blurb="Full chat with message history, image uploads for handwritten work, and a settings popup for response length and tone. Math renders cleanly with proper notation automatically."
             cta={{ href: "/chat", label: "Open the tutor →" }}
             mock={<ChatMock />}
           />
@@ -848,13 +848,13 @@ function MarketingHome() {
                   <th className="py-4 pl-6 pr-3 font-normal text-muted">
                     Feature
                   </th>
-                  <th className="w-[110px] py-4 text-center font-semibold text-ink">
+                  <th className="w-[150px] py-4 text-center font-semibold text-ink">
                     Learner
                   </th>
-                  <th className="w-[110px] py-4 text-center font-semibold text-ink">
+                  <th className="w-[150px] py-4 text-center font-semibold text-ink">
                     Pro
                   </th>
-                  <th className="w-[130px] py-4 text-center font-semibold text-ink">
+                  <th className="w-[150px] py-4 text-center font-semibold text-ink">
                     <span className="inline-flex items-center gap-1">
                       <CrownIcon className="h-3.5 w-3.5 text-amber-500" />
                       Hacker
@@ -869,11 +869,11 @@ function MarketingHome() {
                 />
                 <FeatureRow
                   label="Model strength"
-                  values={{ free: "Standard", pro: "Smarter + Thinking", premium: "Strongest + Thinking" }}
+                  values={{ free: "Smart", pro: "Smarter + Thinking", premium: "Advanced + Thinking" }}
                 />
                 <FeatureRow
                   label="Courses you can add"
-                  values={{ free: "3", pro: "10", premium: "All 16" }}
+                  values={{ free: "3", pro: "10", premium: "Unlimited" }}
                 />
                 <FeatureRow
                   label="AI chat tutor with persistent history"
@@ -887,7 +887,7 @@ function MarketingHome() {
                 />
                 <FeatureRow
                   label="Full lessons"
-                  values={{ free: "2 free", pro: "Unlimited", premium: "Unlimited" }}
+                  values={{ free: "Overviews only", pro: "Unlimited", premium: "Unlimited" }}
                 />
                 <FeatureRow
                   label="Practice problems"
@@ -920,12 +920,13 @@ function MarketingHome() {
                   premium
                 />
                 <FeatureRow
-                  label="Image uploads (photos of handwritten work)"
+                  label="Insights dashboard (tokens, streak, review bank)"
+                  free
                   pro
                   premium
                 />
                 <FeatureRow
-                  label="Insights dashboard (tokens, streak, review bank)"
+                  label="Image uploads (photos of handwritten work)"
                   pro
                   premium
                 />
@@ -935,12 +936,12 @@ function MarketingHome() {
                   premium
                 />
                 <FeatureRow
-                  label="Scheduler + bonus tokens for completed sessions"
+                  label="Scheduler and bonus tokens"
                   pro
                   premium
                 />
                 <FeatureRow
-                  label="Free image uploads (no 2× token cost)"
+                  label="Free image uploads "
                   premiumOnly
                   premium
                 />
@@ -954,10 +955,6 @@ function MarketingHome() {
           </div>
         </div>
 
-        <p className="mt-6 text-xs text-muted">
-           Cancel from your receipt email in one
-          click. Free plan stays free - no credit card required to try.
-        </p>
         </Reveal>
       </section>
 
@@ -975,7 +972,7 @@ function MarketingHome() {
           <div className="space-y-4 text-[16px]">
             {[
               ["Does it work on my phone?", "Yes. The solver works fine on mobile. The diagrams can be a little cramped on small screens - we're working on it."],
-              ["Can I use my school Google account?", "Yes. Checkout runs through PayPal — you can pay with a PayPal account or a credit/debit card. School email sometimes routes receipts to spam."],
+              ["Can I use my school Google account?", "Yes. Checkout takes any major credit or debit card. School email sometimes routes receipts to spam, so check there if it doesn't arrive."],
               ["Is this cheating?", "If you paste a problem in, read the explanation, and then do the problem again on your own, no. If you paste it in and copy the answer without reading, that's on you."],
               ["What if the tutor gets something wrong?", "Tell it in the next message and it will correct itself. If you hit a problem in scope where the explanation was genuinely bad, email finalsprephelp@gmail.com and we'll refund the purchase."],
               ["What if I want a refund?", "Reply to your receipt within 7 days. No questions asked."],

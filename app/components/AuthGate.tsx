@@ -12,15 +12,16 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   if (!configured) {
     return (
       <div className="mx-auto max-w-xl px-6 py-24 text-center">
-        <div className="label mb-4">Auth not configured</div>
+        <div className="label mb-4">Sign-in unavailable</div>
         <h2 className="font-serif text-3xl text-ink">
-          Firebase isn't wired up yet.
+          Sign-in is temporarily unavailable.
         </h2>
         <p className="mt-4 text-muted">
-          Set the <code className="font-mono text-ink">NEXT_PUBLIC_FIREBASE_*</code>{" "}
-          variables in <code className="font-mono text-ink">.env.local</code>,
-          restart the dev server, and this page will show the sign-in form.
-          See the README for setup steps.
+          Try again in a few minutes, or email{" "}
+          <a className="underline" href="mailto:finalsprephelp@gmail.com">
+            finalsprephelp@gmail.com
+          </a>{" "}
+          if it persists.
         </p>
       </div>
     );

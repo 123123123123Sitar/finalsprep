@@ -219,7 +219,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           code: detail.code,
           message:
             detail.code === "auth/too-many-requests"
-              ? "Account created, but Firebase throttled the verification email. Wait a minute, then use 'Resend verification email'."
+              ? "Account created, but the verification email was throttled. Wait a minute, then use 'Resend verification email'."
               : "Account created, but we couldn't send the verification email yet. Use 'Resend verification email' on the next screen.",
         };
       }
@@ -399,19 +399,19 @@ function prettyFirebaseError(
     case "auth/network-request-failed":
       return "Network error. Check your connection and try again.";
     case "auth/operation-not-allowed":
-      return "Email/Password sign-in isn't enabled in Firebase. Enable it in the Firebase console.";
+      return "Email/password sign-in isn't enabled right now. Email finalsprephelp@gmail.com if it persists.";
     case "auth/app-not-authorized":
     case "auth/unauthorized-domain":
-      return "This domain isn't authorized for Firebase auth. Add it under Firebase Authentication -> Settings -> Authorized domains.";
+      return "This domain isn't authorized for sign-in. Email finalsprephelp@gmail.com if you're seeing this on the live site.";
     case "auth/popup-blocked":
       return "Your browser blocked the sign-in popup. Allow popups for this site and try again.";
     case "auth/account-exists-with-different-credential":
       return "An account with this email already exists using a different sign-in method. Try the other method first.";
     case "auth/configuration-not-found":
-      return "Firebase auth isn't fully configured for this project yet. Check the web app config and enabled sign-in methods.";
+      return "Sign-in isn't fully configured yet. Email finalsprephelp@gmail.com if it persists.";
     case "auth/invalid-api-key":
     case "auth/api-key-not-valid":
-      return "The Firebase web API key is invalid for this app. Re-copy the NEXT_PUBLIC_FIREBASE_* config from the Firebase console and restart the app.";
+      return "Sign-in is temporarily unavailable. Try again in a few minutes, or email finalsprephelp@gmail.com if it persists.";
     case "auth/user-disabled":
       return "This account has been disabled.";
     default:

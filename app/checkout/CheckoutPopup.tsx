@@ -123,7 +123,7 @@ export default function CheckoutPopup(props: Props) {
             ? "Finish in the other tab…"
             : status.kind === "success"
             ? "Unlocking your account…"
-            : `Pay $${priceUsd.toFixed(2)} with card or PayPal`}
+            : `Pay $${priceUsd.toFixed(2)} with card`}
         </button>
 
         {status.kind === "waiting" && (
@@ -146,9 +146,9 @@ export default function CheckoutPopup(props: Props) {
       </div>
 
       <p className="mt-6 text-xs text-muted">
-        Payments are processed by Ko-fi and route to our PayPal. You can pay
-        with a credit/debit card or a PayPal account — we never see your card
-        number. 7-day refund, no questions. Email{" "}
+        Payments are processed securely through our payment provider — pay
+        with a credit or debit card and we never see your card number.
+        7-day refund, no questions. Email{" "}
         <a className="underline" href="mailto:finalsprephelp@gmail.com">
           finalsprephelp@gmail.com
         </a>
@@ -163,12 +163,12 @@ function NotConfigured({ priceUsd }: { priceUsd: number }) {
     <section className="mx-auto max-w-xl px-6 py-16">
       <h1 className="font-serif text-3xl text-ink">Checkout isn't configured yet.</h1>
       <p className="mt-3 text-body">
-        The Ko-fi product link for this item isn't set. For now you can send{" "}
-        <strong className="text-ink">${priceUsd.toFixed(2)}</strong> to{" "}
-        <a className="underline" href="https://ko-fi.com/finalsprep" target="_blank" rel="noopener noreferrer">
-          ko-fi.com/finalsprep
+        The product link for this <strong className="text-ink">${priceUsd.toFixed(2)}</strong>{" "}
+        item isn't set. Email{" "}
+        <a className="underline" href="mailto:finalsprephelp@gmail.com">
+          finalsprephelp@gmail.com
         </a>{" "}
-        and we'll activate your plan within a few hours.
+        and we'll activate your plan manually within a few hours.
       </p>
     </section>
   );
