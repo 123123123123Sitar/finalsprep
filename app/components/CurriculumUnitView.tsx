@@ -3,10 +3,12 @@ import type { CurriculumUnit } from "@/lib/curriculum";
 import type { ApTopic } from "@/lib/topics";
 import type { PlanTier } from "@/lib/plans";
 import { getCedLesson, type CedLesson } from "@/lib/cedLessons";
+import { apCentralLinksFor } from "@/lib/apCentralLinks";
 import MathRender from "./Math";
 
 type Props = {
   unit: CurriculumUnit;
+  courseSlug?: string;
   plan?: PlanTier;
   locked?: boolean;
   onUpgrade?: () => void;
@@ -14,16 +16,23 @@ type Props = {
 
 export default function CurriculumUnitView({
   unit,
+  courseSlug,
   locked,
   onUpgrade,
 }: Props) {
   if (locked) {
     return <LockedUnitView unit={unit} onUpgrade={onUpgrade} />;
   }
-  return <UnlockedUnitView unit={unit} />;
+  return <UnlockedUnitView unit={unit} courseSlug={courseSlug} />;
 }
 
-function UnlockedUnitView({ unit }: { unit: CurriculumUnit }) {
+function UnlockedUnitView({
+  unit,
+  courseSlug,
+}: {
+  unit: CurriculumUnit;
+  courseSlug?: string;
+}) {
   return (
     <div className="max-w-3xl space-y-8">
       <div>
@@ -33,6 +42,7 @@ function UnlockedUnitView({ unit }: { unit: CurriculumUnit }) {
         <h3 className="mt-1 font-serif text-3xl font-normal text-ink">
           {unit.title}
         </h3>
+        {courseSlug && <ApCentralUnitLinks courseSlug={courseSlug} />}
         <p className="mt-3 text-[16px] text-body">
           <MathRender auto>{unit.overview}</MathRender>
         </p>
@@ -214,11 +224,12 @@ export function CedLessonsView({
       </div>
 
       <div>
-        <div className="flex items-baseline gap-2">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
           <span className="font-mono text-[12px] text-muted">{active.id}</span>
           <h4 className="font-serif text-2xl font-normal text-ink">
             {active.title}
           </h4>
+          <ApCentralTopicLink courseSlug={courseSlug} />
         </div>
         {lesson?.summary && (
           <p className="mt-2 text-[14.5px] text-muted">
@@ -470,6 +481,58 @@ function Section({
         {title}
       </div>
       {children}
+    </div>
+  );
+}
+
+/** Small "AP Central ↗" chip next to a CED topic. Goes to the course's
+ *  official AP Central page — the authoritative source for this framework
+ *  entry. (College Board doesn't expose per-topic deep links; the topic
+ *  code only appears inside the downloadable CED PDF.) */
+function ApCentralTopicLink({ courseSlug }: { courseSlug: string }) {
+  const links = apCentralLinksFor(courseSlug);
+  if (!links) return null;
+  return (
+    <a
+      href={links.course}
+      target="_blank"
+      rel="noopener noreferrer"
+      title="View this course on AP Central"
+      className="ml-1 inline-flex items-center gap-1 rounded-full border border-hair px-2 py-0.5 text-[10.5px] font-medium uppercase tracking-[0.08em] text-muted hover:border-orange hover:text-orange-ink"
+    >
+      AP Central <span aria-hidden>↗</span>
+    </a>
+  );
+}
+
+/** Pair of links at the unit level: the course page on AP Central plus
+ *  the downloadable CED PDF (when published). */
+function ApCentralUnitLinks({ courseSlug }: { courseSlug: string }) {
+  const links = apCentralLinksFor(courseSlug);
+  if (!links) return null;
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]">
+      <a
+        href={links.course}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-muted underline-offset-2 hover:text-orange-ink hover:underline"
+      >
+        View on AP Central ↗
+      </a>
+      {links.cedPdf && (
+        <>
+          <span className="text-dim">·</span>
+          <a
+            href={links.cedPdf}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted underline-offset-2 hover:text-orange-ink hover:underline"
+          >
+            Official CED PDF ↗
+          </a>
+        </>
+      )}
     </div>
   );
 }

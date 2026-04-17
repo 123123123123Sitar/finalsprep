@@ -806,6 +806,7 @@ export default function Study() {
                   {tab === "curriculum" && curriculumUnit && !viewedCedTopic && (
                     <CurriculumUnitView
                       unit={curriculumUnit}
+                      courseSlug={courseSlug}
                       locked={locked}
                       plan={plan}
                       onUpgrade={() => buy("pro-monthly")}
