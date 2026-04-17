@@ -67,12 +67,11 @@ export default function CheckoutPopup(props: Props) {
       setStatus({ kind: "fallback" });
       return;
     }
-    const width = 520;
-    const height = 720;
-    const left = Math.max(0, Math.floor((window.screen.availWidth - width) / 2));
-    const top = Math.max(0, Math.floor((window.screen.availHeight - height) / 2));
-    const features = `popup=yes,width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
-    const popup = window.open(kofiUrl, "finalsprep_checkout", features);
+    // Open as a normal new tab (no popup=yes features). Ko-fi's checkout
+    // uses PayPal Smart Buttons, which silently refuse to initialise in
+    // restricted popup windows — a full tab gives them the capabilities
+    // they need while still leaving the FinalsPrep page intact underneath.
+    const popup = window.open(kofiUrl, "finalsprep_checkout");
     if (!popup) {
       setStatus({ kind: "fallback" });
       return;
@@ -121,7 +120,7 @@ export default function CheckoutPopup(props: Props) {
           className="btn-primary mt-7 w-full justify-center text-base disabled:opacity-60"
         >
           {status.kind === "waiting"
-            ? "Complete payment in the popup…"
+            ? "Finish in the other tab…"
             : status.kind === "success"
             ? "Unlocking your account…"
             : `Pay $${priceUsd.toFixed(2)} with card or PayPal`}
@@ -129,7 +128,7 @@ export default function CheckoutPopup(props: Props) {
 
         {status.kind === "waiting" && (
           <p className="mt-3 text-center text-xs text-muted">
-            If the popup closed by accident,{" "}
+            A new tab opened for secure checkout. If you closed it by accident,{" "}
             <button onClick={openPopup} className="underline">
               reopen it
             </button>
