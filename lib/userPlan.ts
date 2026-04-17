@@ -2,10 +2,10 @@
  * User plan helper. Stores and reads a user's access period in
  * Firestore under users/{uid}/profile/billing.
  *
- * Paid access is sold as one-time PayPal Orders (no auto-renew on
- * Personal PayPal). Each successful capture extends currentPeriodEnd
- * from max(now, currentPeriodEnd). When the period ends, getPlan
- * auto-returns the learner tier.
+ * Paid access is sold as one-time Ko-fi shop orders (Ko-fi routes the
+ * payment straight to our Personal PayPal). Each successful order
+ * extends currentPeriodEnd from max(now, currentPeriodEnd); when the
+ * period ends, getPlan auto-returns the learner tier.
  */
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import {
@@ -21,7 +21,7 @@ export type UserPlan = {
   plan: PlanTier;
   billingInterval?: BillingInterval;
   status?: string;
-  paypalOrderId?: string;
+  kofiOrderId?: string;
   currentPeriodEnd?: number;
   updatedAt: number;
 };
@@ -43,7 +43,7 @@ export async function getPlan(uid: string): Promise<UserPlan> {
       plan: normalizePlanTier(raw.plan),
       billingInterval: normalizeBillingInterval(raw.billingInterval),
       status: typeof raw.status === "string" ? raw.status : undefined,
-      paypalOrderId: raw.paypalOrderId,
+      kofiOrderId: raw.kofiOrderId,
       currentPeriodEnd: raw.currentPeriodEnd,
       updatedAt: typeof raw.updatedAt === "number" ? raw.updatedAt : Date.now(),
     };
