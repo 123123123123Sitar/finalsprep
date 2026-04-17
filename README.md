@@ -1,6 +1,6 @@
 # FinalsPrep
 
-An AI tutor that explains math, physics, CS, and history step by step. Covers **16 AP courses** organized by the official College Board unit structure. Free to try, $9/month or $50/year for unlimited usage. Built with Next.js 14, Firebase (auth + Firestore), Stripe (subscriptions), Anthropic Claude (streaming responses), KaTeX (math rendering), and Tailwind.
+An AI tutor that explains math, physics, CS, and history step by step. Covers **16 AP courses** organized by the official College Board unit structure. Free to try, one-time PayPal purchases for paid access. Built with Next.js 14, Firebase (auth + Firestore), PayPal Orders API (one-time payments), Anthropic Claude (streaming responses), KaTeX (math rendering), and Tailwind.
 
 ## What's in the box
 
@@ -11,12 +11,15 @@ An AI tutor that explains math, physics, CS, and history step by step. Covers **
 - **`app/privacy/page.tsx`**, **`app/terms/page.tsx`** — plain-English legal pages
 - **`app/api/chat/route.ts`** — streaming Anthropic endpoint with server-side auth, token-based rate limiting, plan lookup
 - **`app/api/explain/route.ts`** — one-shot explain endpoint: curated walkthroughs (free, instant) + AI fallback (gated)
-- **`app/api/checkout/route.ts`** — Stripe subscription checkout (monthly/yearly), attaches Firebase uid as `client_reference_id`
-- **`app/api/webhooks/stripe/route.ts`** — verified Stripe webhook that promotes users to Pro in Firestore on successful checkout
+- **`app/api/paypal/create-order/route.ts`** — creates a PayPal Order for the chosen plan (Pro/Hacker × monthly/6-month) or token pack, embeds `{uid, plan, coupon}` in `custom_id`
+- **`app/api/paypal/capture-order/route.ts`** — captures an approved order, extends the user's access period in Firestore
+- **`app/api/webhooks/paypal/route.ts`** — verified PayPal webhook (PAYMENT.CAPTURE.COMPLETED) for belt-and-braces idempotent re-grant
+- **`app/checkout/page.tsx`** — PayPal Buttons checkout page used for all paid purchases
 - **`lib/firebase.ts`** — client SDK init
 - **`lib/firebaseAdmin.ts`** — server SDK init from base64-encoded service account
 - **`lib/authGuard.ts`** — server-side ID token verification
-- **`lib/userPlan.ts`** — Firestore read/write for subscription plan state
+- **`lib/userPlan.ts`** — Firestore read/write for access-period state (auto-downgrades to learner when `currentPeriodEnd` passes)
+- **`lib/paypal.ts`** — server-side PayPal REST helper (OAuth, create/capture orders, verify webhook)
 - **`lib/rateLimit.ts`** — sliding 5-hour token window limiter
 - **`lib/topics.ts`** — 16 AP courses, official unit structures, 21 curated lessons with walkthroughs, flashcards, links, diagrams
 - **`lib/autoLatex.ts`** — plain-text math → KaTeX auto-wrapper
@@ -41,8 +44,8 @@ Minimum needed for the full flow to work:
 1. **`ANTHROPIC_API_KEY`** — https://console.anthropic.com → API Keys → Create Key. Add $5+ credit.
 2. **Firebase client config** — 6 `NEXT_PUBLIC_FIREBASE_*` values. Firebase Console → Project Settings → Web app → Config.
 3. **`FIREBASE_ADMIN_KEY_B64`** — base64-encoded service account JSON. See "Firebase Admin setup" below.
-4. **`STRIPE_SECRET_KEY`**, **`STRIPE_PRICE_MONTHLY`**, **`STRIPE_PRICE_YEARLY`** — see "Stripe setup" below.
-5. **`STRIPE_WEBHOOK_SECRET`** — for verifying webhook payloads. See "Stripe webhook setup".
+4. **`PAYPAL_CLIENT_ID`** + **`NEXT_PUBLIC_PAYPAL_CLIENT_ID`** (same value), **`PAYPAL_CLIENT_SECRET`**, **`PAYPAL_ENV`** (`sandbox` or `live`) — see "PayPal setup" below.
+5. **`PAYPAL_WEBHOOK_ID`** — optional, for the belt-and-braces webhook. Only add once you have a public URL.
 
 Everything else in `.env.example` is optional.
 
@@ -92,55 +95,50 @@ The server verifies ID tokens and writes subscription state to Firestore using F
 
 When you deploy, Firebase only accepts auth from whitelisted domains. Go to **Authentication → Settings → Authorized domains** and add your production domain alongside `localhost`.
 
-## Stripe setup
+## PayPal setup
 
-### 1. Account + products (test mode first)
+We use **one-time PayPal Orders** (not subscriptions). Each purchase unlocks
+access for a fixed period and does not auto-renew — the user revisits
+`/checkout` to renew. This is the only model that works on PayPal Personal
+accounts; if you upgrade to PayPal Business you can switch to the
+Subscriptions API later.
 
-1. https://dashboard.stripe.com/register → sign up. You can **skip activation** and stay in test mode while you develop.
-2. Make sure you're in **Test mode** (toggle in the top nav).
-3. **Products** → Add Product → "FinalsPrep Pro Monthly"
-   - Recurring, $9.00 / month
-   - Save → copy the `price_...` ID
-4. Repeat for "FinalsPrep Pro Yearly" → $50.00 / year
-5. **Developers → API keys** → copy the **Secret key** (`sk_test_...`)
-6. In `.env.local`:
+### 1. Create a REST API app (sandbox)
+
+1. https://developer.paypal.com/dashboard/applications/sandbox → log in.
+2. Apps & Credentials → **Create App** → name it "FinalsPrep" → Type: Merchant → Create.
+3. Copy the **Client ID** and reveal + copy **Secret key 1**.
+4. In `.env.local`:
    ```
-   STRIPE_SECRET_KEY=sk_test_...
-   STRIPE_PRICE_MONTHLY=price_...
-   STRIPE_PRICE_YEARLY=price_...
+   PAYPAL_ENV=sandbox
+   PAYPAL_CLIENT_ID=...
+   NEXT_PUBLIC_PAYPAL_CLIENT_ID=...   # same value, exposed to the browser SDK
+   PAYPAL_CLIENT_SECRET=...
    ```
-7. Test with card `4242 4242 4242 4242` (any future date, any CVC).
+5. Sandbox test accounts: developer dashboard → Testing Tools → Sandbox Accounts.
+   Use the generated "personal" account's email + password in the PayPal popup
+   on the /checkout page to simulate a buyer.
 
-### 2. Stripe webhook setup
+### 2. PayPal webhook (optional, recommended after deploy)
 
-The webhook promotes users to Pro when their checkout completes. For local development you need the Stripe CLI:
+The `/api/paypal/capture-order` route is authoritative — it writes the
+user's new plan/expiration to Firestore as soon as PayPal returns a
+completed capture. The webhook at `/api/webhooks/paypal` is a belt-and-
+braces idempotent re-grant in case the browser drops between approval
+and capture.
 
-```
-# Install if you haven't (already done on this machine via brew):
-brew install stripe/stripe-cli/stripe
-
-stripe login                                      # opens browser, authenticates CLI
-stripe listen --forward-to localhost:3000/api/webhooks/stripe
-```
-
-The `stripe listen` command prints a line like:
-```
-> Ready! Your webhook signing secret is whsec_1234abcd...
-```
-
-Paste that value into `.env.local` as `STRIPE_WEBHOOK_SECRET`. Keep `stripe listen` running in a separate terminal while testing - it forwards real Stripe events to your local server.
-
-For **production** (Vercel): Stripe Dashboard → **Developers → Webhooks → Add endpoint** → URL `https://yourdomain.com/api/webhooks/stripe` → select events `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted` → Save → copy the **Signing secret** → set as `STRIPE_WEBHOOK_SECRET` in Vercel env vars.
+1. Deploy to Vercel so you have a public URL.
+2. Developer dashboard → your FinalsPrep app → **Sandbox Webhooks** →
+   **Add Webhook** → URL: `https://yourdomain.com/api/webhooks/paypal`.
+3. Event types: **Payment capture completed** (`PAYMENT.CAPTURE.COMPLETED`).
+4. Copy the **Webhook ID** → set as `PAYPAL_WEBHOOK_ID` in Vercel env vars.
 
 ### 3. Going live
 
-When you're ready for real payments:
-1. Stripe dashboard → **Activate account** → complete the KYC flow (legal name, DOB, last-4 SSN, bank, address). Takes 5-10 min of forms + 1-2 business days of verification.
-2. Optionally: **Settings → Payouts → Schedule → Manual** so funds sit in your balance until you trigger a payout.
-3. Flip dashboard to **Live mode**.
-4. Re-create the two products + prices in live mode (they're separate from test mode).
-5. Swap `sk_test_...` for `sk_live_...` and update `STRIPE_PRICE_MONTHLY` / `STRIPE_PRICE_YEARLY` to the live price IDs in your production env.
-6. Re-create the webhook endpoint in live mode and update `STRIPE_WEBHOOK_SECRET`.
+1. Upgrade your PayPal account to **PayPal for Business** (free, 5 min).
+2. Developer dashboard → switch to **Live** → **Create App** → copy live
+   Client ID + Secret. Recreate the webhook under **Live Webhooks**.
+3. In production env: `PAYPAL_ENV=live` + the live client ID/secret/webhook.
 
 ## Deploy to Vercel (10 min)
 
@@ -152,16 +150,17 @@ When you're ready for real payments:
 6. Vercel → Settings → Domains → add your custom domain → follow DNS instructions.
 7. Redeploy.
 8. Firebase Console → Authentication → Settings → Authorized domains → add your production domain.
-9. Stripe Dashboard → Webhooks → Add production endpoint → copy signing secret → add to Vercel env vars.
+9. PayPal developer dashboard → Webhooks → Add endpoint → URL `https://yourdomain.com/api/webhooks/paypal` → copy Webhook ID → set as `PAYPAL_WEBHOOK_ID` in Vercel env vars.
 
 ## How the plan enforcement works end to end
 
-1. **Signup**: user creates account at `/signin`, receives verification email, clicks link, signs in. Firestore has the user doc but no billing record yet → plan defaults to `free`.
-2. **Free chat**: every chat request sends `Authorization: Bearer <idToken>`. Server verifies the token with Firebase Admin, looks up the user's plan in Firestore, and rate-limits against the `free` tier (4,000 tokens per 5-hour rolling window).
-3. **Subscribe**: user clicks "Start Pro - $9/month". Client fetches `/api/checkout` with the ID token. Server creates a Stripe Checkout Session with `client_reference_id = user.uid` and subscription metadata `{ uid, plan }`.
-4. **Webhook**: Stripe sends `checkout.session.completed` to `/api/webhooks/stripe`. Server verifies the signature, reads the uid from `client_reference_id`, fetches the subscription, and writes `{ plan: "pro", stripeCustomerId, stripeSubscriptionId, currentPeriodEnd }` to `users/{uid}/profile/billing` in Firestore.
-5. **Paid chat**: AuthProvider is subscribed via `onSnapshot` to the billing doc, so the chat footer instantly reads "Pro plan · unlimited". Next request rate-limits against the `paid` tier (60,000 tokens per 5-hour window).
-6. **Cancellation**: `customer.subscription.deleted` webhook event sets the plan back to `free`. The user's access expires at the end of the current billing period via the `currentPeriodEnd` check in `lib/userPlan.ts`.
+1. **Signup**: user creates account at `/signin`, receives verification email, clicks link, signs in. Firestore has the user doc but no billing record yet → plan defaults to `learner`.
+2. **Free chat**: every chat request sends `Authorization: Bearer <idToken>`. Server verifies the token with Firebase Admin, looks up the user's plan in Firestore, and rate-limits against the `learner` tier.
+3. **Purchase**: user clicks "Start Pro". Client redirects to `/checkout?plan=pro-monthly`. The PayPal Buttons calls `/api/paypal/create-order` with the ID token. Server creates a PayPal Order with `custom_id = "<uid>|<plan>|<coupon?>"`.
+4. **Approval + capture**: user approves in the PayPal popup. Client calls `/api/paypal/capture-order` with the order ID. Server verifies the buyer, captures via PayPal, then writes `{ plan: "pro"|"hacker", billingInterval, paypalOrderId, currentPeriodEnd }` to `users/{uid}/profile/billing` in Firestore. `currentPeriodEnd` is extended from `max(now, currentPeriodEnd)`.
+5. **Webhook** (belt-and-braces): PayPal posts `PAYMENT.CAPTURE.COMPLETED` to `/api/webhooks/paypal`. The route verifies the signature and performs the same grant idempotently (no-op if the capture route already ran).
+6. **Paid chat**: AuthProvider is subscribed via `onSnapshot` to the billing doc, so the chat footer instantly reflects the new tier.
+7. **Expiration**: `getPlan()` compares `currentPeriodEnd` to `now` on every request. Once the period passes, the user silently reverts to `learner` until they buy again.
 
 ## Rate limits
 
@@ -195,6 +194,8 @@ Grab one from Namecheap or Cloudflare ($10-15/year).
 - **"Firebase isn't wired up yet"** — `NEXT_PUBLIC_FIREBASE_*` env vars are missing. Fill in all six.
 - **"auth/operation-not-allowed"** — Email/Password sign-in isn't enabled in Firebase Console. Enable it under Authentication → Sign-in method.
 - **"Authentication required" on chat/explain** — the client is signed in but the server can't verify the ID token. Check that `FIREBASE_ADMIN_KEY_B64` is set and base64-encodes valid JSON.
-- **Webhook signature verification fails** — `STRIPE_WEBHOOK_SECRET` is wrong. In local dev, re-run `stripe listen` and grab the `whsec_...` it prints. In production, re-copy from Stripe Dashboard → Webhooks.
+- **Webhook signature verification fails** — `PAYPAL_WEBHOOK_ID` is wrong or missing. Copy it from Developer Dashboard → your app → Sandbox Webhooks → Webhook ID. (The webhook route is belt-and-braces; the primary grant path is `/api/paypal/capture-order`.)
+- **"paypal-not-configured"** — `PAYPAL_CLIENT_ID` and/or `PAYPAL_CLIENT_SECRET` are missing on the server. Check `.env.local` / Vercel env vars.
+- **PayPal Buttons never render** — `NEXT_PUBLIC_PAYPAL_CLIENT_ID` is missing on the client. It must be set at build time (it's a `NEXT_PUBLIC_` var).
 - **"Demo mode"** — `ANTHROPIC_API_KEY` isn't set. Add it to `.env.local` and restart.
 - **Rate limit not resetting** — the 5-hour window is sliding, not fixed. Wait until the oldest entry ages out. Check `resetMinutes` in the chat footer.

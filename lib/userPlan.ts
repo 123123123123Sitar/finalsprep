@@ -1,22 +1,11 @@
 /**
- * User plan helper. Stores and reads a user's subscription status in
+ * User plan helper. Stores and reads a user's access period in
  * Firestore under users/{uid}/profile/billing.
  *
- * Shape:
- *   users/{uid}/profile/billing = {
- *     plan: "learner" | "pro" | "hacker",
- *     billingInterval?: "monthly" | "sixmonth",
- *     status?: string,
- *     stripeCustomerId?: string,
- *     stripeSubscriptionId?: string,
- *     stripePriceId?: string,
- *     currentPeriodEnd?: number,  // unix seconds
- *     updatedAt: number,
- *   }
- *
- * The API routes call `getPlan(uid)` to decide whether a request should
- * use the paid tier rate limit. Stripe webhook calls `setPlan` to promote
- * a user after checkout.session.completed and demote on cancellation.
+ * Paid access is sold as one-time PayPal Orders (no auto-renew on
+ * Personal PayPal). Each successful capture extends currentPeriodEnd
+ * from max(now, currentPeriodEnd). When the period ends, getPlan
+ * auto-returns the learner tier.
  */
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import {
@@ -32,9 +21,7 @@ export type UserPlan = {
   plan: PlanTier;
   billingInterval?: BillingInterval;
   status?: string;
-  stripeCustomerId?: string;
-  stripeSubscriptionId?: string;
-  stripePriceId?: string;
+  paypalOrderId?: string;
   currentPeriodEnd?: number;
   updatedAt: number;
 };
@@ -56,9 +43,7 @@ export async function getPlan(uid: string): Promise<UserPlan> {
       plan: normalizePlanTier(raw.plan),
       billingInterval: normalizeBillingInterval(raw.billingInterval),
       status: typeof raw.status === "string" ? raw.status : undefined,
-      stripeCustomerId: raw.stripeCustomerId,
-      stripeSubscriptionId: raw.stripeSubscriptionId,
-      stripePriceId: raw.stripePriceId,
+      paypalOrderId: raw.paypalOrderId,
       currentPeriodEnd: raw.currentPeriodEnd,
       updatedAt: typeof raw.updatedAt === "number" ? raw.updatedAt : Date.now(),
     };

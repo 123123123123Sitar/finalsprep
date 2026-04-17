@@ -743,17 +743,13 @@ function ChatInner() {
       | "hacker-sixmonth" = "pro-monthly"
   ) {
     const token = await getIdToken();
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({ plan: checkoutPlan }),
-    });
-    const { url, error } = await res.json();
-    if (url) window.location.href = url;
-    else alert(error || "Checkout isn't wired up yet.");
+    if (!token) {
+      window.location.href = `/signin?next=${encodeURIComponent(
+        "/checkout?plan=" + checkoutPlan
+      )}`;
+      return;
+    }
+    window.location.href = `/checkout?plan=${encodeURIComponent(checkoutPlan)}`;
   }
 
   const [convSearch, setConvSearch] = useState("");

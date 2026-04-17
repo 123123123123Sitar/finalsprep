@@ -68,19 +68,18 @@ export default function TermsPage() {
             4. Subscriptions and refunds
           </h2>
           <p>
-            The free tier is free. The $9/month and $50/year Pro plans are
-            charged via Stripe and renew automatically until you cancel.
-            You can cancel any time from your Stripe receipt email.
+            The free tier is free. Paid plans are sold as one-time PayPal
+            purchases that unlock access for a fixed period (1 month or
+            6 months). Access does not auto-renew — when the period ends
+            you revert to the free tier until you choose to buy again.
           </p>
           <p>
-            Refunds: if you're unhappy within 7 days of your first
-            payment, email{" "}
+            Refunds: if you're unhappy within 7 days of your purchase,
+            email{" "}
             <a className="text-orange underline" href="mailto:finalsprephelp@gmail.com">
               finalsprephelp@gmail.com
             </a>{" "}
-            and we will refund the last charge, no questions asked. After
-            that, you can cancel to stop future charges but we don't
-            refund partial months.
+            and we will refund the last charge, no questions asked.
           </p>
 
           <h2 className="mt-10 font-serif text-2xl text-ink">

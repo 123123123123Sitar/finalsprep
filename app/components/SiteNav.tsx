@@ -243,30 +243,14 @@ export function BuyProButton() {
   if (plan && plan !== "learner") return null;
 
   async function buy() {
-    setSubmitting(true);
-    try {
-      const token = await getIdToken();
-      if (!token) {
-        window.location.href = `/signin?next=${encodeURIComponent(
-          "/?plan=pro-monthly"
-        )}`;
-        return;
-      }
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ plan: "pro-monthly" }),
-      });
-      const data = await res.json();
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } finally {
-      setSubmitting(false);
+    const token = await getIdToken();
+    if (!token) {
+      window.location.href = `/signin?next=${encodeURIComponent(
+        "/checkout?plan=pro-monthly"
+      )}`;
+      return;
     }
+    window.location.href = `/checkout?plan=pro-monthly`;
   }
 
   return (

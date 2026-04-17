@@ -42,10 +42,10 @@ export default function PrivacyPage() {
               can access them across devices.
             </li>
             <li>
-              <strong className="text-ink">Billing info:</strong> if you
-              subscribe, Stripe stores your payment method. We never see or
-              store your card number - we only receive a customer ID and a
-              subscription status.
+              <strong className="text-ink">Billing info:</strong> when you
+              buy a plan, PayPal handles the payment. We never see or store
+              your card number — we only receive a PayPal order ID and a
+              payment status.
             </li>
             <li>
               <strong className="text-ink">Technical data:</strong> basic
@@ -106,8 +106,9 @@ export default function PrivacyPage() {
             <a className="text-orange underline" href="mailto:finalsprephelp@gmail.com">
               finalsprephelp@gmail.com
             </a>{" "}
-            and we'll purge it within 7 days), or cancel your subscription
-            from your Stripe receipt email.
+            and we'll purge it within 7 days). Paid plans are one-time
+            purchases and do not auto-renew, so there is no subscription
+            to cancel.
           </p>
 
           <h2 className="mt-10 font-serif text-2xl text-ink">
@@ -115,7 +116,7 @@ export default function PrivacyPage() {
           </h2>
           <p>
             User accounts and chat history live in Firebase (Google Cloud,
-            US region). Payment records live at Stripe. Chat prompts go to
+            US region). Payment records live at PayPal. Chat prompts go to
             Anthropic's API. No other third parties touch user data.
           </p>
 

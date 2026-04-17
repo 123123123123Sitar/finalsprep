@@ -6,9 +6,9 @@ rules_version = '2';
 //   - Users can read their own data under users/{uid}/...
 //   - Users can write their own *non-billing* subtree (chat history,
 //     lesson progress, etc.)
-//   - Billing is READ-ONLY for the user. The Stripe webhook uses the
-//     Admin SDK, which bypasses these rules, so plan promotion only ever
-//     happens server-side after a verified Stripe event.
+//   - Billing is READ-ONLY for the user. The PayPal capture + webhook
+//     routes use the Admin SDK, which bypasses these rules, so plan
+//     promotion only ever happens server-side after a verified capture.
 //
 // This prevents a signed-in user from opening the browser console and
 // writing { plan: "pro" } into their own billing doc.

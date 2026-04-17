@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   // Subscribe to the user's billing doc so the plan updates in real-time
-  // when the Stripe webhook promotes them.
+  // when the PayPal capture endpoint or webhook promotes them.
   //
   // Plan resolution is layered to avoid flicker:
   //   1. Initial render: `plan` starts from localStorage cache (fast, warm).

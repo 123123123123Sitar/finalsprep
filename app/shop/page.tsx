@@ -10,7 +10,6 @@ import PageLoader from "@/app/components/PageLoader";
 export default function ShopPage() {
   const { user, loading, getIdToken } = useAuth();
   const [balance, setBalance] = useState<number | null>(null);
-  const [buying, setBuying] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -50,23 +49,14 @@ export default function ShopPage() {
   }, []);
 
   async function buy(packId: string) {
-    setBuying(packId);
-    try {
-      const token = await getIdToken();
-      const res = await fetch("/api/shop/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ packId }),
-      });
-      const { url, error } = await res.json();
-      if (url) window.location.href = url;
-      else setMsg(error || "Checkout not ready yet.");
-    } finally {
-      setBuying(null);
+    const token = await getIdToken();
+    if (!token) {
+      window.location.href = `/signin?next=${encodeURIComponent(
+        "/checkout?pack=" + packId
+      )}`;
+      return;
     }
+    window.location.href = `/checkout?pack=${encodeURIComponent(packId)}`;
   }
 
   if (loading || !user) {
@@ -140,14 +130,13 @@ export default function ShopPage() {
               </p>
               <button
                 onClick={() => buy(pack.id)}
-                disabled={buying !== null}
-                className={`mt-5 w-full rounded-md px-4 py-3 text-center text-base font-medium transition disabled:opacity-50 ${
+                className={`mt-5 w-full rounded-md px-4 py-3 text-center text-base font-medium transition ${
                   i === 1
                     ? "bg-ink text-paper hover:bg-ink/90"
                     : "border border-hair bg-paper text-ink hover:border-ink"
                 }`}
               >
-                {buying === pack.id ? "Opening checkout…" : `Buy ${pack.label}`}
+                Buy {pack.label}
               </button>
             </div>
           ))}

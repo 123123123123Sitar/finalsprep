@@ -110,29 +110,14 @@ function MarketingHome() {
       | "hacker-monthly"
       | "hacker-sixmonth" = "pro-monthly"
   ) {
-    setLoading(true);
-    try {
-      const token = await getIdToken();
-      if (!token) {
-        window.location.href = `/signin?next=${encodeURIComponent(
-          "/?plan=" + checkoutPlan
-        )}`;
-        return;
-      }
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ plan: checkoutPlan }),
-      });
-      const { url, error } = await res.json();
-      if (url) window.location.href = url;
-      else alert(error || "Checkout isn't wired up yet - set Stripe price IDs in env.");
-    } finally {
-      setLoading(false);
+    const token = await getIdToken();
+    if (!token) {
+      window.location.href = `/signin?next=${encodeURIComponent(
+        "/checkout?plan=" + checkoutPlan
+      )}`;
+      return;
     }
+    window.location.href = `/checkout?plan=${encodeURIComponent(checkoutPlan)}`;
   }
 
   async function capture(e: React.FormEvent) {
@@ -902,7 +887,7 @@ function MarketingHome() {
           <div className="space-y-4 text-[16px]">
             {[
               ["Does it work on my phone?", "Yes. The solver works fine on mobile. The diagrams can be a little cramped on small screens - we're working on it."],
-              ["Can I use my school Google account?", "Yes. Checkout is standard Stripe, so any email works. School email sometimes routes receipts to spam."],
+              ["Can I use my school Google account?", "Yes. Checkout runs through PayPal — you can pay with a PayPal account or a credit/debit card. School email sometimes routes receipts to spam."],
               ["Is this cheating?", "If you paste a problem in, read the explanation, and then do the problem again on your own, no. If you paste it in and copy the answer without reading, that's on you."],
               ["What if the tutor gets something wrong?", "Tell it in the next message and it will correct itself. If you hit a problem in scope where the explanation was genuinely bad, email finalsprephelp@gmail.com and we'll refund the purchase."],
               ["What if I want a refund?", "Reply to your receipt within 7 days. No questions asked."],

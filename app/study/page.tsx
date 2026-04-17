@@ -376,29 +376,14 @@ export default function Study() {
       | "hacker-monthly"
       | "hacker-sixmonth" = "pro-monthly"
   ) {
-    setBuyLoading(true);
-    try {
-      const token = await getIdToken();
-      if (!token) {
-        window.location.href = `/signin?next=${encodeURIComponent(
-          "/study?plan=" + checkoutPlan
-        )}`;
-        return;
-      }
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ plan: checkoutPlan }),
-      });
-      const { url, error } = await res.json();
-      if (url) window.location.href = url;
-      else alert(error || "Checkout isn't wired up yet - set Stripe price IDs in env.");
-    } finally {
-      setBuyLoading(false);
+    const token = await getIdToken();
+    if (!token) {
+      window.location.href = `/signin?next=${encodeURIComponent(
+        "/checkout?plan=" + checkoutPlan
+      )}`;
+      return;
     }
+    window.location.href = `/checkout?plan=${encodeURIComponent(checkoutPlan)}`;
   }
 
   async function explain() {
