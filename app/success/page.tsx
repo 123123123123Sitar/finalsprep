@@ -1,9 +1,16 @@
 import SiteNav from "@/app/components/SiteNav";
+import SuccessNotifier from "./SuccessNotifier";
 
-export default function Success() {
+export default function Success({
+  searchParams,
+}: {
+  searchParams?: { plan?: string };
+}) {
+  const plan = typeof searchParams?.plan === "string" ? searchParams.plan : null;
   return (
     <main className="bg-paper">
       <SiteNav />
+      <SuccessNotifier plan={plan} />
       <section className="mx-auto max-w-2xl px-6 py-24">
         <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
           Payment received
@@ -13,7 +20,7 @@ export default function Success() {
         </h1>
         <div className="prose-body mt-6">
           <p>
-            Your plan is active. A receipt is on its way from PayPal. If you
+            Your plan is active. A receipt is on its way from Ko-fi / PayPal. If you
             paid with a school email, the receipt may land in spam.
           </p>
           <p className="mt-4">

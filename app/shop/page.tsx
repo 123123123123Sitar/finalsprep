@@ -39,6 +39,19 @@ export default function ShopPage() {
     const status = url.searchParams.get("status");
     if (status === "ok") {
       setMsg("Thanks! Your tokens should land in a few seconds.");
+      // If we're inside the checkout popup, notify the opener and close.
+      const opener = window.opener as Window | null;
+      if (opener && opener !== window && !opener.closed) {
+        try {
+          opener.postMessage(
+            { type: "finalsprep:purchase-complete", plan: "pack" },
+            window.location.origin
+          );
+        } catch {}
+        window.setTimeout(() => {
+          try { window.close(); } catch {}
+        }, 400);
+      }
     } else if (status === "canceled") {
       setMsg("Checkout canceled. No charge.");
     }
