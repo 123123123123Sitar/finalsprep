@@ -40,13 +40,27 @@ export async function getStreak(uid: string): Promise<StreakDoc | null> {
 }
 
 /**
- * Bump the streak for the current date. Call this from any meaningful
- * user action (chat send, practice problem opened, lesson viewed).
- * Idempotent within a single day.
+ * Bump the streak for the current date. This is now only called when a user
+ * completes active studying during their scheduled study blocks and claims
+ * tokens. The minutes parameter ensures they studied for at least 10 minutes
+ * of active engagement.
+ * 
+ * Requirements for streak bump:
+ * - User must have scheduled study block for the day
+ * - User must have completed at least 10 minutes of active studying
+ *   (reading lessons, using interactives, or AI)
+ * - Idempotent within a single day.
  */
-export async function bumpStreak(uid: string): Promise<StreakDoc | null> {
+export async function bumpStreak(
+  uid: string,
+  minutes: number = 0
+): Promise<StreakDoc | null> {
   const db = getDb();
   if (!db) return null;
+  
+  // Only bump if they actively studied for at least 10 minutes
+  if (minutes < 10) return null;
+  
   const today = ymd(new Date());
   try {
     const ref = doc(db, "users", uid, "profile", "streak");

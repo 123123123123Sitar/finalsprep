@@ -4,6 +4,7 @@ import { isAdminConfigured, getAdminDb } from "@/lib/firebaseAdmin";
 import { addToTokenBank, getTokenBank } from "@/lib/tokenBank";
 import { logEvent } from "@/lib/events";
 import { reloadReward, ymdLocal } from "@/lib/schedule";
+import { bumpStreak } from "@/lib/streaks";
 
 export const runtime = "nodejs";
 
@@ -84,6 +85,8 @@ export async function POST(req: Request) {
 
   if (claimed) {
     await addToTokenBank(user.uid, credited, "schedule.claim");
+    // Bump streak if they studied for at least 10 minutes
+    void bumpStreak(user.uid, minutes);
     void logEvent({
       kind: "chat.send", // reuse for now; add "schedule.claim" later
       uid: user.uid,

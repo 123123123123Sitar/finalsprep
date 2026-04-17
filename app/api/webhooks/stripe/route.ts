@@ -7,6 +7,7 @@ import {
   type PlanTier,
 } from "@/lib/plans";
 import { addToTokenBank } from "@/lib/tokenBank";
+import { getAdminDb } from "@/lib/firebaseAdmin";
 
 export const runtime = "nodejs";
 // Webhook handlers need the raw request body for signature verification.
@@ -52,12 +53,30 @@ export async function POST(req: Request) {
           if (md.kind === "token_pack" && uid) {
             const tokens = parseInt(md.tokens || "0", 10) || 0;
             if (tokens > 0) {
-              await addToTokenBank(uid, tokens, `pack:${md.pack_id || ""}`);
+              const adminDb = getAdminDb();
+              let bonusTokens = 0;
+              if (adminDb) {
+                const bankRef = adminDb.doc(`users/${uid}/profile/tokenBank`);
+                const bankSnap = await bankRef.get();
+                const lastPurchaseDate: string =
+                  (bankSnap.exists ? (bankSnap.data() as any) : {})?.lastPackPurchaseDate || "";
+                const noPurchaseInLastThreeDays =
+                  !lastPurchaseDate ||
+                  Date.now() - new Date(lastPurchaseDate).getTime() > 3 * 24 * 60 * 60 * 1000;
+                if (noPurchaseInLastThreeDays) {
+                  bonusTokens = Math.round(tokens * 0.1);
+                }
+                const todayIso = new Date().toISOString().slice(0, 10);
+                await bankRef.set({ lastPackPurchaseDate: todayIso }, { merge: true });
+              }
+              const totalTokens = tokens + bonusTokens;
+              await addToTokenBank(uid, totalTokens, `pack:${md.pack_id || ""}`);
               console.log(
                 "[stripe-webhook] credited",
-                tokens,
+                totalTokens,
                 "tokens to",
-                uid
+                uid,
+                bonusTokens > 0 ? `(includes +${bonusTokens} loyalty bonus)` : ""
               );
             }
           }

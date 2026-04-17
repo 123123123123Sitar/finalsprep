@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { updateProfile } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
 import PageLoader from "@/app/components/PageLoader";
@@ -48,6 +48,7 @@ export default function AccountPage() {
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(
     null
   );
+  const [bonusBalance, setBonusBalance] = useState<number | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -83,6 +84,21 @@ export default function AccountPage() {
     return () => {
       cancelled = true;
     };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const db = getDb();
+    if (!db) return;
+    const unsub = onSnapshot(
+      doc(db, "users", user.uid, "profile", "tokenBank"),
+      (snap) => {
+        const d = snap.data() as { balance?: number } | undefined;
+        setBonusBalance(typeof d?.balance === "number" ? d.balance : 0);
+      },
+      () => setBonusBalance(0)
+    );
+    return () => unsub();
   }, [user]);
 
   async function save() {
@@ -242,6 +258,19 @@ export default function AccountPage() {
                 </span>
               </span>
             </label>
+          </div>
+
+          <div className="rounded-xl border border-hair bg-offwhite p-5">
+            <div className="label mb-2">Bonus tokens</div>
+            <p className="text-[15px] text-body">
+              You have <span className="font-semibold text-ink">{bonusBalance === null ? "…" : bonusBalance.toLocaleString()}</span> bonus tokens available. These are earned by completing scheduled study sessions.
+            </p>
+            <a
+              href="/shop"
+              className="btn-ghost mt-4 inline-flex text-sm"
+            >
+              Top up tokens →
+            </a>
           </div>
 
           <div className="rounded-xl border border-hair bg-offwhite p-5">

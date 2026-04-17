@@ -16,6 +16,13 @@ import {
 import { subscribeSelectedCourses } from "@/lib/selectedCourses";
 import { examCountdownLabel } from "@/lib/examDates";
 import { subscribeCompletedSlugs } from "@/lib/progress";
+import {
+  blocksOnDay,
+  fmtTime,
+  DEFAULT_SCHEDULE,
+  type Schedule,
+  type StudyBlock,
+} from "@/lib/schedule";
 
 type QuickAction = {
   href: string;
@@ -35,7 +42,7 @@ const QUICK_ACTIONS: QuickAction[] = [
   { href: "/review", title: "Review", blurb: "Your saved problems and notes." },
   { href: "/insights", title: "Insights", blurb: "Progress, streaks, and weak spots." },
   { href: "/schedule", title: "Schedule", blurb: "Plan the week ahead." },
-  { href: "/shop", title: "Shop", blurb: "Top up bonus tokens." },
+  { href: "/shop", title: "Shop", blurb: "Extra tokens that never expire." },
 ];
 
 /**
@@ -43,11 +50,20 @@ const QUICK_ACTIONS: QuickAction[] = [
  * is signed in. Structured so we can add panels (recent projects, progress
  * charts, etc.) without reshuffling the top-level grid.
  */
+type UsageData = {
+  tokensRemaining: number;
+  tokensCap: number;
+  bonusBalance: number;
+};
+
 export default function Dashboard() {
-  const { user, loading: authLoading, plan, planLoading, streak } = useAuth();
+  const { user, loading: authLoading, plan, planLoading, streak, getIdToken } = useAuth();
   const [bonusBalance, setBonusBalance] = useState<number | null>(null);
+  const [usage, setUsage] = useState<UsageData | null>(null);
   const [recent, setRecent] = useState<StoredConversation[] | null>(null);
   const [recentError, setRecentError] = useState(false);
+  const [schedule, setSchedule] = useState<Schedule | null>(null);
+  const [, tickBanner] = useState(0);
   // Same three-state machine as /study so the course-cards section never
   // flashes an empty state during the auth → Firestore resolution window.
   const [selectedCourses, setSelectedCourses] = useState<string[] | null>(
@@ -77,6 +93,47 @@ export default function Dashboard() {
     );
     return () => unsub();
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    getIdToken().then((token) => {
+      fetch("/api/usage", {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+        .then((r) => r.json())
+        .then((data) => { if (!cancelled) setUsage(data); })
+        .catch(() => {});
+    });
+    return () => { cancelled = true; };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const db = getDb();
+    if (!db) return;
+    const unsub = onSnapshot(
+      doc(db, "users", user.uid, "profile", "schedule"),
+      (snap) => {
+        const d = snap.data() as any;
+        if (!d) { setSchedule(DEFAULT_SCHEDULE); return; }
+        setSchedule({
+          days: Array.isArray(d.days) ? d.days : DEFAULT_SCHEDULE.days,
+          dailyGoalMinutes: d.dailyGoalMinutes || DEFAULT_SCHEDULE.dailyGoalMinutes,
+          lastClaimDate: d.lastClaimDate || "",
+          totalClaims: d.totalClaims || 0,
+          blocks: Array.isArray(d.blocks) ? (d.blocks as StudyBlock[]) : [],
+        });
+      },
+      () => setSchedule(DEFAULT_SCHEDULE)
+    );
+    return () => unsub();
+  }, [user]);
+
+  useEffect(() => {
+    const id = setInterval(() => tickBanner((n) => n + 1), 10_000);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -137,9 +194,35 @@ export default function Dashboard() {
   );
   const coursesLoading = selectedCourses === null;
 
+  const nowDate = new Date();
+  const todayWd = nowDate.getDay();
+  const nowMin = nowDate.getHours() * 60 + nowDate.getMinutes();
+  const todayBlocks = schedule ? blocksOnDay(schedule.blocks, todayWd) : [];
+  const activeBlock = todayBlocks.find(
+    (b) => nowMin >= Number(b.startMin) && nowMin < Number(b.endMin)
+  ) ?? null;
+
   return (
     <main className="bg-paper text-body">
       <SiteNav sticky />
+
+      {activeBlock && (
+        <div className="bg-orange px-6 py-3 text-paper">
+          <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold uppercase tracking-wider opacity-80">
+                Study time
+              </span>
+              <span className="font-serif text-lg font-normal">
+                {activeBlock.subject}
+              </span>
+            </div>
+            <div className="shrink-0 text-sm opacity-80">
+              {fmtTime(activeBlock.startMin)} – {fmtTime(activeBlock.endMin)}
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="mx-auto max-w-5xl px-6 pt-12 pb-6">
         <div className="label mb-3">Dashboard</div>
@@ -176,14 +259,65 @@ export default function Dashboard() {
             }
             cta={!planLoading && plan === "learner" ? { href: "/#price", label: "Upgrade" } : undefined}
           />
-          <SummaryTile
-            label="Bonus tokens"
-            value={bonusBalance === null ? "…" : bonusBalance.toLocaleString()}
-            hint="Never expire"
-            cta={{ href: "/shop", label: "Top up" }}
-          />
+          <div className="rounded-xl border border-hair bg-paper p-5">
+            <div className="label">Your tokens</div>
+            <div className="mt-3 space-y-3">
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">Daily</div>
+                <div className="mt-0.5 flex items-baseline gap-1.5">
+                  <span className="font-serif text-3xl font-normal text-ink">
+                    {usage ? usage.tokensRemaining.toLocaleString() : "…"}
+                  </span>
+                  <span className="text-xs text-muted">
+                    / {usage ? usage.tokensCap.toLocaleString() : "…"}
+                  </span>
+                </div>
+              </div>
+              <div className="border-t border-hair pt-3">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">Bonus</div>
+                <div className="mt-0.5 font-serif text-3xl font-normal text-ink">
+                  {bonusBalance === null ? "…" : bonusBalance.toLocaleString()}
+                </div>
+                <div className="text-xs text-muted">never expire</div>
+              </div>
+            </div>
+            <a href="/shop" className="mt-3 inline-block text-xs font-medium text-orange hover:underline">
+              Top up →
+            </a>
+          </div>
         </div>
       </section>
+
+      {todayBlocks.length > 0 && (
+        <section className="mx-auto max-w-5xl px-6 pt-6 pb-2">
+          <div className="mb-3 flex items-baseline justify-between">
+            <h2 className="label">Today's schedule</h2>
+            <a href="/schedule" className="text-xs text-muted hover:text-ink">
+              Edit →
+            </a>
+          </div>
+          <div className="divide-y divide-hair overflow-hidden rounded-xl border border-hair bg-paper">
+            {todayBlocks.map((b) => (
+              <div
+                key={b.id}
+                className={`flex items-center justify-between px-5 py-3.5 ${
+                  nowMin >= Number(b.startMin) && nowMin < Number(b.endMin)
+                    ? "bg-orange-tint"
+                    : ""
+                }`}
+              >
+                <div>
+                  <span className="font-medium text-ink">{b.subject}</span>
+                  <span className="ml-2 text-sm text-muted">
+                    {fmtTime(b.startMin)}–{fmtTime(b.endMin)}
+                  </span>
+                </div>
+                <span className="text-xs text-muted">{b.endMin - b.startMin} min</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="mx-auto max-w-5xl px-6 pt-8 pb-2">
         <div className="mb-4 flex items-baseline justify-between">

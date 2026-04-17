@@ -94,12 +94,12 @@ export default function ShopPage() {
           never expire.
         </p>
 
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-hair bg-paper px-4 py-2 text-sm">
-          <span className="text-muted">Your bonus balance:</span>
-          <strong className="font-mono text-ink">
+        <div className="mt-8 inline-block rounded-xl border border-orange/40 bg-orange-tint px-6 py-4">
+          <div className="label text-orange-ink">Your current balance</div>
+          <div className="mt-1 font-serif text-4xl font-normal text-orange-ink">
             {balance === null ? "…" : balance.toLocaleString()}
-          </strong>
-          <span className="text-muted">tokens</span>
+          </div>
+          <div className="mt-0.5 text-sm text-orange-ink/70">bonus tokens · never expire</div>
         </div>
 
         {msg && (

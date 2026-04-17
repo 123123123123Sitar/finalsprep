@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   doc,
   getDoc,
@@ -22,12 +22,13 @@ import {
   type Schedule,
   type StudyBlock,
 } from "@/lib/schedule";
+import { COURSES } from "@/lib/topics";
+import { subscribeSelectedCourses } from "@/lib/selectedCourses";
 
 export default function SchedulePage() {
   const { user, loading, getIdToken } = useAuth();
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
   const [bankBalance, setBankBalance] = useState<number>(0);
-  const [saving, setSaving] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [celebrate, setCelebrate] = useState<{
@@ -41,13 +42,14 @@ export default function SchedulePage() {
     tokens: 0,
     minutes: 0,
   });
-  const [completed, setCompleted] = useState<Record<string, boolean>>({});
+  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [newBlock, setNewBlock] = useState<{
     day: number;
     subject: string;
     start: string;
     end: string;
   }>({ day: new Date().getDay(), subject: "", start: "18:00", end: "19:00" });
+  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -59,6 +61,8 @@ export default function SchedulePage() {
     if (!user) return;
     const db = getDb();
     if (!db) return;
+
+    // Initial load of schedule
     (async () => {
       const snap = await getDoc(
         doc(db, "users", user.uid, "profile", "schedule")
@@ -77,6 +81,8 @@ export default function SchedulePage() {
         });
       }
     })();
+
+    // Subscribe to token bank and claim updates
     const unsub = onSnapshot(
       doc(db, "users", user.uid, "profile", "tokenBank"),
       (snap) => {
@@ -96,20 +102,35 @@ export default function SchedulePage() {
         }));
       }
     );
+
     return () => {
       unsub();
       unsub2();
     };
   }, [user]);
 
-  async function save() {
+  useEffect(() => {
     if (!user) return;
-    setSaving(true);
-    setMsg(null);
-    try {
-      const db = getDb();
-      if (!db) throw new Error("db not ready");
-      await setDoc(
+    const db = getDb();
+    if (!db) return;
+    const unsub = subscribeSelectedCourses(db, user.uid, setSelectedCourses);
+    return () => unsub();
+  }, [user]);
+
+  // Auto-save schedule whenever it changes
+  useEffect(() => {
+    if (!user) return;
+    const db = getDb();
+    if (!db) return;
+
+    // Clear any pending save
+    if (autoSaveTimeoutRef.current) {
+      clearTimeout(autoSaveTimeoutRef.current);
+    }
+
+    // Schedule a save for 1 second after the last change
+    autoSaveTimeoutRef.current = setTimeout(() => {
+      setDoc(
         doc(db, "users", user.uid, "profile", "schedule"),
         {
           days: schedule.days,
@@ -118,14 +139,18 @@ export default function SchedulePage() {
           updatedAt: serverTimestamp(),
         },
         { merge: true }
-      );
-      setMsg("Schedule saved.");
-    } catch (e: any) {
-      setMsg(e?.message || "Couldn't save.");
-    } finally {
-      setSaving(false);
-    }
-  }
+      ).catch((e) => {
+        console.error("Failed to auto-save schedule:", e);
+        setMsg("Failed to save schedule. Please check your connection.");
+      });
+    }, 1000);
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [schedule.blocks, schedule.days, schedule.dailyGoalMinutes, user]);
 
   async function claim(minutes: number) {
     if (!user) return;
@@ -157,7 +182,6 @@ export default function SchedulePage() {
           base: typeof j.base === "number" ? j.base : undefined,
           multiplier: typeof j.multiplier === "number" ? j.multiplier : undefined,
         });
-        setCompleted({});
       }
     } finally {
       setClaiming(false);
@@ -228,6 +252,78 @@ export default function SchedulePage() {
 
   const today = ymdLocal();
   const claimedToday = schedule.lastClaimDate === today;
+  const todayWd = new Date().getDay();
+  const todays = blocksOnDay(schedule.blocks, todayWd);
+  const totalMins = todays.reduce((sum, b) => sum + (b.endMin - b.startMin), 0);
+  const estTokens = engagementTokens(totalMins);
+
+  const todayPanel = (
+    <div className="mt-8 rounded-xl border-2 border-orange/40 bg-orange-tint p-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <div className="label text-orange-ink">Today · {WEEKDAYS[todayWd].short}</div>
+          <p className="mt-1 text-[14px] text-orange-ink/80">
+            {todays.length === 0
+              ? "Nothing scheduled for today. Add a block below."
+              : `${todays.length} session${todays.length === 1 ? "" : "s"} planned today — claim when you're done studying.`}
+          </p>
+        </div>
+        <div className="text-right">
+          <div className="font-serif text-3xl text-orange-ink">+{estTokens}</div>
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-orange-ink/70">
+            tokens from {totalMins}m
+          </div>
+        </div>
+      </div>
+
+      {todays.length > 0 && (
+        <ul className="mt-5 space-y-2">
+          {todays.map((b) => {
+            const mins = b.endMin - b.startMin;
+            return (
+              <li
+                key={b.id}
+                className="flex items-center justify-between gap-3 rounded-lg border border-hair bg-paper px-4 py-3"
+              >
+                <div className="flex-1">
+                  <div className="text-[15px] text-ink">
+                    <strong>{b.subject}</strong>
+                    <span className="ml-2 text-muted">
+                      {fmtTime(b.startMin)}–{fmtTime(b.endMin)}
+                    </span>
+                  </div>
+                  <div className="text-[11px] uppercase tracking-wider text-muted">
+                    {mins} min · worth {engagementTokens(mins)} tokens
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        {claimedToday ? (
+          <span className="text-[14px] text-orange-ink">
+            ✓ Already claimed today. Come back tomorrow.
+          </span>
+        ) : (
+          <button
+            onClick={() => claim(totalMins > 0 ? totalMins : schedule.dailyGoalMinutes)}
+            disabled={claiming}
+            className={`btn-primary disabled:opacity-50${todays.length > 0 ? " animate-glowPulse" : ""}`}
+          >
+            {claiming
+              ? "Claiming…"
+              : totalMins > 0
+              ? `Claim +${estTokens} tokens`
+              : `Claim ${DAILY_CLAIM_TOKENS} tokens`}
+          </button>
+        )}
+        {msg && <span className="text-sm text-orange-ink">{msg}</span>}
+      </div>
+    </div>
+  );
 
   return (
     <main className="bg-paper text-body">
@@ -240,9 +336,9 @@ export default function SchedulePage() {
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] text-muted">
           Build a real weekly calendar — block off an hour on Monday for AP
-          Java, 45 minutes on Wednesday for Calc, whatever you need. Check off
-          each session the day you finish it and we'll convert the minutes into
-          bonus tokens. Longer, deeper sessions earn a focus bonus.
+          Java, 45 minutes on Wednesday for Calc, whatever you need. Your
+          scheduled sessions automatically count when you claim for the day.
+          Longer, deeper sessions earn a focus bonus.
         </p>
 
         <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-hair bg-paper px-4 py-2 text-sm">
@@ -257,102 +353,7 @@ export default function SchedulePage() {
         </div>
 
         {/* TODAY'S SESSIONS + CLAIM */}
-        {(() => {
-          const todayWd = new Date().getDay();
-          const todays = blocksOnDay(schedule.blocks, todayWd);
-          const completedMins = todays
-            .filter((b) => completed[b.id])
-            .reduce((sum, b) => sum + (b.endMin - b.startMin), 0);
-          const estTokens = engagementTokens(completedMins);
-          return (
-            <div className="mt-8 rounded-xl border-2 border-orange/40 bg-orange-tint p-6">
-              <div className="flex flex-wrap items-baseline justify-between gap-3">
-                <div>
-                  <div className="label text-orange-ink">Today ·{" "}
-                    {WEEKDAYS[todayWd].short}</div>
-                  <p className="mt-1 text-[14px] text-orange-ink/80">
-                    {todays.length === 0
-                      ? "Nothing scheduled for today. Add a block below or check in anyway."
-                      : `${todays.length} session${todays.length === 1 ? "" : "s"} planned — check each one off as you finish.`}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="font-serif text-3xl text-orange-ink">
-                    +{estTokens}
-                  </div>
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-orange-ink/70">
-                    tokens from {completedMins}m
-                  </div>
-                </div>
-              </div>
-
-              {todays.length > 0 && (
-                <ul className="mt-5 space-y-2">
-                  {todays.map((b) => {
-                    const mins = b.endMin - b.startMin;
-                    const on = !!completed[b.id];
-                    return (
-                      <li
-                        key={b.id}
-                        className={`flex items-center justify-between gap-3 rounded-lg border bg-paper px-4 py-3 transition-all duration-200 ${
-                          on ? "border-orange shadow-[0_0_0_4px_rgba(194,65,12,0.08)]" : "border-hair"
-                        }`}
-                      >
-                        <label className="flex flex-1 cursor-pointer items-center gap-3">
-                          <input
-                            type="checkbox"
-                            checked={on}
-                            onChange={() =>
-                              setCompleted((c) => ({ ...c, [b.id]: !c[b.id] }))
-                            }
-                            disabled={claimedToday}
-                            className="h-5 w-5 accent-orange"
-                          />
-                          <div className="flex-1">
-                            <div className={`text-[15px] ${on ? "text-ink" : "text-body"}`}>
-                              <strong>{b.subject}</strong>
-                              <span className="ml-2 text-muted">
-                                {fmtTime(b.startMin)}–{fmtTime(b.endMin)}
-                              </span>
-                            </div>
-                            <div className="text-[11px] uppercase tracking-wider text-muted">
-                              {mins} min · worth {engagementTokens(mins)} tokens
-                            </div>
-                          </div>
-                        </label>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-
-              <div className="mt-5 flex flex-wrap items-center gap-3">
-                {claimedToday ? (
-                  <span className="text-[14px] text-orange-ink">
-                    ✓ Already claimed today. Come back tomorrow.
-                  </span>
-                ) : (
-                  <button
-                    onClick={() =>
-                      claim(completedMins > 0 ? completedMins : schedule.dailyGoalMinutes)
-                    }
-                    disabled={claiming}
-                    className="btn-primary animate-glowPulse disabled:opacity-50"
-                  >
-                    {claiming
-                      ? "Claiming…"
-                      : completedMins > 0
-                      ? `Claim +${estTokens} tokens`
-                      : `Claim ${DAILY_CLAIM_TOKENS} tokens`}
-                  </button>
-                )}
-                {msg && (
-                  <span className="text-sm text-orange-ink">{msg}</span>
-                )}
-              </div>
-            </div>
-          );
-        })()}
+        {todayPanel}
 
         {/* WEEKLY CALENDAR — time-blocked grid */}
         <div className="mt-12">
@@ -368,15 +369,28 @@ export default function SchedulePage() {
         <div className="mt-8 rounded-xl border border-hair bg-paper p-6">
           <div className="label mb-3">Add a study block</div>
           <div className="grid gap-3 sm:grid-cols-[1.4fr_1fr_1fr_1fr_auto]">
-            <input
-              type="text"
+            <select
               value={newBlock.subject}
               onChange={(e) =>
                 setNewBlock((n) => ({ ...n, subject: e.target.value }))
               }
-              placeholder="AP Java"
               className="focus-ring rounded-md border border-hair bg-paper px-3 py-2 text-sm"
-            />
+            >
+              <option value="">Select a course</option>
+              {selectedCourses.length > 0
+                ? COURSES.filter((c) => selectedCourses.includes(c.slug)).map(
+                    (c) => (
+                      <option key={c.slug} value={c.shortTitle}>
+                        {c.shortTitle}
+                      </option>
+                    )
+                  )
+                : COURSES.map((c) => (
+                    <option key={c.slug} value={c.shortTitle}>
+                      {c.shortTitle}
+                    </option>
+                  ))}
+            </select>
             <select
               value={newBlock.day}
               onChange={(e) =>
@@ -411,22 +425,9 @@ export default function SchedulePage() {
             </button>
           </div>
           <p className="mt-3 text-xs text-muted">
-            Example: <em>AP Java, Mon, 18:00 → 19:00</em>. 45+ minute sessions
+            Select a course you're enrolled in, then pick a day and time. 45+ minute sessions
             earn a 25% deep-focus bonus.
           </p>
-        </div>
-
-        <div className="mt-8 flex flex-wrap items-center gap-3">
-          <button
-            onClick={save}
-            disabled={saving}
-            className="btn-primary disabled:opacity-50"
-          >
-            {saving ? "Saving…" : "Save schedule"}
-          </button>
-          <a href="/shop" className="btn-ghost">
-            Shop bonus tokens →
-          </a>
         </div>
       </section>
 
@@ -664,8 +665,7 @@ function ClaimCelebration({
         </div>
         {hasBonus && (
           <div className="mt-3 text-[12px] text-orange-ink">
-            Base {base} × {multiplier!.toFixed(2)} depletion bonus —
-            bigger reload because you've been burning through tokens.
+            Base {base} × {multiplier!.toFixed(2)} usage bonus
           </div>
         )}
 
