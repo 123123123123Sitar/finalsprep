@@ -22,6 +22,7 @@ import {
   deleteConversation,
   listConversations,
   listConversationsInProject,
+  setConversationTitle,
   titleFromFirstMessage,
   updateConversation,
   type StoredConversation,
@@ -35,7 +36,12 @@ import {
 } from "@/lib/projects";
 
 type UploadImage = { mediaType: string; data: string; thumb: string };
-type Msg = { role: "user" | "assistant"; content: string; streaming?: boolean };
+type Msg = {
+  role: "user" | "assistant";
+  content: string;
+  streaming?: boolean;
+  starred?: boolean;
+};
 
 type ChatExtensionKey =
   | "interactives"
@@ -100,6 +106,8 @@ function ChatInner() {
   const [error, setError] = useState("");
   const [limitHit, setLimitHit] = useState(false);
   const [tokensRemaining, setTokensRemaining] = useState<number | null>(null);
+  const [tokensCap, setTokensCap] = useState<number | null>(null);
+  const [bonusBalance, setBonusBalance] = useState<number | null>(null);
   const [resetMinutes, setResetMinutes] = useState<number | null>(null);
   const [historyOpen, setHistoryOpen] = useState(true);
   const [conversations, setConversations] = useState<StoredConversation[]>([]);
@@ -136,6 +144,7 @@ function ChatInner() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<any>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const [listening, setListening] = useState(false);
   const [voiceUnsupported, setVoiceUnsupported] = useState(false);
 
@@ -144,6 +153,30 @@ function ChatInner() {
     if (!user) return;
     listConversations(user.uid).then(setConversations).catch(() => {});
   }, [user]);
+
+  const refreshUsage = useCallback(async () => {
+    if (!user) return;
+    try {
+      const token = await getIdToken();
+      const res = await fetch("/api/usage", {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        cache: "no-store",
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (typeof data?.tokensRemaining === "number")
+        setTokensRemaining(data.tokensRemaining);
+      if (typeof data?.tokensCap === "number") setTokensCap(data.tokensCap);
+      if (typeof data?.bonusBalance === "number")
+        setBonusBalance(data.bonusBalance);
+      if (typeof data?.resetMinutes === "number")
+        setResetMinutes(data.resetMinutes);
+    } catch {}
+  }, [user, getIdToken]);
+
+  useEffect(() => {
+    refreshUsage();
+  }, [refreshUsage]);
 
   useEffect(() => {
     if (!user) {
@@ -207,11 +240,12 @@ function ChatInner() {
     resize();
   }, [input, resize]);
 
-  async function persist(next: Msg[]) {
-    if (!user) return;
+  async function persist(next: Msg[]): Promise<string | null> {
+    if (!user) return null;
     try {
+      let id: string;
       if (!currentConvId) {
-        const id = await createConversation(
+        id = await createConversation(
           user.uid,
           titleFromFirstMessage(next),
           next,
@@ -219,25 +253,58 @@ function ChatInner() {
         );
         setCurrentConvId(id);
       } else {
-        await updateConversation(
-          user.uid,
-          currentConvId,
-          next,
-          titleFromFirstMessage(next)
-        );
+        // Don't pass a title on updates — once a title exists (either the
+        // draft from creation or an AI-generated one), persist shouldn't
+        // overwrite it. Title changes go through setConversationTitle.
+        await updateConversation(user.uid, currentConvId, next);
+        id = currentConvId;
       }
       const list = await listConversations(user.uid);
       setConversations(list);
+      return id;
     } catch (e) {
       console.warn("Failed to persist conversation", e);
+      return null;
+    }
+  }
+
+  // Track which conversations we've already asked the AI to title so we
+  // don't re-title on every follow-up message. Scoped to the session.
+  const titledConvsRef = useRef<Set<string>>(new Set());
+
+  async function generateTitle(
+    convId: string,
+    firstUser: string,
+    firstAssistant: string
+  ) {
+    if (!user || titledConvsRef.current.has(convId)) return;
+    titledConvsRef.current.add(convId);
+    try {
+      const token = await getIdToken();
+      const res = await fetch("/api/chat-title", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          userMessage: firstUser,
+          assistantMessage: firstAssistant,
+        }),
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      const title: string | undefined = data?.title;
+      if (!title || typeof title !== "string") return;
+      await setConversationTitle(user.uid, convId, title);
+      const list = await listConversations(user.uid);
+      setConversations(list);
+    } catch {
+      // Best-effort — if the title fetch fails, we keep the draft title.
     }
   }
 
   async function ingestImageFiles(files: File[]) {
-    if (plan === "learner") {
-      setError("Image uploads are a Pro feature. Upgrade to attach photos.");
-      return;
-    }
     for (const file of files) {
       if (!file.type.startsWith("image/")) continue;
       if (file.size > 5 * 1024 * 1024) {
@@ -305,10 +372,13 @@ function ChatInner() {
     setError("");
     setLimitHit(false);
 
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
       const token = await getIdToken();
       const res = await fetch("/api/chat", {
         method: "POST",
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -355,35 +425,220 @@ function ChatInner() {
       setStreaming(true);
       setLoading(false);
       let acc = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        acc += chunk;
-        setMessages((ms) => {
-          const next = [...ms];
-          const last = next[next.length - 1];
-          if (!last || last.role !== "assistant") return ms;
-          next[next.length - 1] = { ...last, content: acc, streaming: true };
-          return next;
-        });
+      let aborted = false;
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          acc += chunk;
+          setMessages((ms) => {
+            const next = [...ms];
+            const last = next[next.length - 1];
+            if (!last || last.role !== "assistant") return ms;
+            next[next.length - 1] = { ...last, content: acc, streaming: true };
+            return next;
+          });
+        }
+      } catch (streamErr: any) {
+        if (streamErr?.name === "AbortError" || controller.signal.aborted) {
+          aborted = true;
+        } else {
+          throw streamErr;
+        }
       }
       const finalMessages: Msg[] = [
         ...withUser,
-        { role: "assistant", content: acc, streaming: false },
+        {
+          role: "assistant",
+          content: acc + (aborted && acc.length > 0 ? "\n\n_(stopped)_" : ""),
+          streaming: false,
+        },
       ];
-      setMessages(finalMessages);
-      persist(finalMessages);
+      // If nothing streamed before the user stopped, drop the empty turn.
+      if (aborted && acc.length === 0) {
+        setMessages(withUser);
+      } else {
+        setMessages(finalMessages);
+        const savedId = await persist(finalMessages);
+        // First exchange of a new conversation → ask the AI to title it.
+        const isFirstExchange =
+          finalMessages.filter((m) => m.role === "assistant").length === 1 &&
+          finalMessages.filter((m) => m.role === "user").length === 1;
+        if (savedId && isFirstExchange && !aborted) {
+          void generateTitle(
+            savedId,
+            finalMessages[0]?.content || "",
+            finalMessages[1]?.content || ""
+          );
+        }
+      }
     } catch (e: any) {
-      setError(e?.message || "Network error.");
-      setMessages((ms) =>
-        ms[ms.length - 1]?.role === "assistant" && ms[ms.length - 1]?.content === ""
-          ? ms.slice(0, -1)
-          : ms
-      );
+      if (e?.name === "AbortError" || controller.signal.aborted) {
+        setMessages((ms) =>
+          ms[ms.length - 1]?.role === "assistant" && ms[ms.length - 1]?.content === ""
+            ? ms.slice(0, -1)
+            : ms
+        );
+      } else {
+        setError(e?.message || "Network error.");
+        setMessages((ms) =>
+          ms[ms.length - 1]?.role === "assistant" && ms[ms.length - 1]?.content === ""
+            ? ms.slice(0, -1)
+            : ms
+        );
+      }
     } finally {
+      if (abortRef.current === controller) abortRef.current = null;
       setLoading(false);
       setStreaming(false);
+      // Refresh the bonus balance from Firestore after each send — the
+      // header pill already updated `tokensRemaining` from response
+      // headers, but only /api/usage knows the new bonus number.
+      void refreshUsage();
+    }
+  }
+
+  function stopStream() {
+    abortRef.current?.abort();
+  }
+
+  async function handleCopy(content: string) {
+    try {
+      await navigator.clipboard.writeText(content);
+    } catch {}
+  }
+
+  function toggleStar(idx: number) {
+    setMessages((ms) => {
+      const next = ms.map((m, i) =>
+        i === idx ? { ...m, starred: !m.starred } : m
+      );
+      void persist(next);
+      return next;
+    });
+  }
+
+  async function regenerate(idx: number) {
+    if (loading || streaming) return;
+    const target = messages[idx];
+    if (!target || target.role !== "assistant") return;
+    const history = messages.slice(0, idx);
+    if (history.length === 0 || history[history.length - 1].role !== "user") return;
+
+    const snapshot = messages;
+    const withPlaceholder: Msg[] = [
+      ...history,
+      { role: "assistant", content: "", streaming: true },
+    ];
+    setMessages(withPlaceholder);
+    setLoading(true);
+    setError("");
+    setLimitHit(false);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+    try {
+      const token = await getIdToken();
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          messages: history,
+          thinking: plan !== "learner" && thinking,
+          aiPrefs,
+        }),
+      });
+      if (!res.ok) {
+        let data: any = {};
+        try {
+          data = await res.json();
+        } catch {}
+        if (data?.limitReached) setLimitHit(true);
+        setError(data?.message || data?.error || "Something went wrong.");
+        if (typeof data?.tokensRemaining === "number")
+          setTokensRemaining(data.tokensRemaining);
+        if (typeof data?.resetMinutes === "number")
+          setResetMinutes(data.resetMinutes);
+        setMessages(snapshot);
+        return;
+      }
+      const tr = res.headers.get("X-Tokens-Remaining");
+      if (tr !== null && tr !== "") setTokensRemaining(parseInt(tr, 10));
+      const rm = res.headers.get("X-Reset-Minutes");
+      if (rm !== null && rm !== "") setResetMinutes(parseInt(rm, 10));
+
+      const reader = res.body?.getReader();
+      if (!reader) {
+        setError("No response body.");
+        setMessages(snapshot);
+        return;
+      }
+      const decoder = new TextDecoder();
+      setStreaming(true);
+      setLoading(false);
+      let acc = "";
+      let aborted = false;
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          acc += decoder.decode(value, { stream: true });
+          setMessages((ms) => {
+            const next = [...ms];
+            const last = next[next.length - 1];
+            if (!last || last.role !== "assistant") return ms;
+            next[next.length - 1] = { ...last, content: acc, streaming: true };
+            return next;
+          });
+        }
+      } catch (streamErr: any) {
+        if (streamErr?.name === "AbortError" || controller.signal.aborted) {
+          aborted = true;
+        } else {
+          throw streamErr;
+        }
+      }
+      if (aborted && acc.length === 0) {
+        setMessages(snapshot);
+      } else {
+        const finalMessages: Msg[] = [
+          ...history,
+          {
+            role: "assistant",
+            content: acc + (aborted ? "\n\n_(stopped)_" : ""),
+            streaming: false,
+          },
+        ];
+        setMessages(finalMessages);
+        const savedId = await persist(finalMessages);
+        const isFirstExchange =
+          finalMessages.filter((m) => m.role === "assistant").length === 1 &&
+          finalMessages.filter((m) => m.role === "user").length === 1;
+        if (savedId && isFirstExchange && !aborted) {
+          void generateTitle(
+            savedId,
+            finalMessages[0]?.content || "",
+            finalMessages[1]?.content || ""
+          );
+        }
+      }
+    } catch (e: any) {
+      if (e?.name === "AbortError" || controller.signal.aborted) {
+        setMessages(snapshot);
+      } else {
+        setError(e?.message || "Network error.");
+        setMessages(snapshot);
+      }
+    } finally {
+      if (abortRef.current === controller) abortRef.current = null;
+      setLoading(false);
+      setStreaming(false);
+      void refreshUsage();
     }
   }
 
@@ -562,25 +817,33 @@ function ChatInner() {
               </h1>
             </div>
 
-            {currentProjectName && (
-              <button
-                onClick={() => setProjectsOverlayOpen(true)}
-                className="animate-fadeUp inline-flex min-w-0 max-w-full items-center gap-1.5 self-start rounded-full border border-orange/40 bg-orange-tint px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-orange-ink hover:border-orange hover:bg-orange/20 sm:max-w-[260px]"
-                title={`Project: ${currentProjectName}`}
-              >
-                <svg
-                  viewBox="0 0 16 16"
-                  className="h-3 w-3 shrink-0"
-                  fill="currentColor"
-                  aria-hidden
+            <div className="flex flex-wrap items-center gap-2 self-start">
+              {currentProjectName && (
+                <button
+                  onClick={() => setProjectsOverlayOpen(true)}
+                  className="animate-fadeUp inline-flex min-w-0 max-w-full items-center gap-1.5 rounded-full border border-orange/40 bg-orange-tint px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-orange-ink hover:border-orange hover:bg-orange/20 sm:max-w-[260px]"
+                  title={`Project: ${currentProjectName}`}
                 >
-                  <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h3.086a1.5 1.5 0 0 1 1.06.44L7.707 3.29a.5.5 0 0 0 .354.146H13.5A1.5 1.5 0 0 1 15 4.935V12.5A1.5 1.5 0 0 1 13.5 14h-11A1.5 1.5 0 0 1 1 12.5v-9Z" />
-                </svg>
-                <span className="truncate normal-case tracking-normal">
-                  {currentProjectName}
-                </span>
-              </button>
-            )}
+                  <svg
+                    viewBox="0 0 16 16"
+                    className="h-3 w-3 shrink-0"
+                    fill="currentColor"
+                    aria-hidden
+                  >
+                    <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h3.086a1.5 1.5 0 0 1 1.06.44L7.707 3.29a.5.5 0 0 0 .354.146H13.5A1.5 1.5 0 0 1 15 4.935V12.5A1.5 1.5 0 0 1 13.5 14h-11A1.5 1.5 0 0 1 1 12.5v-9Z" />
+                  </svg>
+                  <span className="truncate normal-case tracking-normal">
+                    {currentProjectName}
+                  </span>
+                </button>
+              )}
+              <TokenUsagePill
+                tokensRemaining={tokensRemaining}
+                tokensCap={tokensCap}
+                bonusBalance={bonusBalance}
+                resetMinutes={resetMinutes}
+              />
+            </div>
           </div>
         </div>
 
@@ -620,8 +883,18 @@ function ChatInner() {
                     role={m.role}
                     content={m.content}
                     streaming={m.streaming}
+                    starred={!!m.starred}
                     isLastAssistantEmpty={
                       m.role === "assistant" && i === messages.length - 1 && m.content === ""
+                    }
+                    onCopy={() => handleCopy(m.content)}
+                    onToggleStar={() => toggleStar(i)}
+                    onRegenerate={
+                      m.role === "assistant" &&
+                      !m.streaming &&
+                      i === messages.length - 1
+                        ? () => regenerate(i)
+                        : undefined
                     }
                   />
                 ))}
@@ -692,24 +965,15 @@ function ChatInner() {
               />
               <button
                 type="button"
-                onClick={() => {
-                  if (!planLoading && plan === "learner") {
-                    setError("Image uploads are a Pro feature. Upgrade to attach photos of your work.");
-                    return;
-                  }
-                  fileInputRef.current?.click();
-                }}
+                onClick={() => fileInputRef.current?.click()}
                 disabled={streaming || loading}
                 aria-label="Attach image"
-                title={!planLoading && plan === "learner" ? "Upload images (Pro feature)" : "Attach an image"}
+                title="Attach an image"
                 className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full text-white/70 transition hover:bg-white/10 hover:text-white active:scale-95 disabled:opacity-40"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M21 12.5 12.5 21a5.5 5.5 0 0 1-7.8-7.8L13 5a4 4 0 1 1 5.7 5.7l-8.5 8.5a2.5 2.5 0 1 1-3.5-3.5L14 8.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                {!planLoading && plan === "learner" && (
-                  <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-amber-500" />
-                )}
               </button>
 
               <textarea
@@ -746,23 +1010,31 @@ function ChatInner() {
                 </svg>
               </button>
 
-              <button
-                type="button"
-                onClick={() => send()}
-                disabled={loading || streaming || !input.trim()}
-                aria-label="Send message"
-                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-ink shadow-sm transition-all hover:-translate-y-[1px] hover:bg-white/95 hover:shadow-md active:translate-y-0 active:scale-95 disabled:cursor-not-allowed disabled:bg-white/30 disabled:text-ink/50 disabled:hover:translate-y-0"
-              >
-                {loading || streaming ? (
-                  <span className="typing-dots" aria-label="sending">
-                    <span /> <span /> <span />
-                  </span>
-                ) : (
+              {loading || streaming ? (
+                <button
+                  type="button"
+                  onClick={stopStream}
+                  aria-label="Stop response"
+                  title="Stop response"
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-ink shadow-sm transition-all hover:-translate-y-[1px] hover:bg-white/95 hover:shadow-md active:translate-y-0 active:scale-95"
+                >
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden>
+                    <rect x="3" y="3" width="10" height="10" rx="1.5" />
+                  </svg>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => send()}
+                  disabled={!input.trim() && pendingImages.length === 0}
+                  aria-label="Send message"
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-ink shadow-sm transition-all hover:-translate-y-[1px] hover:bg-white/95 hover:shadow-md active:translate-y-0 active:scale-95 disabled:cursor-not-allowed disabled:bg-white/30 disabled:text-ink/50 disabled:hover:translate-y-0"
+                >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M12 19V5M6 11l6-6 6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                )}
-              </button>
+                </button>
+              )}
             </div>
             {!planLoading && plan !== "learner" && (
               <div className="mt-2 flex items-center justify-center">
@@ -820,25 +1092,115 @@ function ChatInner() {
   );
 }
 
+function formatTokenCount(n: number): string {
+  if (n >= 10_000) return `${Math.round(n / 1000)}k`;
+  if (n >= 1_000) return `${(n / 1000).toFixed(1)}k`;
+  return String(n);
+}
+
+function TokenUsagePill({
+  tokensRemaining,
+  tokensCap,
+  bonusBalance,
+  resetMinutes,
+}: {
+  tokensRemaining: number | null;
+  tokensCap: number | null;
+  bonusBalance: number | null;
+  resetMinutes: number | null;
+}) {
+  if (tokensRemaining == null && bonusBalance == null) return null;
+  const daily = tokensRemaining ?? 0;
+  const cap = tokensCap ?? 0;
+  const bonus = bonusBalance ?? 0;
+  const lowDaily = cap > 0 && daily < cap * 0.1;
+  const reset =
+    resetMinutes && resetMinutes > 0
+      ? resetMinutes >= 60
+        ? `${Math.floor(resetMinutes / 60)}h ${resetMinutes % 60}m`
+        : `${resetMinutes}m`
+      : null;
+  const title = [
+    cap > 0
+      ? `${daily.toLocaleString()} of ${cap.toLocaleString()} daily tokens left`
+      : `${daily.toLocaleString()} tokens left`,
+    bonus > 0 ? `${bonus.toLocaleString()} bonus tokens` : null,
+    reset ? `Resets in ${reset}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+  return (
+    <div
+      title={title}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-medium ${
+        lowDaily
+          ? "border-orange/40 bg-orange-tint text-orange-ink"
+          : "border-hair bg-paper text-muted"
+      }`}
+    >
+      <svg
+        viewBox="0 0 16 16"
+        className="h-3 w-3 shrink-0"
+        fill="currentColor"
+        aria-hidden
+      >
+        <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm.5 3.25a.5.5 0 0 0-1 0v4a.5.5 0 0 0 .146.354l2.5 2.5a.5.5 0 0 0 .708-.708L8.5 8.043V4.25Z" />
+      </svg>
+      <span>
+        {formatTokenCount(daily)}
+        {cap > 0 ? `/${formatTokenCount(cap)}` : ""} today
+      </span>
+      {bonus > 0 && (
+        <span className="text-orange-ink">
+          · +{formatTokenCount(bonus)} bonus
+        </span>
+      )}
+    </div>
+  );
+}
+
 function Message({
   role,
   content,
   streaming,
+  starred,
   isLastAssistantEmpty,
+  onCopy,
+  onToggleStar,
+  onRegenerate,
 }: {
   role: Msg["role"];
   content: string;
   streaming?: boolean;
+  starred?: boolean;
   isLastAssistantEmpty?: boolean;
+  onCopy?: () => void;
+  onToggleStar?: () => void;
+  onRegenerate?: () => void;
 }) {
+  const showActions = !streaming && !isLastAssistantEmpty && content.length > 0;
   if (role === "user") {
     return (
-      <div className="flex justify-end">
-        <div className="animate-messageIn max-w-[80%] rounded-2xl rounded-tr-sm bg-ink px-4 py-3 text-[15px] text-paper">
+      <div className="group flex flex-col items-end">
+        <div
+          className={`animate-messageIn max-w-[80%] rounded-2xl rounded-tr-sm px-4 py-3 text-[15px] ${
+            starred
+              ? "bg-orange text-white shadow-[0_0_0_1px_rgba(194,65,12,0.5)]"
+              : "bg-ink text-paper"
+          }`}
+        >
           <div className="whitespace-pre-wrap">
             <MathRender auto>{content}</MathRender>
           </div>
         </div>
+        {showActions && (
+          <MessageActions
+            starred={starred}
+            onCopy={onCopy}
+            onToggleStar={onToggleStar}
+            align="end"
+          />
+        )}
       </div>
     );
   }
@@ -847,21 +1209,129 @@ function Message({
       <div className="mt-1 grid h-7 w-7 shrink-0 place-items-center rounded-full border border-orange/40 bg-orange-tint text-orange-ink">
         <LogoMark size={15} className="text-orange-ink" />
       </div>
-      <div className="max-w-[85%] rounded-2xl rounded-tl-sm border border-hair bg-paper px-5 py-4 text-[15.5px] leading-relaxed text-body">
-        {isLastAssistantEmpty ? (
-          <div className="flex items-center gap-2 text-muted">
-            <span className="typing-dots">
-              <span /> <span /> <span />
-            </span>
-            <span className="text-xs">thinking through it…</span>
-          </div>
-        ) : (
-          <>
-            <Markdown>{content}</Markdown>
-            {streaming && <span className="stream-cursor" aria-hidden="true" />}
-          </>
+      <div className="group flex min-w-0 max-w-[85%] flex-col">
+        <div
+          className={`rounded-2xl rounded-tl-sm border px-5 py-4 text-[15.5px] leading-relaxed ${
+            starred
+              ? "border-orange/40 bg-orange-tint text-orange-ink"
+              : "border-hair bg-paper text-body"
+          }`}
+        >
+          {isLastAssistantEmpty ? (
+            <div className="flex items-center gap-2 text-muted">
+              <span className="typing-dots">
+                <span /> <span /> <span />
+              </span>
+              <span className="text-xs">thinking through it…</span>
+            </div>
+          ) : (
+            <>
+              <Markdown>{content}</Markdown>
+              {streaming && <span className="stream-cursor" aria-hidden="true" />}
+            </>
+          )}
+        </div>
+        {showActions && (
+          <MessageActions
+            starred={starred}
+            onCopy={onCopy}
+            onToggleStar={onToggleStar}
+            onRegenerate={onRegenerate}
+            align="start"
+          />
         )}
       </div>
+    </div>
+  );
+}
+
+function MessageActions({
+  starred,
+  onCopy,
+  onToggleStar,
+  onRegenerate,
+  align,
+}: {
+  starred?: boolean;
+  onCopy?: () => void;
+  onToggleStar?: () => void;
+  onRegenerate?: () => void;
+  align: "start" | "end";
+}) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    if (!onCopy) return;
+    onCopy();
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
+  };
+  const btn =
+    "inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px] text-muted transition hover:bg-paper hover:text-ink";
+  return (
+    <div
+      className={`mt-1.5 flex items-center gap-0.5 text-muted opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 ${
+        align === "end" ? "self-end" : "self-start"
+      } ${starred ? "opacity-100" : ""}`}
+    >
+      {onCopy && (
+        <button
+          type="button"
+          onClick={handleCopy}
+          className={btn}
+          title={copied ? "Copied" : "Copy message"}
+          aria-label="Copy message"
+        >
+          {copied ? (
+            <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="currentColor" aria-hidden>
+              <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7 7a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 1 1 1.06-1.06L6.25 10.69l6.47-6.47a.75.75 0 0 1 1.06 0Z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden>
+              <rect x="5" y="5" width="8.5" height="8.5" rx="1.5" />
+              <path d="M10.5 5V3.5A1.5 1.5 0 0 0 9 2H4a1.5 1.5 0 0 0-1.5 1.5v6A1.5 1.5 0 0 0 4 11h1" />
+            </svg>
+          )}
+          <span className="sr-only">{copied ? "Copied" : "Copy"}</span>
+        </button>
+      )}
+      {onRegenerate && (
+        <button
+          type="button"
+          onClick={onRegenerate}
+          className={btn}
+          title="Regenerate response"
+          aria-label="Regenerate response"
+        >
+          <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden>
+            <path d="M2.5 8a5.5 5.5 0 0 1 9.39-3.89L13.5 5.5" strokeLinecap="round" />
+            <path d="M13.5 2.5v3h-3" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M13.5 8a5.5 5.5 0 0 1-9.39 3.89L2.5 10.5" strokeLinecap="round" />
+            <path d="M2.5 13.5v-3h3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
+      {onToggleStar && (
+        <button
+          type="button"
+          onClick={onToggleStar}
+          className={`${btn} ${starred ? "text-orange-ink hover:text-orange-ink" : ""}`}
+          title={starred ? "Unstar message" : "Star message"}
+          aria-label={starred ? "Unstar message" : "Star message"}
+          aria-pressed={!!starred}
+        >
+          <svg
+            viewBox="0 0 16 16"
+            className="h-3.5 w-3.5"
+            fill={starred ? "currentColor" : "none"}
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinejoin="round"
+            aria-hidden
+          >
+            <path d="m8 1.8 1.93 3.91 4.32.63-3.13 3.05.74 4.3L8 11.66l-3.86 2.03.74-4.3L1.75 6.34l4.32-.63L8 1.8Z" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }

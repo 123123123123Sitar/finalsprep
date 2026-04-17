@@ -14,7 +14,11 @@ import {
 } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 
-export type StoredMsg = { role: "user" | "assistant"; content: string };
+export type StoredMsg = {
+  role: "user" | "assistant";
+  content: string;
+  starred?: boolean;
+};
 export type StoredConversation = {
   id: string;
   title: string;
@@ -31,7 +35,9 @@ function conversationsCol(uid: string) {
 }
 
 function toPlain(m: StoredMsg): StoredMsg {
-  return { role: m.role, content: m.content };
+  const out: StoredMsg = { role: m.role, content: m.content };
+  if (m.starred) out.starred = true;
+  return out;
 }
 
 export async function createConversation(
@@ -66,6 +72,21 @@ export async function updateConversation(
   };
   if (title) payload.title = title.slice(0, 120);
   await setDoc(ref, payload, { merge: true });
+}
+
+export async function setConversationTitle(
+  uid: string,
+  conversationId: string,
+  title: string
+) {
+  const db = getDb();
+  if (!db) throw new Error("Firestore not configured");
+  const ref = doc(db, "users", uid, "conversations", conversationId);
+  await setDoc(
+    ref,
+    { title: title.slice(0, 120), updatedAt: serverTimestamp() },
+    { merge: true }
+  );
 }
 
 export async function deleteConversation(uid: string, conversationId: string) {

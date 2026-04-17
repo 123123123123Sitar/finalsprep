@@ -26,6 +26,7 @@ import {
   isGeminiRateLimit,
   markGeminiBlocked,
 } from "@/lib/geminiStatus";
+import { ocrImage } from "@/lib/ocr";
 import type { PlanTier } from "@/lib/plans";
 
 export const runtime = "nodejs";
@@ -219,22 +220,62 @@ export async function POST(req: Request) {
     },
   });
 
-  // Image uploads: Pro/Hacker only. Attach to the last user message.
+  // Image uploads: available to every plan. OCR pulls text out for free,
+  // and the vision-capable models (Claude + Gemini Flash) handle anything
+  // OCR can't read. Attach to the last user message.
   const rawImages = Array.isArray(body?.images) ? body.images : [];
-  const allowImages = plan === "pro" || plan === "hacker";
-  const validImages = allowImages
-    ? rawImages
-        .filter(
-          (img: any) =>
-            img &&
-            typeof img.mediaType === "string" &&
-            /^image\/(png|jpeg|jpg|gif|webp)$/i.test(img.mediaType) &&
-            typeof img.data === "string" &&
-            img.data.length > 0 &&
-            img.data.length < 10_000_000
-        )
-        .slice(0, 5)
-    : [];
+  const validImages = rawImages
+    .filter(
+      (img: any) =>
+        img &&
+        typeof img.mediaType === "string" &&
+        /^image\/(png|jpeg|jpg|gif|webp)$/i.test(img.mediaType) &&
+        typeof img.data === "string" &&
+        img.data.length > 0 &&
+        img.data.length < 10_000_000
+    )
+    .slice(0, 5);
+
+  // OCR pre-pass. Try to pull plain text out of each attachment with
+  // Tesseract. Three outcomes per image:
+  //   - transcribed: high confidence — drop the image, send text only
+  //   - partial:     some text, but uncertain — keep BOTH the OCR text
+  //                  (as a hint) AND the image so the vision model can
+  //                  verify what's actually there
+  //   - failed:      unreadable — send the image only
+  const imagesForVision: typeof validImages = [];
+  const ocrBlocks: string[] = [];
+  if (validImages.length > 0) {
+    const results = await Promise.all(
+      validImages.map((img: any) =>
+        ocrImage({ mediaType: img.mediaType, data: img.data })
+      )
+    );
+    results.forEach((r, i) => {
+      if (r.kind === "transcribed") {
+        ocrBlocks.push(`[OCR transcription of attached image]\n${r.text}`);
+      } else if (r.kind === "partial") {
+        ocrBlocks.push(
+          `[Partial OCR of attached image — may be inaccurate, the image is also attached for reference]\n${r.text}`
+        );
+        imagesForVision.push(validImages[i]);
+      } else {
+        imagesForVision.push(validImages[i]);
+      }
+    });
+  }
+
+  // Splice OCR text into the latest user message so the model sees it as
+  // part of the prompt. The student's typed question is preserved below.
+  if (ocrBlocks.length > 0) {
+    const preface = ocrBlocks.join("\n\n");
+    const lastIdx = messages.length - 1;
+    const existing = messages[lastIdx].content.trim();
+    messages[lastIdx] = {
+      ...messages[lastIdx],
+      content: existing ? `${preface}\n\n${existing}` : preface,
+    };
+  }
 
   const stream = new ReadableStream({
     async start(controller) {
@@ -250,9 +291,9 @@ export async function POST(req: Request) {
             const isLastUser =
               i === messages.length - 1 &&
               m.role === "user" &&
-              validImages.length > 0;
+              imagesForVision.length > 0;
             if (!isLastUser) return { role: m.role, content: m.content };
-            const content: any[] = validImages.map((img: any) => ({
+            const content: any[] = imagesForVision.map((img: any) => ({
               type: "image",
               source: {
                 type: "base64",
@@ -316,9 +357,25 @@ export async function POST(req: Request) {
           role: m.role === "assistant" ? "model" : "user",
           parts: [{ text: m.content }],
         }));
-        const last = messages[messages.length - 1]?.content || "";
+        const lastText = messages[messages.length - 1]?.content || "";
+        // Gemini accepts a mix of text and inline image parts in the same
+        // message. Send any vision-fallback images alongside the text so
+        // Gemini Flash can read what OCR couldn't.
+        const lastParts: any[] = [];
+        for (const img of imagesForVision) {
+          lastParts.push({
+            inlineData: { mimeType: img.mediaType, data: img.data },
+          });
+        }
+        if (lastText.trim().length > 0) {
+          lastParts.push({ text: lastText });
+        } else if (imagesForVision.length > 0) {
+          lastParts.push({
+            text: "Please help me with the work in this image.",
+          });
+        }
         const chat = model.startChat({ history });
-        const result = await chat.sendMessageStream(last);
+        const result = await chat.sendMessageStream(lastParts);
         for await (const chunk of result.stream) {
           const t = chunk.text();
           if (t) {
