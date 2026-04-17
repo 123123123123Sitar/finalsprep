@@ -641,6 +641,7 @@ function MarketingHome() {
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span><strong className="text-ink">10,000 AI tokens / day</strong></span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Smart AI model</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Units 1-2 of every AP course + 2 free lessons</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Graphing calc, physics sims, code sandbox</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>1 diagnostic quiz per month</span></li>
@@ -672,7 +673,7 @@ function MarketingHome() {
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Everything in Learner</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span><strong className="text-ink">20,000 AI tokens / day</strong></span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Smarter model + Thinking mode for hard problems</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Smart + Thinking model for hard problems</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>All 16 AP courses, every unit + unlimited lessons</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>Image uploads, FRQ practice, Insights</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-orange" /><span>5 diagnostic quizzes per month</span></li>
@@ -696,7 +697,7 @@ function MarketingHome() {
           {/* HACKER */}
           <div className="card-hover relative rounded-xl border border-hair bg-gradient-to-b from-amber-50 to-white p-7">
             <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
-              <CrownIcon className="h-3 w-3" /> Hacker
+              <CrownIcon className="h-3 w-3" /> Premium
             </span>
             <div className="label">Hacker</div>
             <div className="mt-3 flex items-baseline gap-2">
@@ -712,9 +713,10 @@ function MarketingHome() {
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Everything in Pro</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span><strong className="text-ink">80,000 AI tokens / day</strong></span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Priority AI traffic — no queueing</span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Strongest model on demand, always</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Priority AI traffic</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Advanced + Thinking models on demand, always</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Unlimited diagnostic quizzes</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Free image uploads</span></li>
             </ul>
             <button
               onClick={() => buy("hacker-monthly")}

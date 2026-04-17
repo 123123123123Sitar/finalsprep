@@ -150,6 +150,7 @@ export function CedLessonsView({
   completedTopicIds,
   onToggleTopicComplete,
   togglingTopicId,
+  hideHeader,
 }: {
   courseSlug: string;
   unit: CurriculumUnit;
@@ -163,6 +164,9 @@ export function CedLessonsView({
   /** When provided, renders a Mark-complete toggle for the active topic. */
   onToggleTopicComplete?: (topicId: string, next: boolean) => void;
   togglingTopicId?: string | null;
+  /** In Book Mode the wrapping BookPage owns the lesson title, so hide the
+   * internal header to avoid a duplicate heading. */
+  hideHeader?: boolean;
 }) {
   const active = topics.find((t) => t.id === activeTopicId) ?? topics[0];
   if (!active) return null;
@@ -173,15 +177,17 @@ export function CedLessonsView({
 
   return (
     <div className="max-w-3xl space-y-6">
-      <div>
-        <div className="meta">
-          Unit {unit.unitNumber} · Lesson {lessonNumber}
+      {!hideHeader && (
+        <div>
+          <div className="meta">
+            Unit {unit.unitNumber} · Lesson {lessonNumber}
+          </div>
+          <h3 className="mt-1 font-serif text-3xl font-normal text-ink">
+            {lessonTitle}
+          </h3>
+          <div className="mt-1 text-[13px] text-muted">{unit.title}</div>
         </div>
-        <h3 className="mt-1 font-serif text-3xl font-normal text-ink">
-          {lessonTitle}
-        </h3>
-        <div className="mt-1 text-[13px] text-muted">{unit.title}</div>
-      </div>
+      )}
 
       <div className="-mx-1 flex flex-wrap gap-1 border-b border-hair pb-0">
         {topics.map((t) => {

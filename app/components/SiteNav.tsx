@@ -164,6 +164,11 @@ const THEME_META: Record<Theme, { label: string; icon: string }> = {
   light: { label: "Light", icon: "☀︎" },
   dark: { label: "Dark", icon: "☾" },
   sepia: { label: "Sepia", icon: "✦" },
+  solarized: { label: "Solarized", icon: "❂" },
+  nord: { label: "Nord", icon: "❄" },
+  rose: { label: "Rosé", icon: "❀" },
+  forest: { label: "Forest", icon: "❋" },
+  contrast: { label: "Contrast", icon: "◆" },
   auto: { label: "Auto", icon: "◐" },
 };
 

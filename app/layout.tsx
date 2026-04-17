@@ -3,6 +3,7 @@ import "katex/dist/katex.min.css";
 import "./globals.css";
 import { AuthProvider } from "@/app/components/AuthProvider";
 import { ThemeProvider } from "@/app/components/ThemeProvider";
+import { BookModeProvider } from "@/app/components/BookMode";
 
 // Runs before React hydrates so we don't flash the wrong theme or a
 // full SiteNav on pages that are embedded in a chat-extension overlay
@@ -14,7 +15,8 @@ try {
     var h = new Date().getHours();
     t = (h >= 6 && h < 18) ? 'light' : 'dark';
   }
-  if (t === 'dark' || t === 'sepia' || t === 'light') {
+  var allowed = ['light','dark','sepia','solarized','nord','rose','forest','contrast'];
+  if (allowed.indexOf(t) !== -1) {
     document.documentElement.setAttribute('data-theme', t);
   }
   var params = new URLSearchParams(window.location.search);
@@ -47,7 +49,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-paper text-body antialiased">
         <AuthProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <BookModeProvider>{children}</BookModeProvider>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

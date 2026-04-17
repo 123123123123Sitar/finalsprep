@@ -11,9 +11,28 @@ import { doc, onSnapshot, setDoc, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getDb } from "@/lib/firebase";
 
-export type Theme = "light" | "dark" | "sepia" | "auto";
-export type EffectiveTheme = "light" | "dark" | "sepia";
-export const THEMES: Theme[] = ["light", "dark", "sepia", "auto"];
+export type Theme =
+  | "light"
+  | "dark"
+  | "sepia"
+  | "solarized"
+  | "nord"
+  | "rose"
+  | "forest"
+  | "contrast"
+  | "auto";
+export type EffectiveTheme = Exclude<Theme, "auto">;
+export const THEMES: Theme[] = [
+  "light",
+  "dark",
+  "sepia",
+  "solarized",
+  "nord",
+  "rose",
+  "forest",
+  "contrast",
+  "auto",
+];
 const STORAGE_KEY = "fp-theme";
 
 function isTheme(v: unknown): v is Theme {

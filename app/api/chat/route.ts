@@ -11,6 +11,7 @@ import {
   record,
   reserve,
   userKey,
+  type Tier,
 } from "@/lib/rateLimit";
 import { getAuthedUser } from "@/lib/authGuard";
 import { getPlan, planToRateTier } from "@/lib/userPlan";
@@ -21,6 +22,11 @@ import {
   getTokenBank,
   deductFromTokenBank,
 } from "@/lib/tokenBank";
+import {
+  peekUsage,
+  recordUsage,
+  reserveUsage,
+} from "@/lib/rateLimitStore";
 import {
   isGeminiBlocked,
   isGeminiRateLimit,
@@ -170,7 +176,54 @@ export async function POST(req: Request) {
   }
 
   const key = userKey(user?.uid, req);
-  let r = reserve(key, tier);
+  // Authed users: Firestore-backed usage (survives serverless cold starts).
+  // Anonymous/dev: in-memory bucket, since we have no uid to key on.
+  let r: {
+    ok: boolean;
+    tier: Tier;
+    tokensRemaining: number;
+    messagesRemaining: number;
+    reason?: "tokens" | "messages";
+    message?: string;
+    resetMinutes?: number;
+  };
+  if (user?.uid) {
+    const p = await reserveUsage(user.uid, tier);
+    r = p.ok
+      ? {
+          ok: true,
+          tier,
+          tokensRemaining: p.tokensRemaining,
+          messagesRemaining: p.messagesRemaining,
+        }
+      : {
+          ok: false,
+          tier,
+          tokensRemaining: p.tokensRemaining,
+          messagesRemaining: p.messagesRemaining,
+          reason: p.reason,
+          message: p.message,
+          resetMinutes: p.resetMinutes,
+        };
+  } else {
+    const mem = reserve(key, tier);
+    r = mem.ok
+      ? {
+          ok: true,
+          tier,
+          tokensRemaining: mem.tokensRemaining,
+          messagesRemaining: mem.messagesRemaining,
+        }
+      : {
+          ok: false,
+          tier,
+          tokensRemaining: mem.tokensRemaining,
+          messagesRemaining: mem.messagesRemaining,
+          reason: mem.reason,
+          message: mem.message,
+          resetMinutes: mem.resetMinutes,
+        };
+  }
   // If they're out of daily budget, fall back to the bonus token bank.
   let useTokenBank = false;
   if (!r.ok && user?.uid) {
@@ -178,7 +231,7 @@ export async function POST(req: Request) {
     if (bank.balance >= LIMITS.RESERVE_MIN_TOKENS) {
       useTokenBank = true;
       r = {
-        ok: true as const,
+        ok: true,
         tier,
         tokensRemaining: bank.balance,
         messagesRemaining: Math.floor(bank.balance / 700),
@@ -191,7 +244,7 @@ export async function POST(req: Request) {
       uid: user?.uid,
       email: user?.email,
       plan,
-      meta: { reason: r.reason, tier },
+      meta: { reason: r.reason ?? "unknown", tier },
     });
     return jsonError(429, {
       error: "Rate limited",
@@ -420,13 +473,32 @@ export async function POST(req: Request) {
           }
         }
 
-        const rawTokens =
-          capturedInput + capturedOutput ||
-          estimateTokens(messages.map((m) => m.content).join("\n")) +
-            estimateTokens(accumulated);
-        const totalTokens = Math.round(rawTokens * picked.costMultiplier);
+        // Cost formula:
+        //   base:        100 tokens minimum per prompt
+        //   input tax:   +20% of actual input tokens
+        //   output tax:  +30% of actual output tokens
+        //   image 2x:    doubled when images are attached, except on Hacker
+        //   thinking:    × provider costMultiplier (3x for Sonnet)
+        const inputTokens =
+          capturedInput ||
+          estimateTokens(messages.map((m) => m.content).join("\n"));
+        const outputTokens = capturedOutput || estimateTokens(accumulated);
+        const hasImages =
+          imagesForVision.length > 0 || ocrBlocks.length > 0;
+        let totalTokens = Math.max(
+          100,
+          Math.round(100 + inputTokens * 0.2 + outputTokens * 0.3)
+        );
+        if (hasImages && plan !== "hacker") totalTokens *= 2;
+        totalTokens = Math.round(totalTokens * picked.costMultiplier);
         if (useTokenBank && user?.uid) {
           await deductFromTokenBank(user.uid, totalTokens);
+        } else if (user?.uid) {
+          // Authed: persist to Firestore so the 24h window survives cold
+          // starts. Also update the in-memory bucket so /api/usage reflects
+          // the write within the same warm instance.
+          await recordUsage(user.uid, totalTokens);
+          record(key, totalTokens);
         } else {
           record(key, totalTokens);
         }
@@ -456,10 +528,21 @@ export async function POST(req: Request) {
       } catch (e: any) {
         const msg = e?.message || "Upstream error";
         controller.enqueue(enc.encode(`\n\n[error: ${msg}]`));
-        const est =
-          estimateTokens(messages.map((m) => m.content).join("\n")) +
-          estimateTokens(accumulated);
-        if (est > 0) record(key, est);
+        // Still charge the floor for failed prompts so users can't retry
+        // for free past their budget on error.
+        const inputEst =
+          estimateTokens(messages.map((m) => m.content).join("\n"));
+        const outputEst = estimateTokens(accumulated);
+        const est = Math.max(
+          100,
+          Math.round(100 + inputEst * 0.2 + outputEst * 0.3)
+        );
+        if (est > 0) {
+          if (user?.uid) {
+            void recordUsage(user.uid, est);
+          }
+          record(key, est);
+        }
         controller.close();
       }
     },

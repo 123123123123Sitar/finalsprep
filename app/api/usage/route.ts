@@ -1,6 +1,7 @@
 import { getAuthedUser } from "@/lib/authGuard";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
 import { LIMITS, peek, userKey } from "@/lib/rateLimit";
+import { peekUsage } from "@/lib/rateLimitStore";
 import { getTokenBank } from "@/lib/tokenBank";
 import { getPlan, planToRateTier } from "@/lib/userPlan";
 
@@ -28,8 +29,12 @@ export async function GET(req: Request) {
   const tier = planToRateTier(userPlan);
   const caps = LIMITS[tier];
 
+  // Authed users read from Firestore (survives cold starts); anonymous fall
+  // back to the in-memory bucket.
   const key = userKey(user?.uid, req);
-  const p = peek(key, tier);
+  const p = user
+    ? await peekUsage(user.uid, tier)
+    : peek(key, tier);
 
   const bank = user ? await getTokenBank(user.uid) : { balance: 0, updatedAt: 0 };
 

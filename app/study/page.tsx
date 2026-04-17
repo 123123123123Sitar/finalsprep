@@ -40,6 +40,11 @@ import Graph3D from "@/app/components/Graph3D";
 import PhysicsSim from "@/app/components/PhysicsSim";
 import CodeSandbox from "@/app/components/CodeSandbox";
 import BookmarkButton from "@/app/components/BookmarkButton";
+import {
+  BookModeToggle,
+  BookPage,
+  useBookMode,
+} from "@/app/components/BookMode";
 import CoursePicker from "@/app/components/CoursePicker";
 import PageLoader from "@/app/components/PageLoader";
 import LessonAnnotationsPanel from "@/app/components/LessonAnnotations";
@@ -65,6 +70,7 @@ type Tab =
 
 export default function Study() {
   const { user, loading: authLoading, getIdToken, plan, planLoading } = useAuth();
+  const { bookMode } = useBookMode();
   // Enrollment state machine:
   //   null  = unresolved (auth or Firestore still pending)
   //   []    = resolved, user has selected no courses → show picker
@@ -125,6 +131,10 @@ export default function Study() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [tab, setTab] = useState<Tab>("curriculum");
   const [viewedCedTopic, setViewedCedTopic] = useState<string | null>(null);
+  // Course-level "Exam Guide" page — sits before Unit 1 in the sidebar and
+  // shows the at-a-glance exam format + framing. Opening a course lands here
+  // so students see the exam shape before diving into units.
+  const [viewExamGuide, setViewExamGuide] = useState<boolean>(true);
 
   // Keep the active course pinned to something the user has actually added.
   // Runs whenever the added list changes; no-op if the current slug is
@@ -171,6 +181,7 @@ export default function Study() {
         if (m) setSelectedUnit(m.unitNumber);
         setTab("lesson");
         setView("course");
+        setViewExamGuide(false);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -307,6 +318,7 @@ export default function Study() {
     if (m) setSelectedUnit(m.unitNumber);
     setTab("lesson");
     setViewedCedTopic(null);
+    setViewExamGuide(false);
     setExplanation("");
     setError("");
   }
@@ -316,6 +328,7 @@ export default function Study() {
     setSelectedLesson(null);
     setTab("curriculum");
     setViewedCedTopic(null);
+    setViewExamGuide(false);
   }
 
   function selectTopic(unitNumber: number, topicId: string) {
@@ -323,6 +336,14 @@ export default function Study() {
     setSelectedLesson(null);
     setTab("curriculum");
     setViewedCedTopic(topicId);
+    setViewExamGuide(false);
+  }
+
+  function selectExamGuide() {
+    setSelectedLesson(null);
+    setViewedCedTopic(null);
+    setTab("curriculum");
+    setViewExamGuide(true);
   }
 
   function openCourse(slug: CourseSlug) {
@@ -343,6 +364,7 @@ export default function Study() {
     setSelectedLesson(null);
     setTab("curriculum");
     setViewedCedTopic(null);
+    setViewExamGuide(true);
     setExplanation("");
     setError("");
   }
@@ -473,40 +495,32 @@ export default function Study() {
           </div>
         )}
 
-        {curriculum && (
-          <div className="mt-6 rounded-lg border border-hair bg-paper p-5">
-            <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-              Exam at a glance
-            </div>
-            <div className="mt-2 grid gap-4 text-sm text-body md:grid-cols-3">
-              <div>
-                <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
-                  Length
-                </div>
-                <div className="mt-1">{curriculum.examFormat.length}</div>
-              </div>
-              <div>
-                <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
-                  Structure
-                </div>
-                <div className="mt-1">{curriculum.examFormat.structure}</div>
-              </div>
-              <div>
-                <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
-                  Scoring
-                </div>
-                <div className="mt-1">{curriculum.examFormat.scoring}</div>
-              </div>
-            </div>
-            <p className="mt-4 max-w-3xl text-[14px] text-body">
-              {curriculum.framing}
-            </p>
-          </div>
-        )}
-
         <section className="mt-10 grid gap-10 lg:grid-cols-[300px_1fr]">
           {/* Sidebar: units + lessons */}
           <aside className="space-y-6">
+            {curriculum && (
+              <button
+                onClick={selectExamGuide}
+                className={`block w-full border-l-2 pl-3 text-left transition-colors ${
+                  viewExamGuide
+                    ? "border-orange"
+                    : "border-orange/40 hover:border-orange"
+                }`}
+              >
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-orange-ink/80">
+                  Overview
+                </div>
+                <div
+                  className={`mt-0.5 font-serif text-[16px] leading-tight transition-colors ${
+                    viewExamGuide
+                      ? "text-orange"
+                      : "text-ink hover:text-orange"
+                  }`}
+                >
+                  Exam Guide
+                </div>
+              </button>
+            )}
             {units.length === 0 && (
               <div className="rounded-md border border-hair bg-offwhite p-4 text-sm text-muted">
                 No units defined yet.
@@ -515,7 +529,9 @@ export default function Study() {
             {units.map((unit) => {
               const unitLocked = !isUnitUnlocked(unit.number, plan);
               const isActiveUnit =
-                selectedUnit === unit.number && !selectedLesson;
+                !viewExamGuide &&
+                selectedUnit === unit.number &&
+                !selectedLesson;
               return (
                 <div key={unit.number} className="border-l-2 border-orange/40 pl-3">
                   <button
@@ -708,11 +724,13 @@ export default function Study() {
 
           {/* Main panel */}
           <div>
-            {!curriculumUnit && !selectedLesson ? (
+            {viewExamGuide && curriculum ? (
+              <ExamGuideView curriculum={curriculum} />
+            ) : !curriculumUnit && !selectedLesson ? (
               <EmptyCourseView courseTitle={course.title} />
             ) : (
               <>
-                {selectedLesson && (
+                {selectedLesson && !bookMode && (
                   <div className="border-b border-hair pb-6">
                     <div className="meta">
                       {course.title}
@@ -756,23 +774,30 @@ export default function Study() {
                   />
                 )}
 
-                <div className="mt-4 flex flex-wrap gap-6 border-b border-hair">
-                  {TABS.filter((t) => t.show).map((t) => (
-                    <button
-                      key={t.key}
-                      onClick={() => {
-                        setTab(t.key);
-                        setViewedCedTopic(null);
-                      }}
-                      className={`relative -mb-px border-b-2 px-0 py-3 text-sm font-medium transition-colors ${
-                        tab === t.key
-                          ? "border-orange text-ink"
-                          : "border-transparent text-muted hover:text-ink"
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
+                <div className="mt-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-hair">
+                  <div className="flex flex-wrap gap-x-6">
+                    {TABS.filter((t) => t.show).map((t) => (
+                      <button
+                        key={t.key}
+                        onClick={() => {
+                          setTab(t.key);
+                          setViewedCedTopic(null);
+                        }}
+                        className={`relative -mb-px border-b-2 px-0 py-3 text-sm font-medium transition-colors ${
+                          tab === t.key
+                            ? "border-orange text-ink"
+                            : "border-transparent text-muted hover:text-ink"
+                        }`}
+                      >
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                  {(!!selectedLesson || !!viewedCedTopic) && (
+                    <div className="pb-2">
+                      <BookModeToggle />
+                    </div>
+                  )}
                 </div>
 
                 <HighlightTooltip
@@ -827,7 +852,19 @@ export default function Study() {
                           )
                           .map((t) => t.id)
                       );
-                      return (
+                      const activeIdx = activeGroup.topics.findIndex(
+                        (t) => t.id === viewedCedTopic
+                      );
+                      const prevTopic =
+                        activeIdx > 0
+                          ? activeGroup.topics[activeIdx - 1]
+                          : null;
+                      const nextTopic =
+                        activeIdx >= 0 &&
+                        activeIdx < activeGroup.topics.length - 1
+                          ? activeGroup.topics[activeIdx + 1]
+                          : null;
+                      const view = (
                         <CedLessonsView
                           courseSlug={courseSlug}
                           unit={curriculumUnit}
@@ -844,7 +881,30 @@ export default function Study() {
                                   toggleCedTopicComplete(topicId, next)
                               : undefined
                           }
+                          hideHeader={bookMode}
                         />
+                      );
+                      if (!bookMode) return view;
+                      const activeTopic =
+                        activeGroup.topics[Math.max(0, activeIdx)];
+                      return (
+                        <BookPage
+                          pageKey={`ced:${viewedCedTopic}`}
+                          chapter={`${course.title} · Unit ${curriculumUnit.unitNumber} · Lesson ${activeGroup.number}`}
+                          title={activeTopic?.title ?? activeGroup.title}
+                          onPrevLesson={
+                            prevTopic
+                              ? () => setViewedCedTopic(prevTopic.id)
+                              : undefined
+                          }
+                          onNextLesson={
+                            nextTopic
+                              ? () => setViewedCedTopic(nextTopic.id)
+                              : undefined
+                          }
+                        >
+                          {view}
+                        </BookPage>
                       );
                     })()}
 
@@ -882,13 +942,33 @@ export default function Study() {
                   )}
 
                   {tab === "lesson" && selectedLesson && (
-                    <LessonPanel
-                      lesson={selectedLesson}
-                      plan={plan}
-                      uid={user?.uid ?? null}
-                      loadSample={loadSample}
-                      onUpgrade={() => buy("pro-monthly")}
-                    />
+                    bookMode ? (
+                      <BookPage
+                        pageKey={`lesson:${selectedLesson.slug}`}
+                        chapter={`${course.title}${
+                          currentMembership
+                            ? ` · Unit ${currentMembership.unitNumber}: ${currentMembership.unitTitle}`
+                            : ""
+                        }`}
+                        title={selectedLesson.title}
+                      >
+                        <LessonPanel
+                          lesson={selectedLesson}
+                          plan={plan}
+                          uid={user?.uid ?? null}
+                          loadSample={loadSample}
+                          onUpgrade={() => buy("pro-monthly")}
+                        />
+                      </BookPage>
+                    ) : (
+                      <LessonPanel
+                        lesson={selectedLesson}
+                        plan={plan}
+                        uid={user?.uid ?? null}
+                        loadSample={loadSample}
+                        onUpgrade={() => buy("pro-monthly")}
+                      />
+                    )
                   )}
 
                   {tab === "diagram" && selectedLesson?.diagram && (
@@ -1272,6 +1352,80 @@ function LessonPanel({
           >
             {isCompleted ? "✓ Completed" : "Mark complete"}
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ExamGuideView({
+  curriculum,
+}: {
+  curriculum: import("@/lib/curriculum/types").CourseCurriculum;
+}) {
+  return (
+    <div className="max-w-3xl space-y-8">
+      <div>
+        <div className="meta">Overview</div>
+        <h3 className="mt-1 font-serif text-3xl font-normal text-ink">
+          Exam Guide
+        </h3>
+        <p className="mt-3 text-[15px] leading-relaxed text-body">
+          {curriculum.framing}
+        </p>
+      </div>
+
+      <div className="rounded-lg border border-hair bg-paper p-5">
+        <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
+          Exam at a glance
+        </div>
+        <div className="mt-3 grid gap-5 text-sm text-body md:grid-cols-3">
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
+              Length
+            </div>
+            <div className="mt-1">{curriculum.examFormat.length}</div>
+          </div>
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
+              Structure
+            </div>
+            <div className="mt-1">{curriculum.examFormat.structure}</div>
+          </div>
+          <div>
+            <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
+              Scoring
+            </div>
+            <div className="mt-1">{curriculum.examFormat.scoring}</div>
+          </div>
+        </div>
+      </div>
+
+      {curriculum.units.length > 0 && (
+        <div>
+          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
+            Units and exam weights
+          </div>
+          <ul className="mt-3 divide-y divide-hair overflow-hidden rounded-lg border border-hair">
+            {curriculum.units.map((u) => (
+              <li
+                key={u.unitNumber}
+                className="flex items-baseline justify-between gap-4 bg-paper px-4 py-3"
+              >
+                <div>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted">
+                    Unit {u.unitNumber}
+                  </div>
+                  <div className="mt-0.5 text-[14.5px] font-medium text-ink">
+                    {u.title}
+                  </div>
+                </div>
+                <div className="shrink-0 text-[12px] text-muted">
+                  {u.examWeight}
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

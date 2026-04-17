@@ -17,24 +17,11 @@ import {
 } from "@/lib/aiPrefs";
 import { planLabel } from "@/lib/plans";
 
-type AccentKey = "orange" | "blue" | "green" | "plum";
-
-const ACCENTS: { key: AccentKey; label: string; swatch: string }[] = [
-  { key: "orange", label: "Orange", swatch: "#d9480f" },
-  { key: "blue", label: "Ink blue", swatch: "#1e40af" },
-  { key: "green", label: "Pine", swatch: "#166534" },
-  { key: "plum", label: "Plum", swatch: "#6b21a8" },
-];
-
 type Prefs = AiPrefs & {
-  accent: AccentKey;
-  mathJaxRender: boolean;
   selectedCourses: string[];
 };
 
 const DEFAULT_PREFS: Prefs = {
-  accent: "orange",
-  mathJaxRender: true,
   selectedCourses: [],
   ...DEFAULT_AI_PREFS,
 };
@@ -208,56 +195,6 @@ export default function AccountPage() {
               Shown on the top of chat replies. Private — never sent to other
               users.
             </p>
-          </div>
-
-          {/* Accent color */}
-          <div>
-            <div className="label mb-2">Accent color</div>
-            <div className="flex flex-wrap gap-2">
-              {ACCENTS.map((a) => (
-                <button
-                  key={a.key}
-                  onClick={() => setPrefs((p) => ({ ...p, accent: a.key }))}
-                  className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition ${
-                    prefs.accent === a.key
-                      ? "border-ink"
-                      : "border-hair hover:border-ink"
-                  }`}
-                >
-                  <span
-                    className="h-4 w-4 rounded-full"
-                    style={{ backgroundColor: a.swatch }}
-                  />
-                  {a.label}
-                </button>
-              ))}
-            </div>
-            <p className="mt-2 text-xs text-muted">
-              Used for highlights and button accents across the app.
-            </p>
-          </div>
-
-          {/* Math rendering */}
-          <div>
-            <label className="flex cursor-pointer items-start gap-3">
-              <input
-                type="checkbox"
-                checked={prefs.mathJaxRender}
-                onChange={(e) =>
-                  setPrefs((p) => ({ ...p, mathJaxRender: e.target.checked }))
-                }
-                className="mt-[3px] h-4 w-4 accent-orange"
-              />
-              <span>
-                <span className="text-[15px] text-ink">
-                  Render math with KaTeX
-                </span>
-                <span className="mt-0.5 block text-xs text-muted">
-                  Turn off if equations look wrong on your device — we'll fall
-                  back to plain text.
-                </span>
-              </span>
-            </label>
           </div>
 
           <div className="rounded-xl border border-hair bg-offwhite p-5">

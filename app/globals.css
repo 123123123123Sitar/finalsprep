@@ -51,6 +51,92 @@
   --orange-tint: 240 220 185;
 }
 
+/* Warm cream paper with teal ink — Solarized Light by Ethan Schoonover. */
+[data-theme="solarized"] {
+  color-scheme: light;
+  --paper: 253 246 227;
+  --offwhite: 238 232 213;
+  --ink: 7 54 66;
+  --body: 88 110 117;
+  --muted: 101 123 131;
+  --dim: 147 161 161;
+  --hair: 224 214 188;
+  --rule: 203 192 165;
+  --orange: 203 75 22;
+  --orange-hover: 167 61 18;
+  --orange-ink: 130 46 12;
+  --orange-tint: 253 232 206;
+}
+
+/* Cool arctic blues — Nord by Arctic Ice Studio. */
+[data-theme="nord"] {
+  color-scheme: dark;
+  --paper: 46 52 64;
+  --offwhite: 59 66 82;
+  --ink: 236 239 244;
+  --body: 216 222 233;
+  --muted: 143 170 200;
+  --dim: 97 110 136;
+  --hair: 67 76 94;
+  --rule: 76 86 106;
+  --orange: 208 135 112;
+  --orange-hover: 184 106 88;
+  --orange-ink: 235 203 139;
+  --orange-tint: 76 60 53;
+}
+
+/* Warm pink-tinted dark — inspired by Rosé Pine. */
+[data-theme="rose"] {
+  color-scheme: dark;
+  --paper: 25 23 36;
+  --offwhite: 31 29 46;
+  --ink: 224 222 244;
+  --body: 196 193 224;
+  --muted: 144 140 170;
+  --dim: 110 106 134;
+  --hair: 38 35 58;
+  --rule: 57 53 82;
+  --orange: 235 111 146;
+  --orange-hover: 200 93 124;
+  --orange-ink: 246 193 119;
+  --orange-tint: 62 36 50;
+}
+
+/* Cool muted greens on a deep forest-floor background. */
+[data-theme="forest"] {
+  color-scheme: dark;
+  --paper: 24 35 28;
+  --offwhite: 32 45 36;
+  --ink: 232 240 228;
+  --body: 201 216 192;
+  --muted: 139 168 137;
+  --dim: 94 122 98;
+  --hair: 43 58 49;
+  --rule: 61 82 68;
+  --orange: 163 190 140;
+  --orange-hover: 136 168 117;
+  --orange-ink: 235 203 139;
+  --orange-tint: 47 63 50;
+}
+
+/* High-contrast light — pure black on white with bolder rules. Useful
+   for low-vision reading or projector-style classroom displays. */
+[data-theme="contrast"] {
+  color-scheme: light;
+  --paper: 255 255 255;
+  --offwhite: 245 245 245;
+  --ink: 0 0 0;
+  --body: 10 10 10;
+  --muted: 65 65 65;
+  --dim: 110 110 110;
+  --hair: 180 180 180;
+  --rule: 120 120 120;
+  --orange: 179 48 0;
+  --orange-hover: 143 38 0;
+  --orange-ink: 102 25 0;
+  --orange-tint: 255 220 196;
+}
+
 html, body {
   background: rgb(var(--paper));
   color: rgb(var(--body));
@@ -448,6 +534,243 @@ textarea, input {
 /* KaTeX sizing polish */
 .katex { font-size: 1.02em; }
 .katex-display { margin: 0.6em 0; }
+
+/* ——— Book Mode ——— */
+/* A focused reading view: serif typography, limited line length, generous
+   margins, subtle paper/shadow depth. Colors inherit from the active theme
+   so dark/sepia/etc. work without per-theme overrides.
+   The page is viewport-bound (flex column with a fixed-height viewport in
+   the middle). Content paginates across CSS columns so the user can flip
+   through "pages" like a real book — no vertical scroll. */
+.book-stage {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 8px 0 32px;
+}
+.book-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 48rem; /* a touch wider than before to fit more per page */
+  height: min(calc(100vh - 220px), 900px);
+  min-height: 460px;
+  padding: clamp(28px, 4vw, 56px) clamp(24px, 5vw, 72px) clamp(20px, 3vw, 36px);
+  background: rgb(var(--paper));
+  background-image:
+    radial-gradient(ellipse at top left, rgba(0,0,0,0.025), transparent 45%),
+    radial-gradient(ellipse at bottom right, rgba(0,0,0,0.025), transparent 45%);
+  color: rgb(var(--body));
+  border: 1px solid rgb(var(--hair));
+  border-radius: 4px;
+  box-shadow:
+    0 1px 1px rgba(0,0,0,0.04),
+    0 8px 24px -12px rgba(0,0,0,0.18),
+    0 24px 60px -24px rgba(0,0,0,0.22);
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", Times, serif;
+  font-size: 17px;
+  line-height: 1.65;
+  animation: fadeUp 360ms cubic-bezier(0.22,1,0.36,1) both;
+  transform-origin: center center;
+  perspective: 1600px;
+}
+/* Faux stacked pages behind the active page — subtle depth cue. */
+.book-page::before,
+.book-page::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  width: 8px;
+  pointer-events: none;
+  background: rgb(var(--offwhite));
+  border: 1px solid rgb(var(--hair));
+  border-left: none;
+  border-radius: 0 3px 3px 0;
+}
+.book-page::before { right: -4px; opacity: 0.7; z-index: -1; }
+.book-page::after  { right: -8px; opacity: 0.4; z-index: -2; }
+
+/* Page-flip animations (lesson-to-lesson turns) */
+.book-page.is-flipping-forward {
+  animation: bookFlipOutForward 260ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.book-page.is-flipping-back {
+  animation: bookFlipOutBack 260ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.book-page.is-entering-forward {
+  animation: bookFlipInForward 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.book-page.is-entering-back {
+  animation: bookFlipInBack 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes bookFlipOutForward {
+  from { transform: translateX(0) rotateY(0deg); opacity: 1; }
+  to   { transform: translateX(-6%) rotateY(-8deg); opacity: 0; }
+}
+@keyframes bookFlipOutBack {
+  from { transform: translateX(0) rotateY(0deg); opacity: 1; }
+  to   { transform: translateX(6%) rotateY(8deg); opacity: 0; }
+}
+@keyframes bookFlipInForward {
+  from { transform: translateX(8%) rotateY(10deg); opacity: 0; }
+  to   { transform: translateX(0) rotateY(0deg); opacity: 1; }
+}
+@keyframes bookFlipInBack {
+  from { transform: translateX(-8%) rotateY(-10deg); opacity: 0; }
+  to   { transform: translateX(0) rotateY(0deg); opacity: 1; }
+}
+
+.book-page__header {
+  border-bottom: 1px solid rgb(var(--hair));
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+  flex: 0 0 auto;
+}
+.book-page__chapter {
+  font-family: Georgia, serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgb(var(--muted));
+}
+.book-page__title {
+  margin-top: 6px;
+  font-family: Georgia, serif;
+  font-size: clamp(20px, 2.8vw, 28px);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: rgb(var(--ink));
+}
+
+/* The paginated viewport: fixed-height, overflow-hidden, shows exactly one
+   viewport-wide column at a time. Edge buttons sit on top for click-to-flip. */
+.book-page__viewport {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+.book-page__columns {
+  height: 100%;
+  column-gap: 0;
+  column-fill: auto;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+/* Cascade book typography into nested app components, but keep monospace
+   and KaTeX elements using their native stacks. */
+.book-page__columns :where(p, li, span, div, h1, h2, h3, h4, h5, blockquote) {
+  font-family: inherit;
+}
+.book-page__columns :where(.font-serif, [class*="font-serif"]) { font-family: inherit; }
+.book-page__columns :where(.font-mono, [class*="font-mono"], code, pre) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+.book-page__columns .katex { font-family: KaTeX_Main, "Times New Roman", serif; }
+/* Keep large blocks from splitting awkwardly across a column boundary. */
+.book-page__columns :where(h1, h2, h3, h4) {
+  break-inside: avoid;
+  break-after: avoid;
+}
+.book-page__columns :where(img, svg, pre, table, blockquote, .katex-display) {
+  break-inside: avoid;
+}
+/* Let the top-level wrapper of lesson bodies fill the column width. */
+.book-page__columns > * { max-width: none !important; width: 100%; }
+
+.book-page__edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12%;
+  max-width: 96px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+}
+.book-page__edge:disabled { cursor: default; }
+.book-page__edge--left { left: 0; }
+.book-page__edge--right { right: 0; }
+
+.book-page__footer {
+  flex: 0 0 auto;
+  margin-top: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgb(var(--hair));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: Georgia, serif;
+  font-size: 13px;
+  color: rgb(var(--muted));
+}
+.book-page__pageno { font-style: italic; letter-spacing: 0.04em; }
+.book-page__exit {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  border: 1px solid rgb(var(--hair));
+  background: rgb(var(--paper));
+  color: rgb(var(--muted));
+  font-size: 13px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+}
+.book-page__exit:hover {
+  color: rgb(var(--orange));
+  border-color: rgb(var(--orange));
+}
+.book-page__exit:focus-visible {
+  outline: 2px solid rgb(var(--orange));
+  outline-offset: 2px;
+}
+.book-page__nav {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: rgb(var(--muted));
+  cursor: pointer;
+  border-radius: 4px;
+}
+.book-page__nav:hover:not(:disabled) { color: rgb(var(--orange)); }
+.book-page__nav:focus-visible {
+  outline: 2px solid rgb(var(--orange));
+  outline-offset: 2px;
+}
+.book-page__nav:disabled { opacity: 0.3; cursor: default; }
+
+@media (max-width: 640px) {
+  .book-page {
+    padding: 22px 18px 18px;
+    max-width: 100%;
+    height: calc(100vh - 180px);
+    border-radius: 2px;
+  }
+  .book-page::before,
+  .book-page::after { display: none; }
+  .book-page__footer { font-size: 12px; }
+  .book-page__edge { width: 18%; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
