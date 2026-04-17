@@ -11,6 +11,19 @@ export type CedFlashcard = {
   a: string;
 };
 
+/**
+ * A single multiple-choice question served after a lesson. Four answer
+ * choices is the AP exam convention; keep `answerIndex` zero-based and
+ * always include a short `explanation` for the correct choice so the UI
+ * can reveal it after submission.
+ */
+export type CedQuizQuestion = {
+  q: string;
+  choices: [string, string, string, string];
+  answerIndex: 0 | 1 | 2 | 3;
+  explanation: string;
+};
+
 export type CedLesson = {
   /** Matches the topic id in apUnits (e.g. "1.1", "3.14"). */
   id: string;
@@ -35,6 +48,12 @@ export type CedLesson = {
   flashcards?: CedFlashcard[];
   /** 2-4 traps graders see on this topic. */
   commonMistakes: string[];
+  /**
+   * End-of-lesson check: 4-5 multiple-choice questions. Rendered as a
+   * mini-quiz beneath the lesson body so students can self-assess before
+   * moving to the next topic.
+   */
+  quiz?: CedQuizQuestion[];
   /**
    * Optional inline SVG string. Use viewBox="0 0 400 240" by default
    * so the diagram scales to the card width. Keep palette neutral +
