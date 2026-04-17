@@ -246,7 +246,7 @@ function CheckoutInner() {
             </div>
           )}
 
-          <div className="mt-6">
+          <div className="mt-6 isolate">
             <PayPalScriptProvider
               options={{
                 clientId,

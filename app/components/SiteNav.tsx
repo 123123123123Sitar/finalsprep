@@ -47,7 +47,7 @@ export default function SiteNav({
     <nav
       data-site-nav
       className={`border-b border-hair ${
-        sticky ? "sticky top-0 z-30 bg-paper/85 backdrop-blur" : "bg-paper"
+        sticky ? "sticky top-0 z-50 bg-paper/85 backdrop-blur" : "bg-paper"
       }`}
     >
       <div
