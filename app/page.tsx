@@ -5,6 +5,9 @@ import Reveal from "@/app/components/Reveal";
 import { useAuth } from "@/app/components/AuthProvider";
 import Dashboard from "@/app/components/Dashboard";
 import PageLoader from "@/app/components/PageLoader";
+import ScrollCinema from "@/app/components/ScrollCinema";
+import CedCinema from "@/app/components/CedCinema";
+import AuroraBackground from "@/app/components/AuroraBackground";
 
 function formatMinutes(mins: number): string {
   if (mins < 60) return `${mins}m`;
@@ -172,12 +175,10 @@ function MarketingHome() {
       </div>
 
       {/* HERO */}
-      <section className="relative mx-auto max-w-5xl overflow-visible px-6 pt-20 pb-24 sm:pt-28">
-        {/* Animated background blobs */}
-        <div className="hero-blob animate-blob -left-20 top-10 h-72 w-72 bg-orange-tint" aria-hidden />
-        <div className="hero-blob animate-floatSlow right-0 top-40 h-80 w-80 rounded-full bg-amber-100" aria-hidden />
-        <div className="hero-blob animate-float -right-10 bottom-20 h-60 w-60 rounded-full bg-orange/10" aria-hidden />
-
+      <div className="relative isolate overflow-hidden">
+        {/* Animated aurora background — full viewport width */}
+        <AuroraBackground />
+      <section className="relative z-10 mx-auto max-w-5xl overflow-visible px-6 pt-20 pb-24 sm:pt-28">
         <div className="relative max-w-3xl">
           <div className="label animate-fadeUp mb-6">For AP students</div>
           <h1 className="animate-heroReveal font-serif text-[52px] font-normal leading-[1.1] tracking-tightest text-ink pb-2 sm:text-[76px]">
@@ -209,6 +210,13 @@ function MarketingHome() {
           </p>
         </div>
 
+        {/* scroll hint */}
+        <div className="animate-fadeUp delay-700 mt-14 flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted">
+          <span className="h-px w-10 bg-hair" />
+          <span>Scroll to watch it in action</span>
+          <span className="animate-scrollHint text-orange">↓</span>
+        </div>
+
         {/* social proof strip */}
         <Reveal from="up">
         <div className="mt-16 border-y border-hair py-6">
@@ -234,6 +242,13 @@ function MarketingHome() {
         </div>
         </Reveal>
       </section>
+      </div>
+
+      {/* Cinematic scroll-synced demo: AI tutor */}
+      <ScrollCinema />
+
+      {/* Cinematic scroll-synced demo: CED + interactive tools */}
+      <CedCinema />
 
       <hr className="rule mx-auto max-w-5xl" />
 
