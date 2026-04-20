@@ -397,53 +397,6 @@ function MarketingHome() {
 
       <hr className="rule mx-auto max-w-5xl" />
 
-      {/* WHAT THIS IS NOT */}
-      <section className="mx-auto max-w-5xl px-6 py-16">
-        <Reveal from="left">
-        <div className="max-w-3xl">
-          <div className="label mb-4">One-minute honesty</div>
-          <h2 className="font-serif text-4xl font-normal leading-tight text-ink">
-            What this is <span className="italic">not</span>.
-          </h2>
-        </div>
-        <div className="mt-8 grid gap-8 md:grid-cols-2">
-          <div className="prose-body">
-            <p>
-              <strong className="text-ink">It's not Photomath.</strong> Photomath
-              shows the answer. FinalsPrep shows the reasoning - which is what
-              you actually need if you have to do the problem yourself on an
-              exam next week.
-            </p>
-            <p className="mt-5">
-              <strong className="text-ink">It's not a general chatbot.</strong>{" "}
-              General assistants hallucinate on harder problems, especially
-              physics with unit conversions. FinalsPrep is tuned specifically
-              for math and physics pedagogy, and refuses out-of-scope
-              questions instead of making something up.
-            </p>
-          </div>
-          <div className="prose-body">
-            <p>
-              <strong className="text-ink">It's not one subject.</strong>{" "}
-              One subscription covers every AP in the catalog: all four math
-              APs, all four physics APs, biology, chemistry, environmental
-              science, both computer science courses, and three history APs.
-              Whatever you're taking is already in here.
-            </p>
-            <p className="mt-5">
-              <strong className="text-ink">It's less than a single tutoring
-              session.</strong>{" "}
-              $16/month is less than one hour with a human tutor and much
-              less than a Barron's prep book. The 6-month plan works out to
-              $15/month and covers an entire semester of finals.
-            </p>
-          </div>
-        </div>
-        </Reveal>
-      </section>
-
-      <hr className="rule mx-auto max-w-5xl" />
-
       {/* FEATURE PREVIEWS - visual mockups of what's actually in the app */}
       <section id="features" className="relative mx-auto max-w-6xl overflow-hidden px-6 py-20">
         <Reveal from="up">
