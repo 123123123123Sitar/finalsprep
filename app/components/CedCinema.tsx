@@ -193,7 +193,7 @@ export default function CedCinema() {
       className="relative h-[520vh]"
       aria-label="Animated demo: CED curriculum and interactive tools"
     >
-      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
+      <div className="sticky top-0 flex h-screen flex-col items-center overflow-hidden">
         {/* Cinema background */}
         <div
           className="absolute inset-0 opacity-70"
@@ -218,7 +218,7 @@ export default function CedCinema() {
         />
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[4.5vh] z-10 -translate-x-1/2 text-center"
+          className="relative z-10 w-full px-4 pt-[13vh] pb-[2vh] text-center"
           style={{ opacity: titleOpacity }}
         >
           <div className="label">Every unit, every tool</div>
@@ -231,11 +231,13 @@ export default function CedCinema() {
           </h2>
         </div>
 
+        <div className="relative flex min-h-0 w-full flex-1 items-center justify-center px-4 pb-[8vh]">
         <div
-          className="relative mx-4 w-full overflow-hidden rounded-xl border border-hair bg-paper"
+          className="relative h-full w-full overflow-hidden rounded-xl border border-hair bg-paper"
           style={{
             maxWidth: "min(68rem, 94vw)",
             aspectRatio: "16 / 10",
+            maxHeight: "100%",
             boxShadow:
               "0 60px 120px -40px rgba(10,10,10,0.45), 0 20px 50px -30px rgba(249,115,22,0.22)",
           }}
@@ -656,6 +658,7 @@ export default function CedCinema() {
 
           {/* Stage caption */}
           <CedStageCaption progress={story} />
+        </div>
         </div>
 
         {/* Progress track */}

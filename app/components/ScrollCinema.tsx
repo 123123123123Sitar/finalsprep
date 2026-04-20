@@ -140,7 +140,7 @@ export default function ScrollCinema() {
       className="relative h-[520vh]"
       aria-label="Animated demo: watch a problem get solved as you scroll"
     >
-      <div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
+      <div className="sticky top-0 flex h-screen flex-col items-center overflow-hidden">
         {/* Soft cinema background */}
         <div
           className="absolute inset-0 opacity-70"
@@ -166,7 +166,7 @@ export default function ScrollCinema() {
 
         {/* Caption */}
         <div
-          className="pointer-events-none absolute left-1/2 top-[4.5vh] z-10 -translate-x-1/2 text-center"
+          className="relative z-10 w-full px-4 pt-[13vh] pb-[2vh] text-center"
           style={{ opacity: titleOpacity }}
         >
           <div className="label">Watch it happen</div>
@@ -176,12 +176,14 @@ export default function ScrollCinema() {
           </h2>
         </div>
 
-        {/* Browser */}
+        {/* Browser — sized to fit the remaining space */}
+        <div className="relative flex min-h-0 w-full flex-1 items-center justify-center px-4 pb-[8vh]">
         <div
-          className="relative mx-4 w-full overflow-hidden rounded-xl border border-hair bg-paper"
+          className="relative h-full w-full overflow-hidden rounded-xl border border-hair bg-paper"
           style={{
             maxWidth: "min(68rem, 94vw)",
             aspectRatio: "16 / 10",
+            maxHeight: "100%",
             boxShadow:
               "0 60px 120px -40px rgba(10,10,10,0.45), 0 20px 50px -30px rgba(194,65,12,0.25)",
             transform: `translateY(${lerp(40, 0, pageLoad)}px) scale(${lerp(
@@ -386,6 +388,7 @@ export default function ScrollCinema() {
 
           {/* Stage captions that float beside the frame */}
           <StageCaption progress={story} />
+        </div>
         </div>
 
         {/* Progress track */}
