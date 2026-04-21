@@ -1,10 +1,16 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { PracticeProblem } from "@/lib/practice/types";
 import { addToWrongBank } from "@/lib/wrongBank";
 import { useAuth } from "./AuthProvider";
 import MathRender from "./Math";
 import Whiteboard from "./Whiteboard";
+
+const CREDIT_THRESHOLD = 5;
+
+function progressKey(courseSlug: string, unitNumber: number) {
+  return `fp-practice-progress:${courseSlug}:${unitNumber}`;
+}
 
 function stripUnmatched(s: string, open: string, close: string): string {
   const toRemove = new Set<number>();
@@ -72,6 +78,48 @@ export default function PracticeProblems({
     window.location.href = `/chat?q=${encodeURIComponent(prompt)}`;
   }
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [submittedCount, setSubmittedCount] = useState(0);
+  const [submittedIndexes, setSubmittedIndexes] = useState<Set<number>>(() => new Set());
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(progressKey(courseSlug, unitNumber));
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (Array.isArray(data?.submitted)) {
+        const set = new Set<number>(
+          data.submitted.filter((n: unknown) => typeof n === "number")
+        );
+        setSubmittedIndexes(set);
+        setSubmittedCount(set.size);
+        const firstUnsubmitted = [...Array(problems?.length || 0).keys()].find(
+          (i) => !set.has(i)
+        );
+        if (firstUnsubmitted !== undefined) setCurrentIndex(firstUnsubmitted);
+      }
+    } catch {}
+  }, [courseSlug, unitNumber, problems?.length]);
+
+  function markSubmitted(i: number) {
+    setSubmittedIndexes((prev) => {
+      if (prev.has(i)) return prev;
+      const next = new Set(prev);
+      next.add(i);
+      setSubmittedCount(next.size);
+      if (typeof window !== "undefined") {
+        try {
+          window.localStorage.setItem(
+            progressKey(courseSlug, unitNumber),
+            JSON.stringify({ submitted: [...next] })
+          );
+        } catch {}
+      }
+      return next;
+    });
+  }
+
   if (!problems || problems.length === 0) {
     return (
       <div className="rounded-md border border-dashed border-hair bg-offwhite p-6 text-sm text-muted">
@@ -79,44 +127,116 @@ export default function PracticeProblems({
       </div>
     );
   }
+
+  const clampedIndex = Math.max(0, Math.min(currentIndex, problems.length - 1));
+  const currentProblem = problems[clampedIndex];
+  const currentSubmitted = submittedIndexes.has(clampedIndex);
+  const target = Math.min(CREDIT_THRESHOLD, problems.length);
+  const creditEarned = submittedCount >= target;
+  const progressPct = Math.min(100, Math.round((submittedCount / target) * 100));
+
+  function goNext() {
+    const nextUnsubmitted = [...Array(problems.length).keys()].find(
+      (i) => i !== clampedIndex && !submittedIndexes.has(i)
+    );
+    if (nextUnsubmitted !== undefined) {
+      setCurrentIndex(nextUnsubmitted);
+    } else if (clampedIndex < problems.length - 1) {
+      setCurrentIndex(clampedIndex + 1);
+    }
+  }
+
+  function resetProgress() {
+    setSubmittedIndexes(new Set());
+    setSubmittedCount(0);
+    setCurrentIndex(0);
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.removeItem(progressKey(courseSlug, unitNumber));
+      } catch {}
+    }
+  }
+
   return (
     <div className="max-w-3xl space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
+            Practice · {submittedCount} of {target} for credit
+          </div>
+          <div className="mt-2 h-1.5 w-48 overflow-hidden rounded-full bg-hair">
+            <div
+              className={`h-full transition-all ${
+                creditEarned ? "bg-green-500" : "bg-orange"
+              }`}
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {submittedCount > 0 && (
+            <button
+              onClick={resetProgress}
+              className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-muted hover:border-orange"
+              title="Reset practice progress for this unit"
+            >
+              Reset
+            </button>
+          )}
+          <button
+            onClick={generateMore}
+            className="rounded-md border border-orange/40 bg-orange-tint px-3 py-1 text-xs font-medium text-orange-ink hover:border-orange"
+            title="Ask the AI tutor to generate more problems like these"
+          >
+            ✨ Generate more →
+          </button>
+        </div>
+      </div>
+
+      {creditEarned && (
+        <div className="rounded-md border border-green-300 bg-green-50 p-3 text-[13px] text-green-900">
+          ✓ Practice credit earned for this unit — great work. You can keep going
+          or move on.
+        </div>
+      )}
+
+      <ProblemCard
+        key={clampedIndex}
+        problem={currentProblem}
+        index={clampedIndex}
+        canWrongBank={canWrongBank}
+        canAiGrade={canAiGrade}
+        getIdToken={getIdToken}
+        alreadySubmitted={currentSubmitted}
+        onSubmitted={() => markSubmitted(clampedIndex)}
+        onSaveWrong={
+          canWrongBank && user
+            ? async () => {
+                await addToWrongBank(user.uid, {
+                  courseSlug,
+                  unitNumber,
+                  prompt: currentProblem.prompt,
+                  answer: currentProblem.answer,
+                  explanation: currentProblem.explanation,
+                  difficulty: currentProblem.difficulty,
+                });
+              }
+            : undefined
+        }
+      />
+
       <div className="flex items-center justify-between">
-        <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
-          Practice problems ({problems.length})
+        <div className="text-[12px] text-muted">
+          Question {clampedIndex + 1} of {problems.length}
         </div>
         <button
-          onClick={generateMore}
-          className="rounded-md border border-orange/40 bg-orange-tint px-3 py-1 text-xs font-medium text-orange-ink hover:border-orange"
-          title="Ask the AI tutor to generate more problems like these"
+          onClick={goNext}
+          disabled={!currentSubmitted || clampedIndex >= problems.length - 1}
+          className="rounded-md border border-orange bg-orange px-4 py-1.5 text-xs font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          ✨ Generate more →
+          Next question →
         </button>
       </div>
-      {problems.map((p, i) => (
-        <ProblemCard
-          key={i}
-          problem={p}
-          index={i}
-          canWrongBank={canWrongBank}
-          canAiGrade={canAiGrade}
-          getIdToken={getIdToken}
-          onSaveWrong={
-            canWrongBank && user
-              ? async () => {
-                  await addToWrongBank(user.uid, {
-                    courseSlug,
-                    unitNumber,
-                    prompt: p.prompt,
-                    answer: p.answer,
-                    explanation: p.explanation,
-                    difficulty: p.difficulty,
-                  });
-                }
-              : undefined
-          }
-        />
-      ))}
     </div>
   );
 }
@@ -134,6 +254,8 @@ function ProblemCard({
   canWrongBank,
   canAiGrade,
   getIdToken,
+  alreadySubmitted,
+  onSubmitted,
   onSaveWrong,
 }: {
   problem: PracticeProblem;
@@ -141,26 +263,21 @@ function ProblemCard({
   canWrongBank: boolean;
   canAiGrade: boolean;
   getIdToken: () => Promise<string | null>;
+  alreadySubmitted?: boolean;
+  onSubmitted?: () => void;
   onSaveWrong?: () => Promise<void>;
 }) {
   const [attempt, setAttempt] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(!!alreadySubmitted);
   const [showHint, setShowHint] = useState(false);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [showExplain, setShowExplain] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(!!alreadySubmitted);
+  const [showExplain, setShowExplain] = useState(!!alreadySubmitted);
   const [saved, setSaved] = useState(false);
   const [whiteboardOpen, setWhiteboardOpen] = useState(false);
   const [grading, setGrading] = useState(false);
   const [grade, setGrade] = useState<GradeResult | null>(null);
   const [gradeError, setGradeError] = useState<string>("");
   const attemptRef = useRef<HTMLTextAreaElement>(null);
-
-  const diffColor =
-    problem.difficulty === "easy"
-      ? "bg-green-100 text-green-800"
-      : problem.difficulty === "medium"
-      ? "bg-yellow-100 text-yellow-800"
-      : "bg-red-100 text-red-800";
 
   function insertSymbol(text: string, caretOffset?: number) {
     const ta = attemptRef.current;
@@ -193,6 +310,7 @@ function ProblemCard({
     setSubmitted(true);
     setShowAnswer(true);
     setShowExplain(true);
+    onSubmitted?.();
   }
 
   async function handleAiGrade() {
@@ -225,6 +343,9 @@ function ProblemCard({
           tokens: data.tokens,
         });
         setSubmitted(true);
+        setShowAnswer(true);
+        setShowExplain(true);
+        onSubmitted?.();
       }
     } catch (e: any) {
       setGradeError(e?.message || "Grading failed.");
@@ -247,13 +368,8 @@ function ProblemCard({
 
   return (
     <div className="rounded-lg border border-hair bg-paper p-5">
-      <div className="flex items-start justify-between">
-        <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
-          Problem {index + 1}
-        </div>
-        <span className={`rounded px-2 py-0.5 text-[10px] font-semibold uppercase ${diffColor}`}>
-          {problem.difficulty}
-        </span>
+      <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
+        Problem {index + 1}
       </div>
       <div className="mt-2 flex items-start justify-between gap-3">
         <div className="flex-1 whitespace-pre-wrap text-[15px] text-ink">
@@ -361,6 +477,7 @@ function ProblemCard({
             onClick={() => {
               setSubmitted(true);
               setShowAnswer(true);
+              onSubmitted?.();
             }}
             className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-muted hover:border-orange"
             title="Give up and reveal the answer"

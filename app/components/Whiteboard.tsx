@@ -19,6 +19,36 @@ export default function Whiteboard({
   const [tool, setTool] = useState<Tool>("pen");
   const [color, setColor] = useState<string>("#111");
   const [size, setSize] = useState<number>(2);
+  const [pos, setPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const dragStateRef = useRef<{ startX: number; startY: number; baseX: number; baseY: number } | null>(null);
+
+  function onHeaderPointerDown(e: React.PointerEvent<HTMLDivElement>) {
+    if ((e.target as HTMLElement).closest("button,input,label,select")) return;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    dragStateRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      baseX: pos.x,
+      baseY: pos.y,
+    };
+  }
+
+  function onHeaderPointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    const s = dragStateRef.current;
+    if (!s) return;
+    setPos({
+      x: s.baseX + (e.clientX - s.startX),
+      y: s.baseY + (e.clientY - s.startY),
+    });
+  }
+
+  function onHeaderPointerUp(e: React.PointerEvent<HTMLDivElement>) {
+    if (!dragStateRef.current) return;
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {}
+    dragStateRef.current = null;
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -126,11 +156,19 @@ export default function Whiteboard({
     >
       <div
         className="flex h-[80vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-hair bg-paper shadow-xl"
+        style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-hair px-4 py-2">
-          <div className="truncate text-[13px] font-medium text-ink">
-            Whiteboard{title ? ` · ${title}` : ""}
+        <div
+          className="flex cursor-move items-center justify-between border-b border-hair px-4 py-2 select-none"
+          onPointerDown={onHeaderPointerDown}
+          onPointerMove={onHeaderPointerMove}
+          onPointerUp={onHeaderPointerUp}
+          onPointerCancel={onHeaderPointerUp}
+        >
+          <div className="flex items-center gap-2 truncate text-[13px] font-medium text-ink">
+            <span aria-hidden="true" className="text-muted">⠿</span>
+            <span className="truncate">Whiteboard{title ? ` · ${title}` : ""}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 rounded-md border border-hair bg-offwhite p-0.5">
