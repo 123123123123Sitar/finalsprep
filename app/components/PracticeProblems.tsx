@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { PracticeProblem } from "@/lib/practice/types";
 import { addToWrongBank } from "@/lib/wrongBank";
 import { useAuth } from "./AuthProvider";
@@ -83,10 +83,13 @@ function ProblemCard({
   canWrongBank: boolean;
   onSaveWrong?: () => Promise<void>;
 }) {
+  const [attempt, setAttempt] = useState("");
+  const [submitted, setSubmitted] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [showExplain, setShowExplain] = useState(false);
   const [saved, setSaved] = useState(false);
+  const attemptRef = useRef<HTMLTextAreaElement>(null);
 
   const diffColor =
     problem.difficulty === "easy"
@@ -94,6 +97,49 @@ function ProblemCard({
       : problem.difficulty === "medium"
       ? "bg-yellow-100 text-yellow-800"
       : "bg-red-100 text-red-800";
+
+  function insertSymbol(text: string, caretOffset?: number) {
+    const ta = attemptRef.current;
+    if (!ta) {
+      setAttempt((a) => a + text);
+      return;
+    }
+    const start = ta.selectionStart ?? attempt.length;
+    const end = ta.selectionEnd ?? attempt.length;
+    const next = attempt.slice(0, start) + text + attempt.slice(end);
+    setAttempt(next);
+    const pos = start + (caretOffset ?? text.length);
+    requestAnimationFrame(() => {
+      ta.focus();
+      ta.setSelectionRange(pos, pos);
+    });
+  }
+
+  function normalize(s: string) {
+    return s
+      .toLowerCase()
+      .replace(/\$/g, "")
+      .replace(/\\left|\\right/g, "")
+      .replace(/[{}\\]/g, "")
+      .replace(/\s+/g, "");
+  }
+
+  function handleSubmit() {
+    if (!attempt.trim()) return;
+    setSubmitted(true);
+    setShowAnswer(true);
+    setShowExplain(true);
+  }
+
+  const isCorrect =
+    submitted && attempt.trim() !== "" && normalize(attempt) === normalize(problem.answer);
+
+  const shortcuts: { label: string; insert: string; caretOffset?: number; title: string }[] = [
+    { label: "∫", insert: "∫ ", title: "Integral" },
+    { label: "d/dx", insert: "d/dx ", title: "Derivative" },
+    { label: "x²", insert: "²", title: "Square" },
+    { label: "xⁿ", insert: "^", title: "Power" },
+  ];
 
   return (
     <div className="rounded-lg border border-hair bg-paper p-5">
@@ -108,7 +154,50 @@ function ProblemCard({
       <div className="mt-2 whitespace-pre-wrap text-[15px] text-ink">
         <MathRender auto>{problem.prompt}</MathRender>
       </div>
+
+      <div className="mt-4 rounded-md border border-hair bg-offwhite p-3">
+        <label className="mb-2 block text-[11px] font-medium uppercase tracking-wider text-muted">
+          Your answer
+        </label>
+        <textarea
+          ref={attemptRef}
+          value={attempt}
+          onChange={(e) => setAttempt(e.target.value)}
+          onKeyDown={(e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+              e.preventDefault();
+              handleSubmit();
+            }
+          }}
+          disabled={submitted}
+          rows={3}
+          placeholder="Work out your solution here…"
+          className="w-full resize-y rounded-md border border-hair bg-paper px-3 py-2 text-[14px] text-ink focus:border-orange focus:outline-none disabled:opacity-60"
+        />
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {shortcuts.map((s) => (
+            <button
+              key={s.label}
+              type="button"
+              onClick={() => insertSymbol(s.insert, s.caretOffset)}
+              disabled={submitted}
+              title={s.title}
+              className="rounded-md border border-hair bg-paper px-2.5 py-1 font-mono text-[13px] text-ink hover:border-orange disabled:opacity-50"
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          onClick={handleSubmit}
+          disabled={submitted || !attempt.trim()}
+          className="rounded-md border border-orange bg-orange px-3 py-1 text-xs font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {submitted ? "Submitted" : "Submit"}
+        </button>
         {problem.hint && (
           <button
             onClick={() => setShowHint((x) => !x)}
@@ -117,18 +206,34 @@ function ProblemCard({
             {showHint ? "Hide hint" : "Hint"}
           </button>
         )}
-        <button
-          onClick={() => setShowAnswer((x) => !x)}
-          className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-ink hover:border-orange"
-        >
-          {showAnswer ? "Hide answer" : "Answer"}
-        </button>
-        <button
-          onClick={() => setShowExplain((x) => !x)}
-          className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-ink hover:border-orange"
-        >
-          {showExplain ? "Hide solution" : "Solution"}
-        </button>
+        {submitted && (
+          <>
+            <button
+              onClick={() => setShowAnswer((x) => !x)}
+              className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-ink hover:border-orange"
+            >
+              {showAnswer ? "Hide answer" : "Answer"}
+            </button>
+            <button
+              onClick={() => setShowExplain((x) => !x)}
+              className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-ink hover:border-orange"
+            >
+              {showExplain ? "Hide solution" : "Solution"}
+            </button>
+          </>
+        )}
+        {!submitted && (
+          <button
+            onClick={() => {
+              setSubmitted(true);
+              setShowAnswer(true);
+            }}
+            className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-muted hover:border-orange"
+            title="Give up and reveal the answer"
+          >
+            Show answer
+          </button>
+        )}
         {canWrongBank && onSaveWrong && (
           <button
             onClick={async () => {
@@ -147,6 +252,21 @@ function ProblemCard({
           </button>
         )}
       </div>
+
+      {submitted && attempt.trim() && (
+        <div
+          className={`mt-3 rounded-md border p-3 text-[13px] ${
+            isCorrect
+              ? "border-green-300 bg-green-50 text-green-800"
+              : "border-amber-300 bg-amber-50 text-amber-800"
+          }`}
+        >
+          {isCorrect
+            ? "✓ Looks right — nice work. Compare with the walkthrough below."
+            : "Not an exact match. Check the answer and walkthrough below — you may still be right in a different form."}
+        </div>
+      )}
+
       {showHint && problem.hint && (
         <div className="mt-3 rounded-md border border-orange/30 bg-orange-tint p-3 text-[13px] text-orange-ink">
           <strong className="font-semibold">Hint: </strong>

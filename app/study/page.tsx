@@ -321,6 +321,9 @@ export default function Study() {
     setViewExamGuide(false);
     setExplanation("");
     setError("");
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
 
   function selectUnit(n: number) {
