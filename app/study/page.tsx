@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
   doc,
   onSnapshot,
@@ -314,6 +314,31 @@ export default function Study() {
     { key: "solver", label: "Solver", show: true },
   ];
 
+  const [lessonSelectTick, setLessonSelectTick] = useState(0);
+
+  useLayoutEffect(() => {
+    if (lessonSelectTick === 0 || typeof window === "undefined") return;
+    const html = document.documentElement;
+    const prev = html.style.scrollBehavior;
+    html.style.scrollBehavior = "auto";
+    const jump = () => {
+      window.scrollTo(0, 0);
+      html.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    jump();
+    const raf = requestAnimationFrame(() => {
+      jump();
+      html.style.scrollBehavior = prev;
+    });
+    const timer = setTimeout(jump, 80);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer);
+      html.style.scrollBehavior = prev;
+    };
+  }, [lessonSelectTick]);
+
   function selectLesson(l: Lesson) {
     setSelectedLesson(l);
     const m = l.courses.find((c) => c.courseSlug === courseSlug);
@@ -323,15 +348,7 @@ export default function Study() {
     setViewExamGuide(false);
     setExplanation("");
     setError("");
-    if (typeof window === "undefined") return;
-    const jumpTop = () => {
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
-    jumpTop();
-    requestAnimationFrame(jumpTop);
-    setTimeout(jumpTop, 0);
+    setLessonSelectTick((n) => n + 1);
   }
 
   function selectUnit(n: number) {
