@@ -209,6 +209,8 @@ export default function Study() {
   // course from last session.
   const [view, setView] = useState<"home" | "course">("home");
 
+  const mainPanelRef = useRef<HTMLDivElement>(null);
+
   // Progress tracking — subscribes to the user's `completedSlugs` field so
   // course progress only advances after the user explicitly marks a lesson
   // complete, not just when they open it.
@@ -321,9 +323,15 @@ export default function Study() {
     setViewExamGuide(false);
     setExplanation("");
     setError("");
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    if (typeof window === "undefined") return;
+    requestAnimationFrame(() => {
+      const el = mainPanelRef.current;
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
   }
 
   function selectUnit(n: number) {
@@ -711,7 +719,7 @@ export default function Study() {
           </aside>
 
           {/* Main panel */}
-          <div>
+          <div ref={mainPanelRef} className="scroll-mt-4">
             {viewExamGuide && curriculum ? (
               <ExamGuideView curriculum={curriculum} />
             ) : !curriculumUnit && !selectedLesson ? (

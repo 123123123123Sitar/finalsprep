@@ -1,7 +1,7 @@
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { normalizePlanTier, type PlanTier } from "@/lib/plans";
 
-type AiHistoryKind = "chat" | "explain";
+type AiHistoryKind = "chat" | "explain" | "grade";
 type AiHistorySource = "ai" | "curated";
 
 export async function recordAiHistory({

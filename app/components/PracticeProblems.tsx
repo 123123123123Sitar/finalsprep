@@ -4,6 +4,7 @@ import type { PracticeProblem } from "@/lib/practice/types";
 import { addToWrongBank } from "@/lib/wrongBank";
 import { useAuth } from "./AuthProvider";
 import MathRender from "./Math";
+import Whiteboard from "./Whiteboard";
 
 function stripUnmatched(s: string, open: string, close: string): string {
   const toRemove = new Set<number>();
@@ -61,8 +62,9 @@ export default function PracticeProblems({
   unitNumber: number;
   courseTitle?: string;
 }) {
-  const { user, plan } = useAuth();
+  const { user, plan, getIdToken } = useAuth();
   const canWrongBank = !!user && plan !== "learner";
+  const canAiGrade = plan === "hacker";
 
   function generateMore() {
     const subject = courseTitle || courseSlug;
@@ -97,6 +99,8 @@ export default function PracticeProblems({
           problem={p}
           index={i}
           canWrongBank={canWrongBank}
+          canAiGrade={canAiGrade}
+          getIdToken={getIdToken}
           onSaveWrong={
             canWrongBank && user
               ? async () => {
@@ -117,15 +121,26 @@ export default function PracticeProblems({
   );
 }
 
+type GradeResult = {
+  verdict: "correct" | "partial" | "incorrect";
+  score: number;
+  feedback: string;
+  tokens?: number;
+};
+
 function ProblemCard({
   problem,
   index,
   canWrongBank,
+  canAiGrade,
+  getIdToken,
   onSaveWrong,
 }: {
   problem: PracticeProblem;
   index: number;
   canWrongBank: boolean;
+  canAiGrade: boolean;
+  getIdToken: () => Promise<string | null>;
   onSaveWrong?: () => Promise<void>;
 }) {
   const [attempt, setAttempt] = useState("");
@@ -134,6 +149,10 @@ function ProblemCard({
   const [showAnswer, setShowAnswer] = useState(false);
   const [showExplain, setShowExplain] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [whiteboardOpen, setWhiteboardOpen] = useState(false);
+  const [grading, setGrading] = useState(false);
+  const [grade, setGrade] = useState<GradeResult | null>(null);
+  const [gradeError, setGradeError] = useState<string>("");
   const attemptRef = useRef<HTMLTextAreaElement>(null);
 
   const diffColor =
@@ -176,6 +195,44 @@ function ProblemCard({
     setShowExplain(true);
   }
 
+  async function handleAiGrade() {
+    if (!attempt.trim() || grading) return;
+    setGradeError("");
+    setGrading(true);
+    try {
+      const token = await getIdToken();
+      const res = await fetch("/api/grade", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          problem: problem.prompt,
+          attempt,
+          answer: problem.answer,
+          explanation: problem.explanation,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setGradeError(data?.message || data?.error || "Grading failed.");
+      } else {
+        setGrade({
+          verdict: data.verdict,
+          score: data.score,
+          feedback: data.feedback,
+          tokens: data.tokens,
+        });
+        setSubmitted(true);
+      }
+    } catch (e: any) {
+      setGradeError(e?.message || "Grading failed.");
+    } finally {
+      setGrading(false);
+    }
+  }
+
   const isCorrect =
     submitted && attempt.trim() !== "" && normalize(attempt) === normalize(problem.answer);
 
@@ -198,8 +255,18 @@ function ProblemCard({
           {problem.difficulty}
         </span>
       </div>
-      <div className="mt-2 whitespace-pre-wrap text-[15px] text-ink">
-        <MathRender auto>{problem.prompt}</MathRender>
+      <div className="mt-2 flex items-start justify-between gap-3">
+        <div className="flex-1 whitespace-pre-wrap text-[15px] text-ink">
+          <MathRender auto>{problem.prompt}</MathRender>
+        </div>
+        <button
+          type="button"
+          onClick={() => setWhiteboardOpen(true)}
+          className="shrink-0 rounded-md border border-hair bg-offwhite px-2.5 py-1 text-xs text-ink hover:border-orange"
+          title="Open a whiteboard to work this out"
+        >
+          ✎ Whiteboard
+        </button>
       </div>
 
       <div className="mt-4 rounded-md border border-hair bg-offwhite p-3">
@@ -255,6 +322,16 @@ function ProblemCard({
         >
           {submitted ? "Submitted" : "Submit"}
         </button>
+        {canAiGrade && (
+          <button
+            onClick={handleAiGrade}
+            disabled={!attempt.trim() || grading}
+            className="rounded-md border border-purple-400 bg-purple-50 px-3 py-1 text-xs font-medium text-purple-800 hover:border-purple-600 disabled:cursor-not-allowed disabled:opacity-50"
+            title="Have the AI grade your full solution (spends tokens)"
+          >
+            {grading ? "Grading…" : "✨ AI grade (tokens)"}
+          </button>
+        )}
         {problem.hint && (
           <button
             onClick={() => setShowHint((x) => !x)}
@@ -310,7 +387,7 @@ function ProblemCard({
         )}
       </div>
 
-      {submitted && attempt.trim() && (
+      {submitted && attempt.trim() && !grade && (
         <div
           className={`mt-3 rounded-md border p-3 text-[13px] ${
             isCorrect
@@ -321,6 +398,38 @@ function ProblemCard({
           {isCorrect
             ? "✓ Looks right — nice work. Compare with the walkthrough below."
             : "Not an exact match. Check the answer and walkthrough below — you may still be right in a different form."}
+        </div>
+      )}
+
+      {grade && (
+        <div
+          className={`mt-3 rounded-md border p-3 text-[13px] ${
+            grade.verdict === "correct"
+              ? "border-green-300 bg-green-50 text-green-900"
+              : grade.verdict === "partial"
+              ? "border-amber-300 bg-amber-50 text-amber-900"
+              : "border-red-300 bg-red-50 text-red-900"
+          }`}
+        >
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <strong className="font-semibold uppercase tracking-wider text-[11px]">
+              AI grade · {grade.verdict} ({Math.round(grade.score * 100)}%)
+            </strong>
+            {typeof grade.tokens === "number" && (
+              <span className="text-[11px] opacity-70">
+                {grade.tokens} tokens
+              </span>
+            )}
+          </div>
+          <div className="whitespace-pre-wrap">
+            <MathRender auto>{grade.feedback}</MathRender>
+          </div>
+        </div>
+      )}
+
+      {gradeError && (
+        <div className="mt-3 rounded-md border border-red-300 bg-red-50 p-3 text-[13px] text-red-800">
+          {gradeError}
         </div>
       )}
 
@@ -346,6 +455,12 @@ function ProblemCard({
           </div>
         </div>
       )}
+
+      <Whiteboard
+        open={whiteboardOpen}
+        onClose={() => setWhiteboardOpen(false)}
+        title={`Problem ${index + 1}`}
+      />
     </div>
   );
 }
