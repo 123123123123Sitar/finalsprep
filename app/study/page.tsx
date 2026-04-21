@@ -314,10 +314,13 @@ export default function Study() {
     { key: "solver", label: "Solver", show: true },
   ];
 
-  const [lessonSelectTick, setLessonSelectTick] = useState(0);
+  const [scrollTopTick, setScrollTopTick] = useState(0);
+  const triggerScrollTop = useCallback(() => {
+    setScrollTopTick((n) => n + 1);
+  }, []);
 
   useLayoutEffect(() => {
-    if (lessonSelectTick === 0 || typeof window === "undefined") return;
+    if (scrollTopTick === 0 || typeof window === "undefined") return;
     const html = document.documentElement;
     const prev = html.style.scrollBehavior;
     html.style.scrollBehavior = "auto";
@@ -337,7 +340,7 @@ export default function Study() {
       clearTimeout(timer);
       html.style.scrollBehavior = prev;
     };
-  }, [lessonSelectTick]);
+  }, [scrollTopTick]);
 
   function selectLesson(l: Lesson) {
     setSelectedLesson(l);
@@ -348,7 +351,7 @@ export default function Study() {
     setViewExamGuide(false);
     setExplanation("");
     setError("");
-    setLessonSelectTick((n) => n + 1);
+    triggerScrollTop();
   }
 
   function selectUnit(n: number) {
@@ -365,6 +368,7 @@ export default function Study() {
     setTab("curriculum");
     setViewedCedTopic(topicId);
     setViewExamGuide(false);
+    triggerScrollTop();
   }
 
   function selectExamGuide() {
@@ -372,6 +376,7 @@ export default function Study() {
     setViewedCedTopic(null);
     setTab("curriculum");
     setViewExamGuide(true);
+    triggerScrollTop();
   }
 
   function openCourse(slug: CourseSlug) {
@@ -795,6 +800,7 @@ export default function Study() {
                         onClick={() => {
                           setTab(t.key);
                           setViewedCedTopic(null);
+                          triggerScrollTop();
                         }}
                         className={`relative -mb-px border-b-2 px-0 py-3 text-sm font-medium transition-colors ${
                           tab === t.key
@@ -886,7 +892,10 @@ export default function Study() {
                           lessonTitle={activeGroup.title}
                           topics={activeGroup.topics}
                           activeTopicId={viewedCedTopic}
-                          onSelectTopic={(id) => setViewedCedTopic(id)}
+                          onSelectTopic={(id) => {
+                            setViewedCedTopic(id);
+                            triggerScrollTop();
+                          }}
                           completedTopicIds={completedTopicIds}
                           togglingTopicId={togglingCedTopicId}
                           onToggleTopicComplete={
@@ -908,12 +917,18 @@ export default function Study() {
                           title={activeTopic?.title ?? activeGroup.title}
                           onPrevLesson={
                             prevTopic
-                              ? () => setViewedCedTopic(prevTopic.id)
+                              ? () => {
+                                  setViewedCedTopic(prevTopic.id);
+                                  triggerScrollTop();
+                                }
                               : undefined
                           }
                           onNextLesson={
                             nextTopic
-                              ? () => setViewedCedTopic(nextTopic.id)
+                              ? () => {
+                                  setViewedCedTopic(nextTopic.id);
+                                  triggerScrollTop();
+                                }
                               : undefined
                           }
                         >
