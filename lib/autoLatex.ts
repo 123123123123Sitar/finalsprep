@@ -98,8 +98,8 @@ export function autoLatex(text: string): string {
   t = t.replace(
     new RegExp(
       `\\b(${MATH_FNS})` +
-        `(?:\\^(\\([^()]+\\)|-?[A-Za-z0-9]+))?` +
-        `(?:_(\\([^()]+\\)|-?[A-Za-z0-9]+))?` +
+        `(?:\\^(\\([^()]+\\)|-?[A-Za-z0-9]*\\.?[A-Za-z0-9]+))?` +
+        `(?:_(\\([^()]+\\)|-?[A-Za-z0-9]*\\.?[A-Za-z0-9]+))?` +
         `\\(([^()]*(?:\\([^()]*\\)[^()]*)*)\\)`,
       "g"
     ),
@@ -130,15 +130,16 @@ export function autoLatex(text: string): string {
   );
 
   // 4. (expr)^exp -> $(expr)^{exp}$, expr^exp -> $expr^{exp}$
+  //    Exp allows optional decimal (e.g. 2^3.5, 2^-3.5, 2^(t/3)).
   t = t.replace(
-    /(\([^()]+\)|[A-Za-z0-9]+)\^(\([^()]+\)|-?[A-Za-z0-9]+)/g,
+    /(\([^()]+\)|[A-Za-z0-9]+)\^(\([^()]+\)|-?[A-Za-z0-9]*\.?[A-Za-z0-9]+)/g,
     (_m, base: string, exp: string) => {
       const expInner = exp.startsWith("(") ? exp.slice(1, -1) : exp;
       return `$${base}^{${expInner}}$`;
     }
   );
 
-  // 5. Subscripts x_1, a_n -> $x_{1}$
+  // 5. Subscripts x_1, a_n, v_0 -> $x_{1}$
   t = t.replace(/([A-Za-z])_([A-Za-z0-9]+)/g, (_m, base: string, sub: string) => {
     return `$${base}_{${sub}}$`;
   });
@@ -214,7 +215,7 @@ function innerToLatex(s: string): string {
 
   // Exponents (no $ wrap — already inside math)
   inner = inner.replace(
-    /(\([^()]+\)|[A-Za-z0-9]+)\^(\([^()]+\)|-?[A-Za-z0-9]+)/g,
+    /(\([^()]+\)|[A-Za-z0-9]+)\^(\([^()]+\)|-?[A-Za-z0-9]*\.?[A-Za-z0-9]+)/g,
     (_m, base: string, exp: string) => {
       const expInner = exp.startsWith("(") ? exp.slice(1, -1) : exp;
       return `${base}^{${expInner}}`;
