@@ -324,14 +324,14 @@ export default function Study() {
     setExplanation("");
     setError("");
     if (typeof window === "undefined") return;
-    requestAnimationFrame(() => {
-      const el = mainPanelRef.current;
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    });
+    const jumpTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+    jumpTop();
+    requestAnimationFrame(jumpTop);
+    setTimeout(jumpTop, 0);
   }
 
   function selectUnit(n: number) {
