@@ -165,6 +165,8 @@ export default function Study() {
     const params = new URLSearchParams(window.location.search);
     const courseParam = params.get("course") as CourseSlug | null;
     const lessonParam = params.get("lesson");
+    const unitParam = params.get("unit");
+    const topicParam = params.get("topic");
     const courseIsAdded =
       !!courseParam && addedCourses.some((c) => c.slug === courseParam);
     if (courseIsAdded && courseParam) {
@@ -183,6 +185,14 @@ export default function Study() {
         setView("course");
         setViewExamGuide(false);
       }
+    } else if (unitParam && courseIsAdded) {
+      const unitNum = parseInt(unitParam, 10);
+      if (!isNaN(unitNum)) {
+        setSelectedUnit(unitNum);
+        setViewExamGuide(false);
+        setTab("curriculum");
+        if (topicParam) setViewedCedTopic(topicParam);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coursesLoading, addedCourses]);
@@ -196,6 +206,7 @@ export default function Study() {
     // the user's manual tab clicks within a unit.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseSlug, selectedUnit]);
+
   const [problem, setProblem] = useState("");
   const [explanation, setExplanation] = useState("");
   const [source, setSource] = useState<"curated" | "ai" | null>(null);
@@ -208,6 +219,36 @@ export default function Study() {
   // Starts on home so users always land on the overview, not a half-remembered
   // course from last session.
   const [view, setView] = useState<"home" | "course">("home");
+
+  // Sync URL with current course/unit/lesson selection so each has a
+  // bookmarkable route. Uses replaceState so we don't pollute history.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!deepLinkHandled) return;
+    const params = new URLSearchParams();
+    if (view === "course") {
+      params.set("course", courseSlug);
+      if (selectedLesson) {
+        params.set("lesson", selectedLesson.slug);
+      } else if (!viewExamGuide) {
+        params.set("unit", String(selectedUnit));
+        if (viewedCedTopic) params.set("topic", viewedCedTopic);
+      }
+    }
+    const qs = params.toString();
+    const newUrl = qs ? `/study?${qs}` : "/study";
+    if (window.location.pathname + window.location.search !== newUrl) {
+      window.history.replaceState(null, "", newUrl);
+    }
+  }, [
+    view,
+    courseSlug,
+    selectedUnit,
+    selectedLesson,
+    viewExamGuide,
+    viewedCedTopic,
+    deepLinkHandled,
+  ]);
 
   const mainPanelRef = useRef<HTMLDivElement>(null);
 
@@ -653,46 +694,48 @@ export default function Study() {
                                     </span>
                                   )}
                                 </button>
-                                <ul className="mt-0.5 space-y-0 border-l border-hair pl-3 ml-[3px]">
-                                  {g.topics.map((t) => {
-                                    const isTopicActive =
-                                      viewedCedTopic === t.id &&
-                                      selectedUnit === unit.number;
-                                    const topicDone =
-                                      completedSlugsAll.has(
-                                        cedTopicSlug(courseSlug, t.id)
-                                      );
-                                    return (
-                                      <li key={t.id}>
-                                        <button
-                                          onClick={() =>
-                                            selectTopic(
-                                              unit.number,
-                                              t.id
-                                            )
-                                          }
-                                          className={`flex w-full items-start gap-2 py-0.5 text-left text-[12px] leading-snug transition-colors ${
-                                            isTopicActive
-                                              ? "font-medium text-orange"
-                                              : "text-muted hover:text-ink"
-                                          }`}
-                                        >
-                                          <span className="shrink-0 font-mono text-[11px] text-dim">
-                                            {t.id}
-                                          </span>
-                                          <span className="flex-1">
-                                            {t.title}
-                                          </span>
-                                          {topicDone && (
-                                            <span className="shrink-0 text-[10px] text-green-700">
-                                              ✓
+                                {selectedUnit === unit.number && (
+                                  <ul className="mt-0.5 space-y-0 border-l border-hair pl-3 ml-[3px]">
+                                    {g.topics.map((t) => {
+                                      const isTopicActive =
+                                        viewedCedTopic === t.id &&
+                                        selectedUnit === unit.number;
+                                      const topicDone =
+                                        completedSlugsAll.has(
+                                          cedTopicSlug(courseSlug, t.id)
+                                        );
+                                      return (
+                                        <li key={t.id}>
+                                          <button
+                                            onClick={() =>
+                                              selectTopic(
+                                                unit.number,
+                                                t.id
+                                              )
+                                            }
+                                            className={`flex w-full items-start gap-2 py-0.5 text-left text-[12px] leading-snug transition-colors ${
+                                              isTopicActive
+                                                ? "font-medium text-orange"
+                                                : "text-muted hover:text-ink"
+                                            }`}
+                                          >
+                                            <span className="shrink-0 font-mono text-[11px] text-dim">
+                                              {t.id}
                                             </span>
-                                          )}
-                                        </button>
-                                      </li>
-                                    );
-                                  })}
-                                </ul>
+                                            <span className="flex-1">
+                                              {t.title}
+                                            </span>
+                                            {topicDone && (
+                                              <span className="shrink-0 text-[10px] text-green-700">
+                                                ✓
+                                              </span>
+                                            )}
+                                          </button>
+                                        </li>
+                                      );
+                                    })}
+                                  </ul>
+                                )}
                               </li>
                             );
                           })}
@@ -1106,7 +1149,7 @@ function ToolsPanel({
       </div>
       {tools.map((tool, i) => {
         if (tool.type === "graph2d") {
-          return <DesmosCalculator key={i} initialExprs={tool.initial} />;
+          return <DesmosCalculator key={i} initialExprs={tool.initial ?? []} />;
         }
         if (tool.type === "graph3d") {
           return <Graph3D key={i} initialExpr={tool.initial} />;
