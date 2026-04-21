@@ -83,9 +83,24 @@ export default function PracticeProblems({
   const canAiGrade = plan === "hacker";
 
   function generateMore() {
-    const subject = courseTitle || courseSlug;
-    const prompt = `Generate 4 new AP-style practice problems for ${subject}, unit ${unitNumber}, in this format for each one:\n- difficulty: easy/medium/hard\n- prompt\n- hint\n- answer\n- 3-5 sentence explanation\n\nMake them distinct from standard textbook examples. Match the difficulty mix: easy, medium, medium, hard.`;
-    window.location.href = `/chat?q=${encodeURIComponent(prompt)}`;
+    const q = new URLSearchParams({
+      courseSlug,
+      courseTitle: courseTitle ?? "",
+      unitNumber: String(unitNumber),
+      count: "4",
+    });
+    window.location.href = `/practice/generated?${q.toString()}`;
+  }
+
+  function openSimilar(problem: PracticeProblem) {
+    const q = new URLSearchParams({
+      courseSlug,
+      courseTitle: courseTitle ?? "",
+      unitNumber: String(unitNumber),
+      count: "1",
+      similarTo: problem.prompt,
+    });
+    window.location.href = `/practice/generated?${q.toString()}`;
   }
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -156,6 +171,12 @@ export default function PracticeProblems({
     }
   }
 
+  function skipCurrent() {
+    if (clampedIndex < problems.length - 1) {
+      setCurrentIndex(clampedIndex + 1);
+    }
+  }
+
   function resetProgress() {
     setSubmittedIndexes(new Set());
     setSubmittedCount(0);
@@ -220,6 +241,9 @@ export default function PracticeProblems({
         canAiGrade={canAiGrade}
         getIdToken={getIdToken}
         alreadySubmitted={currentSubmitted}
+        canSkip={clampedIndex < problems.length - 1}
+        onSkip={skipCurrent}
+        onSimilar={() => openSimilar(currentProblem)}
         onSubmitted={() => markSubmitted(clampedIndex)}
         onSaveWrong={
           canWrongBank && user
@@ -269,6 +293,9 @@ function ProblemCard({
   canAiGrade,
   getIdToken,
   alreadySubmitted,
+  canSkip,
+  onSkip,
+  onSimilar,
   onSubmitted,
   onSaveWrong,
 }: {
@@ -280,6 +307,9 @@ function ProblemCard({
   canAiGrade: boolean;
   getIdToken: () => Promise<string | null>;
   alreadySubmitted?: boolean;
+  canSkip?: boolean;
+  onSkip?: () => void;
+  onSimilar?: () => void;
   onSubmitted?: () => void;
   onSaveWrong?: () => Promise<void>;
 }) {
@@ -290,6 +320,7 @@ function ProblemCard({
   const [showExplain, setShowExplain] = useState(!!alreadySubmitted);
   const [saved, setSaved] = useState(false);
   const [whiteboardOpen, setWhiteboardOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [grading, setGrading] = useState(false);
   const [grade, setGrade] = useState<GradeResult | null>(null);
   const [gradeError, setGradeError] = useState<string>("");
@@ -407,14 +438,50 @@ function ProblemCard({
         <div className="flex-1 whitespace-pre-wrap text-[15px] text-ink">
           <MathRender auto>{problem.prompt}</MathRender>
         </div>
-        <button
-          type="button"
-          onClick={() => setWhiteboardOpen(true)}
-          className="shrink-0 rounded-md border border-hair bg-offwhite px-2.5 py-1 text-xs text-ink hover:border-orange"
-          title="Open a whiteboard to work this out"
-        >
-          ✎ Whiteboard
-        </button>
+        <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
+          <button
+            type="button"
+            onClick={() => setWhiteboardOpen(true)}
+            className="rounded-md border border-hair bg-offwhite px-2.5 py-1 text-xs text-ink hover:border-orange"
+            title="Open a whiteboard to work this out"
+          >
+            ✎ Whiteboard
+          </button>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(problem.prompt);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1500);
+              } catch {}
+            }}
+            className="rounded-md border border-hair bg-offwhite px-2.5 py-1 text-xs text-ink hover:border-orange"
+            title="Copy the problem text"
+          >
+            {copied ? "✓ Copied" : "⎘ Copy"}
+          </button>
+          {onSimilar && (
+            <button
+              type="button"
+              onClick={onSimilar}
+              className="rounded-md border border-hair bg-offwhite px-2.5 py-1 text-xs text-ink hover:border-orange"
+              title="Generate a fresh problem like this one"
+            >
+              ✨ Similar
+            </button>
+          )}
+          {onSkip && canSkip && (
+            <button
+              type="button"
+              onClick={onSkip}
+              className="rounded-md border border-hair bg-offwhite px-2.5 py-1 text-xs text-muted hover:border-orange"
+              title="Skip to the next question without credit"
+            >
+              ⟶ Skip
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="mt-4 rounded-md border border-hair bg-offwhite p-3">
