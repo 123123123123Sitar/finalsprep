@@ -54,6 +54,16 @@ function buildPreview(raw: string): string {
     .replace(/θ/g, "\\theta ");
   out = out.replace(/\$/g, "");
   out = out.replace(/\s+/g, " ").trim();
+  // Wrap word-like runs (3+ letters not following a backslash) in \text{}
+  // so prose renders upright with proper spacing instead of being treated
+  // as concatenated math variables. LaTeX commands (\int, \sqrt, \pi, …)
+  // are skipped because the char before their letters is a backslash.
+  out = out.replace(
+    /(^|[^\\a-zA-Z])([a-zA-Z]{3,})/g,
+    (_m, pre: string, word: string) => `${pre}\\text{${word}}`
+  );
+  // Preserve remaining bare spaces inside math mode with a backslash-space.
+  out = out.replace(/ /g, "\\ ");
   return `$${out}$`;
 }
 
