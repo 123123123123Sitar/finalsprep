@@ -15,7 +15,11 @@ import { getAdminDb } from "@/lib/firebaseAdmin";
 import { LIMITS, type Tier } from "./rateLimit";
 
 type Entry = { t: number; tokens: number };
-type RateLimitDoc = { entries?: Entry[]; updatedAt?: number };
+type RateLimitDoc = {
+  entries?: Entry[];
+  weeklyEntries?: Entry[];
+  updatedAt?: number;
+};
 
 function docRef(uid: string) {
   const db = getAdminDb();
@@ -28,10 +32,24 @@ function trim(entries: Entry[], at: number): Entry[] {
   return entries.filter((e) => typeof e?.t === "number" && e.t >= cutoff);
 }
 
+function trimWeekly(entries: Entry[], at: number): Entry[] {
+  const cutoff = at - LIMITS.WEEKLY_WINDOW_MS;
+  return entries.filter((e) => typeof e?.t === "number" && e.t >= cutoff);
+}
+
 function resetMinutesFor(entries: Entry[], at: number): number {
   if (entries.length === 0) return 0;
   const oldest = entries[0].t;
   return Math.max(1, Math.ceil((oldest + LIMITS.WINDOW_MS - at) / 60000));
+}
+
+function weeklyResetMinutesFor(entries: Entry[], at: number): number {
+  if (entries.length === 0) return 0;
+  const oldest = entries[0].t;
+  return Math.max(
+    1,
+    Math.ceil((oldest + LIMITS.WEEKLY_WINDOW_MS - at) / 60000)
+  );
 }
 
 export type PersistedUsage = {
@@ -40,6 +58,10 @@ export type PersistedUsage = {
   messagesUsed: number;
   messagesRemaining: number;
   resetMinutes: number;
+  /** Hidden weekly-window counters (not surfaced in the UI). */
+  weeklyTokensUsed: number;
+  weeklyTokensRemaining: number;
+  weeklyResetMinutes: number;
 };
 
 function emptyUsage(tier: Tier): PersistedUsage {
@@ -50,6 +72,9 @@ function emptyUsage(tier: Tier): PersistedUsage {
     messagesUsed: 0,
     messagesRemaining: caps.messages,
     resetMinutes: 0,
+    weeklyTokensUsed: 0,
+    weeklyTokensRemaining: caps.weeklyTokens,
+    weeklyResetMinutes: 0,
   };
 }
 
@@ -66,7 +91,15 @@ export async function peekUsage(
     const data = snap.data() as RateLimitDoc | undefined;
     const at = Date.now();
     const entries = trim(data?.entries ?? [], at);
+    const weeklyEntries = trimWeekly(
+      data?.weeklyEntries ?? data?.entries ?? [],
+      at
+    );
     const tokensUsed = entries.reduce((s, e) => s + (e.tokens || 0), 0);
+    const weeklyTokensUsed = weeklyEntries.reduce(
+      (s, e) => s + (e.tokens || 0),
+      0
+    );
     const caps = LIMITS[tier];
     return {
       tokensUsed,
@@ -74,6 +107,12 @@ export async function peekUsage(
       messagesUsed: entries.length,
       messagesRemaining: Math.max(0, caps.messages - entries.length),
       resetMinutes: resetMinutesFor(entries, at),
+      weeklyTokensUsed,
+      weeklyTokensRemaining: Math.max(
+        0,
+        caps.weeklyTokens - weeklyTokensUsed
+      ),
+      weeklyResetMinutes: weeklyResetMinutesFor(weeklyEntries, at),
     };
   } catch {
     return emptyUsage(tier);
@@ -96,8 +135,18 @@ export async function recordUsage(uid: string, tokens: number): Promise<void> {
         | undefined;
       const at = Date.now();
       const entries = trim(data?.entries ?? [], at);
-      entries.push({ t: at, tokens: Math.round(tokens) });
-      tx.set(ref, { entries, updatedAt: at }, { merge: true });
+      const weeklyEntries = trimWeekly(
+        data?.weeklyEntries ?? data?.entries ?? [],
+        at
+      );
+      const entry = { t: at, tokens: Math.round(tokens) };
+      entries.push(entry);
+      weeklyEntries.push(entry);
+      tx.set(
+        ref,
+        { entries, weeklyEntries, updatedAt: at },
+        { merge: true }
+      );
     });
   } catch (e) {
     console.error("[rateLimitStore] record failed", e);
@@ -136,6 +185,17 @@ export async function reserveUsage(
       tier,
       reason: "tokens",
       message: `You've used your daily tokens. Resets in ~${p.resetMinutes} min.`,
+      ...p,
+    };
+  }
+  // Hidden weekly cap (5x daily per tier). Surfaced as the same "tokens"
+  // error string so the UI never distinguishes it from the daily cap.
+  if (p.weeklyTokensRemaining < LIMITS.RESERVE_MIN_TOKENS) {
+    return {
+      ok: false,
+      tier,
+      reason: "tokens",
+      message: `You've used your tokens. Resets in ~${p.weeklyResetMinutes} min.`,
       ...p,
     };
   }

@@ -25,8 +25,10 @@
 export type Tier = "learner" | "pro" | "hacker";
 
 export const LIMITS = {
-  /** 24-hour sliding window. */
+  /** 24-hour sliding window (visible daily cap). */
   WINDOW_MS: 24 * 60 * 60 * 1000,
+  /** 7-day sliding window — hidden secondary cap, 5x daily per tier. */
+  WEEKLY_WINDOW_MS: 7 * 24 * 60 * 60 * 1000,
   MAX_INPUT_CHARS: 1200,
   MAX_HISTORY: 20,
   /** Minimum tokens we need in the budget before we even attempt a call. */
@@ -34,14 +36,17 @@ export const LIMITS = {
 
   learner: {
     tokens: 10_000,
+    weeklyTokens: 50_000,
     messages: 40,
   },
   pro: {
     tokens: 20_000,
+    weeklyTokens: 100_000,
     messages: 80,
   },
   hacker: {
     tokens: 80_000,
+    weeklyTokens: 400_000,
     messages: 250,
   },
 } as const;
@@ -49,6 +54,7 @@ export const LIMITS = {
 type Entry = { t: number; tokens: number };
 
 const buckets = new Map<string, Entry[]>();
+const weeklyBuckets = new Map<string, Entry[]>();
 
 function now(): number {
   return Date.now();
@@ -59,10 +65,27 @@ function trimWindow(list: Entry[], at: number): Entry[] {
   return list.filter((e) => e.t >= cutoff);
 }
 
+function trimWeekly(list: Entry[], at: number): Entry[] {
+  const cutoff = at - LIMITS.WEEKLY_WINDOW_MS;
+  return list.filter((e) => e.t >= cutoff);
+}
+
 function getList(key: string, at: number): Entry[] {
   const list = trimWindow(buckets.get(key) || [], at);
   buckets.set(key, list);
   return list;
+}
+
+function getWeeklyList(key: string, at: number): Entry[] {
+  const list = trimWeekly(weeklyBuckets.get(key) || [], at);
+  weeklyBuckets.set(key, list);
+  return list;
+}
+
+function weeklyResetInMinutes(list: Entry[], at: number): number {
+  if (list.length === 0) return 0;
+  const oldest = list[0].t;
+  return Math.max(1, Math.ceil((oldest + LIMITS.WEEKLY_WINDOW_MS - at) / 60000));
 }
 
 function resetInMinutes(list: Entry[], at: number): number {
@@ -125,10 +148,13 @@ export function reserve(key: string, tier: Tier): ReserveResult {
   const at = now();
   const caps = LIMITS[tier];
   const list = getList(key, at);
+  const weeklyList = getWeeklyList(key, at);
 
   const tokensUsed = list.reduce((s, e) => s + e.tokens, 0);
+  const weeklyTokensUsed = weeklyList.reduce((s, e) => s + e.tokens, 0);
   const messagesUsed = list.length;
   const tokensRemaining = Math.max(0, caps.tokens - tokensUsed);
+  const weeklyRemaining = Math.max(0, caps.weeklyTokens - weeklyTokensUsed);
   const messagesRemaining = Math.max(0, caps.messages - messagesUsed);
 
   if (messagesUsed >= caps.messages) {
@@ -159,6 +185,22 @@ export function reserve(key: string, tier: Tier): ReserveResult {
       resetMinutes: mins,
     };
   }
+  // Hidden weekly cap (5x daily per tier). Surfaced as the same "tokens"
+  // error so the user never sees a distinct "weekly" concept.
+  if (weeklyRemaining < LIMITS.RESERVE_MIN_TOKENS) {
+    const mins = weeklyResetInMinutes(weeklyList, at);
+    return {
+      ok: false,
+      tier,
+      reason: "tokens",
+      message: `You've used your ${tierLabel(tier)} tokens. ${humanReset(
+        mins
+      )}${tierUpgradeHint(tier)}`,
+      tokensRemaining: 0,
+      messagesRemaining,
+      resetMinutes: mins,
+    };
+  }
   return {
     ok: true,
     tier,
@@ -174,6 +216,9 @@ export function record(key: string, tokens: number): void {
   const list = getList(key, at);
   list.push({ t: at, tokens });
   buckets.set(key, list);
+  const weeklyList = getWeeklyList(key, at);
+  weeklyList.push({ t: at, tokens });
+  weeklyBuckets.set(key, weeklyList);
 }
 
 /** Peek at remaining budget without consuming. */
