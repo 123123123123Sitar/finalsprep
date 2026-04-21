@@ -82,7 +82,7 @@ function pickModel(
 ): ModelPick {
   if (plan === "hacker" || plan === "pro") {
     return thinking
-      ? { provider: "anthropic", model: SONNET_MODEL, costMultiplier: 3 }
+      ? { provider: "anthropic", model: SONNET_MODEL, costMultiplier: 1.5 }
       : { provider: "anthropic", model: HAIKU_MODEL, costMultiplier: 1 };
   }
   // Learner: prefer Gemini, fall back to Claude when Gemini is rate-limited.
@@ -477,7 +477,7 @@ export async function POST(req: Request) {
 
         // Single source of truth for the formula lives in lib/aiCost.ts:
         //   base 100 + 20% input + 30% output, ×2 if images (except Hacker),
-        //   × provider costMultiplier (3x for Sonnet thinking).
+        //   × provider costMultiplier (1.5x for Sonnet thinking).
         const inputTokens =
           capturedInput ||
           estimateTokens(messages.map((m) => m.content).join("\n"));
