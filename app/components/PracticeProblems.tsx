@@ -214,6 +214,8 @@ export default function PracticeProblems({
         key={clampedIndex}
         problem={currentProblem}
         index={clampedIndex}
+        courseSlug={courseSlug}
+        unitNumber={unitNumber}
         canWrongBank={canWrongBank}
         canAiGrade={canAiGrade}
         getIdToken={getIdToken}
@@ -261,6 +263,8 @@ type GradeResult = {
 function ProblemCard({
   problem,
   index,
+  courseSlug,
+  unitNumber,
   canWrongBank,
   canAiGrade,
   getIdToken,
@@ -270,6 +274,8 @@ function ProblemCard({
 }: {
   problem: PracticeProblem;
   index: number;
+  courseSlug: string;
+  unitNumber: number;
   canWrongBank: boolean;
   canAiGrade: boolean;
   getIdToken: () => Promise<string | null>;
@@ -607,6 +613,7 @@ function ProblemCard({
         canSubmit={canAiGrade}
         submitting={grading}
         onSubmitAnswer={canAiGrade ? handleWhiteboardSubmit : undefined}
+        storageKey={`fp-whiteboard:${courseSlug}:${unitNumber}:${index}`}
       />
     </div>
   );

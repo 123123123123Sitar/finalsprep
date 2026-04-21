@@ -2,9 +2,10 @@
 import { useEffect, useRef, useState } from "react";
 import MathRender from "./Math";
 
-type Tool = "pen" | "eraser";
+type Tool = "pen" | "eraser" | "text";
 type Point = { x: number; y: number };
 type Bbox = { minX: number; minY: number; maxX: number; maxY: number };
+type PendingText = { x: number; y: number; value: string };
 
 function detectCircle(points: Point[]): Bbox | null {
   if (points.length < 20) return null;
@@ -48,6 +49,7 @@ export default function Whiteboard({
   canSubmit = false,
   submitting = false,
   onSubmitAnswer,
+  storageKey,
 }: {
   open: boolean;
   onClose: () => void;
@@ -56,6 +58,7 @@ export default function Whiteboard({
   canSubmit?: boolean;
   submitting?: boolean;
   onSubmitAnswer?: (imageBase64: string) => void | Promise<void>;
+  storageKey?: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -63,12 +66,14 @@ export default function Whiteboard({
   const lastRef = useRef<Point | null>(null);
   const strokeRef = useRef<Point[]>([]);
   const historyRef = useRef<ImageData[]>([]);
+  const pendingTextRef = useRef<PendingText | null>(null);
   const [tool, setTool] = useState<Tool>("pen");
   const [color, setColor] = useState<string>("#111");
   const [size, setSize] = useState<number>(2);
   const [pos, setPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [circleBbox, setCircleBbox] = useState<Bbox | null>(null);
   const [historyDepth, setHistoryDepth] = useState(0);
+  const [pendingText, setPendingText] = useState<PendingText | null>(null);
   const dragStateRef = useRef<{
     startX: number;
     startY: number;
@@ -104,17 +109,30 @@ export default function Whiteboard({
     dragStateRef.current = null;
   }
 
+  function saveDrawing() {
+    if (!storageKey || typeof window === "undefined") return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    try {
+      const dataUrl = canvas.toDataURL("image/png");
+      window.localStorage.setItem(storageKey, dataUrl);
+    } catch {}
+  }
+
   useEffect(() => {
     if (!open) {
       setCircleBbox(null);
       historyRef.current = [];
       setHistoryDepth(0);
+      setPendingText(null);
+      pendingTextRef.current = null;
       return;
     }
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
 
+    let restored = false;
     const resize = () => {
       const rect = container.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
@@ -135,21 +153,41 @@ export default function Whiteboard({
       ctx.lineJoin = "round";
       if (prev.width && prev.height) {
         ctx.drawImage(prev, 0, 0, prev.width / dpr, prev.height / dpr);
+      } else if (!restored && storageKey) {
+        const raw = window.localStorage.getItem(storageKey);
+        if (raw) {
+          const img = new Image();
+          img.onload = () => {
+            const c = canvasRef.current;
+            if (!c) return;
+            const cctx = c.getContext("2d");
+            if (!cctx) return;
+            cctx.save();
+            cctx.setTransform(1, 0, 0, 1, 0, 0);
+            cctx.drawImage(img, 0, 0, c.width, c.height);
+            cctx.restore();
+          };
+          img.src = raw;
+        }
+        restored = true;
       }
     };
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, [open]);
+  }, [open, storageKey]);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape" && !pendingTextRef.current) {
+        handleClose();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   if (!open) return null;
 
@@ -188,14 +226,43 @@ export default function Whiteboard({
     }
     ctx.restore();
     setCircleBbox(null);
+    saveDrawing();
+  }
+
+  function commitPendingText() {
+    const p = pendingTextRef.current;
+    pendingTextRef.current = null;
+    setPendingText(null);
+    if (!p) return;
+    const value = p.value.trim();
+    if (!value) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    pushHistory();
+    ctx.save();
+    ctx.font = `${14 + size * 3}px Georgia, "Times New Roman", serif`;
+    ctx.fillStyle = color;
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(value, p.x, p.y);
+    ctx.restore();
+    saveDrawing();
   }
 
   function onPointerDown(e: React.PointerEvent<HTMLCanvasElement>) {
     e.preventDefault();
     (e.target as HTMLCanvasElement).setPointerCapture(e.pointerId);
+    const p = getPos(e);
+    if (tool === "text") {
+      commitPendingText();
+      const next = { x: p.x, y: p.y, value: "" };
+      pendingTextRef.current = next;
+      setPendingText(next);
+      return;
+    }
     pushHistory();
     drawingRef.current = true;
-    const p = getPos(e);
     lastRef.current = p;
     strokeRef.current = [p];
   }
@@ -232,9 +299,11 @@ export default function Whiteboard({
       const bbox = detectCircle(strokeRef.current);
       if (bbox) setCircleBbox(bbox);
     }
+    const wasDrawing = drawingRef.current;
     drawingRef.current = false;
     lastRef.current = null;
     strokeRef.current = [];
+    if (wasDrawing) saveDrawing();
   }
 
   function clear() {
@@ -248,6 +317,13 @@ export default function Whiteboard({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
     setCircleBbox(null);
+    saveDrawing();
+  }
+
+  function handleClose() {
+    commitPendingText();
+    saveDrawing();
+    onClose();
   }
 
   function exportAnswerImage(): string {
@@ -268,7 +344,7 @@ export default function Whiteboard({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div
         className="flex h-[80vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-hair bg-paper shadow-xl"
@@ -309,6 +385,15 @@ export default function Whiteboard({
                 }`}
               >
                 Eraser
+              </button>
+              <button
+                type="button"
+                onClick={() => setTool("text")}
+                className={`rounded px-2 py-1 text-xs ${
+                  tool === "text" ? "bg-paper text-ink" : "text-muted"
+                }`}
+              >
+                Text
               </button>
             </div>
             <div className="flex items-center gap-1">
@@ -359,7 +444,7 @@ export default function Whiteboard({
             </button>
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="rounded-md border border-hair bg-offwhite px-2 py-1 text-xs text-ink hover:border-orange"
             >
               Close
@@ -384,8 +469,49 @@ export default function Whiteboard({
             onPointerUp={onPointerUp}
             onPointerLeave={onPointerUp}
             className="absolute inset-0 h-full w-full touch-none"
-            style={{ cursor: tool === "eraser" ? "cell" : "crosshair" }}
+            style={{
+              cursor:
+                tool === "eraser"
+                  ? "cell"
+                  : tool === "text"
+                  ? "text"
+                  : "crosshair",
+            }}
           />
+          {pendingText && (
+            <input
+              autoFocus
+              value={pendingText.value}
+              onChange={(e) => {
+                const next = { ...pendingText, value: e.target.value };
+                pendingTextRef.current = next;
+                setPendingText(next);
+              }}
+              onBlur={commitPendingText}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  commitPendingText();
+                } else if (e.key === "Escape") {
+                  pendingTextRef.current = null;
+                  setPendingText(null);
+                }
+              }}
+              placeholder="Type…"
+              style={{
+                position: "absolute",
+                left: Math.max(0, pendingText.x - 4),
+                top: Math.max(0, pendingText.y - (18 + size * 3)),
+                font: `${14 + size * 3}px Georgia, "Times New Roman", serif`,
+                color,
+                background: "rgba(255,255,255,0.9)",
+                border: "1px dashed #9ca3af",
+                padding: "2px 4px",
+                outline: "none",
+                minWidth: 80,
+              }}
+            />
+          )}
           {circleBbox && canSubmit && onSubmitAnswer && (
             <button
               type="button"
