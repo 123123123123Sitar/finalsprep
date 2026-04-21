@@ -1,8 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
-import GraphingCalculator from "@/app/components/GraphingCalculator";
+import { getDb } from "@/lib/firebase";
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
+import DesmosCalculator from "@/app/components/DesmosCalculator";
 import Graph3D from "@/app/components/Graph3D";
 import PhysicsSim, { type SimKind } from "@/app/components/PhysicsSim";
 import CodeSandbox from "@/app/components/CodeSandbox";
@@ -13,6 +15,13 @@ type Spec = {
   title: string;
   description: string;
   config: any;
+};
+
+type SavedInteractive = {
+  id: string;
+  prompt: string;
+  spec: Spec;
+  createdAt: number;
 };
 
 const PHYSICS_KINDS: SimKind[] = [
@@ -41,6 +50,33 @@ export default function InteractivesPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [spec, setSpec] = useState<Spec | null>(null);
+  const [history, setHistory] = useState<SavedInteractive[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const db = getDb();
+    if (!db) return;
+
+    setHistoryLoading(true);
+    getDocs(
+      query(
+        collection(db, "users", user.uid, "interactives"),
+        orderBy("createdAt", "desc"),
+        limit(50)
+      )
+    )
+      .then((snap) => {
+        const items = snap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          createdAt: doc.data().createdAt?.toMillis?.() || Date.now(),
+        } as SavedInteractive));
+        setHistory(items);
+      })
+      .catch(() => setHistory([]))
+      .finally(() => setHistoryLoading(false));
+  }, [user]);
 
   async function generate() {
     const trimmed = prompt.trim();
@@ -62,7 +98,13 @@ export default function InteractivesPage() {
         setError(data?.error || "Couldn't generate an interactive.");
         return;
       }
-      setSpec(data.spec as Spec);
+      const newSpec = data.spec as Spec;
+      setSpec(newSpec);
+      // Add to history display immediately (Firestore save happens server-side)
+      setHistory((prev) => [
+        { id: Date.now().toString(), prompt: trimmed, spec: newSpec, createdAt: Date.now() },
+        ...prev,
+      ]);
     } catch (e: any) {
       setError(e?.message || "Network error");
     } finally {
@@ -119,12 +161,18 @@ export default function InteractivesPage() {
           <p className="mt-3 max-w-xl text-[15px] text-muted">
             Interactives is a Pro feature. Upgrade to try it.
           </p>
+          <p className="mt-2 text-[14px] text-muted">
+            If you've already purchased a plan, try <button onClick={() => window.location.reload()} className="text-orange hover:underline">refreshing the page</button>.
+          </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="/#price" className="btn-primary text-sm">
               See Pro plans →
             </a>
             <a href="/chat" className="btn-ghost text-sm">
               Back to chat
+            </a>
+            <a href="/exam" className="btn-ghost text-sm">
+              Try Mock Exam
             </a>
           </div>
         </section>
@@ -199,6 +247,41 @@ export default function InteractivesPage() {
             </div>
           </div>
         )}
+
+        {/* Past interactives */}
+        {history.length > 0 && (
+          <section className="mt-12 pt-8 border-t border-hair">
+            <h2 className="font-serif text-2xl font-normal text-ink mb-4">
+              Past interactives
+            </h2>
+            {historyLoading ? (
+              <div className="text-sm text-muted">Loading history…</div>
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {history.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setSpec(item.spec)}
+                    className="text-left rounded-lg border border-hair bg-paper p-4 hover:border-orange transition-colors"
+                  >
+                    <div className="text-xs text-muted mb-1">
+                      {item.spec.kind}
+                    </div>
+                    <h3 className="font-medium text-ink text-sm mb-1">
+                      {item.spec.title}
+                    </h3>
+                    <p className="text-xs text-muted line-clamp-2">
+                      {item.prompt}
+                    </p>
+                    <div className="mt-2 text-xs text-muted">
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
       </section>
     </main>
   );
@@ -209,7 +292,7 @@ function SpecRenderer({ spec }: { spec: Spec }) {
     const exprs = Array.isArray(spec.config?.expressions)
       ? spec.config.expressions.slice(0, 4).map((e: any) => String(e))
       : ["x^2"];
-    return <GraphingCalculator initialExprs={exprs} />;
+    return <DesmosCalculator initialExprs={exprs} />;
   }
   if (spec.kind === "graph3d") {
     const expr =

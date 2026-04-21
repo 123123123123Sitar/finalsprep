@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, getDocs, query, orderBy, limit, collection } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 import { listConversations, type StoredConversation } from "@/lib/chatStore";
 import { planLabel } from "@/lib/plans";
@@ -23,6 +23,8 @@ import {
   type Schedule,
   type StudyBlock,
 } from "@/lib/schedule";
+import { listWrongBank } from "@/lib/wrongBank";
+import ProgressPanel from "./ProgressPanel";
 
 type QuickAction = {
   href: string;
@@ -30,6 +32,8 @@ type QuickAction = {
   blurb: string;
   emphasis?: boolean;
 };
+
+type HistoryEntry = { kind: string; tokens?: number; createdAt?: number };
 
 const QUICK_ACTIONS: QuickAction[] = [
   {
@@ -42,6 +46,7 @@ const QUICK_ACTIONS: QuickAction[] = [
   { href: "/review", title: "Review", blurb: "Your saved problems and notes." },
   { href: "/insights", title: "Insights", blurb: "Progress, streaks, and weak spots." },
   { href: "/schedule", title: "Schedule", blurb: "Plan the week ahead." },
+  { href: "/exam", title: "Mock Exam", blurb: "Test yourself across all units." },
   { href: "/shop", title: "Shop", blurb: "Extra tokens that never expire." },
 ];
 
@@ -64,6 +69,8 @@ export default function Dashboard() {
   const [recentError, setRecentError] = useState(false);
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [, tickBanner] = useState(0);
+  const [aiHistory, setAiHistory] = useState<HistoryEntry[]>([]);
+  const [wrongCount, setWrongCount] = useState(0);
   // Same three-state machine as /study so the course-cards section never
   // flashes an empty state during the auth → Firestore resolution window.
   const [selectedCourses, setSelectedCourses] = useState<string[] | null>(
@@ -207,6 +214,53 @@ export default function Dashboard() {
     if (!db) return;
     const unsub = subscribeCompletedSlugs(db, user.uid, setCompletedSlugs);
     return () => unsub();
+  }, [user]);
+
+  // Fetch aiHistory and wrongCount for progress panel
+  useEffect(() => {
+    if (!user) {
+      setAiHistory([]);
+      setWrongCount(0);
+      return;
+    }
+    let cancelled = false;
+    const db = getDb();
+    if (!db) return;
+
+    Promise.all([
+      getDocs(
+        query(
+          collection(db, "users", user.uid, "aiHistory"),
+          orderBy("createdAt", "desc"),
+          limit(50)
+        )
+      ),
+      listWrongBank(user.uid),
+    ])
+      .then(([historySnap, wrongBank]) => {
+        if (!cancelled) {
+          const history = historySnap.docs.map((d) => {
+            const data = d.data() as any;
+            return {
+              kind: data.kind || "",
+              tokens: data.tokens,
+              createdAt: data.createdAt?.toMillis?.() || Date.now(),
+            } as HistoryEntry;
+          });
+          setAiHistory(history);
+          setWrongCount(wrongBank.length);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setAiHistory([]);
+          setWrongCount(0);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
 
   const addedCourses = useMemo<Course[]>(
@@ -378,6 +432,15 @@ export default function Dashboard() {
           </div>
         )}
       </section>
+
+      <div className="mx-auto max-w-5xl px-6">
+        <ProgressPanel
+          selectedCourses={selectedCourses ?? []}
+          completedSlugs={completedSlugs}
+          aiHistory={aiHistory}
+          wrongCount={wrongCount}
+        />
+      </div>
 
       <section className="mx-auto max-w-5xl px-6 py-8">
         <h2 className="label mb-4">Jump back in</h2>

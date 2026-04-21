@@ -9,6 +9,7 @@ import {
   type WrongBankEntry,
 } from "@/lib/wrongBank";
 import PageLoader from "@/app/components/PageLoader";
+import WrongBankSrsMode from "@/app/components/WrongBankSrsMode";
 
 export default function ReviewPage() {
   const { user, loading, plan } = useAuth();
@@ -71,6 +72,12 @@ export default function ReviewPage() {
             You haven't saved any problems yet. On any practice problem, tap{" "}
             <strong className="text-ink">Save for review</strong> to add it
             here.
+          </div>
+        )}
+
+        {loaded && plan !== "learner" && (
+          <div className="mt-8">
+            <WrongBankSrsMode />
           </div>
         )}
 

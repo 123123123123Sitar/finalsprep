@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PracticeProblem } from "@/lib/practice/types";
 import { addToWrongBank } from "@/lib/wrongBank";
+import { addWrongProblemToSrs } from "@/lib/srs";
 import { useAuth } from "./AuthProvider";
 import MathRender from "./Math";
 import Whiteboard from "./Whiteboard";
@@ -106,6 +107,8 @@ export default function PracticeProblems({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [submittedCount, setSubmittedCount] = useState(0);
   const [submittedIndexes, setSubmittedIndexes] = useState<Set<number>>(() => new Set());
+  const [correctIndexes, setCorrectIndexes] = useState<Set<number>>(() => new Set());
+  const [difficultyFilter, setDifficultyFilter] = useState<"all" | "easy" | "medium" | "hard">("all");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -124,22 +127,45 @@ export default function PracticeProblems({
         );
         if (firstUnsubmitted !== undefined) setCurrentIndex(firstUnsubmitted);
       }
+      if (Array.isArray(data?.correct)) {
+        const correctSet = new Set<number>(
+          data.correct.filter((n: unknown) => typeof n === "number")
+        );
+        setCorrectIndexes(correctSet);
+      }
     } catch {}
   }, [courseSlug, unitNumber, problems?.length]);
 
-  function markSubmitted(i: number) {
+  function markSubmitted(i: number, isCorrect?: boolean) {
     setSubmittedIndexes((prev) => {
       if (prev.has(i)) return prev;
       const next = new Set(prev);
       next.add(i);
       setSubmittedCount(next.size);
-      if (typeof window !== "undefined") {
-        try {
-          window.localStorage.setItem(
-            progressKey(courseSlug, unitNumber),
-            JSON.stringify({ submitted: [...next] })
-          );
-        } catch {}
+
+      if (isCorrect) {
+        setCorrectIndexes((correct) => {
+          const nextCorrect = new Set(correct);
+          nextCorrect.add(i);
+          if (typeof window !== "undefined") {
+            try {
+              window.localStorage.setItem(
+                progressKey(courseSlug, unitNumber),
+                JSON.stringify({ submitted: [...next], correct: [...nextCorrect] })
+              );
+            } catch {}
+          }
+          return nextCorrect;
+        });
+      } else {
+        if (typeof window !== "undefined") {
+          try {
+            window.localStorage.setItem(
+              progressKey(courseSlug, unitNumber),
+              JSON.stringify({ submitted: [...next], correct: [...correctIndexes] })
+            );
+          } catch {}
+        }
       }
       return next;
     });
@@ -153,9 +179,29 @@ export default function PracticeProblems({
     );
   }
 
-  const clampedIndex = Math.max(0, Math.min(currentIndex, problems.length - 1));
-  const currentProblem = problems[clampedIndex];
+  const difficultyOrder: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
+  const sortedProblems = [...problems].sort(
+    (a, b) => (difficultyOrder[a.difficulty] || 999) - (difficultyOrder[b.difficulty] || 999)
+  );
+
+  const filteredIndices = sortedProblems
+    .map((p, idx) => idx)
+    .filter((idx) =>
+      difficultyFilter === "all" || sortedProblems[idx].difficulty === difficultyFilter
+    );
+
+  const clampedIndex = Math.max(
+    0,
+    Math.min(currentIndex, filteredIndices[filteredIndices.length - 1] ?? 0)
+  );
+  const currentProblem = sortedProblems[clampedIndex];
   const currentSubmitted = submittedIndexes.has(clampedIndex);
+
+  const allEasyIndices = sortedProblems
+    .map((p, idx) => idx)
+    .filter((idx) => sortedProblems[idx].difficulty === "easy");
+  const allEasyCorrect = allEasyIndices.every((idx) => correctIndexes.has(idx)) && allEasyIndices.length > 0;
+
   const target = Math.min(CREDIT_THRESHOLD, problems.length);
   const creditEarned = submittedCount >= target;
   const progressPct = Math.min(100, Math.round((submittedCount / target) * 100));
@@ -190,6 +236,30 @@ export default function PracticeProblems({
 
   return (
     <div className="max-w-3xl space-y-6">
+      {/* Difficulty filter pills */}
+      <div className="flex flex-wrap gap-2">
+        {(["all", "easy", "medium", "hard"] as const).map((level) => (
+          <button
+            key={level}
+            onClick={() => setDifficultyFilter(level)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              difficultyFilter === level
+                ? "bg-orange text-white"
+                : "border border-hair bg-offwhite text-ink hover:border-orange"
+            }`}
+          >
+            {level.charAt(0).toUpperCase() + level.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* All easy solved message */}
+      {allEasyCorrect && difficultyFilter === "all" && (
+        <div className="rounded-md border border-green-300 bg-green-50 p-3 text-[13px] text-green-800">
+          ✓ All easy problems solved — medium difficulty unlocked!
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
@@ -244,7 +314,7 @@ export default function PracticeProblems({
         canSkip={clampedIndex < problems.length - 1}
         onSkip={skipCurrent}
         onSimilar={() => openSimilar(currentProblem)}
-        onSubmitted={() => markSubmitted(clampedIndex)}
+        onSubmitted={(isCorrect) => markSubmitted(clampedIndex, isCorrect)}
         onSaveWrong={
           canWrongBank && user
             ? async () => {
@@ -256,6 +326,7 @@ export default function PracticeProblems({
                   explanation: currentProblem.explanation,
                   difficulty: currentProblem.difficulty,
                 });
+                addWrongProblemToSrs(currentProblem.prompt, currentProblem.answer);
               }
             : undefined
         }
@@ -310,7 +381,7 @@ function ProblemCard({
   canSkip?: boolean;
   onSkip?: () => void;
   onSimilar?: () => void;
-  onSubmitted?: () => void;
+  onSubmitted?: (isCorrect: boolean) => void;
   onSaveWrong?: () => Promise<void>;
 }) {
   const [attempt, setAttempt] = useState("");
@@ -357,7 +428,8 @@ function ProblemCard({
     setSubmitted(true);
     setShowAnswer(true);
     setShowExplain(true);
-    onSubmitted?.();
+    const correct = normalize(attempt) === normalize(problem.answer);
+    onSubmitted?.(correct);
   }
 
   async function runGrade(args: { attempt?: string; imageBase64?: string }) {
@@ -400,7 +472,8 @@ function ProblemCard({
         setShowAnswer(true);
         setShowExplain(true);
         setWhiteboardOpen(false);
-        onSubmitted?.();
+        const isCorrect = data.verdict === "correct";
+        onSubmitted?.(isCorrect);
       }
     } catch (e: any) {
       setGradeError(e?.message || "Grading failed.");
@@ -429,10 +502,24 @@ function ProblemCard({
     { label: "xⁿ", insert: "^", title: "Power" },
   ];
 
+  const difficultyColor =
+    problem.difficulty === "easy"
+      ? "bg-green-100 text-green-700"
+      : problem.difficulty === "medium"
+      ? "bg-yellow-100 text-yellow-700"
+      : "bg-red-100 text-red-700";
+
   return (
     <div className="rounded-lg border border-hair bg-paper p-5">
-      <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
-        Problem {index + 1}
+      <div className="flex items-center justify-between">
+        <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
+          Problem {index + 1}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={`rounded px-2 py-0.5 text-[11px] font-semibold ${difficultyColor}`}>
+            {problem.difficulty}
+          </span>
+        </div>
       </div>
       <div className="mt-2 flex items-start justify-between gap-3">
         <div className="flex-1 whitespace-pre-wrap text-[15px] text-ink">

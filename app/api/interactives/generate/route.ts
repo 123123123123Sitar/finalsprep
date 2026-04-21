@@ -8,12 +8,14 @@ import { logEvent } from "@/lib/events";
 import { aiCost } from "@/lib/aiCost";
 import { estimateTokens } from "@/lib/rateLimit";
 import { spendTokens } from "@/lib/spend";
+import { getFirebaseAdmin } from "@/lib/firebaseAdmin";
+import { serverTimestamp } from "firebase-admin/firestore";
 
 export const runtime = "nodejs";
 
 /**
  * The spec the model must emit as strict JSON. The client renders whichever
- * kind matches using the existing GraphingCalculator / Graph3D / PhysicsSim /
+ * kind matches using the existing DesmosCalculator / Graph3D / PhysicsSim /
  * CodeSandbox components. The model never writes executable code directly —
  * it only picks a widget kind and fills in parameters.
  */
@@ -208,6 +210,22 @@ export async function POST(req: Request) {
     plan,
     meta: { kind: "interactives.generate", spec_kind: spec.kind },
   });
+
+  // Save to Firestore for history
+  if (user?.uid) {
+    try {
+      const admin = getFirebaseAdmin();
+      const db = admin.firestore();
+      await db.collection("users").doc(user.uid).collection("interactives").add({
+        prompt,
+        spec,
+        createdAt: serverTimestamp(),
+      });
+    } catch (e) {
+      // Silently fail — spec has been generated and returned, storage is bonus
+      console.error("Failed to save interactive to Firestore:", e);
+    }
+  }
 
   return NextResponse.json({ spec });
 }

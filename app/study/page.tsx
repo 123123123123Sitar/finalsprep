@@ -35,7 +35,7 @@ import {
 } from "@/lib/cedLessonGroups";
 import HighlightTooltip from "@/app/components/HighlightTooltip";
 import PracticeProblems from "@/app/components/PracticeProblems";
-import GraphingCalculator from "@/app/components/GraphingCalculator";
+import DesmosCalculator from "@/app/components/DesmosCalculator";
 import Graph3D from "@/app/components/Graph3D";
 import PhysicsSim from "@/app/components/PhysicsSim";
 import CodeSandbox from "@/app/components/CodeSandbox";
@@ -1106,7 +1106,7 @@ function ToolsPanel({
       </div>
       {tools.map((tool, i) => {
         if (tool.type === "graph2d") {
-          return <GraphingCalculator key={i} initialExprs={tool.initial} />;
+          return <DesmosCalculator key={i} initialExprs={tool.initial} />;
         }
         if (tool.type === "graph3d") {
           return <Graph3D key={i} initialExpr={tool.initial} />;
