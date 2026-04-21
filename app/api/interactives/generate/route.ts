@@ -5,6 +5,9 @@ import { getAuthedUser } from "@/lib/authGuard";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
 import { getPlan } from "@/lib/userPlan";
 import { logEvent } from "@/lib/events";
+import { aiCost } from "@/lib/aiCost";
+import { estimateTokens } from "@/lib/rateLimit";
+import { spendTokens } from "@/lib/spend";
 
 export const runtime = "nodejs";
 
@@ -142,6 +145,8 @@ export async function POST(req: Request) {
   const geminiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 
   let rawText = "";
+  let inputTokens = 0;
+  let outputTokens = 0;
   try {
     if (anthropicKey) {
       const client = new Anthropic({ apiKey: anthropicKey });
@@ -154,6 +159,8 @@ export async function POST(req: Request) {
       rawText = res.content
         .map((c) => (c.type === "text" ? c.text : ""))
         .join("");
+      inputTokens = (res as any).usage?.input_tokens ?? estimateTokens(SPEC_INSTRUCTIONS + prompt);
+      outputTokens = (res as any).usage?.output_tokens ?? estimateTokens(rawText);
     } else if (geminiKey) {
       const genAi = new GoogleGenerativeAI(geminiKey);
       const model = genAi.getGenerativeModel({
@@ -162,6 +169,8 @@ export async function POST(req: Request) {
       });
       const res = await model.generateContent(prompt);
       rawText = res.response.text();
+      inputTokens = estimateTokens(SPEC_INSTRUCTIONS + prompt);
+      outputTokens = estimateTokens(rawText);
     } else {
       return NextResponse.json(
         { error: "No model API key configured." },
@@ -173,6 +182,12 @@ export async function POST(req: Request) {
       { error: e?.message || "Model request failed" },
       { status: 500 }
     );
+  }
+
+  // Charge using the shared formula; daily first, overflow from bonus bank.
+  if (user?.uid) {
+    const cost = aiCost({ inputTokens, outputTokens, plan });
+    await spendTokens(user.uid, cost);
   }
 
   const spec = extractJson(rawText);

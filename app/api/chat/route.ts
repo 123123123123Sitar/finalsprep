@@ -34,6 +34,8 @@ import {
 } from "@/lib/geminiStatus";
 import { ocrImage } from "@/lib/ocr";
 import type { PlanTier } from "@/lib/plans";
+import { aiCost } from "@/lib/aiCost";
+import { spendTokens } from "@/lib/spend";
 
 export const runtime = "nodejs";
 
@@ -224,12 +226,12 @@ export async function POST(req: Request) {
           resetMinutes: mem.resetMinutes,
         };
   }
-  // If they're out of daily budget, fall back to the bonus token bank.
-  let useTokenBank = false;
+  // If they're out of daily budget, fall back to the bonus token bank for
+  // the gate. The actual deduction (drain daily first, overflow to bank)
+  // happens via spendTokens() after the API call returns.
   if (!r.ok && user?.uid) {
     const bank = await getTokenBank(user.uid);
     if (bank.balance >= LIMITS.RESERVE_MIN_TOKENS) {
-      useTokenBank = true;
       r = {
         ok: true,
         tier,
@@ -473,32 +475,28 @@ export async function POST(req: Request) {
           }
         }
 
-        // Cost formula:
-        //   base:        100 tokens minimum per prompt
-        //   input tax:   +20% of actual input tokens
-        //   output tax:  +30% of actual output tokens
-        //   image 2x:    doubled when images are attached, except on Hacker
-        //   thinking:    × provider costMultiplier (3x for Sonnet)
+        // Single source of truth for the formula lives in lib/aiCost.ts:
+        //   base 100 + 20% input + 30% output, ×2 if images (except Hacker),
+        //   × provider costMultiplier (3x for Sonnet thinking).
         const inputTokens =
           capturedInput ||
           estimateTokens(messages.map((m) => m.content).join("\n"));
         const outputTokens = capturedOutput || estimateTokens(accumulated);
         const hasImages =
           imagesForVision.length > 0 || ocrBlocks.length > 0;
-        let totalTokens = Math.max(
-          100,
-          Math.round(100 + inputTokens * 0.2 + outputTokens * 0.3)
-        );
-        if (hasImages && plan !== "hacker") totalTokens *= 2;
-        totalTokens = Math.round(totalTokens * picked.costMultiplier);
-        if (useTokenBank && user?.uid) {
-          await deductFromTokenBank(user.uid, totalTokens);
-        } else if (user?.uid) {
-          // Authed: persist to Firestore so the 24h window survives cold
-          // starts. Also update the in-memory bucket so /api/usage reflects
-          // the write within the same warm instance.
-          await recordUsage(user.uid, totalTokens);
-          record(key, totalTokens);
+        const totalTokens = aiCost({
+          inputTokens,
+          outputTokens,
+          hasImages,
+          plan,
+          multiplier: picked.costMultiplier,
+        });
+        if (user?.uid) {
+          // Drain daily budget first, overflow from the bonus bank.
+          const split = await spendTokens(user.uid, totalTokens);
+          // Mirror the daily portion into the in-memory bucket so /api/usage
+          // reflects the write within the same warm instance.
+          if (split.fromDaily > 0) record(key, split.fromDaily);
         } else {
           record(key, totalTokens);
         }
@@ -533,15 +531,14 @@ export async function POST(req: Request) {
         const inputEst =
           estimateTokens(messages.map((m) => m.content).join("\n"));
         const outputEst = estimateTokens(accumulated);
-        const est = Math.max(
-          100,
-          Math.round(100 + inputEst * 0.2 + outputEst * 0.3)
-        );
+        const est = aiCost({ inputTokens: inputEst, outputTokens: outputEst, plan });
         if (est > 0) {
           if (user?.uid) {
-            void recordUsage(user.uid, est);
+            const split = await spendTokens(user.uid, est);
+            if (split.fromDaily > 0) record(key, split.fromDaily);
+          } else {
+            record(key, est);
           }
-          record(key, est);
         }
         controller.close();
       }

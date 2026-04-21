@@ -7,16 +7,18 @@ import { findWalkthrough } from "@/lib/topics";
 import {
   clampInput,
   estimateTokens,
-  LIMITS,
   peek,
   record,
   reserve,
   userKey,
 } from "@/lib/rateLimit";
+import { peekUsage, reserveUsage } from "@/lib/rateLimitStore";
 import { getAuthedUser } from "@/lib/authGuard";
 import { getPlan, planToRateTier } from "@/lib/userPlan";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
 import { recordAiHistory } from "@/lib/aiHistory";
+import { aiCost } from "@/lib/aiCost";
+import { spendTokens } from "@/lib/spend";
 
 export const runtime = "nodejs";
 
@@ -98,9 +100,10 @@ export async function POST(req: Request) {
   // 3. Plan lookup.
   const tier = planToRateTier(userPlan);
 
-  // 4. Reserve budget.
+  // 4. Reserve budget. Authed users go through Firestore so cold starts
+  //    don't reset the 24h window; anonymous fall back to the in-memory map.
   const key = userKey(user?.uid, req);
-  const r = reserve(key, tier);
+  const r = user ? await reserveUsage(user.uid, tier) : reserve(key, tier);
   if (!r.ok) {
     return NextResponse.json(
       {
@@ -152,8 +155,10 @@ export async function POST(req: Request) {
 
     const inputTokens = (msg as any).usage?.input_tokens ?? estimateTokens(problem);
     const outputTokens = (msg as any).usage?.output_tokens ?? estimateTokens(text);
-    record(key, inputTokens + outputTokens);
+    const totalTokens = aiCost({ inputTokens, outputTokens, plan });
     if (user?.uid) {
+      const split = await spendTokens(user.uid, totalTokens);
+      if (split.fromDaily > 0) record(key, split.fromDaily);
       void recordAiHistory({
         uid: user.uid,
         kind: "explain",
@@ -161,7 +166,7 @@ export async function POST(req: Request) {
         plan,
         prompt: problem,
         response: text,
-        tokens: inputTokens + outputTokens,
+        tokens: totalTokens,
         model,
         metadata: {
           aiVerbosity: aiPrefs.aiVerbosity,
@@ -169,9 +174,11 @@ export async function POST(req: Request) {
           aiPersonality: aiPrefs.aiPersonality,
         },
       });
+    } else {
+      record(key, totalTokens);
     }
 
-    const p = peek(key, tier);
+    const p = user ? await peekUsage(user.uid, tier) : peek(key, tier);
     return NextResponse.json({
       explanation: text,
       source: "ai",

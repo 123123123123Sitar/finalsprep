@@ -97,16 +97,40 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    getIdToken().then((token) => {
-      fetch("/api/usage", {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      })
-        .then((r) => r.json())
-        .then((data) => { if (!cancelled) setUsage(data); })
-        .catch(() => {});
-    });
-    return () => { cancelled = true; };
-  }, [user]);
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+
+    const fetchUsage = async () => {
+      try {
+        const token = await getIdToken();
+        const res = await fetch("/api/usage", {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled) setUsage(data);
+      } catch {}
+    };
+
+    fetchUsage();
+    // Live-ish refresh: poll every 20s (covers chats sent in another tab) and
+    // refetch immediately when the tab regains focus (covers the common case
+    // of switching tabs after sending a message).
+    intervalId = setInterval(fetchUsage, 20_000);
+    const onFocus = () => fetchUsage();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") fetchUsage();
+    };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      cancelled = true;
+      if (intervalId) clearInterval(intervalId);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [user, getIdToken]);
 
   useEffect(() => {
     if (!user) return;

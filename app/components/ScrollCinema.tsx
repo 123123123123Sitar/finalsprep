@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
  * rewinds the whole thing because state is a pure function of progress.
  */
 
-const URL_TEXT = "finalsprep.com/study";
+const URL_TEXT = "finalsprep.com/chat";
 const PROBLEM = "Solve 2x² − 5x − 3 = 0";
 const SOLUTION = `This is a quadratic. Use the formula
   x = [ −b ± √(b² − 4ac) ] / 2a
@@ -30,16 +30,21 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const smooth = (t: number) => t * t * (3 - 2 * t);
 
 type Key = { p: number; x: number; y: number };
+// Coordinates target the new chat layout:
+//   URL bar     ≈ (22, 8)
+//   Composer    ≈ (55, 88)
+//   Send button ≈ (88, 88)
+//   Messages    ≈ (50, 55)
 const CURSOR_PATH: Key[] = [
-  { p: 0.0, x: 92, y: 90 },
-  { p: 0.08, x: 70, y: 40 },
-  { p: 0.17, x: 26, y: 10 },
-  { p: 0.32, x: 26, y: 10 },
-  { p: 0.44, x: 66, y: 28 },
-  { p: 0.66, x: 66, y: 28 },
-  { p: 0.74, x: 46, y: 35 },
-  { p: 0.82, x: 46, y: 35 },
-  { p: 1.0, x: 72, y: 52 },
+  { p: 0.0, x: 92, y: 92 },
+  { p: 0.08, x: 60, y: 30 },
+  { p: 0.17, x: 22, y: 8 },
+  { p: 0.32, x: 22, y: 8 },
+  { p: 0.44, x: 55, y: 88 },
+  { p: 0.66, x: 55, y: 88 },
+  { p: 0.74, x: 88, y: 88 },
+  { p: 0.82, x: 88, y: 88 },
+  { p: 1.0, x: 50, y: 55 },
 ];
 
 function cursorAt(p: number) {
@@ -213,134 +218,211 @@ export default function ScrollCinema() {
             </div>
           </div>
 
-          {/* Page content — fades in on "page load" */}
+          {/* Page content — fades in on "page load". This is a faithful
+              recreation of /chat: sidebar + main column + dark composer. */}
           <div
             className="relative h-[calc(100%-41px)]"
             style={{ opacity: pageLoad }}
           >
-            {/* Site nav */}
-            <div className="flex items-center justify-between border-b border-hair bg-paper/90 px-4 py-2.5 sm:px-6 sm:py-3">
-              <div className="flex items-center gap-2 font-serif text-base text-ink sm:text-lg">
-                <span className="h-4 w-4 rounded bg-gradient-to-br from-orange to-amber-500" />
-                finalsprep
-              </div>
-              <div className="flex items-center gap-4 text-[11px] text-muted sm:text-xs">
-                <span className="hidden sm:inline">Coverage</span>
-                <span className="hidden sm:inline">Pricing</span>
-                <span className="rounded-md bg-ink px-2.5 py-1 font-medium text-paper">
-                  Start Pro
-                </span>
-              </div>
-            </div>
-
-            {/* Hero mini + tutor panel */}
-            <div className="grid h-[calc(100%-47px)] grid-cols-5 gap-0">
-              {/* Left: hero copy */}
-              <div className="col-span-2 hidden flex-col justify-center border-r border-hair px-6 sm:flex">
-                <div className="label mb-2">For AP students</div>
-                <div className="font-serif text-xl leading-tight text-ink lg:text-2xl xl:text-3xl">
-                  A tutor for{" "}
-                  <span className="italic gradient-text">every</span> AP
-                  class.
+            <div className="flex h-full bg-paper">
+              {/* LEFT SIDEBAR */}
+              <aside className="hidden w-44 shrink-0 flex-col border-r border-hair bg-offwhite p-2 sm:flex">
+                <div className="flex items-center gap-1.5 rounded-md border border-hair bg-paper px-2 py-1.5 text-[10px] text-muted">
+                  <span className="h-1.5 w-1.5 rounded-full border border-muted/60" />
+                  <span>Search…</span>
                 </div>
-                <div className="mt-3 text-[11px] leading-relaxed text-muted lg:text-xs">
-                  Paste a problem. Get a walkthrough. 10,000 free tokens a
-                  day.
+                <div className="mt-1.5 rounded-md bg-ink px-2 py-1.5 text-center text-[11px] font-medium text-paper">
+                  + New chat
                 </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="rounded-full border border-hair bg-paper px-2 py-0.5 text-[10px] text-muted">
-                    Calc BC
-                  </span>
-                  <span className="rounded-full border border-hair bg-paper px-2 py-0.5 text-[10px] text-muted">
-                    Physics 1
-                  </span>
-                  <span className="rounded-full border border-orange/40 bg-orange-tint px-2 py-0.5 text-[10px] text-orange-ink">
-                    AP Precalc
-                  </span>
+                <div className="mt-3 px-1 text-[8px] font-semibold uppercase tracking-[0.18em] text-muted/70">
+                  Today
                 </div>
-              </div>
-
-              {/* Right: tutor / solver */}
-              <div className="col-span-5 flex flex-col p-4 sm:col-span-3 sm:p-5">
-                <div className="label">Try it right here</div>
-                <div
-                  className="mt-2 rounded-md border bg-paper px-3 py-2 font-mono text-[11px] leading-5 text-ink sm:text-[13px]"
-                  style={{
-                    borderColor:
-                      focusIntensity > 0
-                        ? `rgba(194,65,12,${0.15 + focusIntensity * 0.7})`
-                        : "rgb(var(--hair))",
-                    boxShadow:
-                      focusIntensity > 0
-                        ? `0 0 0 ${
-                            focusIntensity * 4
-                          }px rgba(194,65,12,0.10)`
-                        : "none",
-                    minHeight: 52,
-                  }}
-                >
-                  {problemTyped}
-                  {showInputCaret && (
-                    <span className="ml-0.5 inline-block h-[13px] w-[1.5px] animate-pulseSoft bg-orange align-middle" />
-                  )}
-                </div>
-                <div className="mt-3 flex items-center gap-3">
-                  <button
-                    type="button"
-                    tabIndex={-1}
-                    className="relative rounded-md bg-ink px-4 py-1.5 text-xs font-medium text-paper"
+                <div className="mt-1 space-y-0.5">
+                  <div
+                    className="rounded px-1.5 py-1 text-[10px] transition-colors"
                     style={{
-                      transform:
-                        clickP > 0 && clickP < 0.4
-                          ? "translateY(1px) scale(0.985)"
-                          : "none",
+                      background:
+                        solutionP > 0.05
+                          ? "rgba(249,115,22,0.15)"
+                          : "transparent",
+                      color: solutionP > 0.05 ? "rgb(154,52,18)" : "inherit",
                     }}
                   >
-                    Explain it
-                    {clickRipple > 0 && (
-                      <span
-                        className="pointer-events-none absolute inset-0 -m-1 rounded-md ring-2 ring-orange"
-                        style={{
-                          opacity: clickRipple,
-                          transform: `scale(${1 + clickRipple * 0.5})`,
-                        }}
-                      />
-                    )}
-                  </button>
-                  <div className="text-[10px] text-muted">
-                    {thinkingP > 0 && solutionP < 0.05 ? (
-                      <span className="typing-dots">
-                        <span />
-                        <span />
-                        <span />
-                      </span>
-                    ) : solutionP > 0 ? (
-                      <span className="text-orange-ink">
-                        Generated just now
-                      </span>
-                    ) : (
-                      <span>Signed in as you</span>
-                    )}
+                    {solutionP > 0.05 ? "Quadratic equation" : "New chat"}
+                  </div>
+                  <div className="rounded px-1.5 py-1 text-[10px] text-body">
+                    Chain rule check
+                  </div>
+                  <div className="rounded px-1.5 py-1 text-[10px] text-body">
+                    u-sub warm-up
+                  </div>
+                </div>
+                <div className="mt-3 px-1 text-[8px] font-semibold uppercase tracking-[0.18em] text-muted/70">
+                  Yesterday
+                </div>
+                <div className="mt-1 space-y-0.5">
+                  <div className="rounded px-1.5 py-1 text-[10px] text-body">
+                    Redox half-cells
+                  </div>
+                  <div className="rounded px-1.5 py-1 text-[10px] text-body">
+                    Projectile motion
+                  </div>
+                </div>
+              </aside>
+
+              {/* MAIN CHAT COLUMN */}
+              <div className="flex min-w-0 flex-1 flex-col">
+                {/* Header bar — title + token usage pill */}
+                <div className="flex items-center justify-between border-b border-hair bg-offwhite/60 px-3 py-2 sm:px-4">
+                  <div className="truncate font-serif text-[13px] text-ink sm:text-sm">
+                    {solutionP > 0.05 ? "Quadratic equation" : "New chat"}
+                  </div>
+                  <div className="flex items-center gap-1.5 rounded-full border border-hair bg-paper px-2 py-0.5 text-[10px] text-muted">
+                    <span className="h-1 w-1 rounded-full bg-orange" />
+                    <span className="font-mono text-ink">
+                      {Math.round(
+                        10000 - lerp(0, 432, solutionP)
+                      ).toLocaleString()}
+                    </span>
+                    <span>/ 10k</span>
                   </div>
                 </div>
 
-                {/* Solution */}
-                <div
-                  className="mt-3 flex-1 overflow-hidden rounded-md border-l-2 border-orange bg-offwhite/40 pl-3 text-[10px] leading-5 text-body sm:text-[12px]"
-                  style={{
-                    opacity: remap(story, 0.8, 0.84),
-                  }}
-                >
-                  <div className="meta mb-1">Walkthrough</div>
-                  <pre
-                    className="whitespace-pre-wrap font-sans"
-                    style={{ margin: 0 }}
+                {/* Messages area / empty state */}
+                <div className="flex-1 overflow-hidden px-4 py-4 sm:px-6">
+                  {clickP < 0.45 ? (
+                    // Empty state — exactly mirrors the real /chat hero
+                    <div
+                      className="mx-auto max-w-md text-center"
+                      style={{ opacity: remap(story, 0.32, 0.42) }}
+                    >
+                      <h3 className="mt-4 font-serif text-xl leading-tight text-ink sm:mt-6 sm:text-2xl">
+                        What are you stuck on?
+                      </h3>
+                      <div className="mt-3 text-[8px] font-medium uppercase tracking-[0.14em] text-muted sm:mt-4">
+                        Try one of these
+                      </div>
+                      <div className="mt-2 grid grid-cols-2 gap-1.5">
+                        <div className="rounded-md border border-hair bg-paper p-2 text-left text-[10px] text-body">
+                          <span className="text-muted">→</span> Solve a
+                          quadratic
+                        </div>
+                        <div className="rounded-md border border-hair bg-paper p-2 text-left text-[10px] text-body">
+                          <span className="text-muted">→</span> Find dy/dx
+                        </div>
+                        <div className="rounded-md border border-hair bg-paper p-2 text-left text-[10px] text-body">
+                          <span className="text-muted">→</span> Projectile
+                          motion
+                        </div>
+                        <div className="rounded-md border border-hair bg-paper p-2 text-left text-[10px] text-body">
+                          <span className="text-muted">→</span> u-substitution
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    // After send — user bubble, then assistant streams in
+                    <div className="space-y-2.5">
+                      <div className="ml-auto max-w-[78%] rounded-lg bg-offwhite px-3 py-2 text-[11px] leading-snug text-body sm:text-xs">
+                        {PROBLEM}
+                      </div>
+                      {thinkingP > 0 && solutionP < 0.05 && (
+                        <div className="max-w-[40%] border-l-2 border-orange bg-paper px-3 py-2 text-[11px] text-muted">
+                          <span className="typing-dots">
+                            <span />
+                            <span />
+                            <span />
+                          </span>
+                        </div>
+                      )}
+                      {solutionP > 0.02 && (
+                        <div className="max-w-[88%] border-l-2 border-orange bg-paper px-3 py-2 text-[10px] leading-5 text-body sm:text-[11.5px]">
+                          <pre
+                            className="whitespace-pre-wrap font-sans"
+                            style={{ margin: 0 }}
+                          >
+                            {solution}
+                            {showSolutionCaret && (
+                              <span className="ml-0.5 inline-block h-[10px] w-[1.5px] animate-pulseSoft bg-orange align-middle" />
+                            )}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* COMPOSER — dark rounded pill, identical to the real one */}
+                <div className="px-4 pb-3 pt-1 sm:px-6">
+                  <div
+                    className="flex items-center gap-2 rounded-[24px] border border-white/10 bg-[#1f1f22] px-3 py-2.5 shadow-[0_10px_28px_-12px_rgba(0,0,0,0.45)] transition-shadow"
+                    style={{
+                      boxShadow:
+                        focusIntensity > 0
+                          ? `0 12px 36px -12px rgba(194,65,12,${0.25 + focusIntensity * 0.4})`
+                          : undefined,
+                    }}
                   >
-                    {solution}
-                    {showSolutionCaret && (
-                      <span className="ml-0.5 inline-block h-[11px] w-[1.5px] animate-pulseSoft bg-orange align-middle" />
-                    )}
-                  </pre>
+                    {/* Attach button */}
+                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full text-white/60">
+                      <svg
+                        viewBox="0 0 16 16"
+                        className="h-3 w-3"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      >
+                        <path d="M8 2v12M2 8h12" />
+                      </svg>
+                    </span>
+                    {/* Input text — empty until typing phase, then the problem */}
+                    <span className="flex-1 truncate text-[11px] text-white sm:text-xs">
+                      {clickP > 0.45 && solutionP < 0.05 ? (
+                        <span className="text-white/45">Ask anything…</span>
+                      ) : problemTyped ? (
+                        <span>{problemTyped}</span>
+                      ) : (
+                        <span className="text-white/45">Ask anything…</span>
+                      )}
+                      {showInputCaret && (
+                        <span className="ml-0.5 inline-block h-[11px] w-[1.5px] animate-pulseSoft bg-orange align-middle" />
+                      )}
+                    </span>
+                    {/* Send button — orange when typing, glows on click */}
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      className="relative grid h-6 w-6 shrink-0 place-items-center rounded-full bg-orange text-paper"
+                      style={{
+                        opacity: problemTyped.length > 4 || clickP > 0 ? 1 : 0.5,
+                        transform:
+                          clickP > 0 && clickP < 0.4
+                            ? "scale(0.9)"
+                            : "scale(1)",
+                      }}
+                    >
+                      <svg
+                        viewBox="0 0 16 16"
+                        className="h-3 w-3"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M8 13V3M3 8l5-5 5 5" />
+                      </svg>
+                      {clickRipple > 0 && (
+                        <span
+                          className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-orange"
+                          style={{
+                            opacity: clickRipple,
+                            transform: `scale(${1 + clickRipple * 0.6})`,
+                          }}
+                        />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -413,10 +495,10 @@ export default function ScrollCinema() {
 
 function StageCaption({ progress }: { progress: number }) {
   const stages = [
-    { from: 0.06, to: 0.18, label: "01 · Open the app" },
-    { from: 0.32, to: 0.46, label: "02 · Paste a problem" },
-    { from: 0.46, to: 0.72, label: "03 · Type it in" },
-    { from: 0.72, to: 0.82, label: "04 · Ask the tutor" },
+    { from: 0.06, to: 0.18, label: "01 · Open the chat" },
+    { from: 0.32, to: 0.46, label: "02 · Pick a starter" },
+    { from: 0.46, to: 0.72, label: "03 · Type your question" },
+    { from: 0.72, to: 0.82, label: "04 · Send" },
     { from: 0.82, to: 0.98, label: "05 · Read the walkthrough" },
   ];
   const active = stages.findIndex(

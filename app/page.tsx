@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SiteNav from "@/app/components/SiteNav";
 import Reveal from "@/app/components/Reveal";
 import { useAuth } from "@/app/components/AuthProvider";
@@ -8,20 +8,7 @@ import PageLoader from "@/app/components/PageLoader";
 import ScrollCinema from "@/app/components/ScrollCinema";
 import CedCinema from "@/app/components/CedCinema";
 import AuroraBackground from "@/app/components/AuroraBackground";
-
-function formatMinutes(mins: number): string {
-  if (mins < 60) return `${mins}m`;
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  return m === 0 ? `${h}h` : `${h}h ${m}m`;
-}
-
-const DEMO_EXAMPLES = [
-  { label: "Quadratic", problem: "Solve 2x^2 - 5x - 3 = 0" },
-  { label: "Chain rule", problem: "Find dy/dx if y = (3x^2 + 1)^5" },
-  { label: "Projectile", problem: "A ball is thrown up at 20 m/s from ground level. How high does it go? (g = 10 m/s^2)" },
-  { label: "u-sub", problem: "Evaluate integral of 2x · (x^2 + 1)^3 dx." },
-];
+import { firstApExamDate } from "@/lib/examDates";
 
 /**
  * Home route. Auth-aware: while Firebase is still resolving we render a
@@ -48,63 +35,11 @@ function HomeLoading() {
 }
 
 function MarketingHome() {
-  const { user, configured: authConfigured, getIdToken, plan } = useAuth();
-  const isSignedIn = !!user && user.emailVerified;
+  const { user, getIdToken, plan } = useAuth();
   const [email, setEmail] = useState("");
   const [captured, setCaptured] = useState<"idle" | "ok" | "err">("idle");
   const [captureMsg, setCaptureMsg] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Live solver state (runs on the landing page)
-  const [demoProblem, setDemoProblem] = useState(DEMO_EXAMPLES[0].problem);
-  const [demoLoading, setDemoLoading] = useState(false);
-  const [demoResult, setDemoResult] = useState<string>("");
-  const [demoSource, setDemoSource] = useState<"curated" | "ai" | null>(null);
-  const [demoTokensRemaining, setDemoTokensRemaining] = useState<number | null>(null);
-  const [demoMessagesRemaining, setDemoMessagesRemaining] = useState<number | null>(null);
-  const [demoResetMinutes, setDemoResetMinutes] = useState<number | null>(null);
-  const [demoError, setDemoError] = useState("");
-  const [demoLimitHit, setDemoLimitHit] = useState(false);
-
-  async function runDemo(problemOverride?: string) {
-    const p = (problemOverride ?? demoProblem).trim();
-    if (!p) return;
-    if (problemOverride) setDemoProblem(problemOverride);
-    setDemoLoading(true);
-    setDemoError("");
-    setDemoResult("");
-    setDemoLimitHit(false);
-    setDemoSource(null);
-    try {
-      const token = await getIdToken();
-      const res = await fetch("/api/explain", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ problem: p }),
-      });
-      const data = await res.json();
-      if (typeof data?.tokensRemaining === "number")
-        setDemoTokensRemaining(data.tokensRemaining);
-      if (typeof data?.messagesRemaining === "number")
-        setDemoMessagesRemaining(data.messagesRemaining);
-      if (typeof data?.resetMinutes === "number")
-        setDemoResetMinutes(data.resetMinutes);
-      if (!res.ok) {
-        if (data?.limitReached) setDemoLimitHit(true);
-        setDemoError(data?.message || data?.error || "Something went wrong.");
-      } else {
-        setDemoResult(data.explanation);
-        setDemoSource(data.source || null);
-      }
-    } catch (e: any) {
-      setDemoError(e.message || "Network error.");
-    } finally {
-      setDemoLoading(false);
-    }
-  }
 
   async function buy(
     checkoutPlan:
@@ -198,8 +133,8 @@ function MarketingHome() {
             <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary animate-glowPulse text-base">
               {loading ? "Opening checkout…" : "Start Pro - $11 first month"}
             </button>
-            <a href="#try" className="btn-ghost text-base">
-              Try the tutor free ↓
+            <a href="#features" className="btn-ghost text-base">
+              See what's inside ↓
             </a>
           </div>
           <p className="animate-fadeUp delay-700 mt-4 max-w-xl text-sm text-muted">
@@ -208,13 +143,8 @@ function MarketingHome() {
             every day. Enough to run the tutor on your real homework without
             ever paying a cent.
           </p>
-        </div>
 
-        {/* scroll hint */}
-        <div className="animate-fadeUp delay-700 mt-14 flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted">
-          <span className="h-px w-10 bg-hair" />
-          <span>Scroll to watch it in action</span>
-          <span className="animate-scrollHint text-orange">↓</span>
+          <ApCountdown />
         </div>
 
         {/* social proof strip */}
@@ -249,151 +179,6 @@ function MarketingHome() {
 
       {/* Cinematic scroll-synced demo: CED + interactive tools */}
       <CedCinema />
-
-      <hr className="rule mx-auto max-w-5xl" />
-
-      {/* LIVE SOLVER - real working AI on the landing page */}
-      <section id="try" className="mx-auto max-w-5xl px-6 py-16">
-        <div className="grid gap-10 md:grid-cols-[220px_1fr]">
-          <div>
-            <div className="label">Try it right here</div>
-            <p className="mt-3 text-sm text-muted">
-              A real explanation, right now. Pick an example or type your
-              own. Curated walkthroughs are free. New problems pull from
-              your daily token budget — <strong>10,000 tokens a day</strong>{" "}
-              on the Learner tier, on a rolling 24-hour window.
-            </p>
-            <div className="mt-4 text-xs text-muted">
-              {demoTokensRemaining === null
-                ? "Free budget refills daily"
-                : demoTokensRemaining === 0
-                ? `Out of today's budget${
-                    demoResetMinutes
-                      ? ` · resets in ${formatMinutes(demoResetMinutes)}`
-                      : ""
-                  }`
-                : `${demoTokensRemaining.toLocaleString()} tokens left this 24h window`}
-            </div>
-          </div>
-
-          <div>
-            {!isSignedIn && authConfigured ? (
-              <div className="rounded-xl border border-dashed border-hair bg-offwhite p-8 text-center">
-                <div className="label mb-2">Account required</div>
-                <h3 className="font-serif text-2xl font-normal text-ink">
-                  Sign in to use the AI tutor.
-                </h3>
-                <p className="mt-3 text-sm text-muted">
-                  Free to create. Email verification keeps the tutor free
-                  and fair for everyone. Takes 30 seconds.
-                </p>
-                <div className="mt-6 flex flex-wrap justify-center gap-3">
-                  <a href="/signin" className="btn-primary">
-                    Create free account
-                  </a>
-                  <a href="/signin" className="btn-ghost">
-                    I already have one
-                  </a>
-                </div>
-                <p className="mt-4 text-[11px] text-muted">
-                  No credit card. No spam. Cancel any time.
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="mb-3 flex flex-wrap gap-2">
-                  {DEMO_EXAMPLES.map((ex) => (
-                    <button
-                      key={ex.label}
-                      onClick={() => runDemo(ex.problem)}
-                      disabled={demoLoading}
-                      className="rounded-full border border-hair bg-paper px-3 py-1 text-xs text-ink transition-colors hover:border-orange hover:bg-orange-tint hover:text-orange-ink disabled:opacity-50"
-                    >
-                      {ex.label}
-                    </button>
-                  ))}
-                </div>
-
-                <label htmlFor="demo-problem" className="sr-only">
-                  Problem
-                </label>
-                <textarea
-                  id="demo-problem"
-                  value={demoProblem}
-                  onChange={(e) => setDemoProblem(e.target.value)}
-                  rows={3}
-                  placeholder="Paste any math or physics problem..."
-                  className="focus-ring w-full rounded-lg border border-hair bg-paper px-5 py-4 font-mono text-[14px] leading-6 text-ink placeholder-dim"
-                />
-                <div className="mt-3 flex flex-wrap items-center gap-3">
-                  <button
-                    onClick={() => runDemo()}
-                    disabled={demoLoading || !demoProblem.trim()}
-                    className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {demoLoading ? "Thinking…" : "Explain it"}
-                  </button>
-                  <span className="text-xs text-muted">
-                    {demoLoading
-                      ? "The tutor is writing - takes a few seconds on arbitrary problems."
-                      : `Signed in as ${user?.email ?? "you"}.`}
-                  </span>
-                </div>
-              </>
-            )}
-
-            {demoError && (
-              <div
-                className={`mt-5 rounded-md border p-4 text-sm ${
-                  demoLimitHit
-                    ? "border-orange/40 bg-orange-tint text-orange-ink"
-                    : "border-red-200 bg-red-50 text-red-800"
-                }`}
-              >
-                <div>{demoError}</div>
-                {demoLimitHit && (
-                  <button onClick={() => buy("pro-monthly")} className="btn-link mt-2">
-                    Unlock unlimited - $16/month →
-                  </button>
-                )}
-              </div>
-            )}
-
-            {demoResult && (
-              <div className="animate-fadeUp mt-6 border-l-2 border-orange pl-6 text-[16px] leading-relaxed text-body">
-                <div className="mb-2 flex items-center justify-between">
-                  <div className="meta">Walkthrough</div>
-                  <div className="flex items-center gap-3">
-                    {demoSource && (
-                      <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
-                        {demoSource === "curated" ? "Pre-written" : "Generated just now"}
-                      </span>
-                    )}
-                    {demoTokensRemaining !== null && demoSource === "ai" && (
-                      <span className="text-[10px] font-medium uppercase tracking-wider text-muted">
-                        · {demoTokensRemaining.toLocaleString()} tokens left today
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <pre className="whitespace-pre-wrap font-sans">{demoResult}</pre>
-                <div className="mt-5 text-sm">
-                  <button onClick={() => buy("pro-monthly")} className="btn-link">
-                    Like this? Unlock unlimited - $16/month →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {!demoResult && !demoError && (
-              <p className="mt-4 text-xs text-muted">
-                Click an example above, or type your own and hit{" "}
-                <em>Explain it</em>. The walkthrough will appear here.
-              </p>
-            )}
-          </div>
-        </div>
-      </section>
 
       <hr className="rule mx-auto max-w-5xl" />
 
@@ -1043,6 +828,76 @@ function FeaturePreview({
   );
 }
 
+function ApCountdown() {
+  const [remaining, setRemaining] = useState(() =>
+    diffParts(firstApExamDate().getTime() - Date.now())
+  );
+
+  useEffect(() => {
+    const target = firstApExamDate().getTime();
+    const tick = () => setRemaining(diffParts(target - Date.now()));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const passed = remaining.total <= 0;
+  const target = firstApExamDate();
+  const dateLabel = target.toLocaleDateString(undefined, {
+    month: "long",
+    day: "numeric",
+  });
+
+  return (
+    <div className="animate-fadeUp delay-700 mt-8 max-w-xl">
+      <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-orange-ink">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inset-0 animate-pulseSoft rounded-full bg-orange/60" />
+          <span className="relative m-auto h-1 w-1 rounded-full bg-orange" />
+        </span>
+        First AP exam · {dateLabel}
+      </div>
+      {passed ? (
+        <div className="rounded-xl border border-orange/40 bg-orange-tint px-5 py-4 text-sm text-orange-ink">
+          AP exams are happening now — best of luck.
+        </div>
+      ) : (
+        <div className="grid grid-cols-4 gap-2 rounded-xl border border-orange/40 bg-orange-tint p-3 sm:gap-3 sm:p-4">
+          <CountCell value={remaining.days} label="Days" />
+          <CountCell value={remaining.hours} label="Hours" />
+          <CountCell value={remaining.minutes} label="Mins" />
+          <CountCell value={remaining.seconds} label="Secs" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CountCell({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="rounded-lg bg-paper/70 px-2 py-2 text-center sm:px-3 sm:py-3">
+      <div className="font-serif text-3xl font-normal tabular-nums text-ink sm:text-4xl">
+        {String(value).padStart(2, "0")}
+      </div>
+      <div className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-orange-ink/80">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function diffParts(ms: number) {
+  if (ms <= 0) {
+    return { total: ms, days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
+  const total = ms;
+  const days = Math.floor(total / 86_400_000);
+  const hours = Math.floor((total % 86_400_000) / 3_600_000);
+  const minutes = Math.floor((total % 3_600_000) / 60_000);
+  const seconds = Math.floor((total % 60_000) / 1000);
+  return { total, days, hours, minutes, seconds };
+}
+
 function MockFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="absolute inset-4 flex flex-col overflow-hidden rounded-lg border border-hair bg-paper shadow-[0_10px_30px_-18px_rgba(0,0,0,0.4)]">
@@ -1059,35 +914,75 @@ function MockFrame({ children }: { children: React.ReactNode }) {
 function ChatMock() {
   return (
     <MockFrame>
-      <div className="flex h-full">
-        <div className="hidden w-28 shrink-0 flex-col gap-1 border-r border-hair bg-offwhite/60 p-2 text-[9px] text-muted sm:flex">
-          <div className="rounded bg-orange/15 px-1.5 py-1 text-orange-ink">
-            Projectile question
+      <div className="flex h-full bg-paper">
+        {/* Left sidebar — matches the real ExpandedSidebar */}
+        <div className="hidden w-32 shrink-0 flex-col border-r border-hair bg-offwhite p-1.5 text-[8px] sm:flex">
+          <div className="flex items-center gap-1 rounded-md border border-hair bg-paper px-1.5 py-1 text-muted">
+            <span className="h-1.5 w-1.5 rounded-full border border-muted/60" />
+            <span>Search…</span>
           </div>
-          <div className="rounded px-1.5 py-1">Chain rule check</div>
-          <div className="rounded px-1.5 py-1">u-sub warm-up</div>
-          <div className="rounded px-1.5 py-1">Redox half-cells</div>
+          <div className="mt-1.5 rounded-md bg-ink px-1.5 py-1 text-center font-medium text-paper">
+            + New chat
+          </div>
+          <div className="mt-2 px-1 text-[7px] font-semibold uppercase tracking-[0.18em] text-muted/70">
+            Today
+          </div>
+          <div className="mt-1 space-y-0.5">
+            <div className="rounded bg-orange/15 px-1.5 py-1 text-[9px] text-orange-ink">
+              Projectile question
+            </div>
+            <div className="rounded px-1.5 py-1 text-[9px] text-body">Chain rule check</div>
+            <div className="rounded px-1.5 py-1 text-[9px] text-body">u-sub warm-up</div>
+          </div>
+          <div className="mt-2 px-1 text-[7px] font-semibold uppercase tracking-[0.18em] text-muted/70">
+            Yesterday
+          </div>
+          <div className="mt-1 space-y-0.5">
+            <div className="rounded px-1.5 py-1 text-[9px] text-body">Redox half-cells</div>
+          </div>
         </div>
+
+        {/* Main column */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="space-y-2 overflow-hidden p-3">
-            <div className="max-w-[80%] rounded-lg bg-offwhite px-3 py-2 text-[10px] leading-snug text-body">
+          {/* Header bar with title + token pill */}
+          <div className="flex items-center justify-between border-b border-hair bg-offwhite/60 px-2.5 py-1.5">
+            <div className="truncate font-serif text-[11px] text-ink">
+              Projectile question
+            </div>
+            <div className="flex items-center gap-1 rounded-full border border-hair bg-paper px-1.5 py-0.5 text-[8px] text-muted">
+              <span className="h-1 w-1 rounded-full bg-orange" />
+              <span className="font-mono text-ink">8.4k</span>
+              <span>/ 10k</span>
+            </div>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 space-y-2 overflow-hidden px-3 py-2.5">
+            <div className="ml-auto max-w-[78%] rounded-lg bg-offwhite px-2.5 py-1.5 text-[10px] leading-snug text-body">
               A ball is thrown up at 20 m/s. How high does it go?
             </div>
-            <div className="ml-auto max-w-[85%] rounded-lg border-l-2 border-orange bg-paper px-3 py-2 text-[10px] leading-snug text-body">
+            <div className="max-w-[88%] border-l-2 border-orange bg-paper px-2.5 py-1.5 text-[10px] leading-snug text-body">
               Call up positive. At the peak, v = 0. Use{" "}
               <span className="italic">v² = v₀² − 2gh</span> → h = v₀² / (2g)
               = 400 / 20 = <strong className="text-ink">20 m</strong>.
             </div>
-            <div className="ml-auto max-w-[70%] rounded-lg border-l-2 border-orange bg-paper px-3 py-2 text-[10px] leading-snug text-body">
-              <span className="inline-block h-2 w-2 animate-pulseSoft rounded-full bg-orange" />{" "}
+            <div className="max-w-[60%] border-l-2 border-orange bg-paper px-2.5 py-1.5 text-[10px] leading-snug text-muted">
+              <span className="inline-block h-1.5 w-1.5 animate-pulseSoft rounded-full bg-orange align-middle" />
               <span className="ml-1">Want the full walkthrough?</span>
             </div>
           </div>
-          <div className="mt-auto border-t border-hair p-2">
-            <div className="flex items-center gap-1.5 rounded-md border border-hair bg-offwhite px-2 py-1.5 text-[10px] text-muted">
-              <span>Ask a follow-up…</span>
-              <span className="ml-auto rounded bg-ink/90 px-1.5 py-0.5 text-[9px] text-paper">
-                ↵
+
+          {/* Composer — dark rounded pill, matches the real one */}
+          <div className="px-3 pb-2.5 pt-1">
+            <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-[#1f1f22] px-2 py-1.5 shadow-[0_8px_22px_-10px_rgba(0,0,0,0.45)]">
+              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full text-white/70">
+                <svg viewBox="0 0 16 16" className="h-2.5 w-2.5" fill="currentColor"><path d="M8 2v12M2 8h12" /></svg>
+              </span>
+              <span className="flex-1 truncate text-[9px] text-white/45">
+                Ask a follow-up…
+              </span>
+              <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full bg-orange text-paper">
+                <svg viewBox="0 0 16 16" className="h-2.5 w-2.5" fill="currentColor"><path d="M8 14V2M3 7l5-5 5 5" /></svg>
               </span>
             </div>
           </div>

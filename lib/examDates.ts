@@ -52,3 +52,12 @@ export function examCountdownLabel(
   if (days === 1) return "1 day until exam";
   return `${days} days until exam`;
 }
+
+/** First scheduled AP exam of the season (8am local on the earliest date in
+ *  AP_EXAM_DATES). Used by the marketing-page countdown. */
+export function firstApExamDate(): Date {
+  const earliestIso = Object.values(AP_EXAM_DATES).sort()[0];
+  const [y, m, d] = earliestIso.split("-").map(Number);
+  // College Board exams start at 8:00 local time on the scheduled date.
+  return new Date(y, m - 1, d, 8, 0, 0, 0);
+}
