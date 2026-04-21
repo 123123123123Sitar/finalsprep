@@ -556,8 +556,8 @@ textarea, input {
   flex-direction: column;
   width: 100%;
   max-width: 48rem; /* a touch wider than before to fit more per page */
-  height: min(calc(100vh - 220px), 900px);
-  min-height: 460px;
+  height: min(calc(100vh - 120px), 1200px);
+  min-height: 640px;
   padding: clamp(28px, 4vw, 56px) clamp(24px, 5vw, 72px) clamp(20px, 3vw, 36px);
   background: rgb(var(--paper));
   background-image:
@@ -765,7 +765,7 @@ textarea, input {
   .book-page {
     padding: 22px 18px 18px;
     max-width: 100%;
-    height: calc(100vh - 180px);
+    height: calc(100vh - 100px);
     border-radius: 2px;
   }
   .book-page::before,
