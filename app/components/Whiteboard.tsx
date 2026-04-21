@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import MathRender from "./Math";
 
 type Tool = "pen" | "eraser";
 type Point = { x: number; y: number };
@@ -61,12 +62,13 @@ export default function Whiteboard({
   const drawingRef = useRef(false);
   const lastRef = useRef<Point | null>(null);
   const strokeRef = useRef<Point[]>([]);
-  const questionDrawnRef = useRef(false);
+  const historyRef = useRef<ImageData[]>([]);
   const [tool, setTool] = useState<Tool>("pen");
   const [color, setColor] = useState<string>("#111");
   const [size, setSize] = useState<number>(2);
   const [pos, setPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [circleBbox, setCircleBbox] = useState<Bbox | null>(null);
+  const [historyDepth, setHistoryDepth] = useState(0);
   const dragStateRef = useRef<{
     startX: number;
     startY: number;
@@ -102,36 +104,11 @@ export default function Whiteboard({
     dragStateRef.current = null;
   }
 
-  function drawQuestionText(ctx: CanvasRenderingContext2D, cssWidth: number) {
-    if (!questionText) return;
-    ctx.save();
-    ctx.font = "14px Georgia, serif";
-    ctx.fillStyle = "#6b6b6b";
-    ctx.textBaseline = "top";
-    const prefix = "Q: ";
-    const words = (prefix + questionText).split(/\s+/);
-    const maxWidth = cssWidth - 24;
-    let line = "";
-    let y = 16;
-    for (const w of words) {
-      const testLine = line ? `${line} ${w}` : w;
-      if (ctx.measureText(testLine).width > maxWidth && line) {
-        ctx.fillText(line, 12, y);
-        y += 20;
-        line = w;
-      } else {
-        line = testLine;
-      }
-      if (y > 120) break;
-    }
-    if (line && y <= 140) ctx.fillText(line, 12, y);
-    ctx.restore();
-  }
-
   useEffect(() => {
     if (!open) {
-      questionDrawnRef.current = false;
       setCircleBbox(null);
+      historyRef.current = [];
+      setHistoryDepth(0);
       return;
     }
     const canvas = canvasRef.current;
@@ -159,16 +136,11 @@ export default function Whiteboard({
       if (prev.width && prev.height) {
         ctx.drawImage(prev, 0, 0, prev.width / dpr, prev.height / dpr);
       }
-      if (!questionDrawnRef.current) {
-        drawQuestionText(ctx, rect.width);
-        questionDrawnRef.current = true;
-      }
     };
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, questionText]);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -187,9 +159,41 @@ export default function Whiteboard({
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
+  function pushHistory() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    try {
+      const snap = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      historyRef.current.push(snap);
+      if (historyRef.current.length > 50) historyRef.current.shift();
+      setHistoryDepth(historyRef.current.length);
+    } catch {}
+  }
+
+  function undo() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const prev = historyRef.current.pop();
+    setHistoryDepth(historyRef.current.length);
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    if (prev) {
+      ctx.putImageData(prev, 0, 0);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    ctx.restore();
+    setCircleBbox(null);
+  }
+
   function onPointerDown(e: React.PointerEvent<HTMLCanvasElement>) {
     e.preventDefault();
     (e.target as HTMLCanvasElement).setPointerCapture(e.pointerId);
+    pushHistory();
     drawingRef.current = true;
     const p = getPos(e);
     lastRef.current = p;
@@ -238,20 +242,12 @@ export default function Whiteboard({
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    pushHistory();
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
     setCircleBbox(null);
-    // Redraw question so the user can still see it after clearing.
-    const dpr = window.devicePixelRatio || 1;
-    const ctx2 = canvas.getContext("2d");
-    if (ctx2) {
-      ctx2.save();
-      ctx2.scale(dpr, dpr);
-      drawQuestionText(ctx2, canvas.width / dpr);
-      ctx2.restore();
-    }
   }
 
   function exportAnswerImage(): string {
@@ -347,6 +343,15 @@ export default function Whiteboard({
             </label>
             <button
               type="button"
+              onClick={undo}
+              disabled={historyDepth === 0}
+              className="rounded-md border border-hair bg-offwhite px-2 py-1 text-xs text-ink hover:border-orange disabled:opacity-40"
+              title="Undo last stroke"
+            >
+              ↶ Undo
+            </button>
+            <button
+              type="button"
               onClick={clear}
               className="rounded-md border border-hair bg-offwhite px-2 py-1 text-xs text-ink hover:border-red-400"
             >
@@ -361,6 +366,16 @@ export default function Whiteboard({
             </button>
           </div>
         </div>
+        {questionText && (
+          <div className="max-h-40 overflow-y-auto border-b border-hair bg-offwhite px-4 py-2 text-[13px] text-ink">
+            <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
+              Question
+            </div>
+            <div className="whitespace-pre-wrap">
+              <MathRender auto>{questionText}</MathRender>
+            </div>
+          </div>
+        )}
         <div ref={containerRef} className="relative flex-1 bg-white">
           <canvas
             ref={canvasRef}
