@@ -313,8 +313,11 @@ function ProblemCard({
     onSubmitted?.();
   }
 
-  async function handleAiGrade() {
-    if (!attempt.trim() || grading) return;
+  async function runGrade(args: { attempt?: string; imageBase64?: string }) {
+    if (grading) return;
+    const hasAttempt = !!args.attempt && args.attempt.trim().length > 0;
+    const hasImage = !!args.imageBase64 && args.imageBase64.length > 0;
+    if (!hasAttempt && !hasImage) return;
     setGradeError("");
     setGrading(true);
     try {
@@ -327,7 +330,8 @@ function ProblemCard({
         },
         body: JSON.stringify({
           problem: problem.prompt,
-          attempt,
+          attempt: args.attempt ?? "",
+          imageBase64: args.imageBase64 ?? "",
           answer: problem.answer,
           explanation: problem.explanation,
         }),
@@ -342,9 +346,13 @@ function ProblemCard({
           feedback: data.feedback,
           tokens: data.tokens,
         });
+        if (typeof data.extracted === "string" && data.extracted.trim()) {
+          setAttempt((prev) => prev || data.extracted);
+        }
         setSubmitted(true);
         setShowAnswer(true);
         setShowExplain(true);
+        setWhiteboardOpen(false);
         onSubmitted?.();
       }
     } catch (e: any) {
@@ -352,6 +360,14 @@ function ProblemCard({
     } finally {
       setGrading(false);
     }
+  }
+
+  async function handleAiGrade() {
+    await runGrade({ attempt });
+  }
+
+  async function handleWhiteboardSubmit(imageBase64: string) {
+    await runGrade({ imageBase64 });
   }
 
   const isCorrect =
@@ -577,6 +593,10 @@ function ProblemCard({
         open={whiteboardOpen}
         onClose={() => setWhiteboardOpen(false)}
         title={`Problem ${index + 1}`}
+        questionText={problem.prompt}
+        canSubmit={canAiGrade}
+        submitting={grading}
+        onSubmitAnswer={canAiGrade ? handleWhiteboardSubmit : undefined}
       />
     </div>
   );
