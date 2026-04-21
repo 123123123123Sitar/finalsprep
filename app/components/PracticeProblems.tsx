@@ -1,9 +1,54 @@
 "use client";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { PracticeProblem } from "@/lib/practice/types";
 import { addToWrongBank } from "@/lib/wrongBank";
 import { useAuth } from "./AuthProvider";
 import MathRender from "./Math";
+
+function stripUnmatched(s: string, open: string, close: string): string {
+  const toRemove = new Set<number>();
+  const opens: number[] = [];
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === open) opens.push(i);
+    else if (s[i] === close) {
+      if (opens.length) opens.pop();
+      else toRemove.add(i);
+    }
+  }
+  for (const idx of opens) toRemove.add(idx);
+  if (!toRemove.size) return s;
+  let out = "";
+  for (let i = 0; i < s.length; i++) if (!toRemove.has(i)) out += s[i];
+  return out;
+}
+
+function buildPreview(raw: string): string {
+  let out = raw;
+  out = stripUnmatched(out, "(", ")");
+  out = stripUnmatched(out, "{", "}");
+  out = stripUnmatched(out, "[", "]");
+  out = out.replace(/[ \t]+/g, " ").replace(/ *\n+ */g, " ").trim();
+  if (!out) return "";
+  out = out
+    .replace(/∫/g, "\\int ")
+    .replace(/²/g, "^{2}")
+    .replace(/³/g, "^{3}")
+    .replace(/⁴/g, "^{4}")
+    .replace(/π/g, "\\pi ")
+    .replace(/√/g, "\\sqrt ")
+    .replace(/·/g, "\\cdot ")
+    .replace(/×/g, "\\times ")
+    .replace(/÷/g, "\\div ")
+    .replace(/±/g, "\\pm ")
+    .replace(/≤/g, "\\le ")
+    .replace(/≥/g, "\\ge ")
+    .replace(/≠/g, "\\ne ")
+    .replace(/∞/g, "\\infty ")
+    .replace(/θ/g, "\\theta ");
+  out = out.replace(/\$/g, "");
+  out = out.replace(/\s+/g, " ").trim();
+  return `$${out}$`;
+}
 
 export default function PracticeProblems({
   problems,
@@ -134,6 +179,8 @@ function ProblemCard({
   const isCorrect =
     submitted && attempt.trim() !== "" && normalize(attempt) === normalize(problem.answer);
 
+  const preview = useMemo(() => buildPreview(attempt), [attempt]);
+
   const shortcuts: { label: string; insert: string; caretOffset?: number; title: string }[] = [
     { label: "∫", insert: "∫ ", title: "Integral" },
     { label: "d/dx", insert: "d/dx ", title: "Derivative" },
@@ -188,6 +235,16 @@ function ProblemCard({
             </button>
           ))}
         </div>
+        {preview && (
+          <div className="mt-3 rounded-md border border-hair bg-paper px-3 py-2">
+            <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted">
+              Preview
+            </div>
+            <div className="overflow-x-auto text-[15px] text-ink">
+              <MathRender>{preview}</MathRender>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">
