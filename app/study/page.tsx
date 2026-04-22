@@ -362,19 +362,18 @@ export default function Study() {
 
   useLayoutEffect(() => {
     if (scrollTopTick === 0 || typeof window === "undefined") return;
-    // Skip the scroll-to-top if the user can already see a meaningful chunk of
-    // the main panel (≥30% of its height in the viewport). Jumping to the top
-    // when you're already mostly on the page is just annoying.
+    // Skip the scroll-to-top only if the TOP of the main panel is still near
+    // the viewport — i.e. the user is already looking at the start of the new
+    // content. A pure "fraction visible" check breaks on long pages (max
+    // possible fraction is viewport/panel, so the bottom of a 3× viewport
+    // panel reads as ~33% visible and would incorrectly suppress the scroll).
     const panel = mainPanelRef.current;
     if (panel) {
       const rect = panel.getBoundingClientRect();
       const viewportH = window.innerHeight;
-      const visible = Math.max(
-        0,
-        Math.min(rect.bottom, viewportH) - Math.max(rect.top, 0)
-      );
-      const fractionVisible = rect.height > 0 ? visible / rect.height : 0;
-      if (fractionVisible >= 0.3) return;
+      // Allow up to ~30% of a viewport height above the fold before we give up
+      // and yank to the top. Generous enough to not fight small scroll offsets.
+      if (rect.top >= -viewportH * 0.3 && rect.top <= viewportH) return;
     }
     const html = document.documentElement;
     const prev = html.style.scrollBehavior;
