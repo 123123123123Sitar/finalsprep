@@ -362,6 +362,20 @@ export default function Study() {
 
   useLayoutEffect(() => {
     if (scrollTopTick === 0 || typeof window === "undefined") return;
+    // Skip the scroll-to-top if the user can already see a meaningful chunk of
+    // the main panel (≥30% of its height in the viewport). Jumping to the top
+    // when you're already mostly on the page is just annoying.
+    const panel = mainPanelRef.current;
+    if (panel) {
+      const rect = panel.getBoundingClientRect();
+      const viewportH = window.innerHeight;
+      const visible = Math.max(
+        0,
+        Math.min(rect.bottom, viewportH) - Math.max(rect.top, 0)
+      );
+      const fractionVisible = rect.height > 0 ? visible / rect.height : 0;
+      if (fractionVisible >= 0.3) return;
+    }
     const html = document.documentElement;
     const prev = html.style.scrollBehavior;
     html.style.scrollBehavior = "auto";
