@@ -535,7 +535,7 @@ function RecentActivity({
         <div className="label mb-2">Recent activity</div>
         <p className="text-[13px] text-muted">
           {isSelf
-            ? "Nothing here yet — chat with the tutor or finish a lesson to get started."
+            ? "Nothing here yet. Chat with the tutor or finish a lesson to get started."
             : "No recent activity to show."}
         </p>
       </div>

@@ -11,10 +11,10 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
       structure:
         "40 MCQ (80 min) + 4 FRQ (100 min, one is experimental design, one is a qualitative/quantitative translation). Calculator allowed throughout.",
       scoring:
-        "MCQ is 50%, FRQ is 50%. The historical pass rate hovers around 45%, making it one of the toughest AP exams — because the course is taken earlier and students underestimate it.",
+        "MCQ is 50%, FRQ is 50%. The historical pass rate hovers around 45%, making it one of the toughest AP exams because the course is taken earlier and students underestimate it.",
     },
     framing:
-      "AP Physics 1 teaches you to reason about physical systems using a small number of conservation laws and force diagrams. It's notoriously the lowest-scoring AP exam because students try to memorize formulas instead of learning to draw free-body diagrams and track energy/momentum transfers. The course rewards conceptual fluency over computation — treat it as a physics reasoning class, not a math class.",
+      "AP Physics 1 teaches you to reason about physical systems using a small number of conservation laws and force diagrams. It's notoriously the lowest-scoring AP exam because students try to memorize formulas instead of learning to draw free-body diagrams and track energy/momentum transfers. The course rewards conceptual fluency over computation; treat it as a physics reasoning class, not a math class.",
     units: [
       {
         unitNumber: 1,
@@ -62,7 +62,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           "Always identify if acceleration is constant before applying kinematic equations. On projectile problems, treat x and y independently. On graph problems, translate between position, velocity, and acceleration.",
         studyTips: [
           "Memorize the 4 kinematic equations and their missing-variable hints.",
-          "Practice reading motion graphs — 20 problems across position, velocity, acceleration.",
+          "Practice reading motion graphs: 20 problems across position, velocity, acceleration.",
           "Drill projectile motion with different launch angles.",
           "Sketch v-t graphs for scenarios (car accelerating, ball bouncing, etc.).",
         ],
@@ -99,7 +99,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Newton's 3rd law",
-            body: "If A exerts force F on B, B exerts -F on A. The pair acts on DIFFERENT objects, so they don't cancel in a single FBD. Common misconception: 'the table pushes up on the book because the book pushes down on the table' — actually the table pushes up because of contact forces, not because of Newton's 3rd.",
+            body: "If A exerts force F on B, B exerts -F on A. The pair acts on DIFFERENT objects, so they don't cancel in a single FBD. Common misconception: 'the table pushes up on the book because the book pushes down on the table'. Actually the table pushes up because of contact forces, not because of Newton's 3rd.",
           },
         ],
         keyFacts: [
@@ -111,7 +111,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
         commonMistakes: [
           "Drawing forces BY the object instead of ON it.",
           "Forgetting that static friction is variable, not always at its max.",
-          "Thinking centripetal force is a separate force — it's the NET force in circular motion.",
+          "Thinking centripetal force is a separate force: it's the NET force in circular motion.",
           "Confusing action-reaction pairs (Newton's 3rd) with equilibrium forces (Newton's 1st).",
         ],
         examStrategy:
@@ -144,7 +144,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Kinetic and potential energy",
-            body: "KE depends on speed (not velocity direction). PE depends on position. Choose a reference level for PE — the physics doesn't change.",
+            body: "KE depends on speed (not velocity direction). PE depends on position. Choose a reference level for PE; the physics doesn't change.",
           },
           {
             heading: "Conservation of energy",
@@ -164,12 +164,12 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           "Using conservation of energy when friction is present without accounting for energy lost.",
           "Forgetting the cos θ in work calculations.",
           "Double-counting work (e.g., computing work done by gravity AND using PE_grav).",
-          "Using KE = (1/2)mv² with velocity as a vector — v is the speed.",
+          "Using KE = (1/2)mv² with velocity as a vector: v is the speed.",
         ],
         examStrategy:
-          "Energy conservation is often faster than Newton's 2nd law for 'find the speed at the bottom' problems. Always decide between force analysis and energy analysis — they're two tools, not competitors.",
+          "Energy conservation is often faster than Newton's 2nd law for 'find the speed at the bottom' problems. Always decide between force analysis and energy analysis; they're two tools, not competitors.",
         studyTips: [
-          "Solve each free-fall problem with both energy conservation and kinematics — they should match.",
+          "Solve each free-fall problem with both energy conservation and kinematics; they should match.",
           "Drill energy diagrams (bar charts).",
           "Practice identifying when to use energy vs. force analysis.",
           "Memorize PE formulas for gravity, springs, and general gravitation.",
@@ -191,7 +191,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
         essentials: [
           {
             heading: "Momentum and impulse",
-            body: "Momentum is mass times velocity — it's a vector. Impulse is the change in momentum, equal to the integral of force over time. For constant force: J = F·Δt.",
+            body: "Momentum is mass times velocity: it's a vector. Impulse is the change in momentum, equal to the integral of force over time. For constant force: J = F·Δt.",
           },
           {
             heading: "Conservation of momentum",
@@ -213,7 +213,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
         ],
         commonMistakes: [
           "Using KE conservation in perfectly inelastic collisions (don't).",
-          "Forgetting that momentum is a vector — signs matter in 1D.",
+          "Forgetting that momentum is a vector: signs matter in 1D.",
           "Computing impulse without considering force direction.",
           "Assuming energy is conserved in all collisions.",
         ],
@@ -257,7 +257,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Rotational equilibrium",
-            body: "Net force zero AND net torque zero. Pick any axis for torque calculation — result is the same. Pick cleverly to eliminate unknowns.",
+            body: "Net force zero AND net torque zero. Pick any axis for torque calculation; result is the same. Pick cleverly to eliminate unknowns.",
           },
         ],
         keyFacts: [
@@ -352,7 +352,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Pendulum",
-            body: "For small angles (<15°), T = 2π√(L/g). Period depends only on length and g — not mass or amplitude. For large angles, the motion is no longer SHM.",
+            body: "For small angles (<15°), T = 2π√(L/g). Period depends only on length and g, not mass or amplitude. For large angles, the motion is no longer SHM.",
           },
           {
             heading: "Energy in SHM",
@@ -445,7 +445,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
       scoring: "MCQ 50%, FRQ 50%.",
     },
     framing:
-      "AP Physics 2 picks up where Physics 1 left off. Where Physics 1 was about mechanics and energy, Physics 2 is about thermodynamics, electricity, magnetism, waves, and modern physics. The topics are broader and shallower — you need breadth, not deep computation.",
+      "AP Physics 2 picks up where Physics 1 left off. Where Physics 1 was about mechanics and energy, Physics 2 is about thermodynamics, electricity, magnetism, waves, and modern physics. The topics are broader and shallower; you need breadth, not deep computation.",
     units: [
       {
         unitNumber: 1,
@@ -489,7 +489,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
         ],
         commonMistakes: [
           "Using Celsius in PV = nRT.",
-          "Sign errors in the first law — check AP convention.",
+          "Sign errors in the first law; check AP convention.",
           "Claiming heat and temperature are the same thing.",
           "Forgetting that ΔU = 0 for isothermal processes.",
         ],
@@ -525,7 +525,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Electric potential",
-            body: "V = kq/r for a point charge. Potential is scalar (not vector) — add contributions algebraically. Work done by the field on a charge q moving between potentials: W = qΔV.",
+            body: "V = kq/r for a point charge. Potential is scalar (not vector); add contributions algebraically. Work done by the field on a charge q moving between potentials: W = qΔV.",
           },
           {
             heading: "Conductors in electrostatic equilibrium",
@@ -734,7 +734,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
         essentials: [
           {
             heading: "Photoelectric effect",
-            body: "Light above threshold frequency ejects electrons. KE_max = hf - φ where φ is the work function. Cannot be explained classically — requires photons.",
+            body: "Light above threshold frequency ejects electrons. KE_max = hf - φ where φ is the work function. Cannot be explained classically; requires photons.",
           },
           {
             heading: "Photons and de Broglie",
@@ -746,7 +746,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Mass-energy equivalence",
-            body: "E = mc². Small mass can become enormous energy. Used in nuclear physics — binding energy, fission, fusion.",
+            body: "E = mc². Small mass can become enormous energy. Used in nuclear physics: binding energy, fission, fusion.",
           },
           {
             heading: "Radioactive decay",
@@ -765,7 +765,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           "Using λ (wavelength) and λ (decay constant) without distinguishing.",
         ],
         examStrategy:
-          "Be careful with units — eV vs J. Remember E_photon = hf. Identify decay type from the change in Z and A.",
+          "Be careful with units: eV vs J. Remember E_photon = hf. Identify decay type from the change in Z and A.",
         studyTips: [
           "Drill photoelectric effect problems.",
           "Practice atomic transition calculations.",
@@ -836,7 +836,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
       scoring: "MCQ 50%, FRQ 50%. Historically one of the highest-scoring AP exams.",
     },
     framing:
-      "AP Physics C: Mechanics is Physics 1 with calculus. Every topic has a calculus-based treatment: integrals for work, differential equations for motion, moments of inertia computed by integration. Strong students know AP Calc AB/BC in parallel — the course assumes derivatives and integrals as tools.",
+      "AP Physics C: Mechanics is Physics 1 with calculus. Every topic has a calculus-based treatment: integrals for work, differential equations for motion, moments of inertia computed by integration. Strong students know AP Calc AB/BC in parallel; the course assumes derivatives and integrals as tools.",
     units: [
       {
         unitNumber: 1,
@@ -978,7 +978,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           "Computing work without the cos θ factor.",
         ],
         examStrategy:
-          "Recognize which forces are conservative. Use energy conservation whenever possible — it's usually faster than force analysis.",
+          "Recognize which forces are conservative. Use energy conservation whenever possible; it's usually faster than force analysis.",
         studyTips: [
           "Derive the spring PE by integration.",
           "Drill 10 energy conservation problems.",
@@ -1550,7 +1550,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
         ],
         keyFacts: [
-          "Surface area to volume ratio decreases as cells grow — limits cell size.",
+          "Surface area to volume ratio decreases as cells grow; limits cell size.",
           "Osmosis moves water to areas of higher solute concentration.",
           "Na/K ATPase pumps 3 Na out and 2 K in, using 1 ATP.",
         ],
@@ -1609,7 +1609,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
         ],
         commonMistakes: [
           "Confusing light reactions and Calvin cycle.",
-          "Thinking ATP is stored — it's spent almost immediately.",
+          "Thinking ATP is stored: it's spent almost immediately.",
           "Mixing up NADH and NADPH (respiration vs photosynthesis).",
         ],
         examStrategy:
@@ -1659,7 +1659,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
         commonMistakes: [
           "Confusing mitosis and meiosis.",
           "Mixing up the cell cycle stages.",
-          "Thinking signaling always involves hormones — it's also local and even intracellular.",
+          "Thinking signaling always involves hormones: it's also local and even intracellular.",
         ],
         examStrategy:
           "Know the cell cycle stages cold. For signaling, describe a specific pathway (receptor → G-protein → enzyme → response).",
@@ -1816,8 +1816,8 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           "Speciation takes many generations.",
         ],
         commonMistakes: [
-          "Calling natural selection 'survival of the fittest' — it's really differential reproduction.",
-          "Thinking individuals evolve — populations evolve.",
+          "Calling natural selection 'survival of the fittest': it's really differential reproduction.",
+          "Thinking individuals evolve: populations evolve.",
           "Misusing Hardy-Weinberg (it's a null hypothesis, not a description of reality).",
         ],
         examStrategy:
@@ -1896,7 +1896,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
       scoring: "MCQ 50%, FRQ 50%.",
     },
     framing:
-      "AP Chem is the most quantitative of the AP sciences. You must be fluent in stoichiometry, equilibrium, kinetics, and thermodynamics, and you must explain your reasoning in writing on FRQs. The topics build on each other — weak foundations in Unit 1 will hurt you through Unit 9.",
+      "AP Chem is the most quantitative of the AP sciences. You must be fluent in stoichiometry, equilibrium, kinetics, and thermodynamics, and you must explain your reasoning in writing on FRQs. The topics build on each other; weak foundations in Unit 1 will hurt you through Unit 9.",
     units: [
       {
         unitNumber: 1,
@@ -1983,7 +1983,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Polarity",
-            body: "Bond polarity from electronegativity difference. Molecular polarity depends on shape — symmetric molecules with polar bonds can be nonpolar overall (e.g., CO₂).",
+            body: "Bond polarity from electronegativity difference. Molecular polarity depends on shape: symmetric molecules with polar bonds can be nonpolar overall (e.g., CO₂).",
           },
         ],
         keyFacts: [
@@ -2153,7 +2153,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
         commonMistakes: [
           "Confusing reaction order with stoichiometric coefficients.",
           "Using integrated rate laws for the wrong order.",
-          "Thinking catalysts increase yield (they don't — they just speed up equilibrium approach).",
+          "Thinking catalysts increase yield (they don't; they just speed up equilibrium approach).",
         ],
         examStrategy:
           "Determine the order from experimental data. Apply the matching integrated rate law. Use Arrhenius for temperature dependence.",
@@ -2187,7 +2187,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Bond energies",
-            body: "ΔH ≈ Σ(bonds broken) - Σ(bonds formed). Approximate — doesn't account for state or entropy.",
+            body: "ΔH ≈ Σ(bonds broken) - Σ(bonds formed). Approximate; doesn't account for state or entropy.",
           },
           {
             heading: "Standard formation enthalpies",
@@ -2451,7 +2451,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           "Larger and closer-to-mainland islands support more species.",
           "Ecological succession: primary (bare rock) vs secondary (disturbance).",
           "Adaptations are heritable traits that improve fitness.",
-          "Disruptions drive ecosystem change — natural and anthropogenic.",
+          "Disruptions drive ecosystem change: natural and anthropogenic.",
         ],
         essentials: [
           {
@@ -2464,7 +2464,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Succession",
-            body: "Primary: starts on bare rock (after glaciation or volcanism). Pioneer species like lichens. Secondary: after disturbance (fire, flood) — soil remains. Faster than primary.",
+            body: "Primary: starts on bare rock (after glaciation or volcanism). Pioneer species like lichens. Secondary: after disturbance (fire, flood); soil remains. Faster than primary.",
           },
           {
             heading: "Adaptation",
@@ -2774,7 +2774,7 @@ export const SCIENCE_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Bioaccumulation and biomagnification",
-            body: "Persistent toxins (DDT, PCBs, mercury) accumulate in organisms. Biomagnify up the food chain — top predators accumulate the most.",
+            body: "Persistent toxins (DDT, PCBs, mercury) accumulate in organisms. Biomagnify up the food chain; top predators accumulate the most.",
           },
           {
             heading: "Solid waste",

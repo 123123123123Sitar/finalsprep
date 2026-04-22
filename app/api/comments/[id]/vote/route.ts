@@ -4,7 +4,7 @@ import { adminDbOrThrow } from "@/lib/socialAdmin";
 
 export const runtime = "nodejs";
 
-/** POST /api/comments/{id}/vote — toggle the caller's upvote. */
+/** POST /api/comments/{id}/vote: toggle the caller's upvote. */
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }

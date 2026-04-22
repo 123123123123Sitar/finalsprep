@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [plan, setPlan] = useState<ClientPlan>(() => readCachedPlan());
   // True until the first billing-doc snapshot returns for the current user.
-  // Starts true because the auth check is still pending on first mount —
+  // Starts true because the auth check is still pending on first mount;
   // we don't yet know whether there's a user whose plan we need to load.
   const [planLoading, setPlanLoading] = useState(true);
   const [streak, setStreak] = useState<StreakDoc | null>(null);
@@ -149,7 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // the first paint accurate for returning paid subscribers.
   useEffect(() => {
     if (loading) {
-      // Auth state not resolved yet — we can't know which plan to fetch.
+      // Auth state not resolved yet; we can't know which plan to fetch.
       return;
     }
     if (!user) {
@@ -274,7 +274,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { ok: false, code, message: "Sign-in popup was closed." };
       }
       // Popup-blocked, cross-origin, or generic-internal: fall back to a
-      // full-page redirect flow. This never resolves — the browser
+      // full-page redirect flow. This never resolves; the browser
       // navigates away and we finish the sign-in via getRedirectResult
       // on the next page load (handled in AuthProvider mount).
       if (

@@ -35,7 +35,7 @@ export function adminDbOrThrow(): AdminDb {
  *
  * We store `usernameLower` as the unique key for username lookups. If a
  * derived username collides with an existing one, we append a random
- * 4-digit suffix — profile creation is rare (per-user, once) so this is fine.
+ * 4-digit suffix - profile creation is rare (per-user, once) so this is fine.
  */
 export async function ensurePublicProfile(
   db: AdminDb,

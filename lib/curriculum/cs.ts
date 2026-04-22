@@ -12,7 +12,7 @@ export const CS_CURRICULUM: Record<string, CourseCurriculum> = {
       scoring: "MCQ 50%, FRQ 50%. Java is the only language.",
     },
     framing:
-      "AP CSA teaches Java and object-oriented programming. Unlike most AP courses, the content is syntactic — you must know Java's specific rules, not general programming concepts. FRQs are graded on correctness, not style, but clean code reads faster for you too. Strong students write Java in their sleep by April.",
+      "AP CSA teaches Java and object-oriented programming. Unlike most AP courses, the content is syntactic: you must know Java's specific rules, not general programming concepts. FRQs are graded on correctness, not style, but clean code reads faster for you too. Strong students write Java in their sleep by April.",
     units: [
       {
         unitNumber: 1,
@@ -73,7 +73,7 @@ export const CS_CURRICULUM: Record<string, CourseCurriculum> = {
           "Objects are instances of classes.",
           "new ClassName(...) creates an object.",
           "Methods are called with a dot: obj.method().",
-          "String is immutable — methods return new strings.",
+          "String is immutable; methods return new strings.",
           "Wrapper classes (Integer, Double) wrap primitives.",
         ],
         essentials: [
@@ -91,7 +91,7 @@ export const CS_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Strings are immutable",
-            body: "String methods return new strings. s.toUpperCase() doesn't change s — you must do s = s.toUpperCase().",
+            body: "String methods return new strings. s.toUpperCase() doesn't change s; you must do s = s.toUpperCase().",
           },
           {
             heading: "Wrapper classes",
@@ -144,7 +144,7 @@ export const CS_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Short-circuit evaluation",
-            body: "if (x != 0 && y/x > 1) — the second condition is skipped if x is 0, avoiding division by zero. This is a common pattern.",
+            body: "if (x != 0 && y/x > 1): the second condition is skipped if x is 0, avoiding division by zero. This is a common pattern.",
           },
           {
             heading: "Comparing objects",
@@ -303,7 +303,7 @@ export const CS_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Traversal",
-            body: "Traditional: for (int i = 0; i < arr.length; i++) { ... arr[i] ... }. Enhanced: for (int x : arr) { ... x ... }. Enhanced is read-only — you can't modify via x.",
+            body: "Traditional: for (int i = 0; i < arr.length; i++) { ... arr[i] ... }. Enhanced: for (int x : arr) { ... x ... }. Enhanced is read-only; you can't modify via x.",
           },
           {
             heading: "Common algorithms",
@@ -312,7 +312,7 @@ export const CS_CURRICULUM: Record<string, CourseCurriculum> = {
         ],
         keyFacts: [
           "Array length is a field (arr.length), not a method (not arr.length()).",
-          "Arrays are objects — reference semantics.",
+          "Arrays are objects: reference semantics.",
           "Enhanced for loop is syntactic sugar but can't modify elements.",
         ],
         commonMistakes: [
@@ -360,7 +360,7 @@ export const CS_CURRICULUM: Record<string, CourseCurriculum> = {
           },
         ],
         keyFacts: [
-          "ArrayList<int> doesn't work — must use ArrayList<Integer> (wrapper).",
+          "ArrayList<int> doesn't work; must use ArrayList<Integer> (wrapper).",
           ".size() not .length or .size.",
           "add() returns boolean for simple add, void for insert-at.",
         ],
@@ -401,7 +401,7 @@ export const CS_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Column-major traversal",
-            body: "Swap the loops — outer loops over columns, inner over rows. Used for column-wise operations.",
+            body: "Swap the loops: outer loops over columns, inner over rows. Used for column-wise operations.",
           },
           {
             heading: "Enhanced for loop",
@@ -545,7 +545,7 @@ export const CS_CURRICULUM: Record<string, CourseCurriculum> = {
       structure:
         "70 MCQ (2 hours) + Create Performance Task (submitted ahead of exam). The Create task is 30% of score.",
       scoring:
-        "MCQ 70%, Create Task 30%. Uses a pseudocode reference sheet — you don't need to know a specific language.",
+        "MCQ 70%, Create Task 30%. Uses a pseudocode reference sheet; you don't need to know a specific language.",
     },
     framing:
       "AP CSP is a big-picture course about computing as a discipline. It's organized around 5 Big Ideas and uses pseudocode (not a real language). You need to understand programming concepts, not Java syntax. The Create Task is a significant portion of the score and is done outside the exam.",

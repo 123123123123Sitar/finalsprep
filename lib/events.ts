@@ -1,7 +1,7 @@
 /**
  * Lightweight event logging to a top-level `events` collection. Writes
  * happen from server-side routes via the admin SDK. Clients never read
- * this directly — the admin panel goes through /api/admin.
+ * this directly - the admin panel goes through /api/admin.
  */
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import type { PlanTier } from "@/lib/plans";

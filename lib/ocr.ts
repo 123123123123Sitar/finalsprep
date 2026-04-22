@@ -4,7 +4,7 @@ import { createWorker, type Worker } from "tesseract.js";
  * Real OCR pass that runs before the main chat completion. Uses
  * tesseract.js (pure Tesseract running in Node) so we don't burn model
  * tokens just to transcribe text off a screenshot. The goal is to turn
- * image attachments into plain text whenever possible — every downstream
+ * image attachments into plain text whenever possible - every downstream
  * model can then read the result, and we only send the raw image to the
  * vision API when OCR couldn't read it confidently.
  *
@@ -16,12 +16,12 @@ import { createWorker, type Worker } from "tesseract.js";
 export type OcrImageInput = { mediaType: string; data: string };
 
 // Three-state result:
-//   "transcribed" — high-confidence, substantial text. Safe to drop the
+//   "transcribed": high-confidence, substantial text. Safe to drop the
 //                   image entirely and just send the text to the model.
-//   "partial"     — got some text but not confident enough to trust as
+//   "partial":     got some text but not confident enough to trust as
 //                   ground truth. Send BOTH the OCR text (as a hint) and
 //                   the image (so the vision model can verify).
-//   "failed"      — couldn't read anything useful. Send the image only.
+//   "failed":      couldn't read anything useful. Send the image only.
 export type OcrResult =
   | { kind: "transcribed"; text: string; confidence: number }
   | { kind: "partial"; text: string; confidence: number }
@@ -29,7 +29,7 @@ export type OcrResult =
 
 // Tesseract's "confidence" runs 0-100 and skews optimistic on garbage. We
 // only trust a transcription enough to drop the image entirely when it's
-// rock-solid — typed text from a screenshot will hit ~90+, while anything
+// rock-solid - typed text from a screenshot will hit ~90+, while anything
 // hand-written or photographed sits in the 30-70 band that we shouldn't
 // hand to the model as ground truth.
 const HIGH_CONFIDENCE = 82;

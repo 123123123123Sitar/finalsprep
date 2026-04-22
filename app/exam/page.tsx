@@ -179,7 +179,7 @@ export default function ExamPage() {
                     onChange={(e) => setSelectedCourseSlug(e.target.value as CourseSlug)}
                     className="w-full rounded-md border border-hair bg-paper px-3 py-2 text-ink focus:border-orange focus:outline-none"
                   >
-                    <option value="">— Select a course —</option>
+                    <option value="">- Select a course -</option>
                     {addedCourses.map((c) => (
                       <option key={c.slug} value={c.slug}>
                         {c.title}

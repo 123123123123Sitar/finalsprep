@@ -3,7 +3,7 @@
  *
  * The in-memory tracker in `rateLimit.ts` still handles anonymous/IP-based
  * callers (and local dev when the admin SDK isn't wired up), but a Vercel
- * cold start wipes that Map — which is why users would see "tokens remaining"
+ * cold start wipes that Map, which is why users would see "tokens remaining"
  * stay flat across requests. For signed-in users we persist the 24h sliding
  * window of token usage to `users/{uid}/profile/rateLimit`.
  *

@@ -39,7 +39,7 @@ export async function GET(req: Request) {
   }
 
   // Pull a larger window so the streak-bonus re-ranking is stable on a page
-  // of 50 — an in-memory sort on (points + streakBonus) is cheaper than
+  // of 50; an in-memory sort on (points + streakBonus) is cheaper than
   // denormalizing streak onto every leaderboardStats doc.
   const snap = await db
     .collection("leaderboardStats")

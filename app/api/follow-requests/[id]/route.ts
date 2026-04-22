@@ -11,7 +11,7 @@ import {
 export const runtime = "nodejs";
 
 /**
- * POST /api/follow-requests/{id} — accept a pending follow request.
+ * POST /api/follow-requests/{id}: accept a pending follow request.
  * The id is the same composite key stored in the `follows` collection:
  * `${followerUid}__${targetUid}`. Only the target user can accept.
  */
@@ -85,7 +85,7 @@ export async function POST(
   return NextResponse.json({ ok: true, status: "accepted" });
 }
 
-/** DELETE /api/follow-requests/{id} — reject the pending request. */
+/** DELETE /api/follow-requests/{id}: reject the pending request. */
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
@@ -106,7 +106,7 @@ export async function DELETE(
   }
   if (data.status === "accepted") {
     return NextResponse.json(
-      { error: "Already accepted — use DELETE /api/users/{uid}/follow to remove" },
+      { error: "Already accepted. Use DELETE /api/users/{uid}/follow to remove" },
       { status: 409 }
     );
   }

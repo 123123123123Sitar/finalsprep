@@ -26,6 +26,7 @@ import { getUnitPractice } from "@/lib/practice";
 import { getUnitTools } from "@/lib/courseTools";
 import Flashcards from "@/app/components/Flashcards";
 import SiteNav from "@/app/components/SiteNav";
+import CourseIcon from "@/app/components/CourseIcon";
 import MathRender from "@/app/components/Math";
 import CurriculumUnitView, {
   CedLessonsView,
@@ -56,6 +57,7 @@ import {
   setLessonCompleted,
   subscribeCompletedSlugs,
 } from "@/lib/progress";
+import { recordActivityClient } from "@/lib/activityClient";
 import { useAuth } from "@/app/components/AuthProvider";
 import type { PlanTier } from "@/lib/plans";
 
@@ -84,7 +86,7 @@ export default function Study() {
   );
 
   useEffect(() => {
-    // Hold the loading sentinel until auth resolves — otherwise a signed-in
+    // Hold the loading sentinel until auth resolves - otherwise a signed-in
     // user's first render would see `!user` and flip the state to `[]`,
     // triggering the empty-state UI before we even know who they are.
     if (authLoading) {
@@ -108,7 +110,7 @@ export default function Study() {
   }, [user, authLoading]);
 
   // Single source of truth for "what the user can see on /study". Derived
-  // strictly from the added list — no hardcoded defaults, no fallback.
+  // strictly from the added list - no hardcoded defaults, no fallback.
   const coursesLoading = selectedCourses === null;
   const addedCourses = useMemo(
     () =>
@@ -132,7 +134,7 @@ export default function Study() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [tab, setTab] = useState<Tab>("curriculum");
   const [viewedCedTopic, setViewedCedTopic] = useState<string | null>(null);
-  // Course-level "Exam Guide" page — sits before Unit 1 in the sidebar and
+  // Course-level "Exam Guide" page - sits before Unit 1 in the sidebar and
   // shows the at-a-glance exam format + framing. Opening a course lands here
   // so students see the exam shape before diving into units.
   const [viewExamGuide, setViewExamGuide] = useState<boolean>(true);
@@ -154,7 +156,7 @@ export default function Study() {
 
   // Deep-link from /bookmarks or external links: ?course=slug&lesson=slug.
   // Only honor the deep link if the target course is actually in the added
-  // list — otherwise we'd re-introduce the "unassigned lessons on screen" bug
+  // list - otherwise we'd re-introduce the "unassigned lessons on screen" bug
   // through the back door. We wait until the added list has resolved so a
   // signed-in user's assignments are considered before accepting the param.
   const [deepLinkHandled, setDeepLinkHandled] = useState(false);
@@ -253,7 +255,7 @@ export default function Study() {
 
   const mainPanelRef = useRef<HTMLDivElement>(null);
 
-  // Progress tracking — subscribes to the user's `completedSlugs` field so
+  // Progress tracking - subscribes to the user's `completedSlugs` field so
   // course progress only advances after the user explicitly marks a lesson
   // complete, not just when they open it.
   const [completedSlugsAll, setCompletedSlugsAll] = useState<Set<string>>(
@@ -289,11 +291,12 @@ export default function Study() {
           cedTopicSlug(courseSlug, topicId),
           next
         );
+        if (next) void recordActivityClient(getIdToken);
       } finally {
         setTogglingCedTopicId(null);
       }
     },
-    [user, courseSlug]
+    [user, courseSlug, getIdToken]
   );
 
   // <InlineHighlights /> exposes the addHighlight hook so the text-selection
@@ -310,8 +313,8 @@ export default function Study() {
     ? getCurriculumUnit(courseSlug, selectedUnit)
     : undefined;
   // Learners can read every unit's overview (CurriculumUnitView) but the
-  // deeper material — per-topic lessons, flashcards, practice, interactive
-  // tools — is Pro-only. The `locked` flag only forces the full upsell
+  // deeper material (per-topic lessons, flashcards, practice, interactive
+  // tools) is Pro-only. The `locked` flag only forces the full upsell
   // view when a learner is outside their selected-course allowance.
   const isPro = plan !== "learner";
   const locked = false;
@@ -364,7 +367,7 @@ export default function Study() {
   useLayoutEffect(() => {
     if (scrollTopTick === 0 || typeof window === "undefined") return;
     // Skip the scroll-to-top only if the TOP of the main panel is still near
-    // the viewport — i.e. the user is already looking at the start of the new
+    // the viewport, i.e. the user is already looking at the start of the new
     // content. A pure "fraction visible" check breaks on long pages (max
     // possible fraction is viewport/panel, so the bottom of a 3× viewport
     // panel reads as ~33% visible and would incorrectly suppress the scroll).
@@ -555,7 +558,7 @@ export default function Study() {
         {!isPro && (
           <div className="mt-5 inline-flex items-center gap-3 rounded-lg border border-orange/30 bg-orange-tint px-4 py-2 text-[13px] text-orange-ink">
             <span>
-              You're on the free plan — Units 1 and 2 unlocked. Upgrade to
+              You're on the free plan: Units 1 and 2 unlocked. Upgrade to
               unlock everything.
             </span>
             <button
@@ -1234,7 +1237,7 @@ function LockedTabTeaser({
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <button onClick={onUpgrade} className="btn-primary text-sm">
-          Unlock Pro — $16/month
+          Unlock Pro - $16/month
         </button>
         <a href="/#price" className="btn-ghost text-sm">
           See 6-month ($90) →
@@ -1266,7 +1269,7 @@ function LessonPanel({
   // null = not yet loaded for learner users; [] = loaded empty; [..] = loaded
   const [viewedSlugs, setViewedSlugs] = useState<string[] | null>(null);
   const [writeError, setWriteError] = useState<string | null>(null);
-  // Separate completion state — drives the progress bars. Starts false,
+  // Separate completion state - drives the progress bars. Starts false,
   // gets reconciled from the `completedSlugs` field on the same doc.
   const [isCompleted, setIsCompleted] = useState(false);
   const [completing, setCompleting] = useState(false);
@@ -1296,7 +1299,7 @@ function LessonPanel({
 
   // Record this lesson view atomically (transaction) so two fast clicks
   // can't push past the learner cap. Paid plans also write so the Study
-  // homepage progress bar fills up for everyone — the cap check is
+  // homepage progress bar fills up for everyone; the cap check is
   // skipped for them.
   useEffect(() => {
     if (!uid) return;
@@ -1350,6 +1353,7 @@ function LessonPanel({
         void postScoreEvent(getIdToken, courseSlug, "lesson_complete", {
           lessonTitle: lesson.title,
         });
+        void recordActivityClient(getIdToken);
       }
     } catch (e: any) {
       setIsCompleted(!next);
@@ -1394,7 +1398,7 @@ function LessonPanel({
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <button onClick={onUpgrade} className="btn-primary text-sm">
-            Unlock Pro — $16/mo
+            Unlock Pro - $16/mo
           </button>
           <a href="/#price" className="btn-ghost text-sm">
             See all plans →
@@ -1592,7 +1596,7 @@ function courseProgressLabel(
 }
 
 /**
- * Landing view for /study — shows every added course as a card with a
+ * Landing view for /study - shows every added course as a card with a
  * completion bar. Clicking a card opens that course's workspace.
  */
 function StudyHome({
@@ -1625,7 +1629,7 @@ function StudyHome({
         {!isPro && (
           <div className="mt-5 inline-flex items-center gap-3 rounded-lg border border-orange/30 bg-orange-tint px-4 py-2 text-[13px] text-orange-ink">
             <span>
-              You're on the free plan — Units 1 and 2 unlocked. Upgrade to
+              You're on the free plan: Units 1 and 2 unlocked. Upgrade to
               unlock everything.
             </span>
             <button
@@ -1649,8 +1653,11 @@ function StudyHome({
               className="group flex flex-col rounded-xl border border-hair bg-paper p-5 text-left transition hover:-translate-y-0.5 hover:border-orange hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.25)]"
             >
               <div className="flex items-start justify-between gap-3">
-                <div className="font-serif text-xl text-ink group-hover:text-orange">
-                  {c.title}
+                <div className="flex min-w-0 items-start gap-3">
+                  <CourseIcon slug={c.slug} category={c.category} size="md" />
+                  <div className="min-w-0 font-serif text-xl text-ink group-hover:text-orange">
+                    {c.title}
+                  </div>
                 </div>
                 {examCountdownLabel(c.slug) && (
                   <span className="shrink-0 rounded-full border border-orange/30 bg-orange-tint px-2 py-1 text-[10px] font-medium text-orange-ink">
@@ -1704,7 +1711,7 @@ function StudyLoading() {
 
 /**
  * Rendered when the added-courses list is loaded but empty. This is the
- * state that replaces the old "show every course as a fallback" behavior —
+ * state that replaces the old "show every course as a fallback" behavior.
  * users without assignments now see a clear CTA to pick courses instead of
  * a wall of unassigned content.
  *
@@ -1781,7 +1788,7 @@ function SolverPanel({
       </label>
       <p className="mt-1 text-xs text-muted">
         If it matches one of the curated lessons, you'll get an instant
-        walkthrough (free). Anything else counts against your AI budget — free
+        walkthrough (free). Anything else counts against your AI budget. Free
         users get 10 messages per 5-hour window.
       </p>
       <textarea
@@ -1815,7 +1822,7 @@ function SolverPanel({
           <div>{error}</div>
           {limitReached && (
             <a href="/#price" className="mt-2 inline-block btn-link">
-              Unlock unlimited — $9/month →
+              Unlock unlimited - $9/month →
             </a>
           )}
         </div>

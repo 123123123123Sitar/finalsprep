@@ -14,7 +14,7 @@ import {
 
 export const runtime = "nodejs";
 
-/** GET /api/comments?lessonKey=ap-calc-bc::u4 — list comments (public, unauth OK). */
+/** GET /api/comments?lessonKey=ap-calc-bc::u4: list comments (public, unauth OK). */
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const lessonKey = (searchParams.get("lessonKey") || "").trim();
@@ -55,7 +55,7 @@ export async function GET(req: Request) {
   return NextResponse.json({ comments });
 }
 
-/** POST /api/comments — create a new comment (signed-in + verified). */
+/** POST /api/comments: create a new comment (signed-in + verified). */
 export async function POST(req: Request) {
   const authed = await requireAuthedUser(req);
   if ("error" in authed) return authed.error;

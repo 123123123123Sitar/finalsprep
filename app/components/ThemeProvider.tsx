@@ -53,7 +53,7 @@ type Ctx = {
   theme: Theme;
   effectiveTheme: EffectiveTheme;
   setTheme: (t: Theme) => void;
-  /** Retained for backwards compat — themes are universal now, so this is always true. */
+  /** Retained for backwards compat; themes are universal now, so this is always true. */
   canUseThemes: boolean;
 };
 

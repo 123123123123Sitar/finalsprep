@@ -3,8 +3,8 @@
  * profiles, follows, feed, DMs). All cross-user data lives in top-level
  * collections and is read/written via server API routes that use the
  * Firebase Admin SDK. The per-user Firestore rules only cover `users/{uid}`
- * — anything in `publicProfiles`, `lessonComments`, `follows`, etc. is
- * server-authoritative.
+ * (anything in `publicProfiles`, `lessonComments`, `follows`, etc. is
+ * server-authoritative).
  */
 
 export type PublicProfile = {
@@ -196,7 +196,7 @@ export type AppNotification = {
 /**
  * Derive a stable username candidate from an email address. The result is
  * lowercase alphanumeric + dots/underscores, capped at 24 chars. Used on
- * first profile creation — the user can edit it later in /account.
+ * first profile creation - the user can edit it later in /account.
  */
 export function usernameFromEmail(email: string | null | undefined): string {
   if (!email) return `user${Math.floor(Math.random() * 100000)}`;

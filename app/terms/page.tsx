@@ -70,7 +70,7 @@ export default function TermsPage() {
           <p>
             The free tier is free. Paid plans are sold as one-time
             purchases that unlock access for a fixed period (1 month or
-            6 months). Access does not auto-renew — when the period ends
+            6 months). Access does not auto-renew: when the period ends
             you revert to the free tier until you choose to buy again.
           </p>
           <p>

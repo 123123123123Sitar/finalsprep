@@ -213,7 +213,7 @@ function innerToLatex(s: string): string {
     (_m, nested: string) => `\\sqrt{${innerToLatex(nested)}}`
   );
 
-  // Exponents (no $ wrap — already inside math)
+  // Exponents (no $ wrap - already inside math)
   inner = inner.replace(
     /(\([^()]+\)|[A-Za-z0-9]+)\^(\([^()]+\)|-?[A-Za-z0-9]*\.?[A-Za-z0-9]+)/g,
     (_m, base: string, exp: string) => {

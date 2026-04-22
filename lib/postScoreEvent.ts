@@ -1,7 +1,7 @@
 "use client";
 /**
  * Client-side helper for posting a weighted leaderboard event.
- * Fire-and-forget — failures are logged and swallowed so we never
+ * Fire-and-forget - failures are logged and swallowed so we never
  * interfere with the user-facing flow.
  */
 import type { ScoreEvent } from "@/lib/leaderboardScore";
@@ -33,6 +33,6 @@ export async function postScoreEvent(
       keepalive: true,
     });
   } catch {
-    // Swallow — scoring must never interrupt the main flow.
+    // Swallow - scoring must never interrupt the main flow.
   }
 }

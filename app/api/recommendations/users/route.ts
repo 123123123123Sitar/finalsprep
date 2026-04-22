@@ -68,7 +68,7 @@ export async function GET(req: Request) {
       if (f.followeeUid) excluded.add(f.followeeUid);
     });
 
-    // Pull up to 200 candidate profiles. Small user base for now — this
+    // Pull up to 200 candidate profiles. Small user base for now; this
     // is fine; swap to a scored index once it grows.
     const candidatesSnap = await db
       .collection("publicProfiles")

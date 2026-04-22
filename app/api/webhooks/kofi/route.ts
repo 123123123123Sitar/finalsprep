@@ -90,7 +90,7 @@ export async function POST(req: Request) {
 
   const uid = await uidFromEmail(buyerEmail);
   if (!uid) {
-    // Log but don't error — Ko-fi will retry otherwise. Stash the event
+    // Log but don't error; Ko-fi will retry otherwise. Stash the event
     // for later manual fulfillment.
     await stashUnmatchedOrder(payload);
     return NextResponse.json({

@@ -200,7 +200,7 @@ export default function SubforumPage() {
           <div className="rounded-xl bg-offwhite/60 p-10 text-center">
             <div className="text-[15px] text-ink">No posts here yet.</div>
             <p className="mt-2 text-[13px] text-muted">
-              Be the first — click New post.
+              Be the first. Click New post.
             </p>
           </div>
         ) : (

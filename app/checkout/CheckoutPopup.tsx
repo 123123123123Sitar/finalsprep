@@ -70,7 +70,7 @@ export default function CheckoutPopup(props: Props) {
     // Try to open Ko-fi in a centered popup window so the buyer stays on
     // FinalsPrep. If the browser blocks the popup (or returns a closed
     // handle, which some blockers do silently), fall back to redirecting
-    // the main window to the Ko-fi URL — no dead-end for the buyer.
+    // the main window to the Ko-fi URL. No dead-end for the buyer.
     const width = 520;
     const height = 720;
     const left = Math.max(0, Math.floor((window.screen.availWidth - width) / 2));
@@ -83,7 +83,7 @@ export default function CheckoutPopup(props: Props) {
       popup = null;
     }
     if (!popup || popup.closed || typeof popup.focus !== "function") {
-      // Popup blocker tripped — send the main window itself to Ko-fi.
+      // Popup blocker tripped: send the main window itself to Ko-fi.
       // The buyer will come back via Ko-fi's redirect URL (/success or
       // /shop?status=ok), which still fires the webhook and grants access.
       window.location.href = kofiUrl;
@@ -154,7 +154,7 @@ export default function CheckoutPopup(props: Props) {
           <div className="mt-3 rounded-md bg-orange-tint/60 p-3 text-sm text-orange-ink">
             <p>
               Looks like you closed the checkout before finishing. If you did pay,
-              give it a minute — your access will activate automatically from the
+              give it a minute. Your access will activate automatically from the
               receipt.
             </p>
             {kofiUrl && (
@@ -174,7 +174,7 @@ export default function CheckoutPopup(props: Props) {
       </div>
 
       <p className="mt-6 text-xs text-muted">
-        Payments are processed securely through our payment provider — pay
+        Payments are processed securely through our payment provider. Pay
         with a credit or debit card and we never see your card number.
         7-day refund, no questions. Email{" "}
         <a className="underline" href="mailto:finalsprephelp@gmail.com">

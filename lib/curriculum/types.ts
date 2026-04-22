@@ -14,7 +14,7 @@ export type CurriculumUnit = {
   overview: string;
   /** Approximate exam weight as published in the CED (e.g. "10-12%"). */
   examWeight: string;
-  /** 4-6 short "big idea" bullets — what students must walk away understanding. */
+  /** 4-6 short "big idea" bullets - what students must walk away understanding. */
   bigIdeas: string[];
   /** 3-8 essential knowledge sections with a heading and a short paragraph. */
   essentials: { heading: string; body: string }[];

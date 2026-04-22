@@ -21,7 +21,7 @@ export const runtime = "nodejs";
  *   overall: string,  // 1–2 sentence summary
  * }
  *
- * Hands the official rubric to Claude Sonnet (the smarter model — grading
+ * Hands the official rubric to Claude Sonnet (the smarter model, since grading
  * needs careful reasoning) and asks for a structured per-part score with
  * justifications.
  */
@@ -55,7 +55,7 @@ function buildSystem(parts: PastFrqPart[]): string {
 
 Apply the rubric strictly:
 - Award a point only if the student's work clearly satisfies that specific criterion.
-- Do not award points for unsupported answers — show-your-work matters.
+- Do not award points for unsupported answers; show-your-work matters.
 - Partial credit is allowed when a criterion is partially satisfied (use 0.5 sparingly).
 - "earned" must be between 0 and "possible" inclusive.
 
@@ -63,7 +63,7 @@ Here is the rubric for each part:
 
 ${rubricBlocks}
 
-Return ONLY a JSON object — no prose, no markdown, no code fences:
+Return ONLY a JSON object, no prose, no markdown, no code fences:
 
 {
   "parts": [
@@ -202,7 +202,7 @@ export async function POST(req: Request) {
   }
 
   // Sonnet costs the same per-token in our formula but is the right tool for
-  // careful rubric application — bill at the standard formula.
+  // careful rubric application; bill at the standard formula.
   if (user?.uid) {
     const cost = aiCost({ inputTokens, outputTokens, plan });
     await spendTokens(user.uid, cost);

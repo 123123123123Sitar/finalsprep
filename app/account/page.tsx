@@ -89,7 +89,7 @@ export default function AccountPage() {
     return () => {
       cancelled = true;
     };
-    // displayName intentionally excluded — we only want the initial seed.
+    // displayName intentionally excluded - we only want the initial seed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, getIdToken]);
 
@@ -183,7 +183,7 @@ export default function AccountPage() {
       const db = getDb();
       if (db) {
         const normalizedAiPrefs = normalizeAiPrefs(prefs);
-        // `selectedCourses` is owned by the Study page picker now — strip it
+        // `selectedCourses` is owned by the Study page picker now; strip it
         // from the write so a stale-in-state copy can't stomp a concurrent
         // edit made there.
         const { selectedCourses: _ignored, ...rest } = prefs;
@@ -299,7 +299,7 @@ export default function AccountPage() {
               />
             </div>
             <p className="mt-2 text-xs text-muted">
-              Shown on your profile URL. Letters, numbers, dot, or underscore —
+              Shown on your profile URL. Letters, numbers, dot, or underscore,
               3 to 24 characters. Must be unique.
             </p>
           </div>
@@ -477,10 +477,10 @@ export default function AccountPage() {
             <div className="label mb-2">AI tutor model</div>
             <p className="text-[15px] text-body">
               {plan === "hacker"
-                ? "You're on Hacker — the strongest reasoning model is active, plus Thinking mode for the hardest problems."
+                ? "You're on Hacker: the strongest reasoning model is active, plus Thinking mode for the hardest problems."
                 : plan === "pro"
-                ? "You're on Pro — you get the smart model by default, plus a Thinking mode toggle in chat for harder problems."
-                : "You're on Learner — the standard model is active. Upgrade to Pro or Hacker for a smarter model and Thinking mode."}
+                ? "You're on Pro: you get the smart model by default, plus a Thinking mode toggle in chat for harder problems."
+                : "You're on Learner: the standard model is active. Upgrade to Pro or Hacker for a smarter model and Thinking mode."}
             </p>
           </div>
 

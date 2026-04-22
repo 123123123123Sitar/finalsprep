@@ -4,7 +4,7 @@ import { adminDbOrThrow } from "@/lib/socialAdmin";
 export const runtime = "nodejs";
 
 /**
- * GET /api/users/search?q=foo — case-insensitive username prefix search.
+ * GET /api/users/search?q=foo: case-insensitive username prefix search.
  *
  * Uses `usernameLower >= q && usernameLower <= q + \uf8ff` for a simple
  * prefix range query. Caps at 10 results.

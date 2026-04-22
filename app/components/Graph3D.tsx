@@ -268,7 +268,7 @@ export default function Graph3D({
       };
     }
 
-    // Draw grid — lines with color by height
+    // Draw grid: lines with color by height
     type Line = { x1: number; y1: number; x2: number; y2: number; z: number; col: string };
     const lines: Line[] = [];
     for (let i = 0; i <= N; i++) {
@@ -397,7 +397,7 @@ export default function Graph3D({
       />
       <div className="mt-2 text-[10px] text-muted">
         Drag to rotate. Supports x, y, sin/cos/tan, ln, log, exp, sqrt, abs,
-        pi, e. No eval — expressions are parsed by a hand-written parser.
+        pi, e. No eval; expressions are parsed by a hand-written parser.
       </div>
     </div>
   );

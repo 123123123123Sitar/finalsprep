@@ -5,9 +5,9 @@ import { autoLatex } from "@/lib/autoLatex";
 
 /**
  * Lightweight markdown renderer for assistant chat output. Handles the
- * subset the model actually emits — headings, paragraphs, fenced code,
- * lists, blockquotes, horizontal rules, plus inline bold/italic/code/links
- * — and delegates math to KaTeX. Intentionally not a full CommonMark
+ * subset the model actually emits (headings, paragraphs, fenced code,
+ * lists, blockquotes, horizontal rules, plus inline bold/italic/code/links)
+ * and delegates math to KaTeX. Intentionally not a full CommonMark
  * implementation; we don't accept user-authored markdown here so we can
  * skip the long-tail edge cases.
  */
@@ -397,7 +397,7 @@ const JAVA_TYPES = new Set([
 
 /**
  * Single-pass scanner that emits colored spans for Java comments, strings,
- * keywords, types, and numbers. Not a real parser — approximate but robust
+ * keywords, types, and numbers. Not a real parser, just approximate but robust
  * enough for the CED snippets we ship.
  */
 function highlightJava(code: string): ReactNode[] {

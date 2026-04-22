@@ -255,7 +255,7 @@ System.out.println(sum);`,
         {
           type: "code-java",
           prompt: "Write a class and instantiate it (simplified):",
-          initialCode: `// AP CSA subset — treat these as top-level methods
+          initialCode: `// AP CSA subset - treat these as top-level methods
 let name = "Rex";
 let age = 3;
 System.out.println(name + " is " + age + " years old.");`,

@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 
 /**
  * POST /api/forum/posts/{id}/vote  body: { op: "up" | "clear" }
- * Toggles the caller's uid in the post's `upvotes` array. No down-votes —
+ * Toggles the caller's uid in the post's `upvotes` array. No down-votes;
  * this is an upvote-only model (closer to Reddit gold than Reddit karma).
  */
 export async function POST(

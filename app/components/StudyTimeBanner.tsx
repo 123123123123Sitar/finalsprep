@@ -17,7 +17,7 @@ import {
  * Renders nothing if:
  *   - The user is signed out (no schedule to read).
  *   - The schedule has no block covering "now".
- *   - We're inside the chat-extension overlay (?embed=1) — the parent app
+ *   - We're inside the chat-extension overlay (?embed=1); the parent app
  *     already shows it; doubling up looks broken.
  */
 export default function StudyTimeBanner() {

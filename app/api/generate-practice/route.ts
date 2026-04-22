@@ -107,7 +107,7 @@ export async function POST(req: Request) {
     `pipeline understands: x^2, sqrt(x), (x-h)^2, a_n, pi, theta, sin(x), ` +
     `log_2(x). Write 3–5 sentence explanations. Keep prompts self-contained. ` +
     `Do not repeat any textbook example that's likely already in the user's ` +
-    `curriculum — invent fresh scenarios.`;
+    `curriculum; invent fresh scenarios.`;
 
   const userText = similarTo
     ? `Generate ${count} fresh AP-style practice problems for ${courseTitle}, ` +

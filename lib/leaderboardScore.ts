@@ -3,8 +3,8 @@
  *
  * Scoring philosophy (per user request): favor AI chat & tool use *slightly*
  * over passive lesson reading and pure problem solving. The idea is that the
- * product wants to reward engagement with the tutor — asking follow-up
- * questions, using the explain/interactives — as much or more than grinding
+ * product wants to reward engagement with the tutor (asking follow-up
+ * questions, using the explain/interactives) as much or more than grinding
  * isolated problems.
  *
  * Weights per event, ranked:

@@ -7,7 +7,7 @@
  *   1. Free / paid daily allowances are used as designed (you spend what
  *      you've already paid for before dipping into purchased / earned tokens).
  *   2. The bonus bank only ever decreases when the daily budget literally
- *      can't cover the call — keeps purchased balances feeling durable.
+ *      can't cover the call - keeps purchased balances feeling durable.
  *
  * The split is computed inside a single read of `peekUsage`, so a user
  * doesn't get billed twice for the same call.

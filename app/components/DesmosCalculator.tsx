@@ -86,7 +86,7 @@ export default function DesmosCalculator({
     }
 
     return () => {
-      // Destroy Desmos first — it needs to clean up its own DOM before
+      // Destroy Desmos first; it needs to clean up its own DOM before
       // React unmounts the container
       if (calcRef.current) {
         try {
@@ -212,7 +212,7 @@ export default function DesmosCalculator({
         </div>
       </div>
 
-      {/* Desmos calculator container — no children, Desmos manages DOM */}
+      {/* Desmos calculator container: no children, Desmos manages DOM */}
       <div
         style={{
           position: "relative",

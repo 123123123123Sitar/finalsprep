@@ -11,7 +11,7 @@ import { hydrateComment } from "@/lib/forumsHydrate";
 
 export const runtime = "nodejs";
 
-/** POST /api/forum/posts/{id}/comments — add a comment (or reply). */
+/** POST /api/forum/posts/{id}/comments: add a comment (or reply). */
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }

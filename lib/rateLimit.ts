@@ -10,7 +10,7 @@
  * usage so the budget scales with real cost, not request count.
  *
  * Budgets are displayed as "tokens per day" and the values below are
- * the numbers the user actually sees — generous round totals so the
+ * the numbers the user actually sees - generous round totals so the
  * value is obvious. Inflation is a feature, not a bug: each chat
  * exchange burns only a few hundred tokens so a 10k/day learner
  * budget still lets them run the tutor every day.
@@ -19,7 +19,7 @@
  *   This limiter is in-memory. In local dev (single Node process) it
  *   works. On Vercel serverless, each cold start gets a fresh Map. For
  *   real production abuse protection, back this with Upstash Redis or
- *   Firestore — this file is the single place to swap the backend.
+ *   Firestore - this file is the single place to swap the backend.
  */
 
 export type Tier = "learner" | "pro" | "hacker";
@@ -27,7 +27,7 @@ export type Tier = "learner" | "pro" | "hacker";
 export const LIMITS = {
   /** 24-hour sliding window (visible daily cap). */
   WINDOW_MS: 24 * 60 * 60 * 1000,
-  /** 7-day sliding window — hidden secondary cap, 5x daily per tier. */
+  /** 7-day sliding window - hidden secondary cap, 5x daily per tier. */
   WEEKLY_WINDOW_MS: 7 * 24 * 60 * 60 * 1000,
   MAX_INPUT_CHARS: 1200,
   MAX_HISTORY: 20,
@@ -142,7 +142,7 @@ export type ReserveResult =
       resetMinutes: number;
     };
 
-/** Check whether a new call is allowed. Does NOT deduct tokens — you must
+/** Check whether a new call is allowed. Does NOT deduct tokens - you must
  *  call `record()` after the API call with the actual token count. */
 export function reserve(key: string, tier: Tier): ReserveResult {
   const at = now();
@@ -271,7 +271,7 @@ export function clampInput(text: unknown): string {
 }
 
 /** Rough token estimator when the API doesn't report usage (fallback only).
- *  Real calls always return usage — this is just so we never record 0. */
+ *  Real calls always return usage - this is just so we never record 0. */
 export function estimateTokens(text: string): number {
   return Math.max(1, Math.ceil(text.length / 4));
 }

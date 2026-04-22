@@ -61,7 +61,7 @@ Rules:
 - Exactly ${count} questions.
 - Each prompt must be self-contained (no references to figures or previous questions).
 - Answers must be unambiguous so a student can self-check.
-- No multi-part questions — keep each prompt to a single ask.`;
+- No multi-part questions; keep each prompt to a single ask.`;
 }
 
 function extractJson(text: string): { questions?: unknown } | null {

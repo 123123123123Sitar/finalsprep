@@ -14,7 +14,7 @@ export const HISTORY_CURRICULUM: Record<string, CourseCurriculum> = {
         "MCQ 40%, SAQ 20%, DBQ 25%, LEQ 15%. DBQ has 7 points, LEQ has 6, evaluated on a rubric.",
     },
     framing:
-      "APUSH is the most storied AP exam. It's not about memorizing dates — it's about historical thinking: causation, continuity and change, comparison, contextualization. The DBQ is famous for requiring synthesis of 7 documents into a coherent argument. Strong students read primary sources weekly and write practice DBQs every month.",
+      "APUSH is the most storied AP exam. It's not about memorizing dates. It's about historical thinking: causation, continuity and change, comparison, contextualization. The DBQ is famous for requiring synthesis of 7 documents into a coherent argument. Strong students read primary sources weekly and write practice DBQs every month.",
     units: [
       {
         unitNumber: 1,
@@ -44,7 +44,7 @@ export const HISTORY_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Origins of African slavery",
-            body: "Indigenous labor proved insufficient due to disease mortality. Africans brought as enslaved labor on plantations. Chattel slavery emerged — a uniquely harsh, hereditary form.",
+            body: "Indigenous labor proved insufficient due to disease mortality. Africans brought as enslaved labor on plantations. Chattel slavery emerged, a uniquely harsh, hereditary form.",
           },
         ],
         keyFacts: [
@@ -58,7 +58,7 @@ export const HISTORY_CURRICULUM: Record<string, CourseCurriculum> = {
           "Conflating the Columbian Exchange with the slave trade.",
         ],
         examStrategy:
-          "Period 1 questions test causation and the Columbian Exchange. Period 1 is short but foundational — don't skip.",
+          "Period 1 questions test causation and the Columbian Exchange. Period 1 is short but foundational; don't skip.",
         studyTips: [
           "Memorize the Columbian Exchange items.",
           "Know the timeline: 1491, 1492, 1519, 1521.",
@@ -93,7 +93,7 @@ export const HISTORY_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Great Awakening",
-            body: "1730s-40s religious revival. Jonathan Edwards, George Whitefield. Emphasized personal conversion. Created new denominations, questioned established authority — seeds of revolutionary thinking.",
+            body: "1730s-40s religious revival. Jonathan Edwards, George Whitefield. Emphasized personal conversion. Created new denominations, questioned established authority; seeds of revolutionary thinking.",
           },
           {
             heading: "Colonial government",
@@ -535,7 +535,7 @@ export const HISTORY_CURRICULUM: Record<string, CourseCurriculum> = {
       scoring: "Same format as APUSH. MCQ 40%, SAQ 20%, DBQ 25%, LEQ 15%.",
     },
     framing:
-      "AP World History: Modern covers c.1200 CE to the present — not all of human history, just the modern era. The course emphasizes comparison across regions (East Asia, Europe, Africa, Americas, Islamic world) and major themes (trade, empires, revolutions, globalization). You need to be fluent in cross-regional comparison.",
+      "AP World History: Modern covers c.1200 CE to the present (not all of human history, just the modern era). The course emphasizes comparison across regions (East Asia, Europe, Africa, Americas, Islamic world) and major themes (trade, empires, revolutions, globalization). You need to be fluent in cross-regional comparison.",
     units: [
       {
         unitNumber: 1,
@@ -879,7 +879,7 @@ export const HISTORY_CURRICULUM: Record<string, CourseCurriculum> = {
         essentials: [
           {
             heading: "World War I",
-            body: "1914-18. Causes: militarism, alliances, imperialism, nationalism, assassination. Trench warfare, poison gas, tanks. Russia withdrew after 1917 revolution. US entered 1917. Ended with Treaty of Versailles (1919) — harsh on Germany.",
+            body: "1914-18. Causes: militarism, alliances, imperialism, nationalism, assassination. Trench warfare, poison gas, tanks. Russia withdrew after 1917 revolution. US entered 1917. Ended with Treaty of Versailles (1919), harsh on Germany.",
           },
           {
             heading: "Interwar period",
@@ -1037,7 +1037,7 @@ export const HISTORY_CURRICULUM: Record<string, CourseCurriculum> = {
       scoring: "MCQ 40%, SAQ 20%, DBQ 25%, LEQ 15%.",
     },
     framing:
-      "AP Euro covers European history from the Renaissance (c. 1450) to the present. Four major themes run throughout: interaction with the environment, cultural/intellectual developments, state-building, social/economic change. The course is dense — the Renaissance alone demands attention.",
+      "AP Euro covers European history from the Renaissance (c. 1450) to the present. Four major themes run throughout: interaction with the environment, cultural/intellectual developments, state-building, social/economic change. The course is dense; the Renaissance alone demands attention.",
     units: [
       {
         unitNumber: 1,
@@ -1112,7 +1112,7 @@ export const HISTORY_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Calvinism",
-            body: "John Calvin: predestination — God has already chosen the saved. Spread to Geneva, France (Huguenots), Scotland (Presbyterians), Netherlands, England (Puritans).",
+            body: "John Calvin: predestination. God has already chosen the saved. Spread to Geneva, France (Huguenots), Scotland (Presbyterians), Netherlands, England (Puritans).",
           },
           {
             heading: "Anglican Reformation",

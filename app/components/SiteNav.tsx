@@ -11,7 +11,7 @@ import { subscribeBookmarks, type Bookmark } from "@/lib/bookmarks";
 type NavLinkDef = { href: string; label: string };
 
 // Primary destinations shown inline on ≥md, and inside the hamburger on mobile.
-// Keep this list short — five links is the ceiling before the bar feels noisy.
+// Keep this list short: five links is the ceiling before the bar feels noisy.
 const PRIMARY_LINKS: NavLinkDef[] = [
   { href: "/study", label: "Study" },
   { href: "/chat", label: "Chat" },
@@ -217,7 +217,7 @@ export function BuyProButton() {
   const { getIdToken, plan, planLoading, loading } = useAuth();
   const [submitting, setSubmitting] = useState(false);
 
-  // Don't render the CTA until we've resolved the real plan — otherwise
+  // Don't render the CTA until we've resolved the real plan; otherwise
   // paid users see a "Get Pro" button flash before their plan is confirmed.
   if (loading || planLoading) return null;
   if (plan && plan !== "learner") return null;
@@ -255,7 +255,7 @@ function AuthMenu() {
     return (
       <div className="flex items-center gap-4">
         <StreakBadge streak={streak} />
-        {/* Hide the bookmarks shortcut until plan is confirmed — otherwise
+        {/* Hide the bookmarks shortcut until plan is confirmed; otherwise
             it pops in a frame after the rest of the nav for returning pros. */}
         {!planLoading && (plan === "pro" || plan === "hacker") && (
           <BookmarksMenu uid={user.uid} />
@@ -483,7 +483,7 @@ function BookmarksMenu({ uid }: { uid: string }) {
 
   // Start subscribing the first time the menu is opened, then keep the
   // listener alive so subsequent opens are instant. We can't toggle the
-  // subscription flag inside the same effect that owns the listener — the
+  // subscription flag inside the same effect that owns the listener; the
   // re-run tears down the snapshot before any data arrives.
   useEffect(() => {
     if (open) setShouldSubscribe(true);

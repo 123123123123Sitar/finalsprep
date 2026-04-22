@@ -4,7 +4,7 @@ import { isAdminConfigured } from "@/lib/firebaseAdmin";
 import { spendTokens } from "@/lib/spend";
 
 /** Flat cost for chat-title generation. Bypasses the standard aiCost
- *  formula because titles are tiny side-calls — billing them at the
+ *  formula because titles are tiny side-calls; billing them at the
  *  100-token formula floor would unfairly tax a normal chat exchange. */
 const TITLE_TOKEN_COST = 10;
 
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
       .slice(0, 60);
     if (!title) title = "New chat";
 
-    // Flat 10-token cost — see TITLE_TOKEN_COST.
+    // Flat 10-token cost; see TITLE_TOKEN_COST.
     if (user?.uid) {
       await spendTokens(user.uid, TITLE_TOKEN_COST);
     }

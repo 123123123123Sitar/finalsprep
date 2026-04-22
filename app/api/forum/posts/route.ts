@@ -19,7 +19,7 @@ export const runtime = "nodejs";
 /**
  * GET /api/forum/posts?forum={slug}&sort={hot|new}&limit={n}
  *
- * `forum` is optional — omitted means "all subforums" (the home feed).
+ * `forum` is optional; omitted means "all subforums" (the home feed).
  * `sort` defaults to `hot`. We over-fetch a small pool from Firestore
  * (ordered by createdAt) and score in memory so we don't need a composite
  * index for each sort mode.
@@ -62,7 +62,7 @@ export async function GET(req: Request) {
   }
 }
 
-/** POST /api/forum/posts — create a new post. */
+/** POST /api/forum/posts: create a new post. */
 export async function POST(req: Request) {
   const authed = await requireAuthedUser(req);
   if ("error" in authed) return authed.error;

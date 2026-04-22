@@ -215,7 +215,7 @@ export const PAST_FRQS: PastFrq[] = [
           "Construct and interpret a 95% confidence interval for the difference in mean hours of cell phone use (school A − school B).",
         points: 4,
         rubric:
-          "1 point: identifies two-sample t-interval, names conditions (random, independent, normal/large n).\n1 point: computes SE = √(1.6²/50 + 1.4²/50) ≈ 0.300.\n1 point: interval (4.2 − 3.5) ± t* · 0.300 ≈ (0.105, 1.295).\n1 point: interprets in context — 'we are 95% confident the true difference in mean hours (A − B) is between 0.10 and 1.30 hours'.",
+          "1 point: identifies two-sample t-interval, names conditions (random, independent, normal/large n).\n1 point: computes SE = √(1.6²/50 + 1.4²/50) ≈ 0.300.\n1 point: interval (4.2 − 3.5) ± t* · 0.300 ≈ (0.105, 1.295).\n1 point: interprets in context: 'we are 95% confident the true difference in mean hours (A − B) is between 0.10 and 1.30 hours'.",
       },
       {
         label: "(b)",
@@ -262,7 +262,7 @@ export const PAST_FRQS: PastFrq[] = [
           "Explain why the reaction rate eventually levels off, even as substrate concentration continues to increase.",
         points: 2,
         rubric:
-          "1 point: identifies enzyme saturation — all active sites are occupied.\n1 point: explains rate is then limited by the catalytic turnover of the enzyme, not substrate availability.",
+          "1 point: identifies enzyme saturation: all active sites are occupied.\n1 point: explains rate is then limited by the catalytic turnover of the enzyme, not substrate availability.",
       },
       {
         label: "(c)",

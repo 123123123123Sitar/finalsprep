@@ -5,6 +5,7 @@ import { getCourseLimit, planLabel, type PlanTier } from "@/lib/plans";
 import { saveSelectedCourses } from "@/lib/selectedCourses";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getDb } from "@/lib/firebase";
+import CourseIcon from "@/app/components/CourseIcon";
 
 /**
  * Course-selection UI. Writes straight to Firestore on every toggle, so any
@@ -88,7 +89,7 @@ export default function CoursePicker({
               onClick={() => toggle(c.slug)}
               disabled={atLimit}
               aria-pressed={isSelected}
-              className={`flex items-center justify-between gap-2 rounded-md border px-3 py-2 text-left text-[13px] transition ${
+              className={`flex items-center gap-2.5 rounded-md border px-3 py-2 text-left text-[13px] transition ${
                 isSelected
                   ? "border-orange bg-orange-tint text-ink"
                   : atLimit
@@ -96,7 +97,8 @@ export default function CoursePicker({
                   : "border-hair bg-paper text-body hover:border-orange"
               }`}
             >
-              <span className="truncate">{c.title}</span>
+              <CourseIcon slug={c.slug} category={c.category} size="sm" />
+              <span className="min-w-0 flex-1 truncate">{c.title}</span>
               {isSelected && (
                 <span aria-hidden="true" className="shrink-0 text-orange-ink">
                   ✓

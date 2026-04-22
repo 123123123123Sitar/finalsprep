@@ -2,7 +2,7 @@
  * Official College Board AP Central URLs per course. Used by the CED
  * topic view + unit header to link out to the authoritative source.
  *
- * AP Central does not expose per-topic deep links — the topic codes
+ * AP Central does not expose per-topic deep links - the topic codes
  * (e.g. "1.1") only appear inside the downloadable CED PDF. The most
  * useful official link-out is the course page, which has:
  *   - Course overview

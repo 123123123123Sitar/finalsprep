@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 /**
  * CedCinema
  * Second scroll-pinned cinematic. Two acts:
- *   Act 1 (0.00–0.48): the CED curriculum view — sidebar navigation, unit
+ *   Act 1 (0.00–0.48): the CED curriculum view: sidebar navigation, unit
  *     header, exam weighting, overview, big-ideas list revealing one by one.
- *   Act 2 (0.52–1.00): the interactive graphing calculator — equation typed
+ *   Act 2 (0.52–1.00): the interactive graphing calculator: equation typed
  *     into the expression bar, curve drawing left-to-right, a traveling dot,
  *     and an "area under curve" readout at the end.
  * Same invariant as ScrollCinema: all state is a pure function of scroll
@@ -109,7 +109,7 @@ export default function CedCinema() {
   // Middle 92% is the story.
   const story = remap(progress, 0.04, 0.96);
 
-  // Act 1 — CED curriculum view
+  // Act 1: CED curriculum view
   const inAct1 = story < 0.52;
   const act1Progress = remap(story, 0, 0.5);
 
@@ -144,7 +144,7 @@ export default function CedCinema() {
   const tabClickFlash =
     remap(story, 0.52, 0.56) * (1 - remap(story, 0.56, 0.6));
 
-  // Act 2 — interactive graphing calculator
+  // Act 2: interactive graphing calculator
   const eqP = remap(story, 0.6, 0.72);
   const eqLen = Math.round(eqP * EQUATION.length);
   const equationTyped = EQUATION.slice(0, eqLen);
@@ -388,7 +388,7 @@ export default function CedCinema() {
                     </ul>
                   </div>
 
-                  {/* Act 2 content — graphing calc */}
+                  {/* Act 2 content: graphing calc */}
                   <div
                     className="absolute inset-0 px-4 py-3 sm:px-6 sm:py-4"
                     style={{
@@ -602,7 +602,7 @@ export default function CedCinema() {
 
                     <div className="mt-2 flex items-center justify-between text-[9px] text-muted sm:text-[10px]">
                       <span>
-                        Drag sliders or edit the equation — 2D, 3D, physics
+                        Drag sliders or edit the equation. 2D, 3D, physics
                         sims and a code sandbox are one click away.
                       </span>
                       <span className="rounded bg-offwhite px-1.5 py-0.5 font-mono text-ink">

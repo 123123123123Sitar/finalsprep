@@ -107,7 +107,7 @@ export default function ProjectsPage() {
           Group chats by what you're working on.
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] text-muted">
-          A project is a shared context for a series of chats — a unit you're
+          A project is a shared context for a series of chats: a unit you're
           studying, a take-home exam, a lab writeup. New chats started from
           inside a project remember the project's notes and pull the last
           few conversations for context.

@@ -70,7 +70,7 @@ export async function POST(req: Request) {
         course: courseSlug,
         unit: unitNumber,
         content: `hit ${newCount} problems solved in ${courseSlug}${
-          lessonTitle ? ` — latest: ${lessonTitle}` : ""
+          lessonTitle ? `. Latest: ${lessonTitle}` : ""
         }`,
       });
     }

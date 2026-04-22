@@ -84,7 +84,7 @@ type FlipDir = "forward" | "back" | null;
 
 /**
  * A real paginated book page. The content you pass in is laid out inside a
- * viewport-height, CSS-columns container — the browser auto-splits it into
+ * viewport-height, CSS-columns container: the browser auto-splits it into
  * viewport-wide "pages" which we translateX between with a slide animation.
  *
  * `onPrevLesson` / `onNextLesson` fire when the user hits Previous on page 1
@@ -255,7 +255,7 @@ export function BookPage({
         }`}
         key={pageKey}
         role="article"
-        aria-label={title ? `${title} — book view` : "Book view"}
+        aria-label={title ? `${title} - book view` : "Book view"}
       >
         <button
           type="button"
@@ -283,7 +283,7 @@ export function BookPage({
           >
             {children}
           </div>
-          {/* Click targets on the outer edges to flip — feels like clicking
+          {/* Click targets on the outer edges to flip; feels like clicking
               the edge of a physical book. Purely a progressive enhancement;
               the footer buttons and arrow keys still work. */}
           <button

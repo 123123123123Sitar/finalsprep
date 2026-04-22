@@ -575,7 +575,7 @@ export const CS_PRACTICE: Record<string, UnitPractice[]> = {
             "Explain what it means for the Internet to use packet switching and why it is fault tolerant.",
           hint: "Data is split and can take multiple paths.",
           answer:
-            "Packet switching splits data into small packets that travel independently across the network and are reassembled at the destination. If a link fails, packets can take alternate routes, so communication continues—this makes the Internet fault tolerant.",
+            "Packet switching splits data into small packets that travel independently across the network and are reassembled at the destination. If a link fails, packets can take alternate routes, so communication continues. This makes the Internet fault tolerant.",
           explanation:
             "Breaking data into packets lets the network interleave many conversations.\nRouters choose paths dynamically based on congestion and availability.\nIf one path breaks, packets reroute via another, so a single failure does not stop communication.",
         },

@@ -5,10 +5,10 @@ import type { CourseCategory, CourseSlug } from "@/lib/topics";
 type Size = "xs" | "sm" | "md" | "lg";
 
 const SIZE_CLS: Record<Size, string> = {
-  xs: "h-5 w-5 rounded",
-  sm: "h-7 w-7 rounded-md",
-  md: "h-10 w-10 rounded-lg",
-  lg: "h-14 w-14 rounded-xl",
+  xs: "h-5 w-5 rounded-full ring-1",
+  sm: "h-7 w-7 rounded-full ring-1",
+  md: "h-10 w-10 rounded-full ring-2",
+  lg: "h-14 w-14 rounded-full ring-2",
 };
 
 const SVG_PAD: Record<Size, string> = {
@@ -39,7 +39,7 @@ export default function CourseIcon({
   return (
     <span
       aria-hidden
-      className={`inline-flex shrink-0 items-center justify-center ${colors.bg} ${SIZE_CLS[size]} ${className || ""}`}
+      className={`inline-flex shrink-0 items-center justify-center ${colors.bg} ${colors.ring} ${SIZE_CLS[size]} ${className || ""}`}
     >
       <Glyph className={SVG_PAD[size]} />
     </span>
@@ -62,7 +62,7 @@ const SVG_DEFAULTS: GlyphProps = {
 };
 
 function Precalc(p: GlyphProps) {
-  // right triangle with angle arc — geometry vibe
+  // right triangle with angle arc: geometry vibe
   return (
     <svg {...SVG_DEFAULTS} {...p}>
       <path d="M4 19 L20 19 L4 7 Z" />
@@ -121,7 +121,7 @@ function Physics2(p: GlyphProps) {
 }
 
 function PhysicsCMech(p: GlyphProps) {
-  // gear — 8 pegs + center circle
+  // gear: 8 pegs + center circle
   return (
     <svg {...SVG_DEFAULTS} {...p}>
       <circle cx="12" cy="12" r="3" />

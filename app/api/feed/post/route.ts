@@ -9,7 +9,7 @@ import {
 export const runtime = "nodejs";
 
 /**
- * POST /api/feed/post — share a custom progress update to the global feed.
+ * POST /api/feed/post: share a custom progress update to the global feed.
  */
 export async function POST(req: Request) {
   const authed = await requireAuthedUser(req);

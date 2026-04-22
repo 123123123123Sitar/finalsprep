@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * Watches text selection inside its container and shows a floating
  * toolbar (Ask AI, Copy, Define) above the selection. "Ask AI" jumps
  * the user to /chat?q=… so the highlighted text becomes the next
- * chat prompt — that's the monetization hook: we want highlights to
+ * chat prompt. That's the monetization hook: we want highlights to
  * flow into paid chat sessions so token usage goes up.
  */
 export default function HighlightTooltip({

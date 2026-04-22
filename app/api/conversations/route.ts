@@ -9,7 +9,7 @@ import { conversationIdFor } from "@/lib/social";
 
 export const runtime = "nodejs";
 
-/** GET /api/conversations — list conversations the caller is part of. */
+/** GET /api/conversations: list conversations the caller is part of. */
 export async function GET(req: Request) {
   const authed = await requireAuthedUser(req);
   if ("error" in authed) return authed.error;
@@ -51,7 +51,7 @@ export async function GET(req: Request) {
   return NextResponse.json({ conversations });
 }
 
-/** POST /api/conversations { otherUid } — create or return conversation id. */
+/** POST /api/conversations { otherUid }: create or return conversation id. */
 export async function POST(req: Request) {
   const authed = await requireAuthedUser(req);
   if ("error" in authed) return authed.error;

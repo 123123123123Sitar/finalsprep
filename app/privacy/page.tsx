@@ -44,7 +44,7 @@ export default function PrivacyPage() {
             <li>
               <strong className="text-ink">Billing info:</strong> when you
               buy a plan, our payment processor handles the transaction.
-              We never see or store your card number — we only receive an
+              We never see or store your card number; we only receive an
               order ID and a payment status.
             </li>
             <li>
@@ -80,7 +80,7 @@ export default function PrivacyPage() {
             <li>We don't sell your data to anyone, ever.</li>
             <li>
               We don't train AI models on your chat history. Our upstream
-              model providers don't either — their API terms prohibit
+              model providers don't either; their API terms prohibit
               training on customer inputs by default.
             </li>
             <li>We don't show ads on the site.</li>

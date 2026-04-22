@@ -34,7 +34,7 @@ export default async function CheckoutPage({
           kind="pack"
           sku={pack.sku}
           title={packDetails.label}
-          subtitle={`${pack.tokens.toLocaleString()} bonus AI tokens — stack on top of your daily budget, never expire.`}
+          subtitle={`${pack.tokens.toLocaleString()} bonus AI tokens. Stack on top of your daily budget, never expire.`}
           priceUsd={packDetails.priceUsd}
           kofiUrl={kofiUrl}
           successPath="/shop?status=ok"

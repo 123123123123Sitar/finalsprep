@@ -157,7 +157,7 @@ export default function SchedulePage() {
     };
   }, [user]);
 
-  // Activity ping loop — ping every 60s while tab is visible.
+  // Activity ping loop: ping every 60s while tab is visible.
   useEffect(() => {
     if (!user) return;
     let alive = true;
@@ -275,7 +275,7 @@ export default function SchedulePage() {
           const end = j.details?.lastEndMin;
           setMsg(
             typeof end === "number"
-              ? `Come back after ${fmtTime(end)} — claim opens once every block ends.`
+              ? `Come back after ${fmtTime(end)}. Claim opens once every block ends.`
               : "Finish all of today's blocks first."
           );
         } else if (j.reason === "no_qualifying_blocks") {
@@ -297,7 +297,7 @@ export default function SchedulePage() {
             });
           setMsg(
             reasons.length > 0
-              ? `Can't claim yet — ${reasons.join("; ")}`
+              ? `Can't claim yet: ${reasons.join("; ")}`
               : "No qualifying blocks yet."
           );
         } else if (j.reason === "no_schedule") {
@@ -427,7 +427,7 @@ export default function SchedulePage() {
   const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
   const dayOver = lastEnd === null || nowMin >= lastEnd;
 
-  // Preview doesn't yet know today's AI usage — show a no-AI, no-depletion
+  // Preview doesn't yet know today's AI usage, so show a no-AI, no-depletion
   // estimate so the user sees a sensible lower bound. The server uses the
   // true values when credit is issued.
   const previewReward = claimReward({
@@ -447,7 +447,7 @@ export default function SchedulePage() {
           <p className="mt-1 text-[14px] text-orange-ink/80">
             {todays.length === 0
               ? "Nothing scheduled for today. Add a block below."
-              : `${todays.length} session${todays.length === 1 ? "" : "s"} planned today — claim when you're done studying.`}
+              : `${todays.length} session${todays.length === 1 ? "" : "s"} planned today. Claim when you're done studying.`}
           </p>
         </div>
         <div className="text-right">
@@ -464,7 +464,7 @@ export default function SchedulePage() {
             const { block: b, mins, coverage, tooShort, done, active, qualifies } = p;
             const coveragePct = Math.round(coverage * 100);
             let hint = "";
-            if (tooShort) hint = `Too short — needs more than ${MIN_BLOCK_MINUTES} min`;
+            if (tooShort) hint = `Too short: needs more than ${MIN_BLOCK_MINUTES} min`;
             else if (!done) hint = "Mark as done when you finish";
             else if (!active)
               hint = `Need ${Math.round(ACTIVITY_COVERAGE_THRESHOLD * 100)}% active time (currently ${coveragePct}%)`;
@@ -528,7 +528,7 @@ export default function SchedulePage() {
               canClaim
                 ? ""
                 : !dayOver && lastEnd !== null
-                ? `Claim opens at ${fmtTime(lastEnd)} — finish every block first.`
+                ? `Claim opens at ${fmtTime(lastEnd)}. Finish every block first.`
                 : `Finish a block over ${MIN_BLOCK_MINUTES} min, mark it done, and stay active for ${Math.round(ACTIVITY_COVERAGE_THRESHOLD * 100)}% of it.`
             }
           >
@@ -556,7 +556,7 @@ export default function SchedulePage() {
           Block off your week.
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] text-muted">
-          Build a real weekly calendar — block off an hour on Monday for AP
+          Build a real weekly calendar: block off an hour on Monday for AP
           Java, 45 minutes on Wednesday for Calc, whatever you need. Your
           scheduled sessions automatically count when you claim for the day.
           Longer, deeper sessions earn a focus bonus.
@@ -576,7 +576,7 @@ export default function SchedulePage() {
         {/* TODAY'S SESSIONS + CLAIM */}
         {todayPanel}
 
-        {/* WEEKLY CALENDAR — time-blocked grid */}
+        {/* WEEKLY CALENDAR: time-blocked grid */}
         <div className="mt-12">
           <div className="label mb-3">Your week</div>
           <WeekGrid
@@ -649,7 +649,7 @@ export default function SchedulePage() {
             Blocks must be longer than {MIN_BLOCK_MINUTES} minutes to earn tokens.
             Mark each block done and stay active in the app for at least{" "}
             {Math.round(ACTIVITY_COVERAGE_THRESHOLD * 100)}% of its time. Claim
-            opens after your last block ends — 50 base + 1 token per minute past
+            opens after your last block ends: 50 base + 1 token per minute past
             the first hour, plus focus and depletion bonuses up to {MAX_CLAIM_TOKENS} total.
           </p>
         </div>
@@ -889,7 +889,7 @@ function ClaimCelebration({
         </h2>
         <p className="mt-4 text-sm text-muted">
           {minutes > 0
-            ? `${minutes} minutes of deep focus. Tokens earned based on engagement — they never expire and stack with your daily budget.`
+            ? `${minutes} minutes of deep focus. Tokens earned based on engagement; they never expire and stack with your daily budget.`
             : "Bonus unlocked. These tokens never expire and stack with your daily budget."}
         </p>
 

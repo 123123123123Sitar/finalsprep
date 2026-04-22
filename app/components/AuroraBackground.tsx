@@ -2,7 +2,7 @@
 
 /**
  * AuroraBackground
- * Low-cost animated aurora/mesh gradient. Pure CSS — no canvas, no JS loop.
+ * Low-cost animated aurora/mesh gradient. Pure CSS: no canvas, no JS loop.
  * Sits behind hero content; pointer-events disabled. Respects dark themes
  * via var-driven opacity.
  */

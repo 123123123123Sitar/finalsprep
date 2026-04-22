@@ -61,7 +61,7 @@ export function subscribeAnnotations(
                 color: (h.color as HighlightColor) || "yellow",
                 createdAt: typeof h.createdAt === "number" ? h.createdAt : 0,
               };
-              // Only set `note` when it's a real string — Firestore rejects
+              // Only set `note` when it's a real string - Firestore rejects
               // `undefined` field values, so leaving it off the object keeps
               // future saveHighlights() round-trips valid.
               if (typeof h.note === "string") out.note = h.note;

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 /**
  * Physics simulation component. Runs a canvas-based real-time simulation
  * for one of several scenarios. Each scenario has its own set of sliders.
- * All simulations use the same <canvas> and RAF loop — switching scenarios
+ * All simulations use the same <canvas> and RAF loop; switching scenarios
  * swaps the update function.
  */
 

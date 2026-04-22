@@ -5,20 +5,20 @@ import { recordActivity } from "@/lib/activity";
 
 export const runtime = "nodejs";
 
-/**
- * Records that the user was active at (or near) the current local minute.
- * Clients on /schedule ping roughly every 60 seconds while the tab is
- * focused. Shares the activity/streak pipeline with the rest of the app so
- * scheduled study time counts toward the same daily >30-min streak gate.
- */
 export async function POST(req: Request) {
   const adminOn = isAdminConfigured();
   const user = adminOn ? await getAuthedUser(req) : null;
   if (adminOn && (!user || !user.emailVerified)) {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Authentication required" },
+      { status: 401 }
+    );
   }
   if (!user) {
-    return NextResponse.json({ error: "Admin SDK not configured" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Admin SDK not configured" },
+      { status: 500 }
+    );
   }
 
   await recordActivity(user.uid);

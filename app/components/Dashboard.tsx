@@ -202,7 +202,7 @@ export default function Dashboard() {
     return () => unsub();
   }, [user, authLoading]);
 
-  // Completion progress — reads the same `completedSlugs` field the study
+  // Completion progress: reads the same `completedSlugs` field the study
   // page's "Mark complete" button writes, so the progress bar here only
   // advances when a lesson is explicitly finished.
   useEffect(() => {
@@ -303,7 +303,7 @@ export default function Dashboard() {
         <div className="grid gap-4 sm:grid-cols-3">
           <SummaryTile
             label="Current streak"
-            value={streak ? `${streak.current} day${streak.current === 1 ? "" : "s"}` : "—"}
+            value={streak ? `${streak.current} day${streak.current === 1 ? "" : "s"}` : "-"}
             hint={streak?.longest ? `Best: ${streak.longest}` : "Solve one problem to start"}
           />
           <SummaryTile
@@ -547,7 +547,7 @@ function CourseCard({
       ),
     [course.slug]
   );
-  // Single source of truth — same formula used wherever course progress is
+  // Single source of truth: same formula used wherever course progress is
   // shown (sublessons completed + practice problems correct).
   const progress = useMemo(
     () => getCourseProgress(course, completedSlugs),

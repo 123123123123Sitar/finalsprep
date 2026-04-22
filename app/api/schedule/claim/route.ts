@@ -13,8 +13,6 @@ import {
   ACTIVITY_COVERAGE_THRESHOLD,
   type StudyBlock,
 } from "@/lib/schedule";
-import { bumpStreak } from "@/lib/streaks";
-
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
@@ -188,7 +186,6 @@ export async function POST(req: Request) {
 
   if (claimed) {
     await addToTokenBank(user.uid, credited, "schedule.claim");
-    void bumpStreak(user.uid, qualifyingMinutes);
     void logEvent({
       kind: "chat.send",
       uid: user.uid,

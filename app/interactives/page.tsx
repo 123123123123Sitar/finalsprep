@@ -154,7 +154,7 @@ export default function InteractivesPage() {
           </h1>
           <p className="mt-4 max-w-xl text-[16px] text-body">
             Describe the concept and the tutor generates a live, interactive
-            widget you can actually play with — a graphing calculator with
+            widget you can actually play with: a graphing calculator with
             your functions preloaded, a physics simulation with your
             parameters, a code playground primed with the problem.
           </p>
@@ -190,7 +190,7 @@ export default function InteractivesPage() {
           Describe the widget.
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] text-muted">
-          Type what you want to explore — a graph, a physics simulation, a
+          Type what you want to explore: a graph, a physics simulation, a
           code playground. The tutor picks the right tool and preloads it
           with your parameters.
         </p>

@@ -15,7 +15,7 @@ export const runtime = "nodejs";
 /**
  * The spec the model must emit as strict JSON. The client renders whichever
  * kind matches using the existing DesmosCalculator / Graph3D / PhysicsSim /
- * CodeSandbox components. The model never writes executable code directly —
+ * CodeSandbox components. The model never writes executable code directly;
  * it only picks a widget kind and fills in parameters.
  */
 const SPEC_INSTRUCTIONS = `You are designing an interactive learning widget for a student.
@@ -32,12 +32,12 @@ must have this shape and match one of the allowed "kind" values exactly:
 
 graph2d config:
   { "expressions": ["x^2 - 2*x + 1", "sin(x)"] }
-  — array of 1-4 math expressions in x. Use JavaScript math syntax
+  (array of 1-4 math expressions in x). Use JavaScript math syntax
   (Math.sin, Math.sqrt, etc. get rewritten by the renderer). Keep it simple.
 
 graph3d config:
   { "expression": "x^2 - y^2" }
-  — one expression in x and y.
+  (one expression in x and y).
 
 physics-sim config:
   { "kind": "projectile" | "pendulum" | "spring" | "collision" }
@@ -226,7 +226,7 @@ export async function POST(req: Request) {
           });
       }
     } catch (e) {
-      // Silently fail — spec has been generated and returned, storage is bonus
+      // Silently fail; spec has been generated and returned, storage is bonus
       console.error("Failed to save interactive to Firestore:", e);
     }
   }

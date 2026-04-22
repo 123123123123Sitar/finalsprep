@@ -6,7 +6,7 @@ import { hydrateComment, hydratePost } from "@/lib/forumsHydrate";
 
 export const runtime = "nodejs";
 
-/** GET /api/forum/posts/{id} — post + flat comments list (newest-first). */
+/** GET /api/forum/posts/{id}: post + flat comments list (newest-first). */
 export async function GET(
   _req: Request,
   { params }: { params: { id: string } }
@@ -20,7 +20,7 @@ export async function GET(
     const post = hydratePost(postSnap.id, postSnap.data() as any);
 
     // Pull comments ordered by createdAt ascending (oldest first is typical
-    // for threaded discussion — we render nested replies in-order).
+    // for threaded discussion; we render nested replies in-order).
     const commentsSnap = await db
       .collection("forumComments")
       .where("postId", "==", params.id)
@@ -39,7 +39,7 @@ export async function GET(
   }
 }
 
-/** DELETE /api/forum/posts/{id} — author only. Also nukes its comments. */
+/** DELETE /api/forum/posts/{id}: author only. Also nukes its comments. */
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }

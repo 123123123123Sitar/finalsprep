@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { PracticeProblem } from "@/lib/practice/types";
 import { addToWrongBank } from "@/lib/wrongBank";
 import { addWrongProblemToSrs } from "@/lib/srs";
+import { recordActivityClient } from "@/lib/activityClient";
 import { useAuth } from "./AuthProvider";
 import MathRender from "./Math";
 import Whiteboard from "./Whiteboard";
@@ -142,6 +143,7 @@ export default function PracticeProblems({
       const next = new Set(prev);
       next.add(i);
       setSubmittedCount(next.size);
+      if (user) void recordActivityClient(getIdToken);
 
       if (isCorrect) {
         setCorrectIndexes((correct) => {
@@ -256,7 +258,7 @@ export default function PracticeProblems({
       {/* All easy solved message */}
       {allEasyCorrect && difficultyFilter === "all" && (
         <div className="rounded-md border border-green-300 bg-green-50 p-3 text-[13px] text-green-800">
-          ✓ All easy problems solved — medium difficulty unlocked!
+          ✓ All easy problems solved. Medium difficulty unlocked!
         </div>
       )}
 
@@ -296,7 +298,7 @@ export default function PracticeProblems({
 
       {creditEarned && (
         <div className="rounded-md border border-green-300 bg-green-50 p-3 text-[13px] text-green-900">
-          ✓ Practice credit earned for this unit — great work. You can keep going
+          ✓ Practice credit earned for this unit. Great work. You can keep going
           or move on.
         </div>
       )}
@@ -355,7 +357,7 @@ type GradeResult = {
   tokens?: number;
 };
 
-function ProblemCard({
+export function ProblemCard({
   problem,
   index,
   courseSlug,
@@ -369,6 +371,9 @@ function ProblemCard({
   onSimilar,
   onSubmitted,
   onSaveWrong,
+  onRemove,
+  labelOverride,
+  problemKey,
 }: {
   problem: PracticeProblem;
   index: number;
@@ -383,6 +388,9 @@ function ProblemCard({
   onSimilar?: () => void;
   onSubmitted?: (isCorrect: boolean) => void;
   onSaveWrong?: () => Promise<void>;
+  onRemove?: () => void;
+  labelOverride?: string;
+  problemKey?: string;
 }) {
   const [attempt, setAttempt] = useState("");
   const [submitted, setSubmitted] = useState(!!alreadySubmitted);
@@ -516,12 +524,22 @@ function ProblemCard({
     <div className="rounded-lg border border-hair bg-paper p-5">
       <div className="flex items-center justify-between">
         <div className="text-[11px] font-medium uppercase tracking-wider text-muted">
-          Problem {index + 1}
+          {labelOverride || `Problem ${index + 1}`}
         </div>
         <div className="flex items-center gap-2">
           <span className={`rounded px-2 py-0.5 text-[11px] font-semibold ${difficultyColor}`}>
             {problem.difficulty}
           </span>
+          {onRemove && (
+            <button
+              type="button"
+              onClick={onRemove}
+              className="text-[11px] text-muted hover:text-red-600"
+              title="Remove from review bank"
+            >
+              Remove
+            </button>
+          )}
         </div>
       </div>
       <div className="mt-2 flex items-start justify-between gap-3">
@@ -702,8 +720,8 @@ function ProblemCard({
           }`}
         >
           {isCorrect
-            ? "✓ Looks right — nice work. Compare with the walkthrough below."
-            : "Not an exact match. Check the answer and walkthrough below — you may still be right in a different form."}
+            ? "✓ Looks right. Nice work. Compare with the walkthrough below."
+            : "Not an exact match. Check the answer and walkthrough below; you may still be right in a different form."}
         </div>
       )}
 
@@ -770,7 +788,7 @@ function ProblemCard({
         canSubmit={canAiGrade}
         submitting={grading}
         onSubmitAnswer={canAiGrade ? handleWhiteboardSubmit : undefined}
-        storageKey={`fp-whiteboard:${courseSlug}:${unitNumber}:${index}`}
+        storageKey={`fp-whiteboard:${problemKey ?? `${courseSlug}:${unitNumber}:${index}`}`}
       />
     </div>
   );

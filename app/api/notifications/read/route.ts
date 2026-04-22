@@ -4,7 +4,7 @@ import { adminDbOrThrow } from "@/lib/socialAdmin";
 
 export const runtime = "nodejs";
 
-/** POST /api/notifications/read — mark all unread notifications as read. */
+/** POST /api/notifications/read: mark all unread notifications as read. */
 export async function POST(req: Request) {
   const authed = await requireAuthedUser(req);
   if ("error" in authed) return authed.error;

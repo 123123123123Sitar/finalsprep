@@ -29,7 +29,7 @@ export default function NotificationsBell() {
       setItems(data.notifications || []);
       setUnread(data.unread || 0);
     } catch {
-      // Ignore — nav bell should never surface errors.
+      // Ignore. Nav bell should never surface errors.
     }
   }, [user, getIdToken]);
 

@@ -5,14 +5,14 @@ import type { AppNotification } from "@/lib/social";
 
 export const runtime = "nodejs";
 
-/** GET /api/notifications — latest 50 for the caller, newest first. */
+/** GET /api/notifications: latest 50 for the caller, newest first. */
 export async function GET(req: Request) {
   const authed = await requireAuthedUser(req);
   if ("error" in authed) return authed.error;
   const { user } = authed;
 
   const db = adminDbOrThrow();
-  // Avoid `where + orderBy` to skip the composite-index requirement —
+  // Avoid `where + orderBy` to skip the composite-index requirement;
   // at a per-user cap of 50 notifications, in-memory sort is trivial.
   const snap = await db
     .collection("notifications")

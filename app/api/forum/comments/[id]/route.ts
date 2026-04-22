@@ -5,7 +5,7 @@ import { adminDbOrThrow } from "@/lib/socialAdmin";
 
 export const runtime = "nodejs";
 
-/** DELETE /api/forum/comments/{id} — author only. Soft-deletes the body
+/** DELETE /api/forum/comments/{id}: author only. Soft-deletes the body
  *  and decrements the post's comment count so existing replies stay
  *  threaded under a "[deleted]" placeholder. */
 export async function DELETE(

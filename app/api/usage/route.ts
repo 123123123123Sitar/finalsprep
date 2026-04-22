@@ -10,7 +10,7 @@ export const runtime = "nodejs";
 /**
  * Read-only endpoint the chat UI hits to show a student how much of their
  * daily budget is left and how many bonus tokens they're sitting on. Never
- * mutates — just reads the same rate-limiter and token-bank that /api/chat
+ * mutates; just reads the same rate-limiter and token-bank that /api/chat
  * writes to.
  */
 export async function GET(req: Request) {

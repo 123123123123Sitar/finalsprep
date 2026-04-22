@@ -1,12 +1,12 @@
 /**
  * ─────────────────────────────────────────────────────────────────────────────
- * TOKEN POLICY — single source of truth for what an AI call costs.
+ * TOKEN POLICY - single source of truth for what an AI call costs.
  * ─────────────────────────────────────────────────────────────────────────────
  *
  *   base:        100 tokens minimum per call (the "floor")
  *   input tax:   +20% of the model's reported input  tokens
  *   output tax:  +30% of the model's reported output tokens
- *   image 2x:    cost is doubled when any image is attached — EXCEPT on Hacker
+ *   image 2x:    cost is doubled when any image is attached - EXCEPT on Hacker
  *   multiplier:  optional × multiplier applied last
  *                  · 1.5×  for Sonnet "thinking" mode (Pro/Hacker only)
  *                  · 1×    everywhere else
@@ -27,7 +27,7 @@
  *   │ Problem explain                  │ aiCost(); no image flag, no mult     │
  *   │ /api/explain                     │ Curated walkthroughs cost 0          │
  *   │                                  │                                      │
- *   │ Chat-title generation            │ FLAT 10 tokens (bypasses formula —   │
+ *   │ Chat-title generation            │ FLAT 10 tokens (bypasses formula -   │
  *   │ /api/chat-title                  │ titles are tiny side-calls)          │
  *   │                                  │                                      │
  *   │ Interactives generate            │ aiCost(); no image flag, no mult     │
@@ -49,11 +49,11 @@
  * DISPLAY CONTRACT
  *   Every surface that shows "tokens" MUST read from /api/usage so the number
  *   matches everywhere. The endpoint returns:
- *     · tokensRemaining  — daily budget left (24h sliding window)
- *     · tokensCap        — the plan's full daily cap
- *     · bonusBalance     — bonus bank balance
+ *     · tokensRemaining: daily budget left (24h sliding window)
+ *     · tokensCap:        the plan's full daily cap
+ *     · bonusBalance:     bonus bank balance
  *   Historical / cumulative numbers (e.g. "Tokens used in last 7d") MUST be
- *   labelled as such — never as "Tokens" alone — so they can't be confused
+ *   labelled as such (never as "Tokens" alone) so they can't be confused
  *   with the remaining budget.
  */
 import type { PlanTier } from "@/lib/plans";

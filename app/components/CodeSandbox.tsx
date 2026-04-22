@@ -7,14 +7,14 @@ import { useEffect, useRef, useState } from "react";
  * There's no safe way to run real Java in the browser without shipping a
  * ~20MB JVM-in-wasm. Instead we offer two modes:
  *
- *  1. "java-trace" — student writes Java-like code. We rewrite the most
+ *  1. "java-trace": student writes Java-like code. We rewrite the most
  *     common Java idioms to JavaScript (System.out.println → console
  *     output, String.length() → .length, etc.) and execute in an isolated
- *     Web Worker. The sandbox is NOT a full Java parser — it's an AP-CSA-
+ *     Web Worker. The sandbox is NOT a full Java parser; it's an AP-CSA-
  *     pragmatic transpiler that handles the subset that shows up on the
  *     exam.
  *
- *  2. "pseudo" — AP CSP pseudocode (DISPLAY, ←, REPEAT, IF, etc.).
+ *  2. "pseudo": AP CSP pseudocode (DISPLAY, ←, REPEAT, IF, etc.).
  *     Rewritten to JavaScript and run in the same Worker.
  *
  * The Worker is iframe-style isolation: it has NO DOM access, no fetch,
@@ -33,16 +33,16 @@ type Props = {
 };
 
 // ---- Java → JS transpiler (pragmatic subset) ----------------------------
-// Handles the AP CSA subset only — not the full JDK. Does NOT use eval;
+// Handles the AP CSA subset only, not the full JDK. Does NOT use eval;
 // the transpiled JS is run in a sandboxed Web Worker.
 function javaToJs(src: string): string {
   let s = src;
-  // Strip Java class / main wrapper — common boilerplate we can ignore.
+  // Strip Java class / main wrapper: common boilerplate we can ignore.
   s = s.replace(/public\s+class\s+\w+\s*\{/g, "");
   s = s.replace(/public\s+static\s+void\s+main\s*\([^)]*\)\s*\{/g, "");
   // Strip Java casts: (int), (double), (String), etc. → nothing.
   // Matches (typeName) with optional whitespace, only when followed by an
-  // identifier/number/paren/minus — avoids stripping grouping parens.
+  // identifier/number/paren/minus; avoids stripping grouping parens.
   s = s.replace(
     /\((?:int|long|short|byte|float|double|char|boolean|String|Object)\)\s*(?=[\w\-(])/g,
     ""
@@ -122,7 +122,7 @@ function pseudoToJs(src: string): string {
   s = s.replace(/\bMOD\b/g, "%");
   // LENGTH(list) → list.length
   s = s.replace(/LENGTH\s*\(([^)]+)\)/g, "($1).length");
-  // Lists are 1-indexed in pseudocode — wrap accesses with __oneIdx.
+  // Lists are 1-indexed in pseudocode; wrap accesses with __oneIdx.
   // Keep it simple: don't touch, and tell the user to use 0-index.
   return s;
 }
@@ -161,7 +161,7 @@ self.addEventListener("message", function(ev) {
   // Hard budget: set a deadline timer via Date.now() checks inside
   const deadline = Date.now() + 1500;
   const originalDate = Date.now;
-  // Install a guard on common loop constructs via instrumentation — too
+  // Install a guard on common loop constructs via instrumentation; too
   // invasive. Instead rely on user code being honest; the 1.5s timeout
   // is enforced by the parent via Worker.terminate().
   try {
@@ -295,7 +295,7 @@ export default function CodeSandbox({
       <div className="mt-2 text-[10px] text-muted">
         Runs in a sandboxed Web Worker with a 1.5s time limit and a 2000-line
         output cap. No DOM access, no network. Java mode supports the AP CSA
-        subset (System.out, loops, arrays, basic classes) — not the full JDK.
+        subset (System.out, loops, arrays, basic classes), not the full JDK.
       </div>
     </div>
   );

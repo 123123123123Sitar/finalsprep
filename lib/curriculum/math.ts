@@ -11,10 +11,10 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
       structure:
         "40 multiple-choice (80 min) + 4 free-response (40 min). Calculator allowed on Part B of MCQ and on FRQ.",
       scoring:
-        "MCQ is 62.5% of the score, FRQ is 37.5%. Unit 4 is optional on the exam — the College Board uses it as a stretch unit.",
+        "MCQ is 62.5% of the score, FRQ is 37.5%. Unit 4 is optional on the exam. The College Board uses it as a stretch unit.",
     },
     framing:
-      "AP Precalc is about understanding functions as tools for modeling change. The course leans hard on multiple representations — tables, graphs, equations, verbal descriptions — and asks you to move between them fluently. It's the modern replacement for 'Analysis' at most high schools, so treat it as the prerequisite every calc teacher wishes you had.",
+      "AP Precalc is about understanding functions as tools for modeling change. The course leans hard on multiple representations (tables, graphs, equations, verbal descriptions) and asks you to move between them fluently. It's the modern replacement for 'Analysis' at most high schools, so treat it as the prerequisite every calc teacher wishes you had.",
     units: [
       {
         unitNumber: 1,
@@ -32,7 +32,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         essentials: [
           {
             heading: "Rates of change",
-            body: "For linear functions the rate of change is constant. For quadratics the rate of change of the rate of change is constant. For polynomials of degree n, the nth finite difference is constant — use this to identify degree from a table.",
+            body: "For linear functions the rate of change is constant. For quadratics the rate of change of the rate of change is constant. For polynomials of degree n, the nth finite difference is constant. Use this to identify degree from a table.",
           },
           {
             heading: "Zeros and multiplicity",
@@ -59,7 +59,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         commonMistakes: [
           "Forgetting to check for holes before finding vertical asymptotes.",
           "Stating end behavior by plugging in small x instead of analyzing the leading term.",
-          "Treating f(x-3) as a left shift instead of right — the sign flips.",
+          "Treating f(x-3) as a left shift instead of right: the sign flips.",
           "Calling multiplicity-2 zeros 'roots' and double-counting them as turning points.",
         ],
         examStrategy:
@@ -87,7 +87,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         essentials: [
           {
             heading: "Exponential growth and decay",
-            body: "f(x) = a·b^x with a ≠ 0. If b > 1 it grows; if 0 < b < 1 it decays. The y-intercept is a. Find b from a table by computing ratios of consecutive outputs — if constant, the function is exponential.",
+            body: "f(x) = a·b^x with a ≠ 0. If b > 1 it grows; if 0 < b < 1 it decays. The y-intercept is a. Find b from a table by computing ratios of consecutive outputs: if constant, the function is exponential.",
           },
           {
             heading: "Change of base",
@@ -112,9 +112,9 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Doubling time: t = ln(2)/ln(b). Half-life: t = ln(2)/|ln(b)| for 0<b<1.",
         ],
         commonMistakes: [
-          "Writing log(a + b) = log a + log b (wrong — the sum rule is log(a·b)).",
+          "Writing log(a + b) = log a + log b (wrong; the sum rule is log(a·b)).",
           "Forgetting to check that log arguments are positive in the final answer.",
-          "Using log base 10 when the problem used ln — they give different numerical answers.",
+          "Using log base 10 when the problem used ln: they give different numerical answers.",
           "Claiming e^x grows faster than 2^x 'because e > 2' instead of comparing ln(e) vs ln(2).",
         ],
         examStrategy:
@@ -135,9 +135,9 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         bigIdeas: [
           "sin and cos parameterize the unit circle; sin θ is the y-coordinate, cos θ is the x-coordinate.",
           "Sinusoidal functions have form a·sin(b(x-h))+k with amplitude |a|, period 2π/|b|, phase shift h, vertical shift k.",
-          "Pythagorean identity: sin²θ + cos²θ = 1 — this is the identity you'll use most often.",
+          "Pythagorean identity: sin²θ + cos²θ = 1. This is the identity you'll use most often.",
           "Polar coordinates (r,θ) relate to rectangular by x=r cos θ, y=r sin θ.",
-          "Polar curves include circles, roses, cardioids, limaçons, and lemniscates — know their parent equations.",
+          "Polar curves include circles, roses, cardioids, limaçons, and lemniscates. Know their parent equations.",
         ],
         essentials: [
           {
@@ -150,7 +150,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Solving trig equations",
-            body: "Isolate the trig function, find solutions in [0, 2π), then add 2πk for the general solution. Watch for squared trig functions — sin²x = 1/2 gives four solutions in [0, 2π) from sin x = ±√2/2.",
+            body: "Isolate the trig function, find solutions in [0, 2π), then add 2πk for the general solution. Watch for squared trig functions: sin²x = 1/2 gives four solutions in [0, 2π) from sin x = ±√2/2.",
           },
           {
             heading: "Polar graphs",
@@ -158,7 +158,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Rectangular ↔ polar conversion",
-            body: "x = r cos θ, y = r sin θ, r² = x² + y², tan θ = y/x. Watch quadrant placement when converting rectangular to polar — arctan only returns values in (-π/2, π/2).",
+            body: "x = r cos θ, y = r sin θ, r² = x² + y², tan θ = y/x. Watch quadrant placement when converting rectangular to polar: arctan only returns values in (-π/2, π/2).",
           },
         ],
         keyFacts: [
@@ -170,7 +170,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Confusing amplitude with period on sinusoidal modeling problems.",
           "Dropping the ± when taking square roots of trig equations (lose half your solutions).",
           "Getting quadrant wrong when converting from rectangular to polar coordinates.",
-          "Mixing up radians and degrees — the AP expects radians unless stated otherwise.",
+          "Mixing up radians and degrees: the AP expects radians unless stated otherwise.",
         ],
         examStrategy:
           "Sinusoidal modeling FRQs are predictable: identify a, b, h, k from a verbal description or graph, write the equation, use it to predict. Show your steps explicitly. On polar graph problems, sketch the rose/cardioid from the parent curve and apply transformations.",
@@ -178,21 +178,21 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Build the unit circle from memory once a day until you can do it in under a minute.",
           "Identify amplitude, period, and midline from 10 different sinusoidal graphs in a row.",
           "Practice converting between polar and rectangular for 10 points including edge cases (origin, points on axes).",
-          "Sketch r = 1 + 2cos θ and identify the inner loop — limaçons with |b/a| > 1 are tricky.",
+          "Sketch r = 1 + 2cos θ and identify the inner loop: limaçons with |b/a| > 1 are tricky.",
         ],
       },
       {
         unitNumber: 4,
         title: "Functions Involving Parameters, Vectors & Matrices",
         overview:
-          "Parametric equations, vectors, and matrices as tools for modeling motion and transformations. This unit is optional on the AP exam — the College Board calls it out as stretch content.",
+          "Parametric equations, vectors, and matrices as tools for modeling motion and transformations. This unit is optional on the AP exam; the College Board calls it out as stretch content.",
         examWeight: "Optional on exam",
         bigIdeas: [
           "Parametric equations describe curves via a shared parameter (often time).",
           "Vectors have magnitude and direction; dot product measures alignment, cross product (in 3D) gives perpendicular.",
           "Matrices encode linear transformations of the plane (rotations, reflections, scalings).",
           "The determinant of a 2×2 matrix measures signed area; det=0 means non-invertible.",
-          "Conic sections parameterize naturally — circles, ellipses, parabolas, hyperbolas.",
+          "Conic sections parameterize naturally: circles, ellipses, parabolas, hyperbolas.",
         ],
         essentials: [
           {
@@ -205,11 +205,11 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Matrix multiplication",
-            body: "(AB)ᵢⱼ = row i of A · column j of B. Not commutative — AB ≠ BA in general. Identity matrix I satisfies AI = IA = A.",
+            body: "(AB)ᵢⱼ = row i of A · column j of B. Not commutative: AB ≠ BA in general. Identity matrix I satisfies AI = IA = A.",
           },
           {
             heading: "Linear transformations",
-            body: "A 2×2 matrix acting on a column vector (x,y) produces a new vector — this is a linear map. Rotation by θ: [[cos θ, -sin θ], [sin θ, cos θ]]. Scaling by k: kI. Reflection across x-axis: [[1,0],[0,-1]].",
+            body: "A 2×2 matrix acting on a column vector (x,y) produces a new vector; this is a linear map. Rotation by θ: [[cos θ, -sin θ], [sin θ, cos θ]]. Scaling by k: kI. Reflection across x-axis: [[1,0],[0,-1]].",
           },
           {
             heading: "Determinant and inverse",
@@ -224,7 +224,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         ],
         commonMistakes: [
           "Parameter confusion: forgetting that t has physical meaning in motion problems.",
-          "Matrix multiplication order — AB vs BA matters.",
+          "Matrix multiplication order: AB vs BA matters.",
           "Computing determinants as ad + bc instead of ad - bc.",
           "Using rotation matrices without converting degrees to radians.",
         ],
@@ -253,7 +253,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         "Score 1-5; 3+ is typically considered passing. Most selective colleges want a 4 or 5 for credit.",
     },
     framing:
-      "AP Calc AB is a semester of college calculus compressed into a year. It's linear, concept-heavy, and rewards students who see the through-line: limits → derivatives → integrals are one continuous story about rates and accumulation. The common trap is to treat each unit as separate formulas — the strong students see the connections.",
+      "AP Calc AB is a semester of college calculus compressed into a year. It's linear, concept-heavy, and rewards students who see the through-line: limits → derivatives → integrals are one continuous story about rates and accumulation. The common trap is to treat each unit as separate formulas; the strong students see the connections.",
     units: [
       {
         unitNumber: 1,
@@ -283,7 +283,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Types of discontinuities",
-            body: "Removable (hole — the limit exists but doesn't equal f(c) or f(c) is undefined), jump (left and right limits differ), infinite (vertical asymptote).",
+            body: "Removable (hole: the limit exists but doesn't equal f(c) or f(c) is undefined), jump (left and right limits differ), infinite (vertical asymptote).",
           },
           {
             heading: "Intermediate Value Theorem",
@@ -296,15 +296,15 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Squeeze theorem: if g(x) ≤ f(x) ≤ h(x) and g and h have the same limit L, so does f.",
         ],
         commonMistakes: [
-          "Saying 'the limit is undefined' when you see 0/0 — that's indeterminate, not undefined.",
+          "Saying 'the limit is undefined' when you see 0/0: that's indeterminate, not undefined.",
           "Plugging in infinity directly into a rational function instead of analyzing degree.",
           "Forgetting that IVT requires continuity on a closed interval, not just the function being defined there.",
           "Confusing discontinuity types: a hole is removable, a jump is not.",
         ],
         examStrategy:
-          "IVT questions are almost free points — set up the hypothesis (f continuous on [a,b]), compute f(a) and f(b), cite IVT, conclude. Limit-from-a-graph problems show up every year; read carefully for open/closed circles.",
+          "IVT questions are almost free points: set up the hypothesis (f continuous on [a,b]), compute f(a) and f(b), cite IVT, conclude. Limit-from-a-graph problems show up every year; read carefully for open/closed circles.",
         studyTips: [
-          "Do 10 mixed limit problems a day for a week — direct sub, factor/cancel, infinity, one-sided.",
+          "Do 10 mixed limit problems a day for a week: direct sub, factor/cancel, infinity, one-sided.",
           "Write out the three continuity conditions until you can recite them.",
           "Practice IVT justifications in exact CED wording: 'Since f is continuous on [a,b] and f(a) < 0 < f(b), by the IVT there exists c in (a,b) with f(c)=0.'",
           "Sketch 5 functions with each type of discontinuity.",
@@ -314,10 +314,10 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         unitNumber: 2,
         title: "Differentiation: Definition & Fundamental Properties",
         overview:
-          "The derivative is the instantaneous rate of change — the slope of the tangent line. This unit builds derivative rules from the limit definition and develops power, product, quotient, and trig rules.",
+          "The derivative is the instantaneous rate of change: the slope of the tangent line. This unit builds derivative rules from the limit definition and develops power, product, quotient, and trig rules.",
         examWeight: "10-12%",
         bigIdeas: [
-          "f'(a) = lim h→0 (f(a+h) - f(a))/h — the formal definition.",
+          "f'(a) = lim h→0 (f(a+h) - f(a))/h, the formal definition.",
           "Differentiability implies continuity (but not the reverse).",
           "Power rule: d/dx[xⁿ] = nxⁿ⁻¹.",
           "Product rule: (fg)' = f'g + fg'. Quotient rule: (f/g)' = (f'g - fg')/g².",
@@ -351,18 +351,18 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Tangent line at x=a: y = f(a) + f'(a)(x - a).",
         ],
         commonMistakes: [
-          "Applying power rule to eˣ — it's not x^e, the derivative of eˣ is eˣ.",
+          "Applying power rule to eˣ: it's not x^e, the derivative of eˣ is eˣ.",
           "Forgetting the minus sign in the derivative of cos x.",
           "Quotient rule: putting f' and g' in the wrong spots.",
-          "Treating differentiability and continuity as the same thing — they're not.",
+          "Treating differentiability and continuity as the same thing: they're not.",
         ],
         examStrategy:
-          "Unit 2 problems are mechanical — speed matters. Be flawless on power, product, quotient, and chain. On 'derivative from a limit' MCQ problems, recognize the form and identify f and a.",
+          "Unit 2 problems are mechanical; speed matters. Be flawless on power, product, quotient, and chain. On 'derivative from a limit' MCQ problems, recognize the form and identify f and a.",
         studyTips: [
           "Memorize the basic derivatives until you can recall them in under a second each.",
           "Drill product and quotient rules on 20 problems without a calculator.",
           "Practice recognizing the limit form of a derivative.",
-          "Write out the quotient rule in words before applying — slows you down in a good way.",
+          "Write out the quotient rule in words before applying; slows you down in a good way.",
         ],
       },
       {
@@ -401,7 +401,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           },
         ],
         keyFacts: [
-          "Chain rule is required in almost every integral problem too — via u-substitution.",
+          "Chain rule is required in almost every integral problem too, via u-substitution.",
           "d/dx[ln(f(x))] = f'(x)/f(x).",
           "d/dx[e^(f(x))] = f'(x)·e^(f(x)).",
         ],
@@ -409,12 +409,12 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Skipping the inner derivative in the chain rule.",
           "On implicit differentiation, forgetting the y' (chain rule) when differentiating y terms.",
           "Treating inverse trig derivatives as if they had the chain rule built in.",
-          "Confusing (f⁻¹)'(x) with 1/f'(x) — the correct form is 1/f'(f⁻¹(x)).",
+          "Confusing (f⁻¹)'(x) with 1/f'(x): the correct form is 1/f'(f⁻¹(x)).",
         ],
         examStrategy:
-          "Chain rule is tested on every FRQ. Implicit differentiation always has at least one FRQ — practice finding tangent lines, horizontal tangents, and second derivatives from implicit equations.",
+          "Chain rule is tested on every FRQ. Implicit differentiation always has at least one FRQ; practice finding tangent lines, horizontal tangents, and second derivatives from implicit equations.",
         studyTips: [
-          "Drill chain rule until it's automatic — 30 composite problems a day for 3 days.",
+          "Drill chain rule until it's automatic: 30 composite problems a day for 3 days.",
           "Practice implicit differentiation on x²+y²=25, xy=1, and sin(xy)=x.",
           "Write out the inverse function theorem explicitly for 5 worked examples.",
           "Memorize all 6 inverse trig derivatives.",
@@ -436,11 +436,11 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         essentials: [
           {
             heading: "Motion problems",
-            body: "Read carefully — 'speed' means |velocity| and 'moving to the right' means v > 0. The particle is at rest when v = 0. It changes direction where v changes sign (and the sign change is real, not a tangent).",
+            body: "Read carefully: 'speed' means |velocity| and 'moving to the right' means v > 0. The particle is at rest when v = 0. It changes direction where v changes sign (and the sign change is real, not a tangent).",
           },
           {
             heading: "Related rates setup",
-            body: "1) Draw a picture and label variables that change with time. 2) Write a geometric equation relating them. 3) Differentiate both sides with respect to t. 4) Plug in the values at the instant, including the given rate. Don't plug in numbers for variables before differentiating — they'll disappear.",
+            body: "1) Draw a picture and label variables that change with time. 2) Write a geometric equation relating them. 3) Differentiate both sides with respect to t. 4) Plug in the values at the instant, including the given rate. Don't plug in numbers for variables before differentiating; they'll disappear.",
           },
           {
             heading: "Linearization",
@@ -454,7 +454,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         keyFacts: [
           "If v(t) doesn't change sign on [a,b], total distance equals |x(b)-x(a)|.",
           "If v(t) changes sign, total distance = ∫|v(t)|dt.",
-          "The 'instant' in a related rates problem is a snapshot — use it only after you've differentiated.",
+          "The 'instant' in a related rates problem is a snapshot: use it only after you've differentiated.",
         ],
         commonMistakes: [
           "Calling speed the same as velocity (speed is |velocity|).",
@@ -465,7 +465,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         examStrategy:
           "Related rates FRQs reward clean setup. Draw the figure, state what's given, write the equation explicitly. Show the differentiation step. You get points for each part of the process.",
         studyTips: [
-          "Drill related rates on cones, ladders, shadows, boats, and spheres — these recur every year.",
+          "Drill related rates on cones, ladders, shadows, boats, and spheres; these recur every year.",
           "For motion FRQs, practice reading the prompt twice to identify what's being asked.",
           "Memorize the linearization formula and apply it to 5 estimation problems.",
           "Practice L'Hôpital on all indeterminate forms, including rewrites from 0·∞.",
@@ -495,7 +495,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Concavity and inflection",
-            body: "f'' > 0 means f is concave up. f'' < 0 means concave down. Inflection point: where concavity changes — requires an actual sign change of f''.",
+            body: "f'' > 0 means f is concave up. f'' < 0 means concave down. Inflection point: where concavity changes, which requires an actual sign change of f''.",
           },
           {
             heading: "Candidates test for absolute extrema",
@@ -508,14 +508,14 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         ],
         keyFacts: [
           "Absolute extrema on a closed interval always exist (Extreme Value Theorem).",
-          "A critical point doesn't have to be a local extremum — check for sign change.",
+          "A critical point doesn't have to be a local extremum; check for sign change.",
           "Inflection at x=c requires f'' to change sign, not just equal zero.",
         ],
         commonMistakes: [
           "Calling f'(c)=0 a local extremum without checking sign change.",
           "Stating an inflection point where f''=0 but doesn't change sign.",
           "Forgetting endpoints in the candidates test.",
-          "Confusing 'increasing' with 'positive' — f increasing means f' > 0, not f > 0.",
+          "Confusing 'increasing' with 'positive': f increasing means f' > 0, not f > 0.",
         ],
         examStrategy:
           "Unit 5 FRQs always ask for justifications using f, f', f''. Cite the specific test (first derivative test, concavity analysis) and reference the table or graph the question provides. Write justifications in complete sentences.",
@@ -570,11 +570,11 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         commonMistakes: [
           "Forgetting +C on indefinite integrals.",
           "u-substitution without changing the bounds or substituting back.",
-          "Treating ∫f(x)g(x) dx as (∫f)(∫g) — there's no product rule for integration (that's integration by parts, BC only).",
-          "Integrating 1/x as x⁰/0 — that's undefined. The antiderivative is ln|x|.",
+          "Treating ∫f(x)g(x) dx as (∫f)(∫g): there's no product rule for integration (that's integration by parts, BC only).",
+          "Integrating 1/x as x⁰/0: that's undefined. The antiderivative is ln|x|.",
         ],
         examStrategy:
-          "Unit 6 is the biggest FRQ unit. Be ruthless about u-substitution choice — wrong u wastes 5 minutes. On accumulation function problems, track what f tells you about F.",
+          "Unit 6 is the biggest FRQ unit. Be ruthless about u-substitution choice; wrong u wastes 5 minutes. On accumulation function problems, track what f tells you about F.",
         studyTips: [
           "Memorize the 12 most common antiderivatives.",
           "Drill u-substitution on 20 problems a day for a week.",
@@ -640,7 +640,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         examWeight: "10-15%",
         bigIdeas: [
           "Average value of f on [a,b] is (1/(b-a))·∫[a to b] f(x) dx.",
-          "Total change: ∫[a to b] v(t) dt is displacement (not distance — distance is ∫|v|).",
+          "Total change: ∫[a to b] v(t) dt is displacement (not distance; distance is ∫|v|).",
           "Area between curves: ∫[a to b] (top - bottom) dx.",
           "Disk method: V = π·∫[a to b] [f(x)]² dx.",
           "Washer method: V = π·∫[a to b] ([R(x)]² - [r(x)]²) dx.",
@@ -673,7 +673,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "When rotating around y=k instead of y=0, the radius is |f(x)-k|.",
         ],
         commonMistakes: [
-          "Setting up area between curves with (bottom - top) — sign error.",
+          "Setting up area between curves with (bottom - top): sign error.",
           "Forgetting to square the radius in the disk method.",
           "Using volume formulas when the axis of rotation isn't x- or y-axis without adjusting.",
           "Confusing distance and displacement on motion problems.",
@@ -709,10 +709,10 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         unitNumber: 1,
         title: "Limits & Continuity",
         overview:
-          "Identical to AB Unit 1 — limits, one-sided limits, continuity, IVT.",
+          "Identical to AB Unit 1: limits, one-sided limits, continuity, IVT.",
         examWeight: "4-7%",
         bigIdeas: [
-          "Same fundamentals as AB — limits, continuity, IVT.",
+          "Same fundamentals as AB: limits, continuity, IVT.",
           "Expect BC problems to combine limits with later topics (e.g., series convergence).",
         ],
         essentials: [
@@ -734,7 +734,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Ignoring one-sided limits on piecewise functions.",
         ],
         examStrategy:
-          "Mostly review — don't overspend study time here if you've mastered the AB version.",
+          "Mostly review; don't overspend study time here if you've mastered the AB version.",
         studyTips: [
           "Refresh the 10-problem AB drill.",
           "Practice IVT justifications in AP-approved wording.",
@@ -743,7 +743,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
       {
         unitNumber: 2,
         title: "Differentiation: Definition & Fundamental Properties",
-        overview: "Same content as AB Unit 2 — derivative rules, definition.",
+        overview: "Same content as AB Unit 2: derivative rules, definition.",
         examWeight: "4-7%",
         bigIdeas: [
           "Limit definition of the derivative.",
@@ -769,7 +769,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
       {
         unitNumber: 3,
         title: "Differentiation: Composite, Implicit & Inverse Functions",
-        overview: "Chain rule, implicit, inverse trig — same as AB Unit 3.",
+        overview: "Chain rule, implicit, inverse trig: same as AB Unit 3.",
         examWeight: "4-7%",
         bigIdeas: [
           "Chain rule is used on virtually every BC problem.",
@@ -790,7 +790,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Skipping the inner derivative.",
           "Forgetting y' on implicit problems.",
         ],
-        examStrategy: "AB review — make sure chain rule is reflexive.",
+        examStrategy: "AB review; make sure chain rule is reflexive.",
         studyTips: [
           "Drill chain rule until automatic.",
           "Practice implicit differentiation on 10 curves.",
@@ -799,7 +799,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
       {
         unitNumber: 4,
         title: "Contextual Applications of Differentiation",
-        overview: "Motion, related rates, linearization, L'Hôpital — AB Unit 4.",
+        overview: "Motion, related rates, linearization, L'Hôpital: AB Unit 4.",
         examWeight: "6-9%",
         bigIdeas: [
           "Position, velocity, acceleration in 1D.",
@@ -821,7 +821,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Plugging numbers in too early on related rates.",
           "Using L'Hôpital on non-indeterminate forms.",
         ],
-        examStrategy: "Related rates FRQ is guaranteed — practice setup cleanly.",
+        examStrategy: "Related rates FRQ is guaranteed; practice setup cleanly.",
         studyTips: [
           "Drill ladder, cone, shadow, and boat related-rates problems.",
           "Practice motion FRQs with v(t) that changes sign.",
@@ -830,7 +830,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
       {
         unitNumber: 5,
         title: "Analytical Applications of Differentiation",
-        overview: "Extrema, concavity, optimization, MVT — AB Unit 5.",
+        overview: "Extrema, concavity, optimization, MVT: AB Unit 5.",
         examWeight: "8-11%",
         bigIdeas: [
           "Critical points, first/second derivative tests.",
@@ -874,7 +874,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         essentials: [
           {
             heading: "Integration by parts",
-            body: "∫u dv = uv - ∫v du. Pick u using LIATE (Log, Inverse trig, Algebraic, Trig, Exponential) — preferences for u in that order. The 'du' should be simpler than u.",
+            body: "∫u dv = uv - ∫v du. Pick u using LIATE (Log, Inverse trig, Algebraic, Trig, Exponential): preferences for u in that order. The 'du' should be simpler than u.",
           },
           {
             heading: "Partial fractions",
@@ -891,7 +891,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "LIATE is a heuristic, not a law.",
         ],
         commonMistakes: [
-          "Parts without choosing u carefully — endless cycles.",
+          "Parts without choosing u carefully: endless cycles.",
           "Partial fractions without checking the denominator factors completely.",
           "Forgetting the limit on improper integrals.",
         ],
@@ -932,7 +932,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Confusing logistic with pure exponential growth.",
           "Forgetting step size in Euler's method.",
         ],
-        examStrategy: "Euler's method FRQ is common — practice the iterative table.",
+        examStrategy: "Euler's method FRQ is common; practice the iterative table.",
         studyTips: [
           "Drill Euler's method on 5 DEs with 3 steps each.",
           "Memorize the logistic model and its carrying capacity interpretation.",
@@ -942,7 +942,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         unitNumber: 8,
         title: "Applications of Integration",
         overview:
-          "Area, volumes, average value — AB Unit 8 plus arc length.",
+          "Area, volumes, average value: AB Unit 8 plus arc length.",
         examWeight: "6-9%",
         bigIdeas: [
           "Area between curves, volumes by disk/washer/cross-section.",
@@ -974,7 +974,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         bigIdeas: [
           "Parametric: dy/dx = (dy/dt)/(dx/dt). Speed = √((dx/dt)² + (dy/dt)²).",
           "Polar area: A = (1/2)·∫[α to β] r² dθ.",
-          "Vector-valued functions: r(t) = (f(t), g(t)). Derivative is (f'(t), g'(t)) — velocity vector.",
+          "Vector-valued functions: r(t) = (f(t), g(t)). Derivative is (f'(t), g'(t)): velocity vector.",
           "Arc length in parametric/polar forms.",
         ],
         essentials: [
@@ -1058,7 +1058,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Ratio test is the default for series with factorials or exponentials.",
         ],
         commonMistakes: [
-          "Applying the nth term test wrongly — only useful for divergence.",
+          "Applying the nth term test wrongly: only useful for divergence.",
           "Forgetting to check endpoints for the interval of convergence.",
           "Using the wrong center on a Taylor series.",
           "Leaving Lagrange error bound in terms of a variable instead of numerically bounding.",
@@ -1113,7 +1113,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           },
           {
             heading: "Describing distributions",
-            body: "Always hit four points: shape (skewed right/left, symmetric, bimodal), center (median or mean in context), spread (IQR or SD in context), and outliers. Use context — don't just say 'the distribution is skewed', say 'the distribution of reaction times is skewed right'.",
+            body: "Always hit four points: shape (skewed right/left, symmetric, bimodal), center (median or mean in context), spread (IQR or SD in context), and outliers. Use context; don't just say 'the distribution is skewed', say 'the distribution of reaction times is skewed right'.",
           },
         ],
         keyFacts: [
@@ -1171,7 +1171,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "The slope interpretation: 'For a 1-unit increase in x, ŷ changes by b, in context.'",
         ],
         commonMistakes: [
-          "Saying 'r² is the correlation' — r is correlation, r² is the proportion of variation.",
+          "Saying 'r² is the correlation': r is correlation, r² is the proportion of variation.",
           "Interpreting slope without units or context.",
           "Extrapolating beyond the data range.",
           "Using correlation on non-linear data.",
@@ -1414,7 +1414,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
         keyFacts: [
           "t-distribution is wider than Normal for small n; converges to Normal as n → ∞.",
           "df = n-1 for one sample.",
-          "Paired tests require paired data — don't use two-sample t when samples are matched.",
+          "Paired tests require paired data; don't use two-sample t when samples are matched.",
         ],
         commonMistakes: [
           "Using z instead of t when σ is unknown.",
@@ -1422,7 +1422,7 @@ export const MATH_CURRICULUM: Record<string, CourseCurriculum> = {
           "Forgetting to check the Normal condition.",
         ],
         examStrategy:
-          "Identify the correct procedure first — is it one-sample, two-sample, or paired? Wrong choice is 0 points on the setup.",
+          "Identify the correct procedure first: is it one-sample, two-sample, or paired? Wrong choice is 0 points on the setup.",
         studyTips: [
           "Build a decision tree for choosing inference procedures.",
           "Drill paired t-tests on 5 before/after scenarios.",

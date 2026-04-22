@@ -4,7 +4,7 @@ import { adminDbOrThrow } from "@/lib/socialAdmin";
 
 export const runtime = "nodejs";
 
-/** DELETE /api/comments/{id} — author can delete their own comment. */
+/** DELETE /api/comments/{id}: author can delete their own comment. */
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }

@@ -3,7 +3,7 @@
  * rewards; spent when a user would otherwise hit the daily rate limit.
  *
  * Stored at users/{uid}/profile/tokenBank = { balance, updatedAt }.
- * Writes go through the admin SDK from server routes — clients read
+ * Writes go through the admin SDK from server routes - clients read
  * through onSnapshot elsewhere but never write directly.
  */
 import { getAdminDb } from "@/lib/firebaseAdmin";

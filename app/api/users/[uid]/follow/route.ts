@@ -10,7 +10,7 @@ import {
 export const runtime = "nodejs";
 
 /**
- * POST /api/users/{uid}/follow — request to follow the target user.
+ * POST /api/users/{uid}/follow: request to follow the target user.
  *
  * Follows go through an approval step now: the request sits in the
  * `follows` collection with `status: "pending"` and a notification is
@@ -75,7 +75,7 @@ export async function POST(
 }
 
 /**
- * DELETE /api/users/{uid}/follow — unfollow or cancel a pending request.
+ * DELETE /api/users/{uid}/follow: unfollow or cancel a pending request.
  * Counter decrements only when we tear down an accepted follow.
  */
 export async function DELETE(

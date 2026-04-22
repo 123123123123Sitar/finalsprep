@@ -22,6 +22,7 @@ import {
 } from "@/lib/insights";
 import PageLoader from "@/app/components/PageLoader";
 import ReviewPanel from "@/app/components/ReviewPanel";
+import CourseIcon from "@/app/components/CourseIcon";
 
 type LiveUsage = {
   tokensRemaining: number;
@@ -363,7 +364,7 @@ function InsightsBody({
 }) {
   return (
     <>
-      {/* Canonical "right now" token state — matches the dashboard tile and
+      {/* Canonical "right now" token state: matches the dashboard tile and
           the chat header pill. The 7-day numbers below are historical. */}
       <div className="mt-8 rounded-xl border border-hair bg-paper p-5">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -486,8 +487,17 @@ function ScorePredictorSection({
               key={slug}
               className="rounded-md border border-hair bg-offwhite p-4"
             >
-              <div className="flex items-baseline justify-between">
-                <div className="font-medium text-ink">{course.shortTitle}</div>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-2.5">
+                  <CourseIcon
+                    slug={course.slug}
+                    category={course.category}
+                    size="sm"
+                  />
+                  <div className="min-w-0 truncate font-medium text-ink">
+                    {course.shortTitle}
+                  </div>
+                </div>
                 <div className="font-serif text-3xl text-orange">
                   {pred.score}
                 </div>
@@ -593,8 +603,18 @@ function ExamHistorySection({ examResults }: { examResults: ExamResult[] }) {
         {sorted.slice(-3).reverse().map((e) => {
           const course = COURSES.find((c) => c.slug === e.courseSlug);
           return (
-            <div key={e.id} className="rounded border border-hair px-2 py-1">
-              {course?.shortTitle || e.courseSlug}: {e.percentage}% ({e.score}/{e.total})
+            <div
+              key={e.id}
+              className="flex items-center gap-1.5 rounded border border-hair px-2 py-1"
+            >
+              <CourseIcon
+                slug={e.courseSlug}
+                category={course?.category}
+                size="xs"
+              />
+              <span>
+                {course?.shortTitle || e.courseSlug}: {e.percentage}% ({e.score}/{e.total})
+              </span>
             </div>
           );
         })}
@@ -656,20 +676,31 @@ function WeakTopicsSection({ weakTopics }: { weakTopics: WeakTopic[] }) {
       <div className="label mb-3">Weak spots</div>
       {weakTopics.length === 0 ? (
         <p className="text-[13px] text-muted">
-          No weak spots yet — problems you save to review will surface here.
+          No weak spots yet. Problems you save to review will surface here.
         </p>
       ) : (
         <ul className="divide-y divide-hair">
-          {weakTopics.map((w) => (
+          {weakTopics.map((w) => {
+            const course = COURSES.find((c) => c.slug === w.courseSlug);
+            return (
             <li
               key={`${w.courseSlug}:${w.unitNumber}`}
               className="flex items-center justify-between py-2.5"
             >
-              <div>
-                <div className="text-[13px] font-medium text-ink">
-                  {w.courseTitle} · Unit {w.unitNumber}
+              <div className="flex min-w-0 items-center gap-2.5">
+                <CourseIcon
+                  slug={w.courseSlug}
+                  category={course?.category}
+                  size="sm"
+                />
+                <div className="min-w-0">
+                  <div className="truncate text-[13px] font-medium text-ink">
+                    {w.courseTitle} · Unit {w.unitNumber}
+                  </div>
+                  <div className="truncate text-[12px] text-muted">
+                    {w.unitTitle}
+                  </div>
                 </div>
-                <div className="text-[12px] text-muted">{w.unitTitle}</div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="text-[12px] text-muted">
@@ -683,7 +714,8 @@ function WeakTopicsSection({ weakTopics }: { weakTopics: WeakTopic[] }) {
                 </a>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </div>

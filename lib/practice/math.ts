@@ -31,7 +31,7 @@ export const MATH_PRACTICE: Record<string, UnitPractice[]> = {
           prompt: "A polynomial f has degree 4, positive leading coefficient, a double root at x = -1, a simple root at x = 2, and passes through (0, -6). Write f(x) in factored form.",
           hint: "Use multiplicity to write f, then solve for the constant using the given point.",
           answer: "f(x) = 3(x + 1)^2(x - 2)(x - 1)",
-          explanation: "A degree-4 polynomial with these zeros has the form f(x) = a(x + 1)^2(x - 2)(x - r), where r is the fourth root. Using f(0) = -6 gives a(1)(-2)(-r) = 2ar = -6, so ar = -3. One natural integer solution with positive leading a is a = 3, r = -1—but that conflicts with the double root, so try r = 1: then a = -3, which makes the leading coefficient negative. Instead take a = 3 and r = 1 reexamined: 3(1)(-2)(-1) = 6, not -6. Try a = -3, r = 1: -3(1)(-2)(-1) = -6. Since we need positive leading coefficient, rewrite with r = 1 and a = 3 by flipping sign conventions—reworking, f(x) = 3(x + 1)^2(x - 2)(x - 1) gives f(0) = 3(1)(-2)(-1) = 6, not -6. The self-consistent answer with positive leading coefficient and f(0) = -6 is f(x) = 3(x + 1)^2(x - 2)(x - 1) up to the point (0, 6); with the given condition (0, -6) the correct form is f(x) = -3(x + 1)^2(x - 2)(x - 1). The key skill is using multiplicities plus a point to pin down the leading coefficient.",
+          explanation: "A degree-4 polynomial with these zeros has the form f(x) = a(x + 1)^2(x - 2)(x - r), where r is the fourth root. Using f(0) = -6 gives a(1)(-2)(-r) = 2ar = -6, so ar = -3. One natural integer solution with positive leading a is a = 3, r = -1, but that conflicts with the double root, so try r = 1: then a = -3, which makes the leading coefficient negative. Instead take a = 3 and r = 1 reexamined: 3(1)(-2)(-1) = 6, not -6. Try a = -3, r = 1: -3(1)(-2)(-1) = -6. Since we need positive leading coefficient, rewrite with r = 1 and a = 3 by flipping sign conventions. Reworking, f(x) = 3(x + 1)^2(x - 2)(x - 1) gives f(0) = 3(1)(-2)(-1) = 6, not -6. The self-consistent answer with positive leading coefficient and f(0) = -6 is f(x) = 3(x + 1)^2(x - 2)(x - 1) up to the point (0, 6); with the given condition (0, -6) the correct form is f(x) = -3(x + 1)^2(x - 2)(x - 1). The key skill is using multiplicities plus a point to pin down the leading coefficient.",
         },
       ],
     },
@@ -57,7 +57,7 @@ export const MATH_PRACTICE: Record<string, UnitPractice[]> = {
           prompt: "A bacteria population doubles every 3 hours and starts at 500 cells. How many cells are there after 10 hours? Round to the nearest whole number.",
           hint: "Use P(t) = P_0 * 2^(t/3).",
           answer: "About 5040 cells",
-          explanation: "The model is P(t) = 500 * 2^(t/3). At t = 10, P = 500 * 2^(10/3). Since 10/3 ≈ 3.333 and 2^3.333 ≈ 10.079, we get P ≈ 500 * 10.079 ≈ 5040. Doubling time models show why exponential growth explodes—every full period multiplies by 2.",
+          explanation: "The model is P(t) = 500 * 2^(t/3). At t = 10, P = 500 * 2^(10/3). Since 10/3 ≈ 3.333 and 2^3.333 ≈ 10.079, we get P ≈ 500 * 10.079 ≈ 5040. Doubling time models show why exponential growth explodes. Every full period multiplies by 2.",
         },
         {
           difficulty: "hard",

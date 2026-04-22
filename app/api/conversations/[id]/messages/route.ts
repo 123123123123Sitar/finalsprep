@@ -25,7 +25,7 @@ async function assertParticipant(
   return conv;
 }
 
-/** GET /api/conversations/{id}/messages — paginated message thread. */
+/** GET /api/conversations/{id}/messages: paginated message thread. */
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
@@ -62,7 +62,7 @@ export async function GET(
   return NextResponse.json({ messages });
 }
 
-/** POST /api/conversations/{id}/messages { text } — send a message. */
+/** POST /api/conversations/{id}/messages { text }: send a message. */
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }

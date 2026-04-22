@@ -2,7 +2,7 @@
  * Single source of truth for "how far is this user through a course?".
  *
  * Used by the dashboard course cards, the per-course progress panel, and any
- * other surface that wants to show progress — so a user always sees the same
+ * other surface that wants to show progress, so a user always sees the same
  * number on the same course wherever it appears.
  *
  * Formula:
@@ -13,7 +13,7 @@
  * array we treat the unit itself as one sublesson so the bar still moves.
  *
  * Practice progress is read from localStorage under the per-unit key
- * `fp-practice-progress:{courseSlug}:{unitNumber}` — same key
+ * `fp-practice-progress:{courseSlug}:{unitNumber}` - same key
  * `app/components/PracticeProblems.tsx` writes to. Practices are optional:
  * if a unit has no problems available, it just contributes 0/0 to the totals.
  */

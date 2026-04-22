@@ -40,7 +40,7 @@ export async function GET(req: Request) {
 
   // Plan distribution + recent user count.
   // Shallow user stats: count billing docs by plan. For tens of thousands
-  // of users this would need a real aggregate — we cap at 1000 here.
+  // of users this would need a real aggregate; we cap at 1000 here.
   const billingSnap = await db
     .collectionGroup("profile")
     .limit(1000)

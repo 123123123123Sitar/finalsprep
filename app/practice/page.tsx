@@ -227,7 +227,7 @@ function ExamsTab() {
             onChange={(e) => setCourseSlug(e.target.value as CourseSlug)}
             className="w-full rounded-md border border-hair bg-paper px-3 py-2 text-ink focus:border-orange focus:outline-none"
           >
-            <option value="">— Select a course —</option>
+            <option value="">- Select a course -</option>
             {courseChoices.map((c) => (
               <option key={c.slug} value={c.slug}>
                 {c.title}
@@ -333,7 +333,7 @@ function ExamsTab() {
     const isAnswered = (i: number) => responses[i]?.trim().length > 0;
     return (
       <div className="mt-8 space-y-5">
-        {/* TOP BAR — timer + question navigator + submit */}
+        {/* TOP BAR: timer + question navigator + submit */}
         <div className="rounded-xl border border-hair bg-paper p-4">
           <div className="mb-3 flex items-center justify-between gap-4">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">
@@ -448,7 +448,7 @@ function ExamsTab() {
           />
         </div>
 
-        {/* BOTTOM NAV — previous / next */}
+        {/* BOTTOM NAV: previous / next */}
         <div className="flex items-center justify-between gap-3">
           <button
             onClick={() => goTo(idx - 1)}
@@ -625,7 +625,7 @@ function FrqsTab() {
 
         <div className="rounded-md border border-hair bg-offwhite p-3">
           <label className="mb-2 block text-xs font-medium text-muted">
-            Your response (label each part — e.g. "(a) ...")
+            Your response (label each part, e.g. "(a) ...")
           </label>
           <textarea
             value={response}

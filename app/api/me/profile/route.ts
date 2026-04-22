@@ -28,7 +28,7 @@ async function syncPlanToProfile(db: FirebaseFirestore.Firestore, uid: string) {
   }
 }
 
-/** GET /api/me/profile — ensure + return the caller's public profile. */
+/** GET /api/me/profile: ensure + return the caller's public profile. */
 export async function GET(req: Request) {
   const authed = await requireAuthedUser(req);
   if ("error" in authed) return authed.error;
@@ -39,7 +39,7 @@ export async function GET(req: Request) {
   return NextResponse.json({ profile: snap.data() });
 }
 
-/** PATCH /api/me/profile — update the caller's profile fields. */
+/** PATCH /api/me/profile: update the caller's profile fields. */
 export async function PATCH(req: Request) {
   const authed = await requireAuthedUser(req);
   if ("error" in authed) return authed.error;

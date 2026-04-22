@@ -34,7 +34,7 @@ export async function POST(req: Request) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://finalsprep.com";
 
   if (!resendKey) {
-    console.error("[capture] RESEND_API_KEY is not set — email not sent");
+    console.error("[capture] RESEND_API_KEY is not set; email not sent");
     return NextResponse.json(
       { error: "Email delivery is not configured yet. Please try again later." },
       { status: 503 }
@@ -52,9 +52,9 @@ export async function POST(req: Request) {
         from: fromAddress,
         to: [email],
         subject: "Your FinalsPrep formula sheet",
-        html: `<p>Here it is — the one-page sheet of the ~40 formulas from algebra through calculus every student should know cold before an exam.</p>
+        html: `<p>Here it is: the one-page sheet of the ~40 formulas from algebra through calculus every student should know cold before an exam.</p>
 <p><a href="${siteUrl}/formula-sheet.pdf">Download the formula sheet (PDF)</a></p>
-<p>If you want step-by-step walkthroughs on your actual homework — algebra through calc, physics, bio, chem, CS, history — Pro is <a href="${siteUrl}/#price">$11 for the first month with code SCORE5</a>.</p>
+<p>If you want step-by-step walkthroughs on your actual homework (algebra through calc, physics, bio, chem, CS, history), Pro is <a href="${siteUrl}/#price">$11 for the first month with code SCORE5</a>.</p>
 <p>Good luck on finals. You got this.</p>`,
       }),
     });

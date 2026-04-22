@@ -111,7 +111,7 @@ function MarketingHome() {
 
       {/* HERO */}
       <div className="relative isolate overflow-hidden">
-        {/* Animated aurora background — full viewport width */}
+        {/* Animated aurora background - full viewport width */}
         <AuroraBackground />
       <section className="relative z-10 mx-auto max-w-5xl overflow-visible px-6 pt-20 pb-24 sm:pt-28">
         <div className="relative max-w-3xl">
@@ -123,7 +123,7 @@ function MarketingHome() {
           </h1>
           <p className="animate-fadeUp delay-300 mt-8 max-w-2xl text-[19px] leading-relaxed text-body">
             A real AI tutor that walks you through math, physics, chemistry,
-            bio, CS, and history — the concept and reasoning, not just the
+            bio, CS, and history: the concept and reasoning, not just the
             answer. Curriculum overviews for all 16 AP courses, interactive
             tools, a Book-Mode reading view, and a chat that remembers what
             you asked yesterday. <strong className="text-ink">$16/month</strong>,{" "}
@@ -222,7 +222,7 @@ function MarketingHome() {
             from="left"
             eyebrow="Per-unit curriculum"
             title="Every AP unit, structured like the College Board organizes it."
-            blurb="Exam guide, big ideas, essential knowledge, key facts, and CED sublesson walkthroughs. Progress tracked per topic — mark complete, see your course bar fill."
+            blurb="Exam guide, big ideas, essential knowledge, key facts, and CED sublesson walkthroughs. Progress tracked per topic: mark complete, see your course bar fill."
             cta={{ href: "/study", label: "Browse units →" }}
             mock={<StudyMock />}
           />
@@ -241,7 +241,7 @@ function MarketingHome() {
             delay={0}
             from="left"
             eyebrow="Review & insights"
-            title="Every problem you got wrong — spaced and re-served."
+            title="Every problem you got wrong - spaced and re-served."
             blurb="Miss a practice problem? It lands in your review bank. The Insights dashboard shows your 7-day token usage, streak, and the topics you keep tripping on."
             cta={{ href: "/insights?tab=review", label: "Open review →" }}
             mock={<ReviewMock />}
@@ -252,7 +252,7 @@ function MarketingHome() {
             from="right"
             eyebrow="Study scheduler"
             title="Schedule sessions. Finish them. Earn bonus tokens."
-            blurb="Set a daily study goal. Every session you complete stacks bonus tokens on top of your plan's daily budget — they never expire, so grinding pays off."
+            blurb="Set a daily study goal. Every session you complete stacks bonus tokens on top of your plan's daily budget. They never expire, so grinding pays off."
             cta={{ href: "/schedule", label: "Open scheduler →" }}
             mock={<ScheduleMock />}
           />
@@ -358,8 +358,8 @@ function MarketingHome() {
             16 AP courses. One subscription.
           </h2>
           <p className="mt-4 max-w-2xl text-[17px] text-body">
-            Every AP has a full curriculum overview — units, big ideas,
-            essential knowledge, skills, exam weighting — laid out the way
+            Every AP has a full curriculum overview (units, big ideas,
+            essential knowledge, skills, exam weighting) laid out the way
             the College Board organizes it. The AI tutor and all interactive
             tools work across every course from day one.
           </p>
@@ -367,7 +367,7 @@ function MarketingHome() {
             <strong className="text-ink">Content depth is rolling out.</strong>{" "}
             AP Precalculus has the deepest CED sublesson walkthroughs today.
             The rest of the catalog has the full unit structure, exam guide,
-            and tutor access — we're publishing more written lessons every
+            and tutor access. We're publishing more written lessons every
             week.
           </p>
         </Reveal>
@@ -466,7 +466,7 @@ function MarketingHome() {
             Three plans. Cancel anytime.
           </h2>
           <p className="mt-4 max-w-2xl text-[17px] text-body">
-            Learner is free forever — 10,000 AI tokens a day, every day. Pro
+            Learner is free forever: 10,000 AI tokens a day, every day. Pro
             doubles that with image uploads, the full curriculum for every
             AP course, the Insights dashboard, and a smarter thinking mode.
             Hacker quadruples tokens again with priority traffic and the
@@ -859,7 +859,7 @@ function ApCountdown() {
       </div>
       {passed ? (
         <div className="rounded-xl border border-orange/40 bg-orange-tint px-5 py-4 text-sm text-orange-ink">
-          AP exams are happening now — best of luck.
+          AP exams are happening now. Best of luck.
         </div>
       ) : (
         <div className="grid grid-cols-4 gap-2 rounded-xl border border-orange/40 bg-orange-tint p-3 sm:gap-3 sm:p-4">
@@ -915,7 +915,7 @@ function ChatMock() {
   return (
     <MockFrame>
       <div className="flex h-full bg-paper">
-        {/* Left sidebar — matches the real ExpandedSidebar */}
+        {/* Left sidebar - matches the real ExpandedSidebar */}
         <div className="hidden w-32 shrink-0 flex-col border-r border-hair bg-offwhite p-1.5 text-[8px] sm:flex">
           <div className="flex items-center gap-1 rounded-md border border-hair bg-paper px-1.5 py-1 text-muted">
             <span className="h-1.5 w-1.5 rounded-full border border-muted/60" />
@@ -972,7 +972,7 @@ function ChatMock() {
             </div>
           </div>
 
-          {/* Composer — dark rounded pill, matches the real one */}
+          {/* Composer - dark rounded pill, matches the real one */}
           <div className="px-3 pb-2.5 pt-1">
             <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-[#1f1f22] px-2 py-1.5 shadow-[0_8px_22px_-10px_rgba(0,0,0,0.45)]">
               <span className="grid h-4 w-4 shrink-0 place-items-center rounded-full text-white/70">
@@ -1178,7 +1178,7 @@ function ReviewMock() {
         </div>
         <div className="mt-1 space-y-1">
           <div className="flex items-center justify-between rounded border border-hair px-2 py-1 text-[10px] text-body">
-            <span>Related rates — ladder problem</span>
+            <span>Related rates - ladder problem</span>
             <span className="text-orange-ink">retry</span>
           </div>
           <div className="flex items-center justify-between rounded border border-hair px-2 py-1 text-[10px] text-body">
@@ -1186,7 +1186,7 @@ function ReviewMock() {
             <span className="text-orange-ink">retry</span>
           </div>
           <div className="flex items-center justify-between rounded border border-hair px-2 py-1 text-[10px] text-body">
-            <span>Projectile — range formula</span>
+            <span>Projectile - range formula</span>
             <span className="text-green-700">✓ fixed</span>
           </div>
         </div>

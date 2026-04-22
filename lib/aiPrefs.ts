@@ -7,7 +7,7 @@ export type AiPrefs = {
   aiMode: AiMode;
   aiPersonality: AiPersonality;
   aiCustomInstructions: string;
-  /** Optional — pulled from the user's publicProfile for personalization. */
+  /** Optional - pulled from the user's publicProfile for personalization. */
   interests?: string[];
   gradeLevel?: string | null;
 };

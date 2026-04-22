@@ -27,7 +27,6 @@ import {
   updateConversation,
   type StoredConversation,
 } from "@/lib/chatStore";
-import { bumpStreak } from "@/lib/streaks";
 import { postScoreEvent } from "@/lib/postScoreEvent";
 import { subscribeSelectedCourses } from "@/lib/selectedCourses";
 import {
@@ -272,7 +271,7 @@ function ChatInner() {
         );
         setCurrentConvId(id);
       } else {
-        // Don't pass a title on updates — once a title exists (either the
+        // Don't pass a title on updates; once a title exists (either the
         // draft from creation or an AI-generated one), persist shouldn't
         // overwrite it. Title changes go through setConversationTitle.
         await updateConversation(user.uid, currentConvId, next);
@@ -319,7 +318,7 @@ function ChatInner() {
       const list = await listConversations(user.uid);
       setConversations(list);
     } catch {
-      // Best-effort — if the title fetch fails, we keep the draft title.
+      // Best-effort: if the title fetch fails, we keep the draft title.
     }
   }
 
@@ -374,7 +373,6 @@ function ChatInner() {
     const content = (text ?? input).trim();
     if ((!content && pendingImages.length === 0) || loading || streaming) return;
 
-    if (user?.uid) void bumpStreak(user.uid);
     void postScoreEvent(getIdToken, activeCourseSlug, "chat_message");
     const imagesForMessage = pendingImages;
     const visibleContent = content + (imagesForMessage.length > 0
@@ -512,7 +510,7 @@ function ChatInner() {
       if (abortRef.current === controller) abortRef.current = null;
       setLoading(false);
       setStreaming(false);
-      // Refresh the bonus balance from Firestore after each send — the
+      // Refresh the bonus balance from Firestore after each send; the
       // header pill already updated `tokensRemaining` from response
       // headers, but only /api/usage knows the new bonus number.
       void refreshUsage();
@@ -789,7 +787,7 @@ function ChatInner() {
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
-      {/* LEFT SIDEBAR — persistent ChatGPT-style nav */}
+      {/* LEFT SIDEBAR: persistent ChatGPT-style nav */}
       <aside
         className={`shrink-0 border-r border-hair bg-offwhite transition-all duration-200 ease-out ${
           historyOpen ? "w-64" : "w-14"
@@ -1064,7 +1062,7 @@ function ChatInner() {
                   }`}
                   title={
                     thinking
-                      ? "Thinking mode on — uses a stronger model, counts extra tokens"
+                      ? "Thinking mode on: uses a stronger model, counts extra tokens"
                       : "Turn on Thinking mode for hard problems"
                   }
                 >
@@ -2231,7 +2229,7 @@ function AiSettingsOverlay({
               Customize the AI tutor
             </h2>
             <p className="mt-1 max-w-lg text-[13px] text-muted">
-              How the tutor talks to you — verbosity, tone, focus — and any
+              How the tutor talks to you (verbosity, tone, focus) and any
               standing instructions you want to apply to every chat.
             </p>
           </div>
@@ -2274,7 +2272,7 @@ function AiSettingsOverlay({
               }
               rows={4}
               maxLength={1000}
-              placeholder="e.g. 'I'm studying for AP Calc BC finals — always connect problems back to series convergence tests.'"
+              placeholder="e.g. 'I'm studying for AP Calc BC finals, always connect problems back to series convergence tests.'"
               className="focus-ring w-full rounded-md border border-hair bg-offwhite px-3 py-2 text-[14px] text-ink outline-none"
             />
             <div className="mt-1 text-[11px] text-muted">

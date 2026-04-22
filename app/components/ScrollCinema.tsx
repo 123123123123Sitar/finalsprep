@@ -181,7 +181,7 @@ export default function ScrollCinema() {
           </h2>
         </div>
 
-        {/* Browser — sized to fit the remaining space */}
+        {/* Browser: sized to fit the remaining space */}
         <div className="relative flex min-h-0 w-full flex-1 items-center justify-center px-4 pb-[8vh]">
         <div
           className="relative h-full w-full overflow-hidden rounded-xl border border-hair bg-paper"
@@ -218,7 +218,7 @@ export default function ScrollCinema() {
             </div>
           </div>
 
-          {/* Page content — fades in on "page load". This is a faithful
+          {/* Page content: fades in on "page load". This is a faithful
               recreation of /chat: sidebar + main column + dark composer. */}
           <div
             className="relative h-[calc(100%-41px)]"
@@ -272,7 +272,7 @@ export default function ScrollCinema() {
 
               {/* MAIN CHAT COLUMN */}
               <div className="flex min-w-0 flex-1 flex-col">
-                {/* Header bar — title + token usage pill */}
+                {/* Header bar: title + token usage pill */}
                 <div className="flex items-center justify-between border-b border-hair bg-offwhite/60 px-3 py-2 sm:px-4">
                   <div className="truncate font-serif text-[13px] text-ink sm:text-sm">
                     {solutionP > 0.05 ? "Quadratic equation" : "New chat"}
@@ -291,7 +291,7 @@ export default function ScrollCinema() {
                 {/* Messages area / empty state */}
                 <div className="flex-1 overflow-hidden px-4 py-4 sm:px-6">
                   {clickP < 0.45 ? (
-                    // Empty state — exactly mirrors the real /chat hero
+                    // Empty state: exactly mirrors the real /chat hero
                     <div
                       className="mx-auto max-w-md text-center"
                       style={{ opacity: remap(story, 0.32, 0.42) }}
@@ -320,7 +320,7 @@ export default function ScrollCinema() {
                       </div>
                     </div>
                   ) : (
-                    // After send — user bubble, then assistant streams in
+                    // After send: user bubble, then assistant streams in
                     <div className="space-y-2.5">
                       <div className="ml-auto max-w-[78%] rounded-lg bg-offwhite px-3 py-2 text-[11px] leading-snug text-body sm:text-xs">
                         {PROBLEM}
@@ -351,7 +351,7 @@ export default function ScrollCinema() {
                   )}
                 </div>
 
-                {/* COMPOSER — dark rounded pill, identical to the real one */}
+                {/* COMPOSER: dark rounded pill, identical to the real one */}
                 <div className="px-4 pb-3 pt-1 sm:px-6">
                   <div
                     className="flex items-center gap-2 rounded-[24px] border border-white/10 bg-[#1f1f22] px-3 py-2.5 shadow-[0_10px_28px_-12px_rgba(0,0,0,0.45)] transition-shadow"
@@ -375,7 +375,7 @@ export default function ScrollCinema() {
                         <path d="M8 2v12M2 8h12" />
                       </svg>
                     </span>
-                    {/* Input text — empty until typing phase, then the problem */}
+                    {/* Input text: empty until typing phase, then the problem */}
                     <span className="flex-1 truncate text-[11px] text-white sm:text-xs">
                       {clickP > 0.45 && solutionP < 0.05 ? (
                         <span className="text-white/45">Ask anything…</span>
@@ -388,7 +388,7 @@ export default function ScrollCinema() {
                         <span className="ml-0.5 inline-block h-[11px] w-[1.5px] animate-pulseSoft bg-orange align-middle" />
                       )}
                     </span>
-                    {/* Send button — orange when typing, glows on click */}
+                    {/* Send button: orange when typing, glows on click */}
                     <button
                       type="button"
                       tabIndex={-1}

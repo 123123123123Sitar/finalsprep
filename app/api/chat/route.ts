@@ -36,6 +36,7 @@ import { ocrImage } from "@/lib/ocr";
 import type { PlanTier } from "@/lib/plans";
 import { aiCost } from "@/lib/aiCost";
 import { spendTokens } from "@/lib/spend";
+import { recordActivity } from "@/lib/activity";
 
 export const runtime = "nodejs";
 
@@ -165,7 +166,7 @@ export async function POST(req: Request) {
   }
   if (!needAnthropic && !geminiKey) {
     // If Gemini isn't configured, fall back to Anthropic Haiku so the app
-    // still works — we just eat a slightly higher cost.
+    // still works; we just eat a slightly higher cost.
     if (!anthropicKey) {
       return jsonError(500, {
         error:
@@ -293,11 +294,11 @@ export async function POST(req: Request) {
 
   // OCR pre-pass. Try to pull plain text out of each attachment with
   // Tesseract. Three outcomes per image:
-  //   - transcribed: high confidence — drop the image, send text only
-  //   - partial:     some text, but uncertain — keep BOTH the OCR text
+  //   - transcribed: high confidence; drop the image, send text only
+  //   - partial:     some text, but uncertain; keep BOTH the OCR text
   //                  (as a hint) AND the image so the vision model can
   //                  verify what's actually there
-  //   - failed:      unreadable — send the image only
+  //   - failed:      unreadable; send the image only
   const imagesForVision: typeof validImages = [];
   const ocrBlocks: string[] = [];
   if (validImages.length > 0) {
@@ -311,7 +312,7 @@ export async function POST(req: Request) {
         ocrBlocks.push(`[OCR transcription of attached image]\n${r.text}`);
       } else if (r.kind === "partial") {
         ocrBlocks.push(
-          `[Partial OCR of attached image — may be inaccurate, the image is also attached for reference]\n${r.text}`
+          `[Partial OCR of attached image: may be inaccurate, the image is also attached for reference]\n${r.text}`
         );
         imagesForVision.push(validImages[i]);
       } else {
@@ -457,7 +458,7 @@ export async function POST(req: Request) {
           } catch (e) {
             // Learner-tier fallback: Gemini hit a rate limit. Flip the
             // global flag so the next request routes to Claude immediately,
-            // then retry this request on Claude — but only if we haven't
+            // then retry this request on Claude, but only if we haven't
             // already streamed any tokens to the client.
             if (
               isGeminiRateLimit(e) &&
@@ -497,6 +498,7 @@ export async function POST(req: Request) {
           // Mirror the daily portion into the in-memory bucket so /api/usage
           // reflects the write within the same warm instance.
           if (split.fromDaily > 0) record(key, split.fromDaily);
+          void recordActivity(user.uid);
         } else {
           record(key, totalTokens);
         }

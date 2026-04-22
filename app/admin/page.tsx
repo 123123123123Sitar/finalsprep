@@ -160,9 +160,9 @@ export default function AdminPage() {
                           {e.kind}
                         </td>
                         <td className="px-4 py-2 truncate max-w-[160px]">
-                          {e.email || e.uid || "—"}
+                          {e.email || e.uid || "-"}
                         </td>
-                        <td className="px-4 py-2">{e.plan || "—"}</td>
+                        <td className="px-4 py-2">{e.plan || "-"}</td>
                         <td className="px-4 py-2 font-mono text-[11px] text-muted">
                           {e.meta ? JSON.stringify(e.meta) : ""}
                         </td>

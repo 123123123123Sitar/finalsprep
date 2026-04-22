@@ -20,11 +20,11 @@ type HistoryEntry = {
 };
 
 /**
- * GET /api/users/{uid} — public profile view.
+ * GET /api/users/{uid}: public profile view.
  *
  * Returns the profile + the caller's follow relationship. Activity data
  * (recent AI history + a 90-day heatmap) is only included when the caller
- * is the profile owner OR an accepted follower — otherwise the client
+ * is the profile owner OR an accepted follower; otherwise the client
  * shows a "locked" placeholder.
  */
 export async function GET(
@@ -34,16 +34,37 @@ export async function GET(
   let db;
   try {
     db = adminDbOrThrow();
-  } catch {
-    return NextResponse.json({ error: "Not configured" }, { status: 500 });
+  } catch (e: any) {
+    console.error("[api/users] adminDbOrThrow failed", e);
+    return NextResponse.json(
+      { error: e?.message || "Server not configured" },
+      { status: 500 }
+    );
   }
 
   const caller = await getAuthedUser(req);
   const isSelf = !!caller && caller.uid === params.uid;
 
-  let profile = await getPublicProfile(db, params.uid);
-  if (!profile && isSelf && caller) {
-    profile = await ensurePublicProfile(db, caller.uid, caller.email || null);
+  let profile;
+  try {
+    profile = await getPublicProfile(db, params.uid);
+    // Auto-create the public profile on first visit: for the owner viewing
+    // their own page, or for any authed user landing on someone else's page
+    // whose profile hasn't been seeded yet.
+    if (!profile && caller) {
+      if (isSelf) {
+        profile = await ensurePublicProfile(db, caller.uid, caller.email || null);
+      } else {
+        // Seed a minimal stub so the page renders; owner can edit later.
+        profile = await ensurePublicProfile(db, params.uid, null);
+      }
+    }
+  } catch (e: any) {
+    console.error("[api/users] profile lookup failed", e);
+    return NextResponse.json(
+      { error: e?.message || "Profile lookup failed" },
+      { status: 500 }
+    );
   }
   if (!profile) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -96,7 +117,7 @@ export async function GET(
     return { courseSlug: slug, completed };
   });
 
-  // Activity data is gated — only the user themself or an accepted
+  // Activity data is gated: only the user themself or an accepted
   // follower can see the heatmap / recent list.
   const canSeeActivity = isSelf || isFollowing;
   let history: HistoryEntry[] = [];

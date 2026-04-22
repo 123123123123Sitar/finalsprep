@@ -69,7 +69,7 @@ export default function LessonAnnotationsPanel({
 
   if (!user) return null;
 
-  // Don't render anything — neither the panel nor the upsell — while the
+  // Don't render anything (neither the panel nor the upsell) while the
   // plan is still resolving. Otherwise a paid user reloading the page
   // briefly sees the "Pro feature" upsell before their plan loads.
   if (planLoading) return null;

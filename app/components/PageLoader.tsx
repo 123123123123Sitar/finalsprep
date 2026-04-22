@@ -3,7 +3,7 @@ import { LogoMark } from "@/app/components/Logo";
 
 /**
  * Full-page loading screen with a pulsing logo. Use inside a `<main>` where
- * the nav renders above — this just fills the content slot.
+ * the nav renders above; this just fills the content slot.
  */
 export default function PageLoader({
   label = "Loading",

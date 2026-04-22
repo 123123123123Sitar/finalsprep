@@ -1,7 +1,7 @@
 import type { CourseSlug, CourseCategory } from "@/lib/topics";
 
 /**
- * Per-course visual identity — background tint used under the SVG glyph so
+ * Per-course visual identity - background tint used under the SVG glyph so
  * each subject reads at a glance. The actual SVG art lives in
  * app/components/CourseIcon.tsx so it can inline currentColor.
  */

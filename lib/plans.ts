@@ -6,7 +6,7 @@ export type CheckoutPlan = "monthly" | "sixmonth" | PaidCheckoutPlan;
 
 export function normalizePlanTier(value: unknown): PlanTier {
   if (value === "pro" || value === "hacker" || value === "learner") return value;
-  // Legacy aliases — "free" used to be the bottom tier, "premium" the top.
+  // Legacy aliases: "free" used to be the bottom tier, "premium" the top.
   if (value === "premium") return "hacker";
   if (value === "free") return "learner";
   // "regular" was a deprecated mid tier; coerce to pro.

@@ -142,7 +142,7 @@ function UnlockedUnitView({
           memorize the{" "}
           {unit.essentials[0]?.heading.toLowerCase() || "core idea"} and
           understand why each common mistake above is a trap. Graders see the
-          same wrong answer on thousands of exams —{" "}
+          same wrong answer on thousands of exams:{" "}
           {unit.commonMistakes[0] || "watch the signs"} is the #1 one. When you
           hit practice problems, do the hard one first; if you can do it, the
           easy ones are free.
@@ -364,7 +364,7 @@ function LessonFallback({
         A full written walkthrough for{" "}
         <span className="font-medium text-ink">{title}</span> is still being
         drafted. In the meantime the AI tutor can teach you this topic
-        step-by-step — with diagrams and worked examples tuned to your level.
+        step-by-step, with diagrams and worked examples tuned to your level.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         <a
@@ -441,7 +441,7 @@ function LockedUnitView({
           <li className="flex gap-2">
             <span className="mt-[9px] h-1 w-1 rounded-full bg-orange" />
             <span>
-              Every CED topic in every unit — written walkthroughs +
+              Every CED topic in every unit: written walkthroughs +
               diagrams/maps
             </span>
           </li>
@@ -457,7 +457,7 @@ function LockedUnitView({
           </li>
           <li className="flex gap-2">
             <span className="mt-[9px] h-1 w-1 rounded-full bg-orange" />
-            <span>Larger AI chat budget — 8x what Free gets</span>
+            <span>Larger AI chat budget: 8x what Free gets</span>
           </li>
         </ul>
         <div className="mt-6 flex flex-wrap gap-3">
@@ -466,7 +466,7 @@ function LockedUnitView({
             className="btn-primary text-sm"
             data-testid="unit-upgrade-button"
           >
-            Unlock Pro — $16/month
+            Unlock Pro - $16/month
           </button>
           <a href="/#price" className="btn-ghost text-sm">
             Or $90 for 6 months →
@@ -495,7 +495,7 @@ function Section({
 }
 
 /** Small "AP Central ↗" chip next to a CED topic. Goes to the course's
- *  official AP Central page — the authoritative source for this framework
+ *  official AP Central page: the authoritative source for this framework
  *  entry. (College Board doesn't expose per-topic deep links; the topic
  *  code only appears inside the downloadable CED PDF.) */
 function ApCentralTopicLink({ courseSlug }: { courseSlug: string }) {
