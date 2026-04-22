@@ -11,10 +11,7 @@ export default function ProgressPanel({
   aiHistory: HistoryEntry[];
   wrongCount: number;
 }) {
-  // Per-course progress bars now live on the course cards (same global
-  // formula via getCourseProgress) — this panel keeps the cross-cutting
-  // signals: weekly activity and the wrong-bank summary.
-
+ 
   // 7-day activity chart
   const last7days = useMemo(() => {
     const days: { date: string; tokens: number }[] = [];
