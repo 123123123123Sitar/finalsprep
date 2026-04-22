@@ -103,7 +103,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Java is a compiled, strongly-typed, object-oriented language. A program is a sequence of instructions stored as source code and executed after compilation to bytecode.",
       explanation:
-        "A computer program is a precise set of instructions. Java source files (.java) are compiled by javac into platform-independent bytecode (.class), which the Java Virtual Machine (JVM) interprets on whatever operating system you are on. That \"write once, run anywhere\" design is why AP CSA uses Java: you can reason about program behavior without caring what hardware is underneath.\n\nEvery Java program begins execution inside a main method with the exact signature public static void main(String[] args). This method lives inside a class; the file name must match the public class name. A line like System.out.println(\"Hello\"); prints text followed by a newline; System.out.print does the same without the newline. Java is case-sensitive and statement-terminated by semicolons.\n\nJava is strongly and statically typed: every variable has a type declared at compile time, and the compiler refuses to run a program whose types don't line up. That strictness catches bugs early and is exactly what the AP exam tests in code-trace questions. You will spend Unit 1 learning the type rules for primitives and how expressions evaluate, which sets up objects in Unit 2.",
+        "A computer program is a precise set of instructions. Java source files (.java) are compiled by javac into platform-independent bytecode (.class), which the Java Virtual Machine (JVM) interprets on whatever operating system you are on. That \"write once, run anywhere\" design is why AP CSA uses Java: you can reason about program behavior without caring what hardware is underneath.\n\nEvery Java program begins execution inside a main method with the exact signature `public static void main`(`String[] args`). This method lives inside a class; the file name must match the `public class` name. A line like `System.out.println`(\"Hello\"); prints text followed by a newline; `System.out.print` does the same without the newline. Java is case-sensitive and statement-terminated by semicolons.\n\nJava is strongly and statically typed: every variable has a type declared at compile time, and the compiler refuses to run a program whose types don't line up. That strictness catches bugs early and is exactly what the AP exam tests in code-trace questions. You will spend Unit 1 learning the type rules for primitives and how expressions evaluate, which sets up objects in Unit 2.",
       keyIdeas: [
         "Java source compiles to bytecode that runs on the JVM.",
         "Execution begins in public static void main(String[] args).",
@@ -161,7 +161,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
           ],
           answer: "public static void main(String[] args)",
           explanation:
-            "The JVM looks for the exact signature public static void main(String[] args). Wrong case (Main), wrong return type, or missing String[] all prevent the program from starting.",
+            "The JVM looks for the exact signature `public static void main`(`String[] args`). Wrong case (Main), wrong return type, or missing `String[]` all prevent the program from starting.",
         },
         {
           id: "1.1.p2",
@@ -180,7 +180,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Primitive types (int, double, boolean) store single values; reference types store objects. Each variable must be declared with a type before use.",
       explanation:
-        "A variable is a named storage location with a fixed type. AP CSA tests three primitive types: int (32-bit signed integer, roughly ±2.1 billion), double (64-bit IEEE-754 floating-point, about 15 significant digits), and boolean (true or false). Everything else in the course — String, arrays, ArrayList, your own classes — is a reference type that stores the address of an object rather than the object itself.\n\nDeclaring a variable takes the form type name; or type name = value;. Once declared, a variable cannot change its type. You can declare multiple variables of the same type on one line: int a = 1, b = 2;. Identifier rules: start with a letter, $, or _; then letters, digits, $, or _; no reserved words (int, class, return, etc.); convention is camelCase. The final keyword makes a variable a named constant (final double PI = 3.14;) and blocks any reassignment.\n\nLiterals carry a type: 7 is an int, 7.0 is a double, 'a' is a char, \"a\" is a String, true is a boolean. Mixing them in one expression forces type promotion, which is the rule you will trace over and over. The most important AP CSA corollary is that int / int uses integer division — the fractional part is truncated toward zero. If either operand is a double, the division is floating-point.",
+        "A variable is a named storage location with a fixed type. AP CSA tests three primitive types: int (32-bit signed integer, roughly ±2.1 billion), double (64-bit IEEE-754 floating-point, about 15 significant digits), and boolean (`true` or `false`). Everything else in the course — String, arrays, ArrayList, your own classes — is a reference type that stores the address of an object rather than the object itself.\n\nDeclaring a variable takes the form type name; or type name = value;. Once declared, a variable cannot change its type. You can declare multiple variables of the same type on one line: int a = 1, b = 2;. Identifier rules: start with a letter, $, or _; then letters, digits, $, or _; no reserved words (int, class, return, etc.); convention is camelCase. The final keyword makes a variable a named constant (final double PI = 3.14;) and blocks any reassignment.\n\nLiterals carry a type: 7 is an int, 7.0 is a double, 'a' is a char, \"a\" is a String, `true` is a boolean. Mixing them in one expression forces type promotion, which is the rule you will trace over and over. The most important AP CSA corollary is that int / int uses integer division — the fractional part is truncated toward zero. If either operand is a double, the division is floating-point.",
       keyIdeas: [
         "Primitive types: int (whole), double (decimal), boolean (true/false).",
         "Every variable has a type fixed at declaration time.",
@@ -251,7 +251,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Expressions evaluate to a value using arithmetic operators and precedence; assignment (=) stores the right-hand value in the left-hand variable.",
       explanation:
-        "Java's arithmetic operators are +, −, *, /, and %. They follow standard precedence: * / % before + −, left-to-right otherwise, and parentheses override. The pivotal AP CSA rule is operand-driven arithmetic: the result type of a binary operation is the \"wider\" of the two operand types. If both operands are int, the result is int; if either operand is double, the result is double. This controls when you get truncation and when you get a true decimal.\n\nThe modulus operator (%) returns the remainder with the sign of the dividend in Java: 17 % 5 is 2, and −17 % 5 is −2. It is the workhorse for \"every Nth iteration,\" testing even/odd, and extracting digits. Integer division plus modulus (a / 10, a % 10) let you peel digits off a number one at a time.\n\nAn assignment statement looks like variable = expression;. The right side is evaluated fully (respecting precedence and type rules) and then stored. The type of the expression must be assignable to the variable: an int expression can go into a double (widening), but a double cannot fit into an int without a cast. Assignment is itself an expression that yields the stored value, but AP CSA will not lean on that; it will lean on you correctly predicting the stored value.",
+        "Java's arithmetic operators are +, −, *, /, and %. They follow standard precedence: * / % before + −, left-to-right otherwise, and parentheses override. The pivotal AP CSA rule is operand-driven arithmetic: the result type of a binary operation is the \"wider\" of the two operand types. If both operands are int, the result is int; if either operand is double, the result is double. This controls when you get truncation and when you get a `true` decimal.\n\nThe modulus operator (%) returns the remainder with the sign of the dividend in Java: 17 % 5 is 2, and −17 % 5 is −2. It is the workhorse for \"every Nth iteration,\" testing even/odd, and extracting digits. Integer division plus modulus (a / 10, a % 10) let you peel digits off a number one at a time.\n\nAn assignment statement looks like variable = expression;. The right side is evaluated fully (respecting precedence and type rules) and then stored. The type of the expression must be assignable to the variable: an int expression can go into a double (widening), but a double cannot fit into an int without a cast. Assignment is itself an expression that yields the stored value, but AP CSA will not lean on that; it will lean on you correctly predicting the stored value.",
       keyIdeas: [
         "Arithmetic precedence: * / % before + −; parentheses override.",
         "Result type is int only if both operands are int; otherwise double.",
@@ -339,7 +339,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Compound operators (+=, −=, *=, /=, %=) combine an arithmetic op with assignment. ++ and −− increment and decrement by 1.",
       explanation:
-        "A compound assignment like x += 5 is equivalent to x = x + 5 — it reads the current value of x, adds 5, and stores the result back. The same pattern holds for −=, *=, /=, and %=. These operators are valuable because they express the update pattern clearly and (subtly) only evaluate the left-hand variable once, which matters when the left side is an array element with a costly index expression.\n\nThe unary operators ++ and −− increment or decrement a variable by 1. Prefix (++x) updates the variable and then produces the new value; postfix (x++) produces the old value and then updates. The AP exam uses them almost exclusively in isolation (x++; on its own line), where the difference doesn't matter. But you will see trace questions like System.out.println(x++) where it does — the printed value is the old x.\n\nType behavior is the same as regular arithmetic: int += int stays int, int += double promotes on the right but the final storage is still int, and Java silently truncates the double back to int. That silent narrowing is the most common trap on this topic. If you write int x = 5; x += 1.7; you get x == 6, not a compile error, because the operator implicitly casts.",
+        "A compound assignment like x += 5 is equivalent to x = x + 5 — it reads the current value of x, adds 5, and stores the result back. The same pattern holds for −=, *=, /=, and %=. These operators are valuable because they express the update pattern clearly and (subtly) only evaluate the left-hand variable once, which matters when the left side is an array element with a costly index expression.\n\nThe unary operators ++ and −− increment or decrement a variable by 1. Prefix (++x) updates the variable and then produces the new value; postfix (x++) produces the old value and then updates. The AP exam uses them almost exclusively in isolation (x++; on its own line), where the difference doesn't matter. But you will see trace questions like `System.out.println`(x++) where it does — the printed value is the old x.\n\nType behavior is the same as regular arithmetic: int += int stays int, int += double promotes on the right but the final storage is still int, and Java silently truncates the double back to int. That silent narrowing is the most common trap on this topic. If you write int x = 5; x += 1.7; you get x == 6, not a compile error, because the operator implicitly casts.",
       keyIdeas: [
         "x += k is shorthand for x = x + k (same for −= *= /= %=).",
         "Prefix ++x updates first then returns; postfix x++ returns old value then updates.",
@@ -403,7 +403,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Casting forces a value from one type to another. int overflow wraps around; double → int truncates toward zero.",
       explanation:
-        "A cast looks like (type)expression and tells the compiler \"treat this value as this type.\" Widening casts (int → double) happen automatically and are lossless. Narrowing casts (double → int) require an explicit cast and truncate toward zero — not round. So (int) 3.9 is 3 and (int) −3.9 is −3. If you want rounding, add 0.5 before casting for positive numbers, or use Math.round (which returns a long).\n\nThe cast applies only to the single operand it is attached to, which is the source of many trace errors. Consider (double) 7 / 2: the cast turns 7 into 7.0, then 7.0 / 2 promotes to 7.0 / 2.0, giving 3.5. But (double) (7 / 2) performs the integer division first (yielding 3), then casts to 3.0. Parentheses change everything.\n\nRanges: int can hold values from −2,147,483,648 to 2,147,483,647. Going past the max wraps to the minimum (integer overflow). Java does not throw — it silently produces wrong answers. Double has a huge range but is inexact: 0.1 + 0.2 is 0.30000000000000004 because binary floating-point cannot represent 0.1 exactly. AP CSA won't ask about overflow numerically, but it may ask conceptually whether an operation might overflow or lose precision.",
+        "A cast looks like (type)expression and tells the compiler \"treat this value as this type.\" Widening casts (int → double) happen automatically and are lossless. Narrowing casts (double → int) require an explicit cast and truncate toward zero — not round. So (int) 3.9 is 3 and (int) −3.9 is −3. If you want rounding, add 0.5 before casting for positive numbers, or use `Math.round` (which returns a long).\n\nThe cast applies only to the single operand it is attached to, which is the source of many trace errors. Consider (double) 7 / 2: the cast turns 7 into 7.0, then 7.0 / 2 promotes to 7.0 / 2.0, giving 3.5. But (double) (7 / 2) performs the integer division first (yielding 3), then casts to 3.0. Parentheses change everything.\n\nRanges: int can hold values from −2,147,483,648 to 2,147,483,647. Going past the max wraps to the minimum (integer overflow). Java does not throw — it silently produces wrong answers. Double has a huge range but is inexact: 0.1 + 0.2 is 0.30000000000000004 because binary floating-point cannot represent 0.1 exactly. AP CSA won't ask about overflow numerically, but it may ask conceptually whether an operation might overflow or lose precision.",
       keyIdeas: [
         "(type)value forces a cast; widening is implicit, narrowing is explicit.",
         "double → int truncates toward zero; it does not round.",
@@ -487,7 +487,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "A class is a blueprint; an object is a concrete instance built from that blueprint with its own state and behaviors.",
       explanation:
-        "A class defines the attributes (state) and methods (behaviors) that every object of that type will have. You have been using classes already — String, Math, System — but you can also write your own (Unit 5). Creating an actual object means allocating memory on the heap and obtaining a reference (address) to it. A reference variable holds that address; dereferencing it (obj.method()) sends a message to the object.\n\nThis is fundamentally different from primitives. An int variable stores a value directly. A String variable stores a pointer to a String object elsewhere. Two references can point to the same object, in which case a change via one reference is visible through the other (aliasing). A reference can also be null, meaning it points to no object — calling a method on a null reference throws NullPointerException at runtime.\n\nA well-designed class gives you an abstraction: you use the object through its public methods without knowing the internal storage. String is a perfect example — you call s.length() and s.substring(0, 3) without caring how Java stores the characters. In AP CSA, you will constantly ask: is this a primitive or a reference? The answer changes how assignment, comparison, and parameter passing behave.",
+        "A class defines the attributes (state) and methods (behaviors) that every object of that type will have. You have been using classes already — String, Math, System — but you can also write your own (Unit 5). Creating an actual object means allocating memory on the heap and obtaining a reference (address) to it. A reference variable holds that address; dereferencing it (`obj.method()`) sends a message to the object.\n\nThis is fundamentally different from primitives. An int variable stores a value directly. A String variable stores a pointer to a String object elsewhere. Two references can point to the same object, in which case a change via one reference is visible through the other (aliasing). A reference can also be `null`, meaning it points to no object — calling a method on a `null` reference throws `NullPointerException` at runtime.\n\nA well-designed class gives you an abstraction: you use the object through its public methods without knowing the internal storage. String is a perfect example — you call `s.length()` and `s.substring`(0, 3) without caring how Java stores the characters. In AP CSA, you will constantly ask: is this a primitive or a reference? The answer changes how assignment, comparison, and parameter passing behave.",
       keyIdeas: [
         "Class = blueprint; object = instance with its own state.",
         "Reference variables store addresses, not values.",
@@ -548,7 +548,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Use the new operator with a constructor call to allocate an object and initialize its state; save the returned reference in a variable.",
       explanation:
-        "The general form is ClassName var = new ClassName(args);. The new operator allocates memory, runs the matching constructor to initialize fields, and returns a reference. Classes can have multiple constructors (overloading) differing by parameter list. A no-argument (default) constructor is provided automatically only if you write no constructors at all — once you declare one, you must write a no-arg constructor explicitly if you want it.\n\nString is special: literals like \"hello\" implicitly construct a String object via the string pool, so new String(\"hello\") is rarely necessary (and actually creates a duplicate object). For most classes, you will explicitly write new ClassName(...). The constructor's job is to leave the object in a valid starting state — every field either initialized explicitly or left at its default (0, 0.0, false, or null).\n\nOnce constructed, the reference can be assigned, passed to methods, returned, or stored in an array/ArrayList. Reassigning the variable simply changes which object it points to; the old object becomes eligible for garbage collection if no references remain. AP CSA will test your ability to read a constructor call and predict what the resulting object's state looks like.",
+        "The general form is ClassName var = new ClassName(args);. The new operator allocates memory, runs the matching constructor to initialize fields, and returns a reference. Classes can have multiple constructors (overloading) differing by parameter list. A no-argument (default) constructor is provided automatically only if you write no constructors at all — once you declare one, you must write a no-arg constructor explicitly if you want it.\n\nString is special: literals like \"hello\" implicitly construct a String object via the string pool, so new String(\"hello\") is rarely necessary (and actually creates a duplicate object). For most classes, you will explicitly write new ClassName(...). The constructor's job is to leave the object in a valid starting state — every field either initialized explicitly or left at its default (0, 0.0, `false`, or `null`).\n\nOnce constructed, the reference can be assigned, passed to methods, returned, or stored in an array/ArrayList. Reassigning the variable simply changes which object it points to; the old object becomes eligible for garbage collection if no references remain. AP CSA will test your ability to read a constructor call and predict what the resulting object's state looks like.",
       keyIdeas: [
         "new ClassName(args) allocates + initializes + returns a reference.",
         "String literals create String objects without explicit new.",
@@ -605,9 +605,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "2.3",
       title: "Calling a Void Method",
       summary:
-        "A void method performs an action without returning a value. Call it with object.methodName(); on its own line.",
+        "A void method performs an action without returning a value. Call it with `object.methodName()`; on its own line.",
       explanation:
-        "Methods are the verbs of OOP. A void method does something — prints, mutates state, triggers an I/O action — but does not produce a value you can store. Because there is no returned value, a void call sits on its own line as a statement; you cannot write String s = obj.voidMethod();.\n\nStatic (class) methods are called on the class (ClassName.methodName()); instance methods are called on a specific object (obj.methodName()). AP CSA frequently asks you to pick the right form. Math.random() is static because randomness is not tied to an object; myString.length() is an instance method because every String has its own length.\n\nThe method signature — the combination of name and parameter list — determines which overloaded method runs. Return type is not part of the signature. When you invoke a method, Java matches arguments to parameters in order, performing implicit widening if needed (int → double). If no matching signature exists, the compiler reports an error.",
+        "Methods are the verbs of OOP. A void method does something — prints, mutates state, triggers an I/O action — but does not produce a value you can store. Because there is no returned value, a void call sits on its own line as a statement; you cannot write String s = `obj.voidMethod()`;.\n\nStatic (class) methods are called on the class (`ClassName.methodName()`); instance methods are called on a specific object (`obj.methodName()`). AP CSA frequently asks you to pick the right form. `Math.random()` is static because randomness is not tied to an object; `myString.length()` is an instance method because every String has its own length.\n\nThe method signature — the combination of name and parameter list — determines which overloaded method runs. Return type is not part of the signature. When you invoke a method, Java matches arguments to parameters in order, performing implicit widening if needed (int → double). If no matching signature exists, the compiler reports an error.",
       keyIdeas: [
         "A void method returns nothing; the call is a standalone statement.",
         "Static method: ClassName.method(); instance method: obj.method().",
@@ -665,7 +665,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Parameters are the inputs a method accepts. Pass arguments in order; Java uses pass-by-value, even for references.",
       explanation:
-        "A parameter is a local variable inside the method, initialized by copying the argument from the call site. This is pass-by-value, and it has two faces in Java. For primitives, the method gets a copy of the value — modifying the parameter does not affect the caller's variable. For references, the method gets a copy of the reference — both the caller and the method now point at the same object. The method can therefore mutate the object (e.g., arr[0] = 5 inside a void method changes the caller's array), but reassigning the parameter (arr = new int[10]) does not change what the caller refers to.\n\nArguments are matched by position, and Java performs implicit widening if a wider parameter accepts a narrower argument (int passed to double is fine; double passed to int fails). Overloading lets you define multiple methods with the same name but different parameter lists; Java picks the best match at compile time.\n\nOn the AP exam, the pass-by-value rule is tested constantly. Classic trap: a swap method that reassigns its two parameters does nothing to the caller's variables, because the reassignment only affects the local copies.",
+        "A parameter is a local variable inside the method, initialized by copying the argument from the call site. This is pass-by-value, and it has two faces in Java. For primitives, the method gets a copy of the value — modifying the parameter does not affect the caller's variable. For references, the method gets a copy of the reference — both the caller and the method now point at the same object. The method can therefore mutate the object (e.g., `arr[0]` = 5 inside a void method changes the caller's array), but reassigning the parameter (arr = new `int[10]`) does not change what the caller refers to.\n\nArguments are matched by position, and Java performs implicit widening if a wider parameter accepts a narrower argument (int passed to double is fine; double passed to int fails). Overloading lets you define multiple methods with the same name but different parameter lists; Java picks the best match at compile time.\n\nOn the AP exam, the pass-by-value rule is tested constantly. Classic trap: a swap method that reassigns its two parameters does nothing to the caller's variables, because the reassignment only affects the local copies.",
       keyIdeas: [
         "Parameters are local variables initialized with the argument's value.",
         "Java is pass-by-value for both primitives and references.",
@@ -707,7 +707,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "What prints?\n```java\npublic static void clobber(int[] a) { a[0] = -1; }\n// in main:\nint[] nums = {10, 20, 30};\nclobber(nums);\nSystem.out.println(nums[0]);\n```",
           answer: "-1",
           explanation:
-            "clobber receives a copy of the reference but points at the same array, so setting a[0] mutates the caller's array.",
+            "clobber receives a copy of the reference but points at the same array, so setting `a[0]` mutates the caller's array.",
         },
       ],
     },
@@ -717,7 +717,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "A non-void method returns a value you must use — store it, pass it, print it, or ignore it explicitly.",
       explanation:
-        "A non-void method is declared with a return type other than void (int, double, boolean, or a reference type). Every possible execution path inside the method must end in a return statement of a compatible type. The caller invokes the method and uses the returned value in an expression: int n = s.length(); or System.out.println(Math.sqrt(9));.\n\nReturn is immediate — it exits the method and hands the value back to the caller. Any code after an unconditional return is unreachable and is a compile error. In conditional branches, the compiler demands that every path returns; if you return inside an if but the else falls through with no return, the code won't compile.\n\nReturn type must be assignable to where the call is used. If s.length() returns int, you can assign it to an int or a double (widened), but not a String. If a method returns a reference, the caller gets a reference to the same object (no copy). AP CSA trace questions love deeply nested non-void calls like (s.substring(0, 3) + \"...\").length(); you read them inside-out.",
+        "A non-void method is declared with a return type other than void (int, double, boolean, or a reference type). Every possible execution path inside the method must end in a return statement of a compatible type. The caller invokes the method and uses the returned value in an expression: int n = `s.length()`; or `System.out.println`(`Math.sqrt`(9));.\n\nReturn is immediate — it exits the method and hands the value back to the caller. Any code after an unconditional return is unreachable and is a compile error. In conditional branches, the compiler demands that every path returns; if you return inside an if but the else falls through with no return, the code won't compile.\n\nReturn type must be assignable to where the call is used. If `s.length()` returns int, you can assign it to an int or a double (widened), but not a String. If a method returns a reference, the caller gets a reference to the same object (no copy). AP CSA trace questions love deeply nested non-void calls like (`s.substring`(0, 3) + \"...\").length(); you read them inside-out.",
       keyIdeas: [
         "A non-void method must return a compatible value on every path.",
         "return ends the method immediately.",
@@ -759,7 +759,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "What is printed?\n```java\npublic static int f(int n) { return n + 3; }\n// in main:\nSystem.out.println(f(f(2)));\n```",
           answer: "8",
           explanation:
-            "Inner f(2) = 5. Outer f(5) = 8.",
+            "Inner `f(2)` = 5. Outer `f(5)` = 8.",
         },
       ],
     },
@@ -769,7 +769,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Strings are immutable sequences of characters. + concatenates; concat with a non-String promotes both to Strings.",
       explanation:
-        "String is a class, but literals create instances without explicit new. Strings are immutable: every \"modification\" actually creates a new String object. That's why s.substring(1) doesn't change s — it returns a new String. Writing s = s.substring(1) reassigns the local reference.\n\nThe + operator is overloaded for Strings: if at least one operand is a String, + concatenates by converting the other operand via its toString method (or a primitive's textual form). This produces two classic AP traps. First, \"a\" + 1 + 2 evaluates left to right: \"a\" + 1 is \"a1\" (String), then \"a1\" + 2 is \"a12\". Second, 1 + 2 + \"a\" does addition first: 3 + \"a\" gives \"3a\". The evaluator pays attention to types as it walks.\n\nEscape sequences matter: \\n is newline, \\t is tab, \\\" embeds a quote, \\\\ is a literal backslash. A char ('x') and a String (\"x\") are different types — 'x' + 1 uses int arithmetic on the char's ASCII code (120), while \"x\" + 1 concatenates to \"x1\".",
+        "String is a class, but literals create instances without explicit new. Strings are immutable: every \"modification\" actually creates a new String object. That's why `s.substring`(1) doesn't change s — it returns a new String. Writing s = `s.substring`(1) reassigns the local reference.\n\nThe + operator is overloaded for Strings: if at least one operand is a String, + concatenates by converting the other operand via its toString method (or a primitive's textual form). This produces two classic AP traps. First, \"a\" + 1 + 2 evaluates left to right: \"a\" + 1 is \"a1\" (String), then \"a1\" + 2 is \"a12\". Second, 1 + 2 + \"a\" does addition first: 3 + \"a\" gives \"3a\". The evaluator pays attention to types as it walks.\n\nEscape sequences matter: \\n is newline, \\t is tab, \\\" embeds a quote, \\\\ is a literal backslash. A char ('x') and a String (\"x\") are different types — 'x' + 1 uses int arithmetic on the char's ASCII code (120), while \"x\" + 1 concatenates to \"x1\".",
       keyIdeas: [
         "Strings are immutable — methods return new Strings.",
         "+ with a String converts the other operand to a String.",
@@ -822,7 +822,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "length, substring, indexOf, charAt, equals, compareTo — the six String methods AP CSA tests.",
       explanation:
-        "Memorize these signatures verbatim. s.length() returns the number of chars. s.substring(start) returns chars from index start to the end; s.substring(start, end) returns chars from start (inclusive) to end (exclusive). If end < start, or either index is out of range, Java throws StringIndexOutOfBoundsException.\n\ns.indexOf(target) returns the first index where target appears, or −1 if not found. s.charAt(i) returns the char at index i. equals compares contents (s1.equals(s2)), while == compares references; you must always use equals for correctness.\n\ncompareTo returns 0 if equal, a negative value if s1 < s2 lexicographically, a positive value otherwise. You only need the sign — the exam will not ask for the exact magnitude. Lexicographic ordering is character-by-character using Unicode values; uppercase letters (65-90) come before lowercase (97-122). Know the half-open interval of substring: it trips up even careful students.",
+        "Memorize these signatures verbatim. `s.length()` returns the number of chars. `s.substring`(start) returns chars from index start to the end; `s.substring`(start, end) returns chars from start (inclusive) to end (exclusive). If end < start, or either index is out of range, Java throws `StringIndexOutOfBoundsException`.\n\n`s.indexOf`(target) returns the first index where target appears, or −1 if not found. `s.charAt`(i) returns the char at index i. equals compares contents (`s1.equals(s2)`), while == compares references; you must always use equals for correctness.\n\ncompareTo returns 0 if equal, a negative value if s1 < s2 lexicographically, a positive value otherwise. You only need the sign — the exam will not ask for the exact magnitude. Lexicographic ordering is character-by-character using Unicode values; uppercase letters (65-90) come before lowercase (97-122). Know the half-open interval of substring: it trips up even careful students.",
       keyIdeas: [
         "length returns char count; indices are 0-based.",
         "substring(a, b) is [a, b) — b is exclusive.",
@@ -879,7 +879,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "Write one line that returns true iff the String s begins with the String p.",
           answer: "s.indexOf(p) == 0  // or s.substring(0, p.length()).equals(p)",
           explanation:
-            "Prefix check via indexOf: if p first appears at index 0, s begins with p. Alternatively, slice the first p.length() chars and compare with equals.",
+            "Prefix check via indexOf: if p first appears at index 0, s begins with p. Alternatively, slice the first `p.length()` chars and compare with equals.",
         },
       ],
     },
@@ -889,7 +889,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Integer and Double wrap int and double in objects so primitives can be stored in ArrayList and other generic containers.",
       explanation:
-        "Generics in Java (like ArrayList<Integer>) require reference types. You cannot write ArrayList<int>. Wrapper classes bridge the gap: Integer is an object that holds a single int, Double holds a single double. Java performs autoboxing (int → Integer) and unboxing (Integer → int) automatically in assignments and method calls. So list.add(5) on an ArrayList<Integer> silently wraps 5 into an Integer, and int x = list.get(0) silently unwraps.\n\nWrappers are immutable. Integer has constants Integer.MAX_VALUE and Integer.MIN_VALUE that give the range of int. Integer.parseInt(String s) turns a numeric String into an int; Double.parseDouble is its double counterpart. Use equals for comparison: Integer a = 1000; Integer b = 1000; a == b may be false because a and b are separate objects, even though a.equals(b) is true.\n\nOn AP CSA, you mostly see wrappers in ArrayList-heavy Unit 7 questions. You just need to know that autoboxing happens, that the wrappers are immutable, and that equals compares the underlying value.",
+        "Generics in Java (like `ArrayList<Integer>`) require reference types. You cannot write ArrayList<int>. Wrapper classes bridge the gap: Integer is an object that holds a single int, Double holds a single double. Java performs autoboxing (int → Integer) and unboxing (Integer → int) automatically in assignments and method calls. So `list.add(5)` on an `ArrayList<Integer>` silently wraps 5 into an Integer, and int x = `list.get(0)` silently unwraps.\n\nWrappers are immutable. Integer has constants `Integer.MAX_VALUE` and `Integer.MIN_VALUE` that give the range of int. `Integer.parseInt`(String s) turns a numeric String into an int; `Double.parseDouble` is its double counterpart. Use equals for comparison: Integer a = 1000; Integer b = 1000; a == b may be `false` because a and b are separate objects, even though `a.equals(b)` is `true`.\n\nOn AP CSA, you mostly see wrappers in ArrayList-heavy Unit 7 questions. You just need to know that autoboxing happens, that the wrappers are immutable, and that equals compares the underlying value.",
       keyIdeas: [
         "Integer and Double wrap primitives so they can live in ArrayList.",
         "Autoboxing/unboxing is implicit in assignments and method calls.",
@@ -946,9 +946,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "2.9",
       title: "Using the Math Class",
       summary:
-        "Math is a utility class of static methods: abs, pow, sqrt, random, plus constants like Math.PI.",
+        "Math is a utility class of static methods: abs, pow, sqrt, random, plus constants like `Math.PI`.",
       explanation:
-        "Math is a toolbox of static methods — you invoke them as Math.methodName(). Memorize these six for AP CSA: Math.abs(x), Math.pow(base, exp) (returns a double), Math.sqrt(x) (returns a double), Math.random() (returns a double in [0, 1)), Math.round(x) (returns a long), and Math.min/max. Know that pow and sqrt always return double even if the arguments are int.\n\nMath.random is the standard way to generate a uniform random double in [0.0, 1.0). To get a random int in a range [low, high], the idiom is (int)(Math.random() * (high − low + 1)) + low. Memorize that formula — the exam will ask for a random die roll or card draw. Note that Math.random returns 0 inclusive, 1 exclusive, so multiplying and casting to int gives values in [0, N − 1] when multiplying by N.\n\nMath.PI and Math.E are static double constants. The Math class has no instances; you cannot do new Math(). It is a pure utility.",
+        "Math is a toolbox of static methods — you invoke them as `Math.methodName()`. Memorize these six for AP CSA: `Math.abs`(x), `Math.pow`(base, exp) (returns a double), `Math.sqrt`(x) (returns a double), `Math.random()` (returns a double in [0, 1)), `Math.round`(x) (returns a long), and `Math.min`/max. Know that pow and sqrt always return double even if the arguments are int.\n\n`Math.random` is the standard way to generate a uniform random double in [0.0, 1.0). To get a random int in a range [low, high], the idiom is (int)(`Math.random()` * (high − low + 1)) + low. Memorize that formula — the exam will ask for a random die roll or card draw. Note that `Math.random` returns 0 inclusive, 1 exclusive, so multiplying and casting to int gives values in [0, N − 1] when multiplying by N.\n\n`Math.PI` and `Math.E` are static double constants. The Math class has no instances; you cannot do new Math(). It is a pure utility.",
       keyIdeas: [
         "All Math methods are static — call as Math.method(...).",
         "Math.random() returns a double in [0.0, 1.0).",
@@ -998,7 +998,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "Write an expression that returns a random int in [1, 100].",
           answer: "(int)(Math.random() * 100) + 1",
           explanation:
-            "Math.random() * 100 produces [0.0, 100.0). Casting to int truncates to {0, 1, ..., 99}. Adding 1 shifts to {1, 2, ..., 100}.",
+            "`Math.random()` * 100 produces [0.0, 100.0). Casting to int truncates to {0, 1, ..., 99}. Adding 1 shifts to {1, 2, ..., 100}.",
         },
         {
           id: "2.9.p2",
@@ -1007,7 +1007,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "What is printed?\n```java\nSystem.out.println(Math.abs(-5) + (int) Math.pow(2, 3));\n```",
           answer: "13",
           explanation:
-            "Math.abs(-5) is 5. Math.pow(2, 3) is 8.0; cast to int is 8. 5 + 8 = 13.",
+            "`Math.abs`(-5) is 5. `Math.pow`(2, 3) is 8.0; cast to int is 8. 5 + 8 = 13.",
         },
       ],
     },
@@ -1030,7 +1030,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Relational operators (<, <=, >, >=, ==, !=) produce boolean values. Comparing doubles for equality is unreliable.",
       explanation:
-        "A boolean expression is anything that evaluates to true or false. Java's six relational operators are <, <=, >, >=, ==, and !=. They work on any two comparable primitives and on references (for == and != only — those compare identity). Expressions can be combined with && (and), || (or), and ! (not) into compound booleans.\n\nEquality testing on doubles is problematic: binary floating-point cannot represent many decimals exactly, so 0.1 + 0.2 != 0.3 in Java. The cure is to compare magnitudes: Math.abs(a − b) < 1e-9. AP CSA won't make you derive this, but it may ask why an equality check on doubles is risky.\n\nSimple boolean variables are declared as boolean flag = true; and assigned like any other variable. Using them as conditions directly is cleaner than comparing to true — write if (flag), not if (flag == true). A boolean expression can be stored in a variable for reuse: boolean adult = age >= 18;.",
+        "A boolean expression is anything that evaluates to `true` or `false`. Java's six relational operators are <, <=, >, >=, ==, and !=. They work on any two comparable primitives and on references (for == and != only — those compare identity). Expressions can be combined with && (and), || (or), and ! (not) into compound booleans.\n\nEquality testing on doubles is problematic: binary floating-point cannot represent many decimals exactly, so 0.1 + 0.2 != 0.3 in Java. The cure is to compare magnitudes: `Math.abs`(a − b) < 1e-9. AP CSA won't make you derive this, but it may ask why an equality check on doubles is risky.\n\nSimple boolean variables are declared as boolean flag = `true`; and assigned like any other variable. Using them as conditions directly is cleaner than comparing to `true` — write if (flag), not if (flag == `true`). A boolean expression can be stored in a variable for reuse: boolean adult = age >= 18;.",
       keyIdeas: [
         "Relational operators yield boolean.",
         "== on doubles is unreliable due to floating-point rounding.",
@@ -1065,7 +1065,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
           prompt: "What is printed?\n```java\nint a = 4, b = 9;\nSystem.out.println(a * 2 == b - 1);\n```",
           answer: "true",
           explanation:
-            "Left side: 4 * 2 = 8. Right side: 9 − 1 = 8. 8 == 8 is true.",
+            "Left side: 4 * 2 = 8. Right side: 9 − 1 = 8. 8 == 8 is `true`.",
         },
       ],
     },
@@ -1073,9 +1073,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "3.2",
       title: "if Statements and Control Flow",
       summary:
-        "An if statement executes its body only when the condition is true. Without braces, only the next single statement is governed by if.",
+        "An if statement executes its body only when the condition is `true`. Without braces, only the next single statement is governed by if.",
       explanation:
-        "The syntax is if (booleanExpr) { body }. The braces form a block that is skipped when the condition is false. If you omit the braces, only the immediately following statement is conditional — a dangling-else bug magnet. Always use braces on AP FRQs.\n\nControl flow is strict top-down. The condition is evaluated once; if true, the block runs; then execution continues with whatever comes after. Nesting works: an if inside another if creates cascading conditions. You can also place method calls, assignments, and any statements inside the block.\n\nSide effects in conditions are allowed (if (counter++ < 10)), but they hurt readability. AP exam trace problems use them sparingly. Focus on reading the condition as-is and tracing both branches mentally before committing.",
+        "The syntax is if (booleanExpr) { body }. The braces form a block that is skipped when the condition is `false`. If you omit the braces, only the immediately following statement is conditional — a dangling-else bug magnet. Always use braces on AP FRQs.\n\nControl flow is strict top-down. The condition is evaluated once; if `true`, the block runs; then execution continues with whatever comes after. Nesting works: an if inside another if creates cascading conditions. You can also place method calls, assignments, and any statements inside the block.\n\nSide effects in conditions are allowed (if (counter++ < 10)), but they hurt readability. AP exam trace problems use them sparingly. Focus on reading the condition as-is and tracing both branches mentally before committing.",
       keyIdeas: [
         "if (cond) { ... } runs the block only when cond is true.",
         "Without braces, only the next single statement is guarded.",
@@ -1129,7 +1129,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "if-else picks exactly one of two mutually exclusive branches based on the condition.",
       explanation:
-        "if (cond) { A } else { B } runs block A when cond is true and block B otherwise. The two branches are mutually exclusive — exactly one runs. This pattern is the canonical way to express \"choose one of two options.\"\n\nThe else is optional; if omitted, the if stands alone and falling through after a false condition is the default. A common bug is dangling else: in if (a) if (b) { ... } else { ... }, the else binds to the nearest if (the inner one), not the outer one. Use braces to make the structure unambiguous.\n\nBoolean conditions can be any expression of type boolean, including method calls (isEmpty(), equals(), etc.). You can chain complex logic, but prefer simple, readable conditions with clearly named boolean variables when the expression grows long.",
+        "if (cond) { A } else { B } runs block A when cond is `true` and block B otherwise. The two branches are mutually exclusive — exactly one runs. This pattern is the canonical way to express \"choose one of two options.\"\n\nThe else is optional; if omitted, the if stands alone and falling through after a `false` condition is the default. A common bug is dangling else: in if (a) if (b) { ... } else { ... }, the else binds to the nearest if (the inner one), not the outer one. Use braces to make the structure unambiguous.\n\nBoolean conditions can be any expression of type boolean, including method calls (`isEmpty()`, `equals()`, etc.). You can chain complex logic, but prefer simple, readable conditions with clearly named boolean variables when the expression grows long.",
       keyIdeas: [
         "if-else picks exactly one branch.",
         "Dangling else binds to the nearest unmatched if — brace to avoid it.",
@@ -1178,7 +1178,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "else if chains form a mutually exclusive ladder of conditions. At most one branch executes.",
       explanation:
-        "An else if chain tests conditions top-down and stops at the first true one. Only that branch runs; subsequent else-if conditions are not evaluated. A final else catches everything that fell through.\n\nThe order of conditions matters. If you write if (score >= 60) ... else if (score >= 90) ..., the second branch is unreachable: any score ≥ 90 is also ≥ 60, so the first branch always captures it. Always order your conditions from most restrictive to least restrictive when they overlap.\n\nElse-if is syntactically just an else followed by another if. You can achieve the same behavior with nested if-else, but the ladder form reads as a single decision. The exam tests reordering bugs, missing else branches, and boundary values (is 90 an A or A−?).",
+        "An else if chain tests conditions top-down and stops at the first `true` one. Only that branch runs; subsequent else-if conditions are not evaluated. A final else catches everything that fell through.\n\nThe order of conditions matters. If you write if (score >= 60) ... else if (score >= 90) ..., the second branch is unreachable: any score ≥ 90 is also ≥ 60, so the first branch always captures it. Always order your conditions from most restrictive to least restrictive when they overlap.\n\nElse-if is syntactically just an else followed by another if. You can achieve the same behavior with nested if-else, but the ladder form reads as a single decision. The exam tests reordering bugs, missing else branches, and boundary values (is 90 an A or A−?).",
       keyIdeas: [
         "else if chains test conditions top-down; the first true branch wins.",
         "Order matters — put the most restrictive condition first.",
@@ -1229,7 +1229,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "&& (and), || (or), ! (not) combine booleans. Both && and || short-circuit.",
       explanation:
-        "&& is true iff both operands are true. || is true iff at least one operand is true. ! flips a boolean. Precedence (high to low): !, &&, ||. Use parentheses for clarity even when they're technically redundant.\n\nShort-circuit evaluation is the key AP topic. a && b evaluates a first; if a is false, b is never evaluated. a || b evaluates a first; if a is true, b is never evaluated. This lets you guard against a null or out-of-range access: if (arr != null && arr.length > 0) is safe because arr.length is only touched when arr is non-null. Swap the order and you get a NullPointerException when arr is null.\n\nWriting range tests in a single condition is standard: if (x >= 0 && x <= 10). Novices sometimes write 0 <= x <= 10, which is a compile error — Java does not chain comparisons.",
+        "&& is `true` iff both operands are `true`. || is `true` iff at least one operand is `true`. ! flips a boolean. Precedence (high to low): !, &&, ||. Use parentheses for clarity even when they're technically redundant.\n\nShort-circuit evaluation is the key AP topic. a && b evaluates a first; if a is `false`, b is never evaluated. a || b evaluates a first; if a is `true`, b is never evaluated. This lets you guard against a `null` or out-of-range access: if (arr != `null` && `arr.length` > 0) is safe because `arr.length` is only touched when arr is non-`null`. Swap the order and you get a `NullPointerException` when arr is `null`.\n\nWriting range tests in a single condition is standard: if (x >= 0 && x <= 10). Novices sometimes write 0 <= x <= 10, which is a compile error — Java does not chain comparisons.",
       keyIdeas: [
         "Precedence: ! > && > ||.",
         "&& short-circuits on false; || short-circuits on true.",
@@ -1271,7 +1271,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "What prints?\n```java\nint x = 5;\nif (x > 0 || x++ > 10) {}\nSystem.out.println(x);\n```",
           answer: "5",
           explanation:
-            "Left of || is true (5 > 0), so the right side x++ is never evaluated — x stays 5.",
+            "Left of || is `true` (5 > 0), so the right side x++ is never evaluated — x stays 5.",
         },
         {
           id: "3.5.p2",
@@ -1346,9 +1346,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "3.7",
       title: "Comparing Objects",
       summary:
-        "Use .equals() for content equality and == only for reference identity. compareTo yields a signed int.",
+        "Use `.equals()` for content equality and == only for reference identity. compareTo yields a signed int.",
       explanation:
-        "For reference types, == checks whether two variables hold the same address (point to the same object). .equals() is a method that classes override to define content equality. String, Integer, Double, ArrayList, and most standard classes override equals sensibly. For your own classes you will usually rely on the default (Object.equals uses ==) unless you override it (Unit 9).\n\nstr1.compareTo(str2) returns a negative value, 0, or a positive value depending on the lexicographic ordering of the two Strings. You only care about the sign. The Integer and Double wrappers have compareTo too; for primitives, just use <, <=, etc.\n\nThe classic AP trap: comparing two Strings created via new with == returns false because they are different objects even with identical contents. Even two literals can sometimes yield true via the string pool, but you must not rely on it — always use .equals() for string content.",
+        "For reference types, == checks whether two variables hold the same address (point to the same object). `.equals()` is a method that classes override to define content equality. String, Integer, Double, ArrayList, and most standard classes override equals sensibly. For your own classes you will usually rely on the default (Object.equals uses ==) unless you override it (Unit 9).\n\n`str1.compareTo(str2)` returns a negative value, 0, or a positive value depending on the lexicographic ordering of the two Strings. You only care about the sign. The Integer and Double wrappers have compareTo too; for primitives, just use <, <=, etc.\n\nThe classic AP trap: comparing two Strings created via new with == returns `false` because they are different objects even with identical contents. Even two literals can sometimes yield `true` via the string pool, but you must not rely on it — always use `.equals()` for string content.",
       keyIdeas: [
         "== compares references; .equals() compares contents.",
         "String, Integer, Double override equals to compare values.",
@@ -1410,9 +1410,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "4.1",
       title: "while Loops",
       summary:
-        "while (cond) { body } runs the body repeatedly as long as cond is true. Evaluate the condition before each iteration.",
+        "while (cond) { body } runs the body repeatedly as long as cond is `true`. Evaluate the condition before each iteration.",
       explanation:
-        "A while loop is the basic indefinite loop. Java evaluates the condition; if true, the body runs, then the condition is evaluated again. If the condition is false on first check, the body never runs. If the body never modifies the condition's variables, the loop runs forever (infinite loop). The three things every while loop must do: initialize the loop variable before the loop, check the condition at the top, and update the variable inside the body.\n\nUse while when the number of iterations is not known in advance — reading input until end-of-file, searching until a match, iterating until convergence. break exits the loop early; continue jumps to the next iteration. Both are fair game on AP but are used sparingly in exam code; prefer restructuring the condition over adding a break when you can.\n\nTrace problems are the main assessment style. Given a short loop, predict the final values of variables and the printed output. The technique is always the same: make a variable table, update one row per iteration, and stop when the condition fails.",
+        "A while loop is the basic indefinite loop. Java evaluates the condition; if `true`, the body runs, then the condition is evaluated again. If the condition is `false` on first check, the body never runs. If the body never modifies the condition's variables, the loop runs forever (infinite loop). The three things every while loop must do: initialize the loop variable before the loop, check the condition at the top, and update the variable inside the body.\n\nUse while when the number of iterations is not known in advance — reading input until end-of-file, searching until a match, iterating until convergence. break exits the loop early; continue jumps to the next iteration. Both are fair game on AP but are used sparingly in exam code; prefer restructuring the condition over adding a break when you can.\n\nTrace problems are the main assessment style. Given a short loop, predict the final values of variables and the printed output. The technique is always the same: make a variable table, update one row per iteration, and stop when the condition fails.",
       keyIdeas: [
         "while checks the condition before each iteration.",
         "Initialize, test, update — every loop needs all three.",
@@ -1477,7 +1477,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "for (init; cond; update) { body } packages the three loop parts into one header. Prefer for when the iteration count is known.",
       explanation:
-        "A for loop condenses the init-test-update pattern into one line. init runs once before the loop starts (typically int i = 0). cond is checked before each iteration. update runs after each body execution. A for loop with empty parts — for (;;) — is an infinite loop.\n\nThe scope of a variable declared in the init is the loop itself. Outside the loop, i is not accessible if declared with int i = 0 inside the header. If you need the final value, declare i before the loop.\n\nFor loops are the idiomatic way to traverse a structure by index: for (int i = 0; i < arr.length; i++). For Strings: for (int i = 0; i < s.length(); i++). Enhanced for loops (for (int x : arr)) are covered in Unit 6. Regular for loops are what the exam mostly asks you to trace.",
+        "A for loop condenses the init-test-update pattern into one line. init runs once before the loop starts (typically int i = 0). cond is checked before each iteration. update runs after each body execution. A for loop with empty parts — for (;;) — is an infinite loop.\n\nThe scope of a variable declared in the init is the loop itself. Outside the loop, i is not accessible if declared with int i = 0 inside the header. If you need the final value, declare i before the loop.\n\nFor loops are the idiomatic way to traverse a structure by index: for (int i = 0; i < `arr.length`; i++). For Strings: for (int i = 0; i < `s.length()`; i++). Enhanced for loops (for (int x : arr)) are covered in Unit 6. Regular for loops are what the exam mostly asks you to trace.",
       keyIdeas: [
         "for (init; cond; update) { body }.",
         "init runs once; cond before each iteration; update after each body run.",
@@ -1543,7 +1543,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Iterate over String indices with charAt to count, search, reverse, or transform. Strings are immutable, so build with concatenation.",
       explanation:
-        "Common String algorithms on the exam: counting a character (\"count the number of 'a's\"), reversing a String (build a new one by concatenating in reverse), counting substrings, and testing palindromes. The base pattern is a for loop from 0 to s.length() − 1 that calls s.charAt(i).\n\nBecause Strings are immutable, you cannot modify one in place. Build a result String with concatenation: String result = \"\"; for (int i = ...) result += s.charAt(i);. Be aware concatenation in a loop is O(n²) in the worst case — fine for AP but real-world code uses StringBuilder.\n\nSubstring queries use s.substring(start, end) — remember the end is exclusive. Palindrome detection: compare s.charAt(i) with s.charAt(s.length() − 1 − i) for i from 0 to s.length() / 2. The exam loves palindromes, vowel-counting, and reversal as FRQs.",
+        "Common String algorithms on the exam: counting a character (\"count the number of 'a's\"), reversing a String (build a new one by concatenating in reverse), counting substrings, and testing palindromes. The base pattern is a for loop from 0 to `s.length()` − 1 that calls `s.charAt`(i).\n\nBecause Strings are immutable, you cannot modify one in place. Build a result String with concatenation: String result = \"\"; for (int i = ...) result += `s.charAt`(i);. Be aware concatenation in a loop is O(n²) in the worst case — fine for AP but real-world code uses StringBuilder.\n\nSubstring queries use `s.substring`(start, end) — remember the end is exclusive. Palindrome detection: compare `s.charAt`(i) with `s.charAt`(`s.length()` − 1 − i) for i from 0 to `s.length()` / 2. The exam loves palindromes, vowel-counting, and reversal as FRQs.",
       keyIdeas: [
         "Iterate with charAt(i) and a for loop from 0 to s.length() − 1.",
         "Strings are immutable — build a new one.",
@@ -1590,7 +1590,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
           answer:
             "public static boolean isPalindrome(String s) {\n    s = s.toLowerCase();\n    for (int i = 0; i < s.length() / 2; i++) {\n        if (s.charAt(i) != s.charAt(s.length() - 1 - i)) return false;\n    }\n    return true;\n}",
           explanation:
-            "Compare mirrored pairs; return false on any mismatch. Only need to go halfway because each iteration tests two positions.",
+            "Compare mirrored pairs; return `false` on any mismatch. Only need to go halfway because each iteration tests two positions.",
         },
       ],
     },
@@ -1600,7 +1600,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "A loop inside a loop. The inner loop runs completely for each iteration of the outer loop.",
       explanation:
-        "Nesting lets you enumerate pairs, traverse 2-D structures, or build tables. Total iterations equal outer count × inner count when the inner bounds don't depend on the outer. The canonical example is printing a multiplication table or generating all (i, j) pairs.\n\nBe deliberate with variable names — int i for outer and int j for inner is convention. If the inner loop depends on the outer (for (int j = i; j < n; j++)), iterations total roughly n(n+1)/2. AP will occasionally ask how many times a println executes; just multiply the outer count by the inner count.\n\nBreaking out of only the inner loop uses break. There is no clean syntax to break out of both; use a boolean flag or refactor into a method. That pattern is fair game on FRQs.",
+        "Nesting lets you enumerate pairs, traverse 2-D structures, or build tables. Total iterations equal outer count × inner count when the inner bounds don't depend on the outer. The canonical example is printing a multiplication table or generating all (i, j) pairs.\n\nBe deliberate with variable names — int i for outer and int j for inner is convention. If the inner loop depends on the outer (for (int j = i; j < n; j++)), iterations total roughly `n(n+1)`/2. AP will occasionally ask how many times a println executes; just multiply the outer count by the inner count.\n\nBreaking out of only the inner loop uses break. There is no clean syntax to break out of both; use a boolean flag or refactor into a method. That pattern is fair game on FRQs.",
       keyIdeas: [
         "Inner loop completes every time the outer advances.",
         "Total iterations = outer × inner (if independent).",
@@ -1714,7 +1714,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "A class declares instance variables (state) and methods (behavior). Keep state private and expose a minimal public API.",
       explanation:
-        "A class file has three conceptual parts: instance variables (fields), constructors, and methods. Instance variables hold the per-object state. By convention they are private — no outside code can touch them directly — which is the encapsulation principle. Access is mediated through methods.\n\nMethods come in two flavors in Unit 5. Instance methods operate on a specific object's state and are called via an object reference. Static methods belong to the class and are called via the class name (Math.sqrt). The choice is design: if the work requires an object's state, make it an instance method; otherwise consider static.\n\nMinimal class template: public class Name { private Type field; public Name(args) { ... } public Type someMethod() { ... } }. Note that fields declared without = default to 0 / 0.0 / false / null. A class without an explicit constructor gets a default no-arg constructor; defining any constructor disables that default.",
+        "A class file has three conceptual parts: instance variables (fields), constructors, and methods. Instance variables hold the per-object state. By convention they are private — no outside code can touch them directly — which is the encapsulation principle. Access is mediated through methods.\n\nMethods come in two flavors in Unit 5. Instance methods operate on a specific object's state and are called via an object reference. Static methods belong to the class and are called via the class name (`Math.sqrt`). The choice is design: if the work requires an object's state, make it an instance method; otherwise consider static.\n\nMinimal class template: `public class` Name { private Type field; public Name(args) { ... } public Type `someMethod()` { ... } }. Note that fields declared without = default to 0 / 0.0 / `false` / `null`. A class without an explicit constructor gets a default no-arg constructor; defining any constructor disables that default.",
       keyIdeas: [
         "A class = private fields + public methods.",
         "Fields default to 0/0.0/false/null if uninitialized.",
@@ -1771,7 +1771,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "A constructor initializes a new object. Its name matches the class; it has no return type. Overloading provides multiple creation paths.",
       explanation:
-        "A constructor is a special method invoked by new. It has the exact name of the class and no return type (not even void). Inside, you assign initial values to fields, possibly using parameters passed in by the caller. A constructor can delegate to another constructor via this(args), which is useful when you want a convenience no-arg constructor that fills in defaults.\n\nOverloading lets you offer multiple constructors for different use cases: Point(), Point(int x, int y), Point(Point other). Java picks the best match at compile time by parameter types.\n\nIf you do not write any constructor, Java inserts a no-arg constructor that takes no arguments and sets all fields to their defaults. Once you declare even one constructor, that default disappears. Code that relied on new Point() will no longer compile until you add a no-arg constructor back.",
+        "A constructor is a special method invoked by new. It has the exact name of the class and no return type (not even void). Inside, you assign initial values to fields, possibly using parameters passed in by the caller. A constructor can delegate to another constructor via `this(args)`, which is useful when you want a convenience no-arg constructor that fills in defaults.\n\nOverloading lets you offer multiple constructors for different use cases: Point(), Point(int x, int y), Point(Point other). Java picks the best match at compile time by parameter types.\n\nIf you do not write any constructor, Java inserts a no-arg constructor that takes no arguments and sets all fields to their defaults. Once you declare even one constructor, that default disappears. Code that relied on new Point() will no longer compile until you add a no-arg constructor back.",
       keyIdeas: [
         "Constructor name == class name; no return type.",
         "Multiple constructors (overloading) pick by parameter list.",
@@ -1865,9 +1865,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "5.4",
       title: "Accessor Methods",
       summary:
-        "An accessor (getter) returns a copy of a private field. Naming convention: getField().",
+        "An accessor (getter) returns a copy of a private field. Naming convention: `getField()`.",
       explanation:
-        "Accessors provide read-only access to private state. A standard getter looks like public int getAge() { return age; }. For primitive fields this returns a copy; for reference fields, it returns the reference — so the caller can mutate the underlying object.\n\nReturning mutable references (arrays, ArrayList) leaks internal state. Best practice is to return a copy or an unmodifiable view. AP CSA may ask you to reason about whether a getter \"breaks encapsulation\" when it returns a reference.\n\nConsistency matters. A toString method (public String toString() { return ...; }) is an accessor of sorts — it builds a String representation for printing. Overriding toString is idiomatic and is tested on FRQs.",
+        "Accessors provide read-only access to private state. A standard getter looks like `public int` `getAge()` { return age; }. For primitive fields this returns a copy; for reference fields, it returns the reference — so the caller can mutate the underlying object.\n\nReturning mutable references (arrays, ArrayList) leaks internal state. Best practice is to return a copy or an unmodifiable view. AP CSA may ask you to reason about whether a getter \"breaks encapsulation\" when it returns a reference.\n\nConsistency matters. A toString method (`public String` `toString()` { return ...; }) is an accessor of sorts — it builds a String representation for printing. Overriding toString is idiomatic and is tested on FRQs.",
       keyIdeas: [
         "Getter = public read-only view of a private field.",
         "Returning a primitive is safe; returning a reference to a mutable object leaks state.",
@@ -1917,7 +1917,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "A mutator (setter) changes a field's value. Validate inputs to maintain class invariants.",
       explanation:
-        "Mutators, or setters, are public void methods that update a private field. The standard signature is public void setAge(int age) { this.age = age; }. Using this.age clarifies which age is the field vs. the parameter when they share a name.\n\nGood mutators enforce invariants. A setAge method that refuses negatives, or clamps into a legal range, protects the object's state from invalid data. Some mutators return the new value or a boolean indicating success, though AP problems usually use void setters.\n\nNot every field needs a setter. Immutable classes (Unit 9-ish) expose only getters. Conversely, a mutator might update multiple derived fields together (e.g., setting a rectangle's width recomputes its area). Decide based on what invariants you want to guarantee.",
+        "Mutators, or setters, are `public void` methods that update a private field. The standard signature is `public void` `setAge(int age)` { this.age = age; }. Using this.age clarifies which age is the field vs. the parameter when they share a name.\n\nGood mutators enforce invariants. A setAge method that refuses negatives, or clamps into a legal range, protects the object's state from invalid data. Some mutators return the new value or a boolean indicating success, though AP problems usually use void setters.\n\nNot every field needs a setter. Immutable classes (Unit 9-ish) expose only getters. Conversely, a mutator might update multiple derived fields together (e.g., setting a rectangle's width recomputes its area). Decide based on what invariants you want to guarantee.",
       keyIdeas: [
         "Setter = public method that updates a private field.",
         "Use this.field = parameter to disambiguate names.",
@@ -2018,7 +2018,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Static members belong to the class, not an instance. Use them for constants, counters, or utility functions.",
       explanation:
-        "A static variable is shared across all instances of the class. public static int count; has one storage location; every object sees the same value. A static method does not have access to this (no instance context) — it can only touch static fields and its parameters.\n\nConstants are usually static final: public static final double PI = 3.14159;. All caps names are convention. Utility classes (Math) have only static methods and no instance state — you never new Math().\n\nAPI: call static members via ClassName.member from outside, or unqualified from inside. Instance methods can access static fields freely; static methods cannot access instance fields without an explicit object reference. AP exam questions often test whether a given method should be static.",
+        "A static variable is shared across all instances of the class. `public static` int count; has one storage location; every object sees the same value. A static method does not have access to this (no instance context) — it can only touch static fields and its parameters.\n\nConstants are usually static final: `public static` final double PI = 3.14159;. All caps names are convention. Utility classes (Math) have only static methods and no instance state — you never new Math().\n\nAPI: call static members via ClassName.member from outside, or unqualified from inside. Instance methods can access static fields freely; static methods cannot access instance fields without an explicit object reference. AP exam questions often test whether a given method should be static.",
       keyIdeas: [
         "Static = belongs to the class, not the object.",
         "static final creates a class constant.",
@@ -2121,7 +2121,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "this is a reference to the current object inside an instance method. Used to disambiguate fields, pass the object, or call another constructor.",
       explanation:
-        "Inside an instance method, this refers to the object the method was called on. Its most common uses: this.field = field to store a parameter into a field when names match, return this so method calls can chain, and this(args) as the first line of a constructor to delegate to another constructor.\n\nStatic methods have no this — they aren't tied to an object. Attempting to use this inside a static method is a compile error.\n\nPassing this to another method hands over the current object as an argument. This is how a container can say add me to a list, or how observer patterns work. AP CSA mostly tests this for parameter/field disambiguation and constructor delegation.",
+        "Inside an instance method, this refers to the object the method was called on. Its most common uses: this.field = field to store a parameter into a field when names match, return this so method calls can chain, and `this(args)` as the first line of a constructor to delegate to another constructor.\n\nStatic methods have no this — they aren't tied to an object. Attempting to use this inside a static method is a compile error.\n\nPassing this to another method hands over the current object as an argument. This is how a container can say add me to a list, or how observer patterns work. AP CSA mostly tests this for parameter/field disambiguation and constructor delegation.",
       keyIdeas: [
         "this = the object the method is called on.",
         "Use this.field when parameter shadows field.",
@@ -2156,7 +2156,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "Rewrite without duplication:\n```java\npublic Rect() { width = 1; height = 1; }\npublic Rect(int w, int h) { width = w; height = h; }\n```",
           answer: "public Rect() { this(1, 1); }\npublic Rect(int w, int h) { this.width = w; this.height = h; }",
           explanation:
-            "Delegate the no-arg constructor to the parameterized one using this(1, 1).",
+            "Delegate the no-arg constructor to the parameterized one using `this(1, 1)`.",
         },
       ],
     },
@@ -2228,9 +2228,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "6.1",
       title: "Array Creation and Access",
       summary:
-        "An array is a fixed-size, indexed sequence of same-typed values. Create with new T[size] or initializer braces.",
+        "An array is a fixed-size, indexed sequence of same-typed values. Create with new `T[size]` or initializer braces.",
       explanation:
-        "Two creation forms: int[] a = new int[5]; allocates 5 ints (all 0) and int[] a = {1, 2, 3}; both allocates and initializes. The length is fixed at creation; arrays do not grow. Access is zero-indexed: a[0] is the first element, a[a.length − 1] is the last. length is a field, not a method (no parentheses).\n\nAssigning to an index (a[i] = x) writes; reading (int v = a[i]) reads. Out-of-bounds access throws ArrayIndexOutOfBoundsException at runtime. The compiler can catch obvious cases (negative literal), but most bounds errors are runtime-only.\n\nArrays are reference types. Declaring int[] b = a; aliases — both refer to the same array. To make a copy, loop and assign or use Arrays.copyOf. AP CSA mostly requires the loop approach.",
+        "Two creation forms: `int[]` a = new `int[5]`; allocates 5 ints (all 0) and `int[]` a = {1, 2, 3}; both allocates and initializes. The length is fixed at creation; arrays do not grow. Access is zero-indexed: `a[0]` is the first element, `a[a.length − 1]` is the last. length is a field, not a method (no parentheses).\n\nAssigning to an index (`a[i]` = x) writes; reading (int v = `a[i]`) reads. Out-of-bounds access throws `ArrayIndexOutOfBoundsException` at runtime. The compiler can catch obvious cases (negative literal), but most bounds errors are runtime-only.\n\nArrays are reference types. Declaring `int[]` b = a; aliases — both refer to the same array. To make a copy, loop and assign or use Arrays.copyOf. AP CSA mostly requires the loop approach.",
       keyIdeas: [
         "new T[n] allocates n default-valued slots.",
         "{a, b, c} initializer allocates + fills.",
@@ -2278,7 +2278,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
           ],
           answer: "int[] a = new int[5];",
           explanation:
-            "new int[5] allocates 5 slots and defaults them to 0. The other options either initialize wrong or have invalid syntax.",
+            "new `int[5]` allocates 5 slots and defaults them to 0. The other options either initialize wrong or have invalid syntax.",
         },
       ],
     },
@@ -2286,9 +2286,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "6.2",
       title: "Traversing Arrays",
       summary:
-        "An index-based for loop lets you read or mutate each element. Use i < arr.length (not <=).",
+        "An index-based for loop lets you read or mutate each element. Use i < `arr.length` (not <=).",
       explanation:
-        "The canonical traversal is for (int i = 0; i < arr.length; i++) { ... arr[i] ... }. This is the version you use when you need the index — for instance, to update each element (arr[i] = arr[i] * 2), compare adjacent elements (arr[i] vs arr[i+1]), or track position.\n\nReverse traversal flips the header: for (int i = arr.length − 1; i >= 0; i--). Partial traversals narrow the bounds. The two ends — starting too low or going too high — are the perennial bug source.\n\nAccumulator patterns extend traversal: running sum, running max, count of matches. Each maintains one or two variables initialized before the loop and updated during the body.",
+        "The canonical traversal is for (int i = 0; i < `arr.length`; i++) { ... `arr[i]` ... }. This is the version you use when you need the index — for instance, to update each element (`arr[i]` = `arr[i]` * 2), compare adjacent elements (`arr[i]` vs `arr[i+1]`), or track position.\n\nReverse traversal flips the header: for (int i = `arr.length` − 1; i >= 0; i--). Partial traversals narrow the bounds. The two ends — starting too low or going too high — are the perennial bug source.\n\nAccumulator patterns extend traversal: running sum, running max, count of matches. Each maintains one or two variables initialized before the loop and updated during the body.",
       keyIdeas: [
         "Index traversal: for (int i = 0; i < arr.length; i++).",
         "Use indexed loop when you need index or are modifying elements.",
@@ -2336,9 +2336,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "6.3",
       title: "Enhanced for Loop for Arrays",
       summary:
-        "for (T x : arr) gives one element at a time. Cannot reassign arr[i] — use indexed for to mutate.",
+        "for (T x : arr) gives one element at a time. Cannot reassign `arr[i]` — use indexed for to mutate.",
       explanation:
-        "The enhanced for loop (sometimes called for-each) iterates over every element in order. Syntax: for (Type x : arr) { ... x ... }. The variable x is a local copy (for primitives) or a reference (for objects) to each successive element. It is perfect for read-only scans: summing, finding a match, printing.\n\nThe key limitation is that x = newValue inside the loop does not modify the array. For primitives this is obvious — x is a copy. For objects, x points to the same object as arr[i], so you can mutate the object (x.setName(\"foo\")), but reassigning x doesn't update arr[i]. If you need to replace elements, use an indexed for loop.\n\nYou also cannot access the index directly from an enhanced for loop. If you need i, use the indexed version. AP CSA tests both forms; choose based on whether you need the index or the element.",
+        "The enhanced for loop (sometimes called for-each) iterates over every element in order. Syntax: for (Type x : arr) { ... x ... }. The variable x is a local copy (for primitives) or a reference (for objects) to each successive element. It is perfect for read-only scans: summing, finding a match, printing.\n\nThe key limitation is that x = newValue inside the loop does not modify the array. For primitives this is obvious — x is a copy. For objects, x points to the same object as `arr[i]`, so you can mutate the object (`x.setName(\"foo\")`), but reassigning x doesn't update `arr[i]`. If you need to replace elements, use an indexed for loop.\n\nYou also cannot access the index directly from an enhanced for loop. If you need i, use the indexed version. AP CSA tests both forms; choose based on whether you need the index or the element.",
       keyIdeas: [
         "for (T x : arr) visits each element.",
         "Cannot reassign arr[i] through the enhanced for variable.",
@@ -2395,7 +2395,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Min/max, count, shift, reverse, standard swap. Master these patterns — FRQs recombine them.",
       explanation:
-        "The canonical AP array algorithms are: find min or max (initialize to arr[0], scan rest), count occurrences (counter that increments on match), linear search (return first index of match, or −1), reverse in place (two indices moving inward with swap), and shift (move element at position k to position 0, shifting others right).\n\nSwap is a three-line idiom: int temp = a[i]; a[i] = a[j]; a[j] = temp;. Shift is a loop that walks indices backward or forward depending on direction. Reverse is n/2 swaps.\n\nFRQ prompts combine these. A typical problem: \"write a method that returns a new array containing only the even elements of the input in reverse order.\" You filter (copy matches to a new array), then reverse. Break the problem into standard patterns, code each, compose.",
+        "The canonical AP array algorithms are: find min or max (initialize to `arr[0]`, scan rest), count occurrences (counter that increments on match), linear search (return first index of match, or −1), reverse in place (two indices moving inward with swap), and shift (move element at position k to position 0, shifting others right).\n\nSwap is a three-line idiom: int temp = `a[i]`; `a[i]` = `a[j]`; `a[j]` = temp;. Shift is a loop that walks indices backward or forward depending on direction. Reverse is n/2 swaps.\n\nFRQ prompts combine these. A typical problem: \"write a method that returns a new array containing only the even elements of the input in reverse order.\" You filter (copy matches to a new array), then reverse. Break the problem into standard patterns, code each, compose.",
       keyIdeas: [
         "Min/max: initialize to arr[0], scan from 1.",
         "Count: increment on each match.",
@@ -2463,9 +2463,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "7.1",
       title: "Introduction to ArrayList",
       summary:
-        "ArrayList<E> is a resizable list backed by an array. Generic type parameter E is a reference type.",
+        "`ArrayList<E>` is a resizable list backed by an array. Generic type parameter E is a reference type.",
       explanation:
-        "Import with import java.util.ArrayList;. Declare as ArrayList<String> names = new ArrayList<>(); (the diamond <> infers the type). The generic type parameter E must be a reference type — Integer not int, Double not double. Autoboxing makes this mostly invisible.\n\nAn ArrayList grows automatically when you add beyond its current capacity. The size() method returns the number of elements currently stored (not capacity). New lists start empty. Accessing an out-of-range index throws IndexOutOfBoundsException.\n\nCompared to arrays: arrays are faster and lower overhead but fixed size; ArrayList trades overhead for resizing and convenience methods. The AP exam uses ArrayList whenever it needs dynamic size.",
+        "Import with import java.util.ArrayList;. Declare as `ArrayList<String>` names = new ArrayList<>(); (the diamond <> infers the type). The generic type parameter E must be a reference type — Integer not int, Double not double. Autoboxing makes this mostly invisible.\n\nAn ArrayList grows automatically when you add beyond its current capacity. The `size()` method returns the number of elements currently stored (not capacity). New lists start empty. Accessing an out-of-range index throws `IndexOutOfBoundsException`.\n\nCompared to arrays: arrays are faster and lower overhead but fixed size; ArrayList trades overhead for resizing and convenience methods. The AP exam uses ArrayList whenever it needs dynamic size.",
       keyIdeas: [
         "ArrayList<E> takes a reference type parameter.",
         "import java.util.ArrayList; required.",
@@ -2515,9 +2515,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "7.2",
       title: "ArrayList Methods",
       summary:
-        "add, add(i, x), get, set, remove, size, contains, indexOf — the method menu AP tests.",
+        "add, `add(i, x)`, get, set, remove, size, contains, indexOf — the method menu AP tests.",
       explanation:
-        "The AP subset: add(E x) appends at the end; add(int i, E x) inserts at index i, shifting later elements right; E get(int i) reads; E set(int i, E x) replaces and returns the old value; E remove(int i) removes and returns the element, shifting later elements left; boolean remove(Object x) removes the first occurrence and returns whether removed; int size() returns count; boolean contains(Object x) tests for presence; int indexOf(Object x) returns first index or −1.\n\nContains and indexOf use .equals() internally, so they work correctly for Strings and Integers. For your own classes, you must override equals (Unit 9) or these methods fall back to reference identity.\n\nInserts and removes in the middle are O(n) because of shifting. Adds at the end are amortized O(1). AP doesn't formally test complexity but you should know that repeated middle-removes in a loop must be handled carefully.",
+        "The AP subset: `add(E x)` appends at the end; `add(int i, E x)` inserts at index i, shifting later elements right; E `get(int i)` reads; E `set(int i, E x)` replaces and returns the old value; E `remove(int i)` removes and returns the element, shifting later elements left; boolean `remove(Object x)` removes the first occurrence and returns whether removed; int `size()` returns count; boolean `contains(Object x)` tests for presence; int `indexOf(Object x)` returns first index or −1.\n\nContains and indexOf use `.equals()` internally, so they work correctly for Strings and Integers. For your own classes, you must override equals (Unit 9) or these methods fall back to reference identity.\n\nInserts and removes in the middle are O(n) because of shifting. Adds at the end are amortized O(1). AP doesn't formally test complexity but you should know that repeated middle-removes in a loop must be handled carefully.",
       keyIdeas: [
         "add appends; add(i, x) inserts and shifts right.",
         "remove(i) removes and shifts left.",
@@ -2569,7 +2569,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Indexed for or enhanced for. Same rules as arrays — enhanced for can't modify the list.",
       explanation:
-        "Two traversal forms work on ArrayList. Indexed: for (int i = 0; i < list.size(); i++) { ... list.get(i) ... }. Enhanced: for (E x : list) { ... }. Same tradeoff as arrays — enhanced for is read-only from the list's perspective.\n\nA critical gotcha: removing elements during an enhanced for throws ConcurrentModificationException at runtime. Even indexed for has a subtler bug — if you remove at index i, the next element slides to i, and i++ skips it. The fix is to decrement i after a remove, or iterate backwards: for (int i = list.size() − 1; i >= 0; i--).\n\nAdding during traversal is similarly dangerous. When in doubt, build a new list and assign, or collect the indices to remove and process after the loop.",
+        "Two traversal forms work on ArrayList. Indexed: for (int i = 0; i < `list.size()`; i++) { ... `list.get(i)` ... }. Enhanced: for (E x : list) { ... }. Same tradeoff as arrays — enhanced for is read-only from the list's perspective.\n\nA critical gotcha: removing elements during an enhanced for throws `ConcurrentModificationException` at runtime. Even indexed for has a subtler bug — if you remove at index i, the next element slides to i, and i++ skips it. The fix is to decrement i after a remove, or iterate backwards: for (int i = `list.size()` − 1; i >= 0; i--).\n\nAdding during traversal is similarly dangerous. When in doubt, build a new list and assign, or collect the indices to remove and process after the loop.",
       keyIdeas: [
         "Indexed for: for (int i = 0; i < size(); i++) list.get(i).",
         "Enhanced for: for (E x : list) — read-only.",
@@ -2620,7 +2620,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Compose size, get, set, remove, add into standard algorithms: filter, dedupe, shift-in-place.",
       explanation:
-        "Most ArrayList algorithms mirror array algorithms with method calls instead of indexing syntax. Copy when transforming — do not mutate a list you're iterating over.\n\nFilter: build a new list; iterate the source; add matches. Dedupe: iterate, add to a new list if not already contains. Move first-to-last: store list.get(0), remove(0), add(stored). Sorting is usually done with Collections.sort(list) when allowed, but AP FRQs often ask you to implement selection or insertion sort manually.\n\nThe AP exam's most popular FRQ pattern is: given a method signature and a precondition, write a correct implementation using ArrayList. Practice by writing small pure methods that take and return ArrayLists.",
+        "Most ArrayList algorithms mirror array algorithms with method calls instead of indexing syntax. Copy when transforming — do not mutate a list you're iterating over.\n\nFilter: build a new list; iterate the source; add matches. Dedupe: iterate, add to a new list if not already contains. Move first-to-last: store `list.get(0)`, `remove(0)`, `add(stored)`. Sorting is usually done with `Collections.sort`(list) when allowed, but AP FRQs often ask you to implement selection or insertion sort manually.\n\nThe AP exam's most popular FRQ pattern is: given a method signature and a precondition, write a correct implementation using ArrayList. Practice by writing small pure methods that take and return ArrayLists.",
       keyIdeas: [
         "When transforming, prefer building a new list.",
         "Filter = iterate source, add matches to new list.",
@@ -2829,9 +2829,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "8.1",
       title: "2D Arrays",
       summary:
-        "A 2D array is an array of arrays. Declare T[][], access with arr[row][col]. length gives rows; arr[i].length gives columns.",
+        "A 2D array is an array of arrays. Declare T[][], access with `arr[row]`[col]. length gives rows; `arr[i]`.length gives columns.",
       explanation:
-        "Declaration forms: int[][] grid = new int[3][4]; allocates 3 rows × 4 columns, all zeroed. Initializer: int[][] g = { {1,2,3}, {4,5,6} };. Java technically allows ragged arrays (rows of different lengths), but the AP exam assumes rectangular.\n\nAccess with two indices: grid[r][c]. Assignment: grid[r][c] = value. Bounds: 0 ≤ r < grid.length and 0 ≤ c < grid[r].length. Exceeding either throws ArrayIndexOutOfBoundsException.\n\nThink of a 2D array as a rectangle of values. Rows are the outer index; columns the inner. The AP exam uses grids to represent game boards, pixel images, matrices — anywhere a rectangular structure fits.",
+        "Declaration forms: `int[][]` grid = new `int[3]`[4]; allocates 3 rows × 4 columns, all zeroed. Initializer: `int[][]` g = { {1,2,3}, {4,5,6} };. Java technically allows ragged arrays (rows of different lengths), but the AP exam assumes rectangular.\n\nAccess with two indices: `grid[r]`[c]. Assignment: `grid[r]`[c] = value. Bounds: 0 ≤ r < grid.length and 0 ≤ c < `grid[r]`.length. Exceeding either throws `ArrayIndexOutOfBoundsException`.\n\nThink of a 2D array as a rectangle of values. Rows are the outer index; columns the inner. The AP exam uses grids to represent game boards, pixel images, matrices — anywhere a rectangular structure fits.",
       keyIdeas: [
         "int[][] arr = new int[rows][cols] allocates rectangular.",
         "Access: arr[row][col].",
@@ -2866,7 +2866,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "What is printed?\n```java\nint[][] g = { {1,2,3}, {4,5,6} };\nSystem.out.println(g.length + \" \" + g[0].length);\n```",
           answer: "2 3",
           explanation:
-            "g has 2 rows and each row has 3 columns. g.length = 2, g[0].length = 3.",
+            "g has 2 rows and each row has 3 columns. g.length = 2, `g[0]`.length = 3.",
         },
       ],
     },
@@ -2876,7 +2876,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "Row-major: outer loop over rows, inner over columns. Column-major swaps the loops. Use the one that matches your task.",
       explanation:
-        "Row-major traversal is the default: for (int r = 0; r < arr.length; r++) for (int c = 0; c < arr[r].length; c++) arr[r][c] ...;. Columns advance fastest, rows slowest. Perfect when you work one row at a time — sum each row, print each row.\n\nColumn-major swaps the loops: for (int c = 0; c < arr[0].length; c++) for (int r = 0; r < arr.length; r++) arr[r][c] ...;. Use when you need to process each column as a unit (column sums, column searches, transposing).\n\nEnhanced for works too: for (int[] row : arr) for (int v : row) ...;. Clean for read-only scans. As with 1D, you can't use it to reassign arr[r][c]. Count operations carefully on AP exam problems — a double loop over rows × cols runs rows × cols times.",
+        "Row-major traversal is the default: for (int r = 0; r < `arr.length`; r++) for (int c = 0; c < `arr[r]`.length; c++) `arr[r]`[c] ...;. Columns advance fastest, rows slowest. Perfect when you work one row at a time — sum each row, print each row.\n\nColumn-major swaps the loops: for (int c = 0; c < `arr[0]`.length; c++) for (int r = 0; r < `arr.length`; r++) `arr[r]`[c] ...;. Use when you need to process each column as a unit (column sums, column searches, transposing).\n\nEnhanced for works too: for (`int[]` row : arr) for (int v : row) ...;. Clean for read-only scans. As with 1D, you can't use it to reassign `arr[r]`[c]. Count operations carefully on AP exam problems — a double loop over rows × cols runs rows × cols times.",
       keyIdeas: [
         "Row-major: outer r, inner c.",
         "Column-major: outer c, inner r.",
@@ -2955,7 +2955,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "extends declares a subclass. A subclass inherits all non-private fields and methods of the superclass.",
       explanation:
-        "class Subclass extends Superclass creates an is-a relationship — a Subclass object is also a Superclass object. The subclass inherits all public and protected members. private members exist in the superclass but cannot be accessed directly by the subclass — the subclass must use getters and setters.\n\nAn inheritance hierarchy is a tree rooted (in Java) at Object. Every class implicitly extends Object if it does not explicitly extend another class. A subclass can add new fields and methods. A well-designed superclass factors out what is common to many related types.\n\nThe compiler verifies that the subclass does not try to reach private superclass members directly. You will see \"has private access\" errors if you misuse inheritance. Always design superclass fields as private with accessors/mutators if subclasses need access.",
+        "class Subclass extends Superclass creates an is-a relationship — a Subclass object is also a Superclass object. The subclass inherits all public and protected members. private members exist in the superclass but cannot be accessed directly by the subclass — the subclass must use getters and setters.\n\nAn inheritance hierarchy is a tree rooted (in Java) at Object. Every class implicitly `extends Object` if it does not explicitly extend another class. A subclass can add new fields and methods. A well-designed superclass factors out what is common to many related types.\n\nThe compiler verifies that the subclass does not try to reach private superclass members directly. You will see \"has private access\" errors if you misuse inheritance. Always design superclass fields as private with accessors/mutators if subclasses need access.",
       keyIdeas: [
         "class Sub extends Super creates an is-a relationship.",
         "Subclass inherits non-private fields and methods.",
@@ -3010,9 +3010,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "9.2",
       title: "Writing Constructors for Subclasses",
       summary:
-        "super(args) calls a superclass constructor. If omitted, the compiler inserts super() — which must exist.",
+        "`super(args)` calls a superclass constructor. If omitted, the compiler inserts `super()` — which must exist.",
       explanation:
-        "A subclass constructor starts by building the superclass part of the object. If you do not explicitly call super(args), the compiler inserts a zero-arg super() as the first statement. That only works if the superclass has a no-arg constructor. If not — for instance, the superclass requires name in its only constructor — you must write super(name); on the first line of your subclass constructor.\n\nsuper(args) resembles this(args): both must be the first statement of a constructor, and they are mutually exclusive. A constructor can delegate to either the superclass or another constructor of its own class, but not both.\n\nOn FRQ constructor questions, the rubric usually requires you to call super with the correct arguments. Forgetting to do so costs points.",
+        "A subclass constructor starts by building the superclass part of the object. If you do not explicitly call `super(args)`, the compiler inserts a zero-arg `super()` as the first statement. That only works if the superclass has a no-arg constructor. If not — for instance, the superclass requires name in its only constructor — you must write `super(name)`; on the first line of your subclass constructor.\n\n`super(args)` resembles `this(args)`: both must be the first statement of a constructor, and they are mutually exclusive. A constructor can delegate to either the superclass or another constructor of its own class, but not both.\n\nOn FRQ constructor questions, the rubric usually requires you to call super with the correct arguments. Forgetting to do so costs points.",
       keyIdeas: [
         "super(args) calls a specific superclass constructor.",
         "If omitted, compiler inserts super() implicitly.",
@@ -3053,7 +3053,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "Which fix makes this compile if Animal has only Animal(String n)?\n```java\nclass Cat extends Animal {\n    public Cat() { }\n}\n```",
           answer: "public Cat() { super(\"unknown\"); }",
           explanation:
-            "Without an explicit super call, the compiler tries super() which doesn't exist. Call super with a valid String argument.",
+            "Without an explicit super call, the compiler tries `super()` which doesn't exist. Call super with a valid String argument.",
         },
       ],
     },
@@ -3063,7 +3063,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "A subclass can redefine a superclass method with the same signature. Return type must match or be narrower (covariant).",
       explanation:
-        "To override, declare a method in the subclass with the exact same name and parameter list as the superclass method. The return type must be the same or a subtype (covariant return). The overriding method cannot be more private than the superclass method — if the superclass method is public, the override must also be public.\n\nWhen you call the method on a subclass object, Java uses dynamic dispatch: the actual class of the object determines which version runs, not the type of the reference. That is polymorphism in action (Topic 9.6). Marking the method @Override is optional but recommended — the compiler will flag a signature mismatch that would otherwise silently become a different method.\n\nCommon overrides: toString (return a String representation), equals (content equality), and class-specific behavior like speak() on Animal vs Cat. On AP FRQs, the rubric often tests whether you correctly override with the right signature.",
+        "To override, declare a method in the subclass with the exact same name and parameter list as the superclass method. The return type must be the same or a subtype (covariant return). The overriding method cannot be more private than the superclass method — if the superclass method is public, the override must also be public.\n\nWhen you call the method on a subclass object, Java uses dynamic dispatch: the actual class of the object determines which version runs, not the type of the reference. That is polymorphism in action (Topic 9.6). Marking the method `@Override` is optional but recommended — the compiler will flag a signature mismatch that would otherwise silently become a different method.\n\nCommon overrides: toString (return a String representation), equals (content equality), and class-specific behavior like `speak()` on Animal vs Cat. On AP FRQs, the rubric often tests whether you correctly override with the right signature.",
       keyIdeas: [
         "Override = same name + same parameters.",
         "Return type must be equal or narrower (covariant).",
@@ -3112,9 +3112,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "9.4",
       title: "super Keyword",
       summary:
-        "super.method(...) calls the superclass version. super(args) (first line of constructor) calls a superclass constructor.",
+        "`super.method(...)` calls the superclass version. `super(args)` (first line of constructor) calls a superclass constructor.",
       explanation:
-        "Two uses of super. As a constructor call: super(args) invokes a superclass constructor; only legal as the first line of a constructor body. As a method prefix: super.method(args) calls the superclass's implementation of the method, useful inside an override to reuse the parent's logic.\n\nUse super.method() when you override but want to extend rather than replace. For example, in Dog.speak you might call super.speak() to reuse the generic Animal behavior and then add the bark. You can also write super.field when you want to reach a superclass field of the same name as a subclass field, though this is rare on AP.\n\nThe common AP pattern: a subclass's toString calls super.toString() plus additional info. You don't duplicate the parent's code; you wrap it.",
+        "Two uses of super. As a constructor call: `super(args)` invokes a superclass constructor; only legal as the first line of a constructor body. As a method prefix: `super.method(args)` calls the superclass's implementation of the method, useful inside an override to reuse the parent's logic.\n\nUse `super.method()` when you override but want to extend rather than replace. For example, in Dog.speak you might call `super.speak()` to reuse the generic Animal behavior and then add the bark. You can also write super.field when you want to reach a superclass field of the same name as a subclass field, though this is rare on AP.\n\nThe common AP pattern: a subclass's toString calls `super.toString()` plus additional info. You don't duplicate the parent's code; you wrap it.",
       keyIdeas: [
         "super(args) — superclass constructor call (first statement).",
         "super.method() — superclass method call.",
@@ -3149,7 +3149,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
           answer:
             "public String toString() { return \"Fancy: \" + super.toString(); }",
           explanation:
-            "super.toString() calls Plain's implementation; prepending adds context without duplicating logic.",
+            "`super.toString()` calls Plain's implementation; prepending adds context without duplicating logic.",
         },
       ],
     },
@@ -3159,7 +3159,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "A superclass reference can hold a subclass object. You can only call methods declared at or above the reference's static type.",
       explanation:
-        "Animal a = new Cat(\"Mittens\"); is legal — a Cat is an Animal. The reference variable a has compile-time (static) type Animal and runtime (dynamic) type Cat. You can call any Animal method through a (including speak() which dispatches to Cat's override). You cannot call a Cat-specific method through a without casting.\n\nCasting: Cat c = (Cat) a; downcast from Animal to Cat. Allowed when the object really is a Cat; otherwise a ClassCastException at runtime. instanceof checks before casting: if (a instanceof Cat) Cat c = (Cat) a;.\n\nStore mixed subclasses in a single array or ArrayList of the superclass type: Animal[] zoo. Iterate with a polymorphic method call — each object dispatches to its own override. This is the payoff of polymorphism.",
+        "Animal a = new Cat(\"Mittens\"); is legal — a Cat is an Animal. The reference variable a has compile-time (static) type Animal and runtime (dynamic) type Cat. You can call any Animal method through a (including `speak()` which dispatches to Cat's override). You cannot call a Cat-specific method through a without casting.\n\nCasting: Cat c = (Cat) a; downcast from Animal to Cat. Allowed when the object really is a Cat; otherwise a `ClassCastException` at runtime. instanceof checks before casting: if (a instanceof Cat) Cat c = (Cat) a;.\n\nStore mixed subclasses in a single array or ArrayList of the superclass type: Animal[] zoo. Iterate with a polymorphic method call — each object dispatches to its own override. This is the payoff of polymorphism.",
       keyIdeas: [
         "Superclass reference can hold subclass object.",
         "Static type restricts callable methods; dynamic type picks the override.",
@@ -3205,7 +3205,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "One method call can execute different code based on the object's class. The foundation of OOP flexibility.",
       explanation:
-        "Polymorphism means \"many forms.\" When you call a.speak() on an Animal reference, Java looks at the runtime type of the object and dispatches to the appropriate speak method. If a is a Cat, the Cat.speak override runs. If a is a Dog, Dog.speak runs. This is dynamic (or late) binding.\n\nWhy it matters: you can write one loop that processes a heterogeneous collection and automatically gets the right behavior for each element. The caller doesn't need to know each object's exact class — it just calls the method defined by the common superclass and trusts each subclass to do the right thing.\n\nStatic members (static methods, fields) do not dispatch dynamically — they are resolved at compile time using the declared type. That is a subtle exam trap. The vast majority of AP polymorphism questions are about instance methods, so focus your mental model on them.",
+        "Polymorphism means \"many forms.\" When you call `a.speak()` on an Animal reference, Java looks at the runtime type of the object and dispatches to the appropriate speak method. If a is a Cat, the Cat.speak override runs. If a is a Dog, Dog.speak runs. This is dynamic (or late) binding.\n\nWhy it matters: you can write one loop that processes a heterogeneous collection and automatically gets the right behavior for each element. The caller doesn't need to know each object's exact class — it just calls the method defined by the common superclass and trusts each subclass to do the right thing.\n\nStatic members (static methods, fields) do not dispatch dynamically — they are resolved at compile time using the declared type. That is a subtle exam trap. The vast majority of AP polymorphism questions are about instance methods, so focus your mental model on them.",
       keyIdeas: [
         "Overridden instance methods dispatch by runtime type.",
         "Fields and static methods are resolved statically.",
@@ -3248,9 +3248,9 @@ AP_COMPUTER_SCIENCE_A.units.push({
       id: "9.7",
       title: "Object Superclass",
       summary:
-        "Every class implicitly extends Object. Methods to know: toString and equals. You frequently override both.",
+        "Every class implicitly `extends Object`. Methods to know: toString and equals. You frequently override both.",
       explanation:
-        "Object is the root of every class hierarchy. The methods you care about on AP CSA are toString (returns a String representation of the object) and equals (tests equality with another object). Object's default toString returns something like ClassName@1a2b3c, which is almost never what you want. The default equals is just == (reference equality).\n\nOverride toString for any class whose objects get printed: public String toString() { return \"Point(\" + x + \", \" + y + \")\"; }. println and string concatenation call toString automatically, so your override pays off everywhere.\n\nOverride equals to define content equality. The standard pattern: public boolean equals(Object other) { if (!(other instanceof MyClass)) return false; MyClass o = (MyClass) other; return this.field.equals(o.field); }. Don't forget the instanceof/null check. The AP exam occasionally asks you to write equals, though it is more common on FRQ.",
+        "Object is the root of every class hierarchy. The methods you care about on AP CSA are toString (returns a String representation of the object) and equals (tests equality with another object). Object's default toString returns something like ClassName@1a2b3c, which is almost never what you want. The default equals is just == (reference equality).\n\nOverride toString for any class whose objects get printed: `public String` `toString()` { return \"Point(\" + x + \", \" + y + \")\"; }. println and string concatenation call toString automatically, so your override pays off everywhere.\n\nOverride equals to define content equality. The standard pattern: `public boolean` `equals(Object other)` { if (!(other instanceof MyClass)) return `false`; MyClass o = (MyClass) other; return this.`field.equals(o.field)`; }. Don't forget the instanceof/`null` check. The AP exam occasionally asks you to write equals, though it is more common on FRQ.",
       keyIdeas: [
         "All classes inherit from Object.",
         "Object.toString defaults to a class@hash string.",
@@ -3309,7 +3309,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
       summary:
         "A recursive method calls itself on a smaller subproblem. Every recursion needs a base case and a progress step.",
       explanation:
-        "A recursive method is structured as if (base case) return baseAnswer; else return something involving method(smallerInput);. The base case terminates; the recursive step reduces the input toward the base. Without a base case, the recursion is infinite — you get StackOverflowError when the call stack fills up.\n\nClassic examples: factorial (n! = n × (n−1)!, with 0! = 1), Fibonacci, power (xⁿ = x × xⁿ⁻¹, with x⁰ = 1), and sum/search over arrays. Each call creates a new stack frame with its own local variables. When the base case returns, frames unwind and return values propagate up.\n\nTo trace a recursive call, write down the sequence of calls as they're made (descend), then the return values as they come back (ascend). This \"stack of sticky notes\" visualization is exactly what the exam wants you to do on MCQ trace questions.\n\nRecursion is equivalent in power to iteration; any problem solvable recursively is solvable iteratively (and vice versa). Choose based on readability — tree structures and divide-and-conquer are naturally recursive; counters and running totals are naturally iterative.",
+        "A recursive method is structured as if (base case) return baseAnswer; else return something involving `method(smallerInput)`;. The base case terminates; the recursive step reduces the input toward the base. Without a base case, the recursion is infinite — you get `StackOverflowError` when the call stack fills up.\n\nClassic examples: factorial (n! = n × (n−1)!, with 0! = 1), Fibonacci, power (xⁿ = x × xⁿ⁻¹, with x⁰ = 1), and sum/search over arrays. Each call creates a new stack frame with its own local variables. When the base case returns, frames unwind and return values propagate up.\n\nTo trace a recursive call, write down the sequence of calls as they're made (descend), then the return values as they come back (ascend). This \"stack of sticky notes\" visualization is exactly what the exam wants you to do on MCQ trace questions.\n\nRecursion is equivalent in power to iteration; any problem solvable recursively is solvable iteratively (and vice versa). Choose based on readability — tree structures and divide-and-conquer are naturally recursive; counters and running totals are naturally iterative.",
       keyIdeas: [
         "Every recursion needs a base case + a smaller-subproblem call.",
         "Missing or wrong base case → StackOverflowError.",
@@ -3364,7 +3364,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
             "What does f(4) return?\n```java\npublic static int f(int n) {\n    if (n <= 0) return 0;\n    return n + f(n - 1);\n}\n```",
           answer: "10",
           explanation:
-            "f(4) = 4 + f(3) = 4 + 3 + f(2) = 4+3+2+f(1) = 4+3+2+1+f(0) = 4+3+2+1+0 = 10.",
+            "`f(4)` = 4 + `f(3)` = 4 + 3 + `f(2)` = 4+3+2+`f(1)` = 4+3+2+1+`f(0)` = 4+3+2+1+0 = 10.",
         },
         {
           id: "10.1.p2",
@@ -3444,7 +3444,7 @@ AP_COMPUTER_SCIENCE_A.units.push({
           answer:
             "Merge sort is O(n log n); selection sort is O(n²). For large n, n log n grows much slower than n².",
           explanation:
-            "Asymptotic complexity dominates at scale. Doubling n in selection sort quadruples the time; in merge sort, it just over doubles (2n × log(2n) ≈ 2·n log n + 2n).",
+            "Asymptotic complexity dominates at scale. Doubling n in selection sort quadruples the time; in merge sort, it just over doubles (2n × `log(2n)` ≈ 2·n log n + 2n).",
         },
       ],
     },

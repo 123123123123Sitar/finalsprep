@@ -217,14 +217,7 @@ function renderBlock(b: Block, key: number): ReactNode {
         </ol>
       );
     case "code":
-      return (
-        <pre
-          key={key}
-          className="overflow-x-auto rounded-lg border border-hair bg-offwhite p-3 text-[13px] leading-relaxed text-ink"
-        >
-          <code className="font-mono">{b.text}</code>
-        </pre>
-      );
+      return <TerminalCode key={key} lang={b.lang} text={b.text} />;
     case "quote":
       return (
         <blockquote
@@ -290,7 +283,7 @@ function renderInline(input: string): ReactNode[] {
         out.push(
           <code
             key={`c-${key++}`}
-            className="rounded bg-offwhite px-1 py-0.5 font-mono text-[13.5px] text-ink"
+            className="rounded bg-[#11161d] px-1.5 py-0.5 font-mono text-[13px] text-emerald-300"
           >
             {prepared.slice(i + 1, end)}
           </code>
@@ -349,6 +342,178 @@ function renderInline(input: string): ReactNode[] {
     i++;
   }
   flushText();
+  return out;
+}
+
+/**
+ * Fenced code blocks render as a dark "terminal" card: a slate title bar with
+ * three mac-style dots and a language label, a near-black body with a
+ * lightweight Java syntax highlighter. Fancy enough to feel like an IDE,
+ * regex-driven enough to stay readable and cheap.
+ */
+function TerminalCode({ lang, text }: { lang: string; text: string }) {
+  const label = (lang || "code").toLowerCase();
+  const highlighted = useMemo(
+    () => (isJavaLang(label) ? highlightJava(text) : [text]),
+    [label, text]
+  );
+  return (
+    <div className="overflow-hidden rounded-lg border border-zinc-800/70 bg-[#0b0f14] shadow-sm">
+      <div className="flex items-center justify-between border-b border-zinc-800/70 bg-[#11161d] px-3 py-1.5">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
+        </div>
+        <span className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-zinc-500">
+          {label}
+        </span>
+      </div>
+      <pre className="overflow-x-auto px-4 py-3 text-[13px] leading-relaxed text-zinc-100">
+        <code className="font-mono">{highlighted}</code>
+      </pre>
+    </div>
+  );
+}
+
+function isJavaLang(lang: string): boolean {
+  return lang === "" || lang === "code" || lang === "java" || lang === "jsh";
+}
+
+const JAVA_KEYWORDS = new Set([
+  "abstract", "assert", "break", "case", "catch", "class", "const", "continue",
+  "default", "do", "else", "enum", "extends", "final", "finally", "for", "goto",
+  "if", "implements", "import", "instanceof", "interface", "native", "new",
+  "package", "private", "protected", "public", "return", "static", "strictfp",
+  "super", "switch", "synchronized", "this", "throw", "throws", "transient",
+  "try", "void", "volatile", "while", "true", "false", "null",
+]);
+
+const JAVA_TYPES = new Set([
+  "int", "double", "boolean", "char", "byte", "short", "long", "float",
+  "String", "Integer", "Double", "Boolean", "Character", "Object", "ArrayList",
+  "List", "Math", "System",
+]);
+
+/**
+ * Single-pass scanner that emits colored spans for Java comments, strings,
+ * keywords, types, and numbers. Not a real parser — approximate but robust
+ * enough for the CED snippets we ship.
+ */
+function highlightJava(code: string): ReactNode[] {
+  const out: ReactNode[] = [];
+  let buf = "";
+  let key = 0;
+  const flush = () => {
+    if (buf) {
+      out.push(buf);
+      buf = "";
+    }
+  };
+  const push = (node: ReactNode) => {
+    flush();
+    out.push(node);
+  };
+
+  let i = 0;
+  while (i < code.length) {
+    const c = code[i];
+
+    // line comment
+    if (c === "/" && code[i + 1] === "/") {
+      let end = code.indexOf("\n", i);
+      if (end === -1) end = code.length;
+      push(
+        <span key={`c-${key++}`} className="italic text-zinc-500">
+          {code.slice(i, end)}
+        </span>
+      );
+      i = end;
+      continue;
+    }
+    // block comment
+    if (c === "/" && code[i + 1] === "*") {
+      const end = code.indexOf("*/", i + 2);
+      const stop = end === -1 ? code.length : end + 2;
+      push(
+        <span key={`bc-${key++}`} className="italic text-zinc-500">
+          {code.slice(i, stop)}
+        </span>
+      );
+      i = stop;
+      continue;
+    }
+    // string literal
+    if (c === '"') {
+      let end = i + 1;
+      while (end < code.length && code[end] !== '"') {
+        if (code[end] === "\\" && end + 1 < code.length) end += 2;
+        else end++;
+      }
+      end = Math.min(end + 1, code.length);
+      push(
+        <span key={`s-${key++}`} className="text-emerald-300">
+          {code.slice(i, end)}
+        </span>
+      );
+      i = end;
+      continue;
+    }
+    // char literal
+    if (c === "'") {
+      let end = i + 1;
+      while (end < code.length && code[end] !== "'") {
+        if (code[end] === "\\" && end + 1 < code.length) end += 2;
+        else end++;
+      }
+      end = Math.min(end + 1, code.length);
+      push(
+        <span key={`ch-${key++}`} className="text-emerald-300">
+          {code.slice(i, end)}
+        </span>
+      );
+      i = end;
+      continue;
+    }
+    // identifier / keyword / type
+    if (/[A-Za-z_$]/.test(c)) {
+      let end = i;
+      while (end < code.length && /[A-Za-z0-9_$]/.test(code[end])) end++;
+      const word = code.slice(i, end);
+      if (JAVA_KEYWORDS.has(word)) {
+        push(
+          <span key={`k-${key++}`} className="text-indigo-300">
+            {word}
+          </span>
+        );
+      } else if (JAVA_TYPES.has(word)) {
+        push(
+          <span key={`t-${key++}`} className="text-cyan-300">
+            {word}
+          </span>
+        );
+      } else {
+        buf += word;
+      }
+      i = end;
+      continue;
+    }
+    // number
+    if (/[0-9]/.test(c)) {
+      let end = i;
+      while (end < code.length && /[0-9._A-Fa-fx]/.test(code[end])) end++;
+      push(
+        <span key={`n-${key++}`} className="text-amber-300">
+          {code.slice(i, end)}
+        </span>
+      );
+      i = end;
+      continue;
+    }
+    buf += c;
+    i++;
+  }
+  flush();
   return out;
 }
 

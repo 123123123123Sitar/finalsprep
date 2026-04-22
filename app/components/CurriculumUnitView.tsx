@@ -5,6 +5,7 @@ import type { PlanTier } from "@/lib/plans";
 import { getCedLesson, type CedLesson } from "@/lib/cedLessons";
 import { apCentralLinksFor } from "@/lib/apCentralLinks";
 import MathRender from "./Math";
+import Markdown from "./Markdown";
 
 type Props = {
   unit: CurriculumUnit;
@@ -277,7 +278,7 @@ function LessonBody({ lesson }: { lesson: CedLesson }) {
   return (
     <div className="space-y-6">
       <div className="prose-body text-[15px] leading-relaxed">
-        <MathRender auto>{lesson.lesson}</MathRender>
+        <Markdown>{lesson.lesson}</Markdown>
       </div>
 
       {lesson.diagram && (
@@ -309,10 +310,10 @@ function LessonBody({ lesson }: { lesson: CedLesson }) {
           </div>
           <div className="mt-2 text-[14px] text-body">
             <div className="font-medium text-ink">
-              <MathRender auto>{lesson.workedExample.prompt}</MathRender>
+              <Markdown>{lesson.workedExample.prompt}</Markdown>
             </div>
             <div className="mt-2">
-              <MathRender auto>{lesson.workedExample.solution}</MathRender>
+              <Markdown>{lesson.workedExample.solution}</Markdown>
             </div>
           </div>
         </div>
