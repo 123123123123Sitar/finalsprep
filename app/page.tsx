@@ -7,6 +7,7 @@ import Dashboard from "@/app/components/Dashboard";
 import PageLoader from "@/app/components/PageLoader";
 import ScrollCinema from "@/app/components/ScrollCinema";
 import CedCinema from "@/app/components/CedCinema";
+import VoiceCinema from "@/app/components/VoiceCinema";
 import AuroraBackground from "@/app/components/AuroraBackground";
 import MarketingBackground from "@/app/components/MarketingBackground";
 import { firstApExamDate } from "@/lib/examDates";
@@ -903,6 +904,13 @@ function MarketingHome() {
         </div>
         </Reveal>
       </section>
+
+      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
+
+      {/* Cinematic scroll-synced demo: voice chat → quiz generation
+          Placed after the FAQ (far from the other two cinemas at the top
+          of the page) so the visual tempo varies. */}
+      <VoiceCinema />
 
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
