@@ -7,6 +7,15 @@ type Point = { x: number; y: number };
 type Bbox = { minX: number; minY: number; maxX: number; maxY: number };
 type PendingText = { x: number; y: number; value: string };
 
+// Logical drawing surface. Much larger than the visible modal so the student
+// has room to spread their work out and can zoom out to see more at once.
+const LOGICAL_W = 2400;
+const LOGICAL_H = 1600;
+const ZOOM_MIN = 0.35;
+const ZOOM_MAX = 2.0;
+const ZOOM_STEP = 0.15;
+const HISTORY_LIMIT = 40;
+
 function detectCircle(points: Point[]): Bbox | null {
   if (points.length < 20) return null;
   const first = points[0];
@@ -61,15 +70,17 @@ export default function Whiteboard({
   storageKey?: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const drawingRef = useRef(false);
   const lastRef = useRef<Point | null>(null);
   const strokeRef = useRef<Point[]>([]);
-  const historyRef = useRef<ImageData[]>([]);
+  const historyRef = useRef<string[]>([]);
   const pendingTextRef = useRef<PendingText | null>(null);
+  const initializedRef = useRef(false);
   const [tool, setTool] = useState<Tool>("pen");
   const [color, setColor] = useState<string>("#111");
   const [size, setSize] = useState<number>(2);
+  const [zoom, setZoom] = useState<number>(1);
   const [pos, setPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [circleBbox, setCircleBbox] = useState<Bbox | null>(null);
   const [historyDepth, setHistoryDepth] = useState(0);
@@ -119,6 +130,9 @@ export default function Whiteboard({
     } catch {}
   }
 
+  // Initialise the canvas once when it opens. The logical size is fixed, so
+  // we don't need to re-resize on window resize — the CSS transform handles
+  // display scaling.
   useEffect(() => {
     if (!open) {
       setCircleBbox(null);
@@ -126,55 +140,38 @@ export default function Whiteboard({
       setHistoryDepth(0);
       setPendingText(null);
       pendingTextRef.current = null;
+      initializedRef.current = false;
       return;
     }
     const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container) return;
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(LOGICAL_W * dpr);
+    canvas.height = Math.floor(LOGICAL_H * dpr);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
 
-    let restored = false;
-    const resize = () => {
-      const rect = container.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      const prev = document.createElement("canvas");
-      prev.width = canvas.width;
-      prev.height = canvas.height;
-      const pctx = prev.getContext("2d");
-      if (pctx) pctx.drawImage(canvas, 0, 0);
-
-      canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-      canvas.height = Math.max(1, Math.floor(rect.height * dpr));
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      ctx.scale(dpr, dpr);
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      if (prev.width && prev.height) {
-        ctx.drawImage(prev, 0, 0, prev.width / dpr, prev.height / dpr);
-      } else if (!restored && storageKey) {
-        const raw = window.localStorage.getItem(storageKey);
-        if (raw) {
-          const img = new Image();
-          img.onload = () => {
-            const c = canvasRef.current;
-            if (!c) return;
-            const cctx = c.getContext("2d");
-            if (!cctx) return;
-            cctx.save();
-            cctx.setTransform(1, 0, 0, 1, 0, 0);
-            cctx.drawImage(img, 0, 0, c.width, c.height);
-            cctx.restore();
-          };
-          img.src = raw;
-        }
-        restored = true;
+    if (!initializedRef.current && storageKey) {
+      const raw = window.localStorage.getItem(storageKey);
+      if (raw) {
+        const img = new Image();
+        img.onload = () => {
+          const c = canvasRef.current;
+          if (!c) return;
+          const cctx = c.getContext("2d");
+          if (!cctx) return;
+          cctx.save();
+          cctx.setTransform(1, 0, 0, 1, 0, 0);
+          cctx.drawImage(img, 0, 0, c.width, c.height);
+          cctx.restore();
+        };
+        img.src = raw;
       }
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
+      initializedRef.current = true;
+    }
   }, [open, storageKey]);
 
   useEffect(() => {
@@ -191,21 +188,24 @@ export default function Whiteboard({
 
   if (!open) return null;
 
-  function getPos(e: React.PointerEvent<HTMLCanvasElement>) {
+  function getPos(e: React.PointerEvent<HTMLCanvasElement>): Point {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
-    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    // rect.width/height are after CSS scale, so dividing maps back into the
+    // logical 0..LOGICAL_W / 0..LOGICAL_H coordinate system.
+    return {
+      x: ((e.clientX - rect.left) / rect.width) * LOGICAL_W,
+      y: ((e.clientY - rect.top) / rect.height) * LOGICAL_H,
+    };
   }
 
   function pushHistory() {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
     try {
-      const snap = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const snap = canvas.toDataURL("image/png");
       historyRef.current.push(snap);
-      if (historyRef.current.length > 50) historyRef.current.shift();
+      if (historyRef.current.length > HISTORY_LIMIT) historyRef.current.shift();
       setHistoryDepth(historyRef.current.length);
     } catch {}
   }
@@ -219,14 +219,26 @@ export default function Whiteboard({
     setHistoryDepth(historyRef.current.length);
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    if (prev) {
-      ctx.putImageData(prev, 0, 0);
-    } else {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
+    if (prev) {
+      const img = new Image();
+      img.onload = () => {
+        const c = canvasRef.current;
+        if (!c) return;
+        const cctx = c.getContext("2d");
+        if (!cctx) return;
+        cctx.save();
+        cctx.setTransform(1, 0, 0, 1, 0, 0);
+        cctx.drawImage(img, 0, 0, c.width, c.height);
+        cctx.restore();
+        saveDrawing();
+      };
+      img.src = prev;
+    } else {
+      saveDrawing();
+    }
     setCircleBbox(null);
-    saveDrawing();
   }
 
   function commitPendingText() {
@@ -339,6 +351,47 @@ export default function Whiteboard({
     await onSubmitAnswer(img);
   }
 
+  function setZoomAround(nextZoom: number) {
+    const clamped = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, nextZoom));
+    const scroller = scrollRef.current;
+    if (!scroller) {
+      setZoom(clamped);
+      return;
+    }
+    // Keep the view's center point stable across zoom changes.
+    const prevZoom = zoom;
+    const rect = scroller.getBoundingClientRect();
+    const centerX = scroller.scrollLeft + rect.width / 2;
+    const centerY = scroller.scrollTop + rect.height / 2;
+    const factor = clamped / prevZoom;
+    setZoom(clamped);
+    requestAnimationFrame(() => {
+      if (!scroller) return;
+      scroller.scrollLeft = centerX * factor - rect.width / 2;
+      scroller.scrollTop = centerY * factor - rect.height / 2;
+    });
+  }
+
+  function zoomIn() {
+    setZoomAround(zoom + ZOOM_STEP);
+  }
+
+  function zoomOut() {
+    setZoomAround(zoom - ZOOM_STEP);
+  }
+
+  function fitToView() {
+    const scroller = scrollRef.current;
+    if (!scroller) return;
+    const rect = scroller.getBoundingClientRect();
+    const fit = Math.min(rect.width / LOGICAL_W, rect.height / LOGICAL_H);
+    setZoomAround(fit);
+  }
+
+  function resetZoom() {
+    setZoomAround(1);
+  }
+
   const colors = ["#111", "#e11d48", "#2563eb", "#059669", "#d97706"];
 
   return (
@@ -347,12 +400,12 @@ export default function Whiteboard({
       onClick={handleClose}
     >
       <div
-        className="flex h-[80vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-hair bg-paper shadow-xl"
+        className="flex h-[85vh] w-full max-w-6xl flex-col overflow-hidden rounded-lg border border-hair bg-paper shadow-xl"
         style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="flex cursor-move items-center justify-between border-b border-hair px-4 py-2 select-none"
+          className="flex cursor-move flex-wrap items-center justify-between gap-2 border-b border-hair px-4 py-2 select-none"
           onPointerDown={onHeaderPointerDown}
           onPointerMove={onHeaderPointerMove}
           onPointerUp={onHeaderPointerUp}
@@ -366,7 +419,7 @@ export default function Whiteboard({
               Whiteboard{title ? ` · ${title}` : ""}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-1 rounded-md border border-hair bg-offwhite p-0.5">
               <button
                 type="button"
@@ -426,6 +479,42 @@ export default function Whiteboard({
                 className="w-20"
               />
             </label>
+            <div className="flex items-center gap-1 rounded-md border border-hair bg-offwhite p-0.5">
+              <button
+                type="button"
+                onClick={zoomOut}
+                disabled={zoom <= ZOOM_MIN + 0.001}
+                className="rounded px-2 py-1 text-xs text-ink disabled:opacity-40"
+                title="Zoom out for more room to write"
+              >
+                −
+              </button>
+              <button
+                type="button"
+                onClick={resetZoom}
+                className="rounded px-2 py-1 text-xs text-ink"
+                title="Reset zoom to 100%"
+              >
+                {Math.round(zoom * 100)}%
+              </button>
+              <button
+                type="button"
+                onClick={zoomIn}
+                disabled={zoom >= ZOOM_MAX - 0.001}
+                className="rounded px-2 py-1 text-xs text-ink disabled:opacity-40"
+                title="Zoom in"
+              >
+                +
+              </button>
+              <button
+                type="button"
+                onClick={fitToView}
+                className="rounded px-2 py-1 text-[11px] text-muted hover:text-ink"
+                title="Fit entire canvas in view"
+              >
+                Fit
+              </button>
+            </div>
             <button
               type="button"
               onClick={undo}
@@ -461,73 +550,98 @@ export default function Whiteboard({
             </div>
           </div>
         )}
-        <div ref={containerRef} className="relative flex-1 bg-white">
-          <canvas
-            ref={canvasRef}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerLeave={onPointerUp}
-            className="absolute inset-0 h-full w-full touch-none"
+        <div
+          ref={scrollRef}
+          className="relative flex-1 overflow-auto bg-neutral-100"
+        >
+          <div
+            className="relative bg-white shadow-sm"
             style={{
-              cursor:
-                tool === "eraser"
-                  ? "cell"
-                  : tool === "text"
-                  ? "text"
-                  : "crosshair",
+              width: LOGICAL_W * zoom,
+              height: LOGICAL_H * zoom,
             }}
-          />
-          {pendingText && (
-            <input
-              autoFocus
-              value={pendingText.value}
-              onChange={(e) => {
-                const next = { ...pendingText, value: e.target.value };
-                pendingTextRef.current = next;
-                setPendingText(next);
-              }}
-              onBlur={commitPendingText}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  commitPendingText();
-                } else if (e.key === "Escape") {
-                  pendingTextRef.current = null;
-                  setPendingText(null);
-                }
-              }}
-              placeholder="Type…"
+          >
+            <canvas
+              ref={canvasRef}
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerLeave={onPointerUp}
+              className="absolute left-0 top-0 touch-none"
               style={{
-                position: "absolute",
-                left: Math.max(0, pendingText.x - 4),
-                top: Math.max(0, pendingText.y - (18 + size * 3)),
-                font: `${14 + size * 3}px Georgia, "Times New Roman", serif`,
-                color,
-                background: "rgba(255,255,255,0.9)",
-                border: "1px dashed #9ca3af",
-                padding: "2px 4px",
-                outline: "none",
-                minWidth: 80,
+                width: LOGICAL_W * zoom,
+                height: LOGICAL_H * zoom,
+                cursor:
+                  tool === "eraser"
+                    ? "cell"
+                    : tool === "text"
+                    ? "text"
+                    : "crosshair",
               }}
             />
-          )}
+            {pendingText && (
+              <input
+                autoFocus
+                value={pendingText.value}
+                onChange={(e) => {
+                  const next = { ...pendingText, value: e.target.value };
+                  pendingTextRef.current = next;
+                  setPendingText(next);
+                }}
+                onBlur={commitPendingText}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitPendingText();
+                  } else if (e.key === "Escape") {
+                    pendingTextRef.current = null;
+                    setPendingText(null);
+                  }
+                }}
+                placeholder="Type…"
+                style={{
+                  position: "absolute",
+                  left: Math.max(0, pendingText.x * zoom - 4),
+                  top: Math.max(
+                    0,
+                    pendingText.y * zoom - (18 + size * 3) * zoom
+                  ),
+                  font: `${(14 + size * 3) * zoom}px Georgia, "Times New Roman", serif`,
+                  color,
+                  background: "rgba(255,255,255,0.9)",
+                  border: "1px dashed #9ca3af",
+                  padding: "2px 4px",
+                  outline: "none",
+                  minWidth: 80,
+                }}
+              />
+            )}
+          </div>
           {circleBbox && canSubmit && onSubmitAnswer && (
             <button
               type="button"
               onClick={handleSubmit}
               disabled={submitting}
-              className="absolute bottom-4 right-4 rounded-md border border-purple-600 bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-lg hover:opacity-90 disabled:opacity-60"
+              className="sticky bottom-4 right-4 ml-auto mr-4 mt-[-48px] block rounded-md border border-purple-600 bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-lg hover:opacity-90 disabled:opacity-60"
               title="OCR your circled answer and grade it"
             >
               {submitting ? "Submitting…" : "✨ Submit circled answer"}
             </button>
           )}
           {circleBbox && !canSubmit && (
-            <div className="pointer-events-none absolute bottom-4 right-4 rounded-md border border-hair bg-paper/90 px-3 py-1.5 text-[11px] text-muted shadow">
+            <div className="pointer-events-none sticky bottom-4 right-4 ml-auto mr-4 mt-[-40px] block w-max rounded-md border border-hair bg-paper/90 px-3 py-1.5 text-[11px] text-muted shadow">
               Circle detected · Hacker plan required to OCR-grade
             </div>
           )}
+        </div>
+        <div className="flex items-center justify-between border-t border-hair bg-offwhite px-4 py-1.5 text-[11px] text-muted">
+          <span>
+            Canvas: {LOGICAL_W} × {LOGICAL_H} px · zoom out to spread out your
+            work, or scroll to pan.
+          </span>
+          <span>
+            {Math.round(zoom * 100)}% zoom
+          </span>
         </div>
       </div>
     </div>

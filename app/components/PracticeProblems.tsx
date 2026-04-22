@@ -472,7 +472,6 @@ export function ProblemCard({
 }) {
   const [attempt, setAttempt] = useState("");
   const [submitted, setSubmitted] = useState(!!alreadySubmitted);
-  const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(!!alreadySubmitted);
   const [showExplain, setShowExplain] = useState(!!alreadySubmitted);
   const [saved, setSaved] = useState(false);
@@ -482,6 +481,20 @@ export function ProblemCard({
   const [grade, setGrade] = useState<GradeResult | null>(null);
   const [gradeError, setGradeError] = useState<string>("");
   const attemptRef = useRef<HTMLTextAreaElement>(null);
+
+  // Progressive AI hints: each click on "Hint" fetches the next single step.
+  const [hints, setHints] = useState<string[]>([]);
+  const [hintLoading, setHintLoading] = useState(false);
+  const [hintError, setHintError] = useState("");
+  const [hintLimitReached, setHintLimitReached] = useState(false);
+
+  // Post-wrong "Ask AI what I did wrong" chat.
+  type AskTurn = { role: "user" | "assistant"; content: string };
+  const [askOpen, setAskOpen] = useState(false);
+  const [askHistory, setAskHistory] = useState<AskTurn[]>([]);
+  const [askInput, setAskInput] = useState("");
+  const [askLoading, setAskLoading] = useState(false);
+  const [askError, setAskError] = useState("");
 
   function insertSymbol(text: string, caretOffset?: number) {
     const ta = attemptRef.current;
@@ -577,6 +590,95 @@ export function ProblemCard({
 
   async function handleWhiteboardSubmit(imageBase64: string) {
     await runGrade({ imageBase64 });
+  }
+
+  async function requestHint() {
+    if (hintLoading || hintLimitReached) return;
+    setHintLoading(true);
+    setHintError("");
+    try {
+      const token = await getIdToken();
+      const res = await fetch("/api/hint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          problem: problem.prompt,
+          answer: problem.answer,
+          explanation: problem.explanation,
+          attempt,
+          hintIndex: hints.length,
+          previousHints: hints,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 429 && /limit/i.test(data?.error || "")) {
+          setHintLimitReached(true);
+        }
+        setHintError(data?.message || data?.error || "Couldn't fetch a hint.");
+        return;
+      }
+      const nextHint = typeof data.hint === "string" ? data.hint.trim() : "";
+      if (!nextHint) {
+        setHintError("No hint returned.");
+        return;
+      }
+      setHints((prev) => [...prev, nextHint]);
+      if (typeof data.hintsRemaining === "number" && data.hintsRemaining <= 0) {
+        setHintLimitReached(true);
+      }
+    } catch (e: any) {
+      setHintError(e?.message || "Network error.");
+    } finally {
+      setHintLoading(false);
+    }
+  }
+
+  async function askFollowUp() {
+    const q = askInput.trim();
+    if (!q || askLoading) return;
+    setAskLoading(true);
+    setAskError("");
+    const history = askHistory;
+    const nextHistory: AskTurn[] = [...history, { role: "user", content: q }];
+    setAskHistory(nextHistory);
+    setAskInput("");
+    try {
+      const token = await getIdToken();
+      const res = await fetch("/api/ask-wrong", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          problem: problem.prompt,
+          attempt,
+          answer: problem.answer,
+          explanation: problem.explanation,
+          question: q,
+          history,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setAskError(data?.message || data?.error || "Couldn't ask the tutor.");
+        return;
+      }
+      const reply = typeof data.reply === "string" ? data.reply.trim() : "";
+      if (!reply) {
+        setAskError("No reply returned.");
+        return;
+      }
+      setAskHistory((prev) => [...prev, { role: "assistant", content: reply }]);
+    } catch (e: any) {
+      setAskError(e?.message || "Network error.");
+    } finally {
+      setAskLoading(false);
+    }
   }
 
   const isCorrect =
@@ -733,14 +835,20 @@ export function ProblemCard({
             {grading ? "Grading…" : "✨ AI grade (tokens)"}
           </button>
         )}
-        {problem.hint && (
-          <button
-            onClick={() => setShowHint((x) => !x)}
-            className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-ink hover:border-orange"
-          >
-            {showHint ? "Hide hint" : "Hint"}
-          </button>
-        )}
+        <button
+          onClick={requestHint}
+          disabled={hintLoading || hintLimitReached}
+          title="Each hint gives one next step — not the full answer"
+          className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-ink hover:border-orange disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {hintLoading
+            ? "Thinking…"
+            : hintLimitReached
+            ? "No more hints"
+            : hints.length === 0
+            ? "Hint"
+            : `Next hint (${hints.length})`}
+        </button>
         {submitted && (
           <>
             <button
@@ -835,10 +943,106 @@ export function ProblemCard({
         </div>
       )}
 
-      {showHint && problem.hint && (
-        <div className="mt-3 rounded-md border border-orange/30 bg-orange-tint p-3 text-[13px] text-orange-ink">
-          <strong className="font-semibold">Hint: </strong>
-          <MathRender auto>{problem.hint}</MathRender>
+      {hints.length > 0 && (
+        <div className="mt-3 space-y-2">
+          {hints.map((h, i) => (
+            <div
+              key={i}
+              className="rounded-md border border-orange/30 bg-orange-tint p-3 text-[13px] text-orange-ink"
+            >
+              <strong className="font-semibold">Hint {i + 1}: </strong>
+              <MathRender auto>{h}</MathRender>
+            </div>
+          ))}
+          {hintLimitReached && (
+            <div className="text-[11px] text-muted">
+              You've used every hint for this problem.
+            </div>
+          )}
+        </div>
+      )}
+      {hintError && (
+        <div className="mt-3 rounded-md border border-red-300 bg-red-50 p-3 text-[12px] text-red-800">
+          {hintError}
+        </div>
+      )}
+
+      {submitted && !isCorrect && (grade ? grade.verdict !== "correct" : true) && (
+        <div className="mt-3 rounded-md border border-hair bg-offwhite p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+              Ask the tutor what you did wrong
+            </div>
+            <button
+              type="button"
+              onClick={() => setAskOpen((x) => !x)}
+              className="rounded-md border border-hair bg-paper px-2 py-0.5 text-[11px] text-ink hover:border-orange"
+            >
+              {askOpen ? "Hide" : askHistory.length ? "Show chat" : "Open chat"}
+            </button>
+          </div>
+          {askOpen && (
+            <div className="mt-3 space-y-3">
+              {askHistory.length > 0 && (
+                <div className="space-y-2">
+                  {askHistory.map((t, i) => (
+                    <div
+                      key={i}
+                      className={`rounded-md px-3 py-2 text-[13px] ${
+                        t.role === "user"
+                          ? "bg-paper text-ink"
+                          : "border border-orange/30 bg-orange-tint/60 text-orange-ink"
+                      }`}
+                    >
+                      <div className="mb-0.5 text-[10px] font-semibold uppercase tracking-wider opacity-70">
+                        {t.role === "user" ? "You" : "Tutor"}
+                      </div>
+                      <div className="whitespace-pre-wrap">
+                        <MathRender auto>{t.content}</MathRender>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex flex-col gap-2">
+                <textarea
+                  value={askInput}
+                  onChange={(e) => setAskInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+                      e.preventDefault();
+                      askFollowUp();
+                    }
+                  }}
+                  placeholder={
+                    askHistory.length === 0
+                      ? "e.g. Why is my approach wrong? Where did I slip up?"
+                      : "Follow up…"
+                  }
+                  rows={2}
+                  className="w-full resize-y rounded-md border border-hair bg-paper px-3 py-2 text-[13px] text-ink focus:border-orange focus:outline-none"
+                />
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] text-muted">
+                    Cmd/Ctrl + Enter to send
+                  </span>
+                  <button
+                    type="button"
+                    onClick={askFollowUp}
+                    disabled={!askInput.trim() || askLoading}
+                    className="rounded-md border border-orange bg-orange px-3 py-1 text-xs font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {askLoading ? "Asking…" : "Ask"}
+                  </button>
+                </div>
+                {askError && (
+                  <div className="rounded-md border border-red-300 bg-red-50 p-2 text-[12px] text-red-800">
+                    {askError}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
       {showAnswer && (

@@ -142,10 +142,10 @@ function UnlockedUnitView({
           memorize the{" "}
           {unit.essentials[0]?.heading.toLowerCase() || "core idea"} and
           understand why each common mistake above is a trap. Graders see the
-          same wrong answer on thousands of exams:{" "}
-          {unit.commonMistakes[0] || "watch the signs"} is the #1 one. When you
-          hit practice problems, do the hard one first; if you can do it, the
-          easy ones are free.
+          same wrong answer on thousands of exams — the most common one:{" "}
+          {unit.commonMistakes[0] || "watch the signs"}. When you hit practice
+          problems, do the hard one first; if you can do it, the easy ones are
+          free.
         </p>
       </div>
 
