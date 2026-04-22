@@ -22,20 +22,61 @@ import {
 } from "@/lib/insights";
 import PageLoader from "@/app/components/PageLoader";
 
+type LiveUsage = {
+  tokensRemaining: number;
+  tokensCap: number;
+  bonusBalance: number;
+};
+
 export default function InsightsPage() {
-  const { user, loading, plan, planLoading, streak } = useAuth();
+  const { user, loading, plan, planLoading, streak, getIdToken } = useAuth();
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [wrongBank, setWrongBank] = useState<WrongBankEntry[]>([]);
   const [examResults, setExamResults] = useState<ExamResult[]>([]);
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [completedSlugs, setCompletedSlugs] = useState<Set<string>>(new Set());
   const [loaded, setLoaded] = useState(false);
+  // Canonical "right now" token state, fetched from /api/usage so this page
+  // shows the SAME numbers as the dashboard tile and the chat header pill.
+  const [liveUsage, setLiveUsage] = useState<LiveUsage | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
       window.location.href = "/signin?next=/insights";
     }
   }, [loading, user]);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    const fetchUsage = async () => {
+      try {
+        const token = await getIdToken();
+        const res = await fetch("/api/usage", {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled) {
+          setLiveUsage({
+            tokensRemaining: Number(data.tokensRemaining) || 0,
+            tokensCap: Number(data.tokensCap) || 0,
+            bonusBalance: Number(data.bonusBalance) || 0,
+          });
+        }
+      } catch {}
+    };
+    fetchUsage();
+    const id = setInterval(fetchUsage, 20_000);
+    const onFocus = () => fetchUsage();
+    window.addEventListener("focus", onFocus);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [user, getIdToken]);
 
   useEffect(() => {
     if (!user) return;
@@ -152,11 +193,40 @@ export default function InsightsPage() {
           How you've been studying.
         </h1>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {/* Canonical "right now" token state — matches the dashboard tile and
+            the chat header pill. The 7-day numbers below are historical. */}
+        <div className="mt-8 rounded-xl border border-hair bg-paper p-5">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <div className="label">Daily tokens</div>
+              <div className="mt-1 flex items-baseline gap-1.5">
+                <span className="font-serif text-3xl font-normal text-ink">
+                  {liveUsage
+                    ? liveUsage.tokensRemaining.toLocaleString()
+                    : "…"}
+                </span>
+                <span className="text-xs text-muted">
+                  / {liveUsage ? liveUsage.tokensCap.toLocaleString() : "…"} remaining today
+                </span>
+              </div>
+            </div>
+            <div className="border-t border-hair pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
+              <div className="label">Bonus tokens</div>
+              <div className="mt-1 flex items-baseline gap-1.5">
+                <span className="font-serif text-3xl font-normal text-ink">
+                  {liveUsage ? liveUsage.bonusBalance.toLocaleString() : "…"}
+                </span>
+                <span className="text-xs text-muted">never expire</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat label="Current streak" value={streak?.current ?? 0} suffix="days" />
           <Stat label="Longest streak" value={streak?.longest ?? 0} suffix="days" />
-          <Stat label="Chats, 7d" value={chats7} />
-          <Stat label="Tokens, 7d" value={tokens7.toLocaleString()} />
+          <Stat label="Chats (last 7d)" value={chats7} />
+          <Stat label="Tokens used (7d)" value={tokens7.toLocaleString()} />
         </div>
 
         {actions.length > 0 && (
