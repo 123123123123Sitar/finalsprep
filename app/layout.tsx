@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/app/components/AuthProvider";
 import { ThemeProvider } from "@/app/components/ThemeProvider";
 import { BookModeProvider } from "@/app/components/BookMode";
+import StudyTimeBanner from "@/app/components/StudyTimeBanner";
 
 // Runs before React hydrates so we don't flash the wrong theme or a
 // full SiteNav on pages that are embedded in a chat-extension overlay
@@ -50,7 +51,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen bg-paper text-body antialiased">
         <AuthProvider>
           <ThemeProvider>
-            <BookModeProvider>{children}</BookModeProvider>
+            <BookModeProvider>
+              <StudyTimeBanner />
+              {children}
+            </BookModeProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>

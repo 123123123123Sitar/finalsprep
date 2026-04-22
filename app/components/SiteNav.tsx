@@ -11,10 +11,11 @@ import { subscribeBookmarks, type Bookmark } from "@/lib/bookmarks";
 type NavLinkDef = { href: string; label: string };
 
 // Primary destinations shown inline on ≥md, and inside the hamburger on mobile.
-// Keep this list short — four links is the ceiling before the bar feels noisy.
+// Keep this list short — five links is the ceiling before the bar feels noisy.
 const PRIMARY_LINKS: NavLinkDef[] = [
   { href: "/study", label: "Study" },
   { href: "/chat", label: "Chat" },
+  { href: "/practice", label: "Practice" },
   { href: "/insights", label: "Insights" },
   { href: "/review", label: "Review" },
 ];

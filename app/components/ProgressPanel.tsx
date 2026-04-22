@@ -1,42 +1,19 @@
 "use client";
 import { useMemo } from "react";
 import Link from "next/link";
-import { COURSES, LESSONS } from "@/lib/topics";
 
 type HistoryEntry = { kind: string; tokens?: number; createdAt?: number };
 
 export default function ProgressPanel({
-  selectedCourses,
-  completedSlugs,
   aiHistory,
   wrongCount,
 }: {
-  selectedCourses: string[];
-  completedSlugs: Set<string>;
   aiHistory: HistoryEntry[];
   wrongCount: number;
 }) {
-  // Course progress bars
-  const courseProgress = useMemo(() => {
-    return selectedCourses
-      .map((slug) => {
-        const course = COURSES.find((c) => c.slug === slug);
-        if (!course) return null;
-        const courseLessons = LESSONS.filter((l) =>
-          l.courses.some((m) => m.courseSlug === slug)
-        );
-        const completed = courseLessons.filter((l) =>
-          completedSlugs.has(l.slug)
-        ).length;
-        return {
-          slug,
-          title: course.shortTitle,
-          completed,
-          total: courseLessons.length,
-        };
-      })
-      .filter(Boolean);
-  }, [selectedCourses, completedSlugs]);
+  // Per-course progress bars now live on the course cards (same global
+  // formula via getCourseProgress) — this panel keeps the cross-cutting
+  // signals: weekly activity and the wrong-bank summary.
 
   // 7-day activity chart
   const last7days = useMemo(() => {
@@ -66,37 +43,6 @@ export default function ProgressPanel({
       <h2 className="text-lg font-semibold text-ink mb-6">Your progress</h2>
 
       <div className="grid gap-8">
-        {/* Course progress bars */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium text-muted uppercase tracking-wider">
-            Lessons
-          </h3>
-          {courseProgress.length > 0 ? (
-            <div className="space-y-3">
-              {courseProgress.map((course) => (
-                <div key={course.slug}>
-                  <div className="flex items-center justify-between text-sm mb-1">
-                    <span className="text-ink font-medium">{course.title}</span>
-                    <span className="text-xs text-muted">
-                      {course.completed}/{course.total}
-                    </span>
-                  </div>
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-hair">
-                    <div
-                      className="h-full transition-all bg-orange"
-                      style={{
-                        width: `${(course.completed / course.total) * 100}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-xs text-muted">No courses selected yet</div>
-          )}
-        </div>
-
         {/* 7-day activity chart */}
         <div className="space-y-4">
           <h3 className="text-sm font-medium text-muted uppercase tracking-wider">

@@ -13,6 +13,7 @@ import {
   type CourseSlug,
   type Lesson,
 } from "@/lib/topics";
+import { getCourseProgress } from "@/lib/courseProgress";
 import { subscribeSelectedCourses } from "@/lib/selectedCourses";
 import { examCountdownLabel } from "@/lib/examDates";
 import { subscribeCompletedSlugs } from "@/lib/progress";
@@ -42,7 +43,6 @@ const QUICK_ACTIONS: QuickAction[] = [
     blurb: "Pick up where you left off or start a new conversation.",
     emphasis: true,
   },
-  { href: "/study", title: "Study", blurb: "Curated walkthroughs by subject." },
   { href: "/review", title: "Review", blurb: "Your saved problems and notes." },
   { href: "/insights", title: "Insights", blurb: "Progress, streaks, and weak spots." },
   { href: "/schedule", title: "Schedule", blurb: "Plan the week ahead." },
@@ -272,35 +272,16 @@ export default function Dashboard() {
   );
   const coursesLoading = selectedCourses === null;
 
+  // Today's schedule strip below; the global StudyTimeBanner (in app/layout)
+  // handles the "you're in a block right now" callout.
   const nowDate = new Date();
   const todayWd = nowDate.getDay();
   const nowMin = nowDate.getHours() * 60 + nowDate.getMinutes();
   const todayBlocks = schedule ? blocksOnDay(schedule.blocks, todayWd) : [];
-  const activeBlock = todayBlocks.find(
-    (b) => nowMin >= Number(b.startMin) && nowMin < Number(b.endMin)
-  ) ?? null;
 
   return (
     <main className="bg-paper text-body">
       <SiteNav sticky />
-
-      {activeBlock && (
-        <div className="bg-orange px-6 py-3 text-paper">
-          <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold uppercase tracking-wider opacity-80">
-                Study time
-              </span>
-              <span className="font-serif text-lg font-normal">
-                {activeBlock.subject}
-              </span>
-            </div>
-            <div className="shrink-0 text-sm opacity-80">
-              {fmtTime(activeBlock.startMin)} – {fmtTime(activeBlock.endMin)}
-            </div>
-          </div>
-        </div>
-      )}
 
       <section className="mx-auto max-w-5xl px-6 pt-12 pb-6">
         <div className="label mb-3">Dashboard</div>
@@ -434,12 +415,7 @@ export default function Dashboard() {
       </section>
 
       <div className="mx-auto max-w-5xl px-6">
-        <ProgressPanel
-          selectedCourses={selectedCourses ?? []}
-          completedSlugs={completedSlugs}
-          aiHistory={aiHistory}
-          wrongCount={wrongCount}
-        />
+        <ProgressPanel aiHistory={aiHistory} wrongCount={wrongCount} />
       </div>
 
       <section className="mx-auto max-w-5xl px-6 py-8">
@@ -571,12 +547,13 @@ function CourseCard({
       ),
     [course.slug]
   );
-  const total = courseLessons.length;
-  const done = courseLessons.reduce(
-    (n, l) => (completedSlugs.has(l.slug) ? n + 1 : n),
-    0
+  // Single source of truth — same formula used wherever course progress is
+  // shown (sublessons completed + practice problems correct).
+  const progress = useMemo(
+    () => getCourseProgress(course, completedSlugs),
+    [course, completedSlugs]
   );
-  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const { done, total, pct } = progress;
   const nextLesson = courseLessons.find((l) => !completedSlugs.has(l.slug));
   const resumeLesson = nextLesson ?? courseLessons[courseLessons.length - 1];
   const countdown = examCountdownLabel(course.slug as CourseSlug);
@@ -608,7 +585,7 @@ function CourseCard({
           <span>
             {total === 0
               ? "No lessons yet"
-              : `${done}/${total} lessons`}
+              : `${done}/${total} sublessons + practice`}
           </span>
           <span className="font-medium text-ink">{pct}%</span>
         </div>
