@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PracticeProblems from "@/app/components/PracticeProblems";
 import SiteNav from "@/app/components/SiteNav";
@@ -8,6 +8,14 @@ import { useAuth } from "@/app/components/AuthProvider";
 import type { PracticeProblem } from "@/lib/practice/types";
 
 export default function GeneratedPracticePage() {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <GeneratedPracticeInner />
+    </Suspense>
+  );
+}
+
+function GeneratedPracticeInner() {
   const router = useRouter();
   const params = useSearchParams();
   const { user, getIdToken, loading: authLoading } = useAuth();

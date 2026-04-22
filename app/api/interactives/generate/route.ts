@@ -2,14 +2,13 @@ import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getAuthedUser } from "@/lib/authGuard";
-import { isAdminConfigured } from "@/lib/firebaseAdmin";
+import { getAdminDb, isAdminConfigured } from "@/lib/firebaseAdmin";
 import { getPlan } from "@/lib/userPlan";
 import { logEvent } from "@/lib/events";
 import { aiCost } from "@/lib/aiCost";
 import { estimateTokens } from "@/lib/rateLimit";
 import { spendTokens } from "@/lib/spend";
-import { getFirebaseAdmin } from "@/lib/firebaseAdmin";
-import { serverTimestamp } from "firebase-admin/firestore";
+import { FieldValue } from "firebase-admin/firestore";
 
 export const runtime = "nodejs";
 
@@ -214,13 +213,18 @@ export async function POST(req: Request) {
   // Save to Firestore for history
   if (user?.uid) {
     try {
-      const admin = getFirebaseAdmin();
-      const db = admin.firestore();
-      await db.collection("users").doc(user.uid).collection("interactives").add({
-        prompt,
-        spec,
-        createdAt: serverTimestamp(),
-      });
+      const db = getAdminDb();
+      if (db) {
+        await db
+          .collection("users")
+          .doc(user.uid)
+          .collection("interactives")
+          .add({
+            prompt,
+            spec,
+            createdAt: FieldValue.serverTimestamp(),
+          });
+      }
     } catch (e) {
       // Silently fail — spec has been generated and returned, storage is bonus
       console.error("Failed to save interactive to Firestore:", e);

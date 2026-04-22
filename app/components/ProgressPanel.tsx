@@ -35,7 +35,7 @@ export default function ProgressPanel({
           total: courseLessons.length,
         };
       })
-      .filter(Boolean);
+      .filter((c): c is NonNullable<typeof c> => c !== null);
   }, [selectedCourses, completedSlugs]);
 
   // 7-day activity chart

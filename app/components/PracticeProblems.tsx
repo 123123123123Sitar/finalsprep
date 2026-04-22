@@ -663,7 +663,7 @@ function ProblemCard({
             onClick={() => {
               setSubmitted(true);
               setShowAnswer(true);
-              onSubmitted?.();
+              onSubmitted?.(false);
             }}
             className="rounded-md border border-hair bg-offwhite px-3 py-1 text-xs text-muted hover:border-orange"
             title="Give up and reveal the answer"
