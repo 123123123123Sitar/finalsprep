@@ -1,3 +1,15 @@
+import { AP_PHYSICS_C_EM_LESSONS } from "@/lib/lessons/ap-physics-c-em";
+import { AP_PHYSICS_C_MECH_LESSONS } from "@/lib/lessons/ap-physics-c-mech";
+import { AP_STATISTICS_LESSONS } from "@/lib/lessons/ap-statistics";
+import { AP_BIOLOGY_LESSONS } from "@/lib/lessons/ap-biology";
+import { AP_CHEMISTRY_LESSONS } from "@/lib/lessons/ap-chemistry";
+import { AP_ENVIRONMENTAL_LESSONS } from "@/lib/lessons/ap-environmental";
+import { AP_CS_A_LESSONS } from "@/lib/lessons/ap-cs-a";
+import { AP_CS_PRINCIPLES_LESSONS } from "@/lib/lessons/ap-cs-principles";
+import { AP_US_HISTORY_LESSONS } from "@/lib/lessons/ap-us-history";
+import { AP_WORLD_HISTORY_LESSONS } from "@/lib/lessons/ap-world-history";
+import { AP_EURO_HISTORY_LESSONS } from "@/lib/lessons/ap-euro-history";
+
 export type Flashcard = { q: string; a: string };
 export type LinkRef = { title: string; url: string; source: string };
 
@@ -749,6 +761,24 @@ export const LESSONS: Lesson[] = [
     ],
     diagram: D_STANDING_WAVE,
   },
+  // ----- per-CED-topic lessons (one entry per CED topic for previously
+  // uncovered courses). The five "showcase" lessons above remain for the
+  // courses that have always had them (precalc, calc-AB, calc-BC,
+  // physics-1, physics-2); the lessons appended below cover Statistics,
+  // Physics C Mech/E&M, Biology, Chemistry, APES, CS A, CSP, APUSH,
+  // World History, and European History so the Flashcards / Lesson tabs
+  // surface for every CED topic across every AP. -----
+  ...AP_PHYSICS_C_EM_LESSONS,
+  ...AP_PHYSICS_C_MECH_LESSONS,
+  ...AP_STATISTICS_LESSONS,
+  ...AP_BIOLOGY_LESSONS,
+  ...AP_CHEMISTRY_LESSONS,
+  ...AP_ENVIRONMENTAL_LESSONS,
+  ...AP_CS_A_LESSONS,
+  ...AP_CS_PRINCIPLES_LESSONS,
+  ...AP_US_HISTORY_LESSONS,
+  ...AP_WORLD_HISTORY_LESSONS,
+  ...AP_EURO_HISTORY_LESSONS,
 ];
 
 // Back-compat alias so any old import (TOPICS) still works.
