@@ -275,7 +275,7 @@ export function computeNextActions(params: {
         actions.push({
           label: `Review ${due} due card${due === 1 ? "" : "s"}`,
           description: "Spaced repetition picks what you're closest to forgetting.",
-          href: "/review",
+          href: "/insights?tab=review",
           priority: due > 10 ? 100 : 80,
         });
       }
@@ -289,7 +289,7 @@ export function computeNextActions(params: {
         params.wrongBankCount === 1 ? "" : "s"
       }`,
       description: "Re-attempt problems you got wrong.",
-      href: "/review",
+      href: "/insights?tab=review",
       priority: 70,
     });
   }

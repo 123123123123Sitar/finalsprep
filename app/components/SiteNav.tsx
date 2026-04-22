@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { doc, onSnapshot } from "firebase/firestore";
 import Logo from "@/app/components/Logo";
 import { useAuth } from "@/app/components/AuthProvider";
-import { useTheme, THEMES, type Theme } from "@/app/components/ThemeProvider";
+import NotificationsBell from "@/app/components/NotificationsBell";
 import { getDb } from "@/lib/firebase";
 import { subscribeBookmarks, type Bookmark } from "@/lib/bookmarks";
 
@@ -17,12 +17,13 @@ const PRIMARY_LINKS: NavLinkDef[] = [
   { href: "/chat", label: "Chat" },
   { href: "/practice", label: "Practice" },
   { href: "/insights", label: "Insights" },
-  { href: "/review", label: "Review" },
+  { href: "/social", label: "Community" },
 ];
 
 // Secondary destinations shown only in the mobile menu and the account dropdown.
 const SECONDARY_LINKS: NavLinkDef[] = [
   { href: "/interactives", label: "Interactives" },
+  { href: "/messages", label: "Messages" },
   { href: "/schedule", label: "Schedule" },
   { href: "/shop", label: "Shop" },
 ];
@@ -70,7 +71,7 @@ export default function SiteNav({
 
         <div className="flex items-center gap-3 text-sm sm:gap-4">
           {children}
-          <ThemePicker />
+          <NotificationsBell />
           <BuyProButton />
           <div className="hidden md:block">
             <AuthMenu />
@@ -161,76 +162,54 @@ function NavLink({
   );
 }
 
-const THEME_META: Record<Theme, { label: string; icon: string }> = {
-  light: { label: "Light", icon: "☀︎" },
-  dark: { label: "Dark", icon: "☾" },
-  sepia: { label: "Sepia", icon: "✦" },
-  solarized: { label: "Solarized", icon: "❂" },
-  nord: { label: "Nord", icon: "❄" },
-  rose: { label: "Rosé", icon: "❀" },
-  forest: { label: "Forest", icon: "❋" },
-  contrast: { label: "Contrast", icon: "◆" },
-  auto: { label: "Auto", icon: "◐" },
-};
-
-export function ThemePicker() {
-  const { theme, effectiveTheme, setTheme } = useTheme();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    function onDown(e: MouseEvent) {
-      if (!ref.current?.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener("mousedown", onDown);
-    return () => document.removeEventListener("mousedown", onDown);
-  }, [open]);
-
-  // Show the resolved glyph for "auto" so the nav reflects what's actually rendered.
-  const displayIcon =
-    theme === "auto" ? THEME_META[effectiveTheme].icon : THEME_META[theme].icon;
+/**
+ * Prominent streak display in the nav. Shows even at 0 so new users see
+ * the "start your streak" affordance. Milestones (7, 30, 100 days) get a
+ * subtle pulsing halo. Hidden on very narrow viewports to keep the nav
+ * from wrapping.
+ */
+function StreakBadge({
+  streak,
+}: {
+  streak: { current: number; longest: number } | null | undefined;
+}) {
+  const current = streak?.current ?? 0;
+  const longest = streak?.longest ?? 0;
+  const isMilestone = current >= 7 && (current === 7 || current % 30 === 0);
+  const isCold = current === 0;
 
   return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="grid h-9 w-9 place-items-center rounded-md text-lg text-muted hover:bg-offwhite hover:text-ink"
-        title={theme === "auto" ? `Theme (Auto · ${effectiveTheme})` : "Theme"}
-        aria-label="Change theme"
-      >
-        <span aria-hidden="true">{displayIcon}</span>
-      </button>
-      {open && (
-        <div className="absolute right-0 top-full z-40 mt-2 w-40 rounded-md border border-hair bg-paper py-1 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]">
-          {THEMES.map((t) => (
-            <button
-              key={t}
-              onClick={() => {
-                setTheme(t);
-                setOpen(false);
-              }}
-              className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-sm ${
-                theme === t ? "text-ink" : "text-muted hover:text-ink"
-              }`}
-            >
-              <span aria-hidden="true" className="w-4 text-center">
-                {THEME_META[t].icon}
-              </span>
-              <span>{THEME_META[t].label}</span>
-              {t === "auto" && (
-                <span className="ml-1 text-[10px] uppercase tracking-wider text-dim">
-                  {effectiveTheme}
-                </span>
-              )}
-              {theme === t && (
-                <span className="ml-auto text-xs text-orange">●</span>
-              )}
-            </button>
-          ))}
-        </div>
+    <a
+      href="/schedule"
+      title={
+        isCold
+          ? "Start a study streak by claiming a scheduled session"
+          : `${current}-day streak · longest ${longest}`
+      }
+      className={`group relative flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-semibold transition ${
+        isCold
+          ? "border border-dashed border-hair text-muted hover:border-orange hover:text-orange-ink"
+          : "bg-gradient-to-r from-orange/90 to-orange-ink text-white hover:brightness-110"
+      }`}
+    >
+      {isMilestone && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 animate-ping rounded-full bg-orange/40"
+        />
       )}
-    </div>
+      <span aria-hidden="true" className={isCold ? "" : "drop-shadow-sm"}>
+        {isCold ? "🔥" : "🔥"}
+      </span>
+      <span className="relative tabular-nums">
+        {isCold ? "Start streak" : current}
+      </span>
+      {!isCold && current > 0 && (
+        <span className="relative hidden text-[10px] font-medium uppercase tracking-wider opacity-80 sm:inline">
+          day{current === 1 ? "" : "s"}
+        </span>
+      )}
+    </a>
   );
 }
 
@@ -275,16 +254,7 @@ function AuthMenu() {
   if (user && user.emailVerified) {
     return (
       <div className="flex items-center gap-4">
-        {streak && streak.current > 0 && (
-          <a
-            href="/schedule"
-            title={`${streak.current}-day streak · longest ${streak.longest}`}
-            className="flex items-center gap-1 rounded-full bg-orange-tint px-2 py-0.5 text-xs font-medium text-orange-ink hover:bg-orange/20"
-          >
-            <span aria-hidden="true">🔥</span>
-            <span>{streak.current}</span>
-          </a>
-        )}
+        <StreakBadge streak={streak} />
         {/* Hide the bookmarks shortcut until plan is confirmed — otherwise
             it pops in a frame after the rest of the nav for returning pros. */}
         {!planLoading && (plan === "pro" || plan === "hacker") && (
@@ -435,6 +405,24 @@ function AccountMenu({
           <div className="my-3 border-t border-hair" />
 
           <div className="flex flex-col">
+            <a
+              href={`/users/${uid}`}
+              className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
+            >
+              <span>Your profile</span>
+              <span aria-hidden="true" className="text-dim">
+                ›
+              </span>
+            </a>
+            <a
+              href="/messages"
+              className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
+            >
+              <span>Messages</span>
+              <span aria-hidden="true" className="text-dim">
+                ›
+              </span>
+            </a>
             <a
               href="/account"
               className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"

@@ -28,6 +28,8 @@ import {
   type StoredConversation,
 } from "@/lib/chatStore";
 import { bumpStreak } from "@/lib/streaks";
+import { postScoreEvent } from "@/lib/postScoreEvent";
+import { subscribeSelectedCourses } from "@/lib/selectedCourses";
 import {
   createProject,
   deleteProject,
@@ -55,7 +57,7 @@ const CHAT_EXTENSIONS: Record<
   { title: string; path: string }
 > = {
   interactives: { title: "Interactives", path: "/interactives" },
-  review: { title: "Review bank", path: "/review" },
+  review: { title: "Review bank", path: "/insights?tab=review" },
   insights: { title: "Insights", path: "/insights" },
   schedule: { title: "Schedule", path: "/schedule" },
   shop: { title: "Shop tokens", path: "/shop" },
@@ -124,6 +126,7 @@ function ChatInner() {
   const [extensionOverlay, setExtensionOverlay] =
     useState<ChatExtensionKey | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [activeCourseSlug, setActiveCourseSlug] = useState<string | null>(null);
 
   // Keep projects list fresh for the overlay.
   useEffect(() => {
@@ -177,6 +180,22 @@ function ChatInner() {
   useEffect(() => {
     refreshUsage();
   }, [refreshUsage]);
+
+  // Track the user's first selected course so chat/tool events can attribute
+  // leaderboard points to the right course. If nothing is selected, events
+  // fall through to a "general" bucket.
+  useEffect(() => {
+    if (!user) {
+      setActiveCourseSlug(null);
+      return;
+    }
+    const db = getDb();
+    if (!db) return;
+    const unsub = subscribeSelectedCourses(db, user.uid, (slugs) => {
+      setActiveCourseSlug(slugs[0] ?? null);
+    });
+    return () => unsub();
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -356,6 +375,7 @@ function ChatInner() {
     if ((!content && pendingImages.length === 0) || loading || streaming) return;
 
     if (user?.uid) void bumpStreak(user.uid);
+    void postScoreEvent(getIdToken, activeCourseSlug, "chat_message");
     const imagesForMessage = pendingImages;
     const visibleContent = content + (imagesForMessage.length > 0
       ? `\n\n[${imagesForMessage.length} image${imagesForMessage.length === 1 ? "" : "s"} attached]`

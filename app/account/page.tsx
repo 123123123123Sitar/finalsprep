@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { updateProfile } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 import SiteNav from "@/app/components/SiteNav";
+import ThemePicker from "@/app/components/ThemePicker";
 import { useAuth } from "@/app/components/AuthProvider";
 import PageLoader from "@/app/components/PageLoader";
 import { getDb, getFirebaseAuth } from "@/lib/firebase";
@@ -197,6 +198,15 @@ export default function AccountPage() {
               Shown on the top of chat replies. Private — never sent to other
               users.
             </p>
+          </div>
+
+          <div className="rounded-xl border border-hair bg-offwhite p-5">
+            <div className="label mb-2">Appearance</div>
+            <p className="mb-3 text-[14px] text-body">
+              Pick a theme for the whole app. Syncs across devices when you're
+              signed in.
+            </p>
+            <ThemePicker />
           </div>
 
           <div className="rounded-xl border border-hair bg-offwhite p-5">

@@ -243,7 +243,7 @@ function MarketingHome() {
             eyebrow="Review & insights"
             title="Every problem you got wrong — spaced and re-served."
             blurb="Miss a practice problem? It lands in your review bank. The Insights dashboard shows your 7-day token usage, streak, and the topics you keep tripping on."
-            cta={{ href: "/review", label: "Open review →" }}
+            cta={{ href: "/insights?tab=review", label: "Open review →" }}
             mock={<ReviewMock />}
           />
 

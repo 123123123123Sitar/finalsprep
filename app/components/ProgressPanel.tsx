@@ -79,7 +79,7 @@ export default function ProgressPanel({
             </div>
             {wrongCount > 0 && (
               <Link
-                href="/review"
+                href="/insights?tab=review"
                 className="text-xs font-medium text-orange-ink hover:underline whitespace-nowrap ml-4"
               >
                 Review →

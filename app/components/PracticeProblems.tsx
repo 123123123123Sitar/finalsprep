@@ -430,6 +430,7 @@ function ProblemCard({
     setShowExplain(true);
     const correct = normalize(attempt) === normalize(problem.answer);
     onSubmitted?.(correct);
+    if (correct) postSolve(getIdToken, courseSlug, unitNumber, problem.prompt);
   }
 
   async function runGrade(args: { attempt?: string; imageBase64?: string }) {
@@ -474,6 +475,8 @@ function ProblemCard({
         setWhiteboardOpen(false);
         const isCorrect = data.verdict === "correct";
         onSubmitted?.(isCorrect);
+        if (isCorrect)
+          postSolve(getIdToken, courseSlug, unitNumber, problem.prompt);
       }
     } catch (e: any) {
       setGradeError(e?.message || "Grading failed.");
@@ -771,4 +774,34 @@ function ProblemCard({
       />
     </div>
   );
+}
+
+/**
+ * Fire-and-forget: log a correct solve to the leaderboard API. Failures
+ * are swallowed so grading UX never blocks on a social write.
+ */
+async function postSolve(
+  getIdToken: () => Promise<string | null>,
+  courseSlug: string,
+  unitNumber: number,
+  lessonTitle: string
+) {
+  try {
+    const token = await getIdToken();
+    if (!token) return;
+    await fetch("/api/leaderboards/solve", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        courseSlug,
+        unitNumber,
+        lessonTitle: lessonTitle.slice(0, 120),
+      }),
+    });
+  } catch {
+    /* ignore */
+  }
 }

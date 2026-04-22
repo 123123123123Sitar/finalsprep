@@ -21,12 +21,16 @@ import {
   type NextAction,
 } from "@/lib/insights";
 import PageLoader from "@/app/components/PageLoader";
+import ReviewPanel from "@/app/components/ReviewPanel";
 
 type LiveUsage = {
   tokensRemaining: number;
   tokensCap: number;
   bonusBalance: number;
 };
+
+type TabId = "insights" | "review";
+const VALID_TABS: TabId[] = ["insights", "review"];
 
 export default function InsightsPage() {
   const { user, loading, plan, planLoading, streak, getIdToken } = useAuth();
@@ -36,6 +40,7 @@ export default function InsightsPage() {
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [completedSlugs, setCompletedSlugs] = useState<Set<string>>(new Set());
   const [loaded, setLoaded] = useState(false);
+  const [tab, setTab] = useState<TabId>("insights");
   // Canonical "right now" token state, fetched from /api/usage so this page
   // shows the SAME numbers as the dashboard tile and the chat header pill.
   const [liveUsage, setLiveUsage] = useState<LiveUsage | null>(null);
@@ -45,6 +50,24 @@ export default function InsightsPage() {
       window.location.href = "/signin?next=/insights";
     }
   }, [loading, user]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("tab");
+    if (raw && (VALID_TABS as string[]).includes(raw)) {
+      setTab(raw as TabId);
+    }
+  }, []);
+
+  function switchTab(next: TabId) {
+    setTab(next);
+    const params = new URLSearchParams(window.location.search);
+    if (next === "insights") params.delete("tab");
+    else params.set("tab", next);
+    const qs = params.toString();
+    const url = `${window.location.pathname}${qs ? `?${qs}` : ""}`;
+    window.history.replaceState({}, "", url);
+  }
 
   useEffect(() => {
     if (!user) return;
@@ -188,14 +211,161 @@ export default function InsightsPage() {
     <main className="bg-paper text-body">
       <SiteNav />
       <section className="mx-auto max-w-4xl px-6 py-12">
-        <div className="label mb-3">Insights</div>
+        <div className="label mb-3">{tab === "review" ? "Review" : "Insights"}</div>
         <h1 className="font-serif text-4xl font-normal text-ink">
-          How you've been studying.
+          {tab === "review"
+            ? "Problems you got wrong."
+            : "How you've been studying."}
         </h1>
 
-        {/* Canonical "right now" token state — matches the dashboard tile and
-            the chat header pill. The 7-day numbers below are historical. */}
-        <div className="mt-8 rounded-xl border border-hair bg-paper p-5">
+        <div className="mt-6 flex gap-1 border-b border-hair">
+          <TabButton
+            active={tab === "insights"}
+            onClick={() => switchTab("insights")}
+            label="Insights"
+          />
+          <TabButton
+            active={tab === "review"}
+            onClick={() => switchTab("review")}
+            label="Review"
+            badge={wrongBank.length > 0 ? wrongBank.length : undefined}
+          />
+        </div>
+
+        {tab === "review" ? (
+          <div className="mt-8">
+            <ReviewPanel />
+            <RelatedFeatures />
+          </div>
+        ) : (
+          <InsightsBody
+            liveUsage={liveUsage}
+            streak={streak}
+            chats7={chats7}
+            tokens7={tokens7}
+            actions={actions}
+            selectedCourses={selectedCourses}
+            completedSlugs={completedSlugs}
+            wrongBank={wrongBank}
+            examResults={examResults}
+            mastery={mastery}
+            weakTopics={weakTopics}
+            activityMap={activityMap}
+            onGoToReview={() => switchTab("review")}
+          />
+        )}
+      </section>
+    </main>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  label,
+  badge,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  badge?: number;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`-mb-px flex items-center gap-2 border-b-2 px-4 py-2 text-[14px] transition ${
+        active
+          ? "border-orange text-ink"
+          : "border-transparent text-muted hover:text-ink"
+      }`}
+      aria-current={active ? "page" : undefined}
+    >
+      <span>{label}</span>
+      {typeof badge === "number" && badge > 0 && (
+        <span className="rounded-full bg-orange-tint px-1.5 py-0.5 text-[10px] font-semibold text-orange-ink">
+          {badge}
+        </span>
+      )}
+    </button>
+  );
+}
+
+function RelatedFeatures() {
+  const links: { href: string; label: string; description: string }[] = [
+    {
+      href: "/practice",
+      label: "Practice problems",
+      description: "Grind a few fresh problems to feed the review bank.",
+    },
+    {
+      href: "/chat",
+      label: "Ask the tutor",
+      description: "Get step-by-step help on anything you missed.",
+    },
+    {
+      href: "/exam",
+      label: "Take a mock exam",
+      description: "Benchmark how your review is translating to the real thing.",
+    },
+    {
+      href: "/insights",
+      label: "Back to insights",
+      description: "See weak topics, mastery, and the predicted score.",
+    },
+  ];
+  return (
+    <div className="mt-10">
+      <div className="label mb-3">Keep the loop going</div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {links.map((l) => (
+          <a
+            key={l.href}
+            href={l.href}
+            className="rounded-lg border border-hair bg-paper p-4 transition-colors hover:border-orange"
+          >
+            <div className="font-medium text-ink">{l.label}</div>
+            <div className="mt-1 text-[13px] text-muted">{l.description}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InsightsBody({
+  liveUsage,
+  streak,
+  chats7,
+  tokens7,
+  actions,
+  selectedCourses,
+  completedSlugs,
+  wrongBank,
+  examResults,
+  mastery,
+  weakTopics,
+  activityMap,
+  onGoToReview,
+}: {
+  liveUsage: LiveUsage | null;
+  streak: { current: number; longest: number } | null | undefined;
+  chats7: number;
+  tokens7: number;
+  actions: NextAction[];
+  selectedCourses: string[];
+  completedSlugs: Set<string>;
+  wrongBank: WrongBankEntry[];
+  examResults: ExamResult[];
+  mastery: ReturnType<typeof computeDifficultyMastery>;
+  weakTopics: WeakTopic[];
+  activityMap: Map<string, number>;
+  onGoToReview: () => void;
+}) {
+  return (
+    <>
+      {/* Canonical "right now" token state — matches the dashboard tile and
+          the chat header pill. The 7-day numbers below are historical. */}
+      <div className="mt-8 rounded-xl border border-hair bg-paper p-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <div className="label">Daily tokens</div>
@@ -254,13 +424,15 @@ export default function InsightsPage() {
             You have{" "}
             <strong className="text-ink">{wrongBank.length}</strong> problem
             {wrongBank.length === 1 ? "" : "s"} saved for review.{" "}
-            <a href="/review" className="text-orange hover:underline">
+            <button
+              onClick={onGoToReview}
+              className="text-orange hover:underline"
+            >
               Review them →
-            </a>
+            </button>
           </p>
         </div>
-      </section>
-    </main>
+    </>
   );
 }
 

@@ -4,8 +4,10 @@ import type { ApTopic } from "@/lib/topics";
 import type { PlanTier } from "@/lib/plans";
 import { getCedLesson, type CedLesson } from "@/lib/cedLessons";
 import { apCentralLinksFor } from "@/lib/apCentralLinks";
+import { lessonKey } from "@/lib/social";
 import MathRender from "./Math";
 import Markdown from "./Markdown";
+import LessonComments from "./LessonComments";
 
 type Props = {
   unit: CurriculumUnit;
@@ -146,6 +148,12 @@ function UnlockedUnitView({
           easy ones are free.
         </p>
       </div>
+
+      {courseSlug && (
+        <LessonComments
+          lessonKey={lessonKey(courseSlug, unit.unitNumber)}
+        />
+      )}
     </div>
   );
 }

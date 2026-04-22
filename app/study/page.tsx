@@ -8,6 +8,7 @@ import {
 } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 import { subscribeSelectedCourses } from "@/lib/selectedCourses";
+import { postScoreEvent } from "@/lib/postScoreEvent";
 import {
   COURSES,
   LESSONS,
@@ -496,6 +497,7 @@ export default function Study() {
       } else {
         setExplanation(data.explanation);
         setSource(data.source || null);
+        void postScoreEvent(getIdToken, courseSlug, "tool_use");
       }
     } catch (e: any) {
       setError(e.message);
@@ -1041,6 +1043,8 @@ export default function Study() {
                           lesson={selectedLesson}
                           plan={plan}
                           uid={user?.uid ?? null}
+                          courseSlug={courseSlug}
+                          getIdToken={getIdToken}
                           loadSample={loadSample}
                           onUpgrade={() => buy("pro-monthly")}
                         />
@@ -1050,6 +1054,8 @@ export default function Study() {
                         lesson={selectedLesson}
                         plan={plan}
                         uid={user?.uid ?? null}
+                        courseSlug={courseSlug}
+                        getIdToken={getIdToken}
                         loadSample={loadSample}
                         onUpgrade={() => buy("pro-monthly")}
                       />
@@ -1244,12 +1250,16 @@ function LessonPanel({
   lesson,
   plan,
   uid,
+  courseSlug,
+  getIdToken,
   loadSample,
   onUpgrade,
 }: {
   lesson: Lesson;
   plan: "learner" | "pro" | "hacker";
   uid: string | null;
+  courseSlug: string;
+  getIdToken: () => Promise<string | null>;
   loadSample: () => void;
   onUpgrade: () => void;
 }) {
@@ -1335,6 +1345,12 @@ function LessonPanel({
     setIsCompleted(next);
     try {
       await setLessonCompleted(db, uid, lesson.slug, next);
+      // Only award points on completion, not on un-completion.
+      if (next) {
+        void postScoreEvent(getIdToken, courseSlug, "lesson_complete", {
+          lessonTitle: lesson.title,
+        });
+      }
     } catch (e: any) {
       setIsCompleted(!next);
       setWriteError(e?.message || "couldn't save");
