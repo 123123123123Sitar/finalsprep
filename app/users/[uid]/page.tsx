@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import SiteNav from "@/app/components/SiteNav";
 import UserAvatar from "@/app/components/UserAvatar";
 import FollowButton from "@/app/components/FollowButton";
@@ -11,12 +11,27 @@ import {
   type PublicProfile,
 } from "@/lib/social";
 import { COURSES } from "@/lib/topics";
+import { getHeatmapDays } from "@/lib/insights";
+
+type HistoryEntry = {
+  kind?: string;
+  tokens?: number;
+  createdAt: number;
+};
+
+type CourseProgress = {
+  courseSlug: string;
+  completed: number;
+};
 
 type ProfileResponse = {
   profile: PublicProfile;
   isFollowing: boolean;
+  isRequested: boolean;
   isSelf: boolean;
-  courseStats: { courseSlug: string; problems: number }[];
+  canSeeActivity: boolean;
+  courses: CourseProgress[];
+  history: HistoryEntry[];
 };
 
 export default function UserProfilePage({
@@ -24,7 +39,7 @@ export default function UserProfilePage({
 }: {
   params: { uid: string };
 }) {
-  const { user, getIdToken } = useAuth();
+  const { user, loading: authLoading, getIdToken } = useAuth();
   const [data, setData] = useState<ProfileResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,8 +66,9 @@ export default function UserProfilePage({
   }, [params.uid, getIdToken]);
 
   useEffect(() => {
+    if (authLoading) return;
     load();
-  }, [load]);
+  }, [authLoading, load]);
 
   function openEdit() {
     if (!data) return;
@@ -142,7 +158,6 @@ export default function UserProfilePage({
   }
 
   const p = data.profile;
-  const topCourses = data.courseStats.slice(0, 6);
 
   return (
     <main className="min-h-screen bg-paper">
@@ -165,6 +180,7 @@ export default function UserProfilePage({
                 <FollowButton
                   targetUid={p.uid}
                   initialFollowing={data.isFollowing}
+                  initialRequested={data.isRequested}
                   onChange={() => load()}
                 />
               )}
@@ -185,14 +201,33 @@ export default function UserProfilePage({
                 </button>
               )}
             </div>
-            <div className="mt-1 text-[14px] text-muted">@{p.username}</div>
+            <div className="mt-1 flex flex-wrap items-center gap-2 text-[14px] text-muted">
+              <span>@{p.username}</span>
+              <PlanChip plan={p.plan} />
+              {p.gradeLevel && (
+                <span className="rounded-full border border-hair bg-offwhite px-2 py-0.5 text-[11px] font-medium text-muted">
+                  {p.gradeLevel}
+                </span>
+              )}
+            </div>
             {p.bio && (
               <p className="mt-3 max-w-prose whitespace-pre-wrap text-[14.5px] text-body">
                 {p.bio}
               </p>
             )}
+            {p.interests && p.interests.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {p.interests.map((i) => (
+                  <span
+                    key={i}
+                    className="rounded-full border border-hair bg-paper px-2.5 py-0.5 text-[11px] text-muted"
+                  >
+                    {i}
+                  </span>
+                ))}
+              </div>
+            )}
             <div className="mt-4 flex gap-6 text-[13px]">
-              <Stat label="Problems" value={p.stats.problemsSolved} />
               <Stat label="Followers" value={p.stats.followersCount} />
               <Stat label="Following" value={p.stats.followingCount} />
               <Stat label="Longest streak" value={p.stats.longestStreak} />
@@ -200,37 +235,15 @@ export default function UserProfilePage({
           </div>
         </div>
 
-        {topCourses.length > 0 && (
-          <section className="mt-10">
-            <h2 className="label mb-3">Top courses</h2>
-            <ul className="grid gap-2 sm:grid-cols-2">
-              {topCourses.map((c) => {
-                const meta = COURSES.find((x) => x.slug === c.courseSlug);
-                return (
-                  <li
-                    key={c.courseSlug}
-                    className="flex items-center justify-between rounded-lg border border-hair bg-paper px-4 py-3"
-                  >
-                    <a
-                      href={`/leaderboard?course=${c.courseSlug}`}
-                      className="flex-1 text-[14px] text-ink hover:underline"
-                    >
-                      {meta?.title || c.courseSlug}
-                    </a>
-                    <div className="text-right">
-                      <div className="text-[15px] font-semibold text-ink">
-                        {c.problems}
-                      </div>
-                      <div className="text-[10.5px] uppercase tracking-wider text-muted">
-                        solves
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        )}
+        <CoursesSection courses={data.courses} />
+
+        <ActivitySection
+          canSee={data.canSeeActivity}
+          isSelf={data.isSelf}
+          isRequested={data.isRequested}
+          history={data.history}
+          displayName={p.displayName || p.username}
+        />
 
         {editing && data.isSelf && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -341,6 +354,251 @@ export default function UserProfilePage({
         )}
       </div>
     </main>
+  );
+}
+
+function CoursesSection({ courses }: { courses: CourseProgress[] }) {
+  if (courses.length === 0) return null;
+  return (
+    <section className="mt-10">
+      <h2 className="label mb-3">Courses in progress</h2>
+      <ul className="grid gap-2 sm:grid-cols-2">
+        {courses.map((c) => {
+          const meta = COURSES.find((x) => x.slug === c.courseSlug);
+          const total = meta
+            ? meta.units.reduce((s, u) => s + (u.topics?.length || 0), 0)
+            : 0;
+          const pct =
+            total > 0 ? Math.min(100, Math.round((c.completed / total) * 100)) : 0;
+          return (
+            <li
+              key={c.courseSlug}
+              className="rounded-lg border border-hair bg-paper px-4 py-3"
+            >
+              <div className="flex items-baseline justify-between gap-3">
+                <a
+                  href={`/study?course=${c.courseSlug}`}
+                  className="truncate text-[14px] text-ink hover:underline"
+                >
+                  {meta?.title || c.courseSlug}
+                </a>
+                <span className="text-[12px] text-muted">
+                  {c.completed}
+                  {total > 0 ? ` / ${total}` : ""}
+                </span>
+              </div>
+              {total > 0 && (
+                <div className="mt-2 h-1.5 w-full rounded-full bg-hair">
+                  <div
+                    className="h-full rounded-full bg-orange"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+function ActivitySection({
+  canSee,
+  isSelf,
+  isRequested,
+  history,
+  displayName,
+}: {
+  canSee: boolean;
+  isSelf: boolean;
+  isRequested: boolean;
+  history: HistoryEntry[];
+  displayName: string;
+}) {
+  if (!canSee) {
+    return (
+      <section className="mt-10 rounded-xl border border-dashed border-hair bg-offwhite/50 p-6 text-center">
+        <div className="label mb-2">Activity</div>
+        <div className="text-[24px]" aria-hidden="true">
+          🔒
+        </div>
+        <p className="mt-2 text-[13.5px] text-muted">
+          {isRequested
+            ? `Waiting on ${displayName} to approve your follow request. Their heatmap and recent activity unlock once they accept.`
+            : `Follow ${displayName} to see their study heatmap and recent activity.`}
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="mt-10 space-y-6">
+      <Heatmap history={history} />
+      <RecentActivity history={history} isSelf={isSelf} />
+    </section>
+  );
+}
+
+function Heatmap({ history }: { history: HistoryEntry[] }) {
+  const activityMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const h of history) {
+      const d = new Date(h.createdAt);
+      const key = ymd(d);
+      map.set(key, (map.get(key) || 0) + 1);
+    }
+    return map;
+  }, [history]);
+
+  const days = getHeatmapDays(90);
+  const firstDate = new Date(days[0]);
+  const leadingBlanks = firstDate.getDay();
+  const max = Math.max(1, ...Array.from(activityMap.values()));
+
+  function intensity(count: number) {
+    if (count === 0) return 0;
+    const ratio = count / max;
+    if (ratio >= 0.75) return 4;
+    if (ratio >= 0.5) return 3;
+    if (ratio >= 0.25) return 2;
+    return 1;
+  }
+
+  const colors = [
+    "rgb(var(--hair))",
+    "rgb(var(--orange) / 0.3)",
+    "rgb(var(--orange) / 0.55)",
+    "rgb(var(--orange) / 0.8)",
+    "rgb(var(--orange))",
+  ];
+
+  const activeDays = Array.from(activityMap.values()).filter((v) => v > 0).length;
+
+  return (
+    <div className="rounded-lg border border-hair bg-paper p-5">
+      <div className="flex items-baseline justify-between">
+        <div className="label">Activity · last 90 days</div>
+        <div className="text-[11px] text-muted">
+          {activeDays} active day{activeDays === 1 ? "" : "s"}
+        </div>
+      </div>
+      <div
+        className="mt-4 grid gap-[3px]"
+        style={{
+          gridTemplateRows: "repeat(7, 12px)",
+          gridAutoFlow: "column",
+          gridAutoColumns: "12px",
+        }}
+      >
+        {Array.from({ length: leadingBlanks }).map((_, i) => (
+          <div key={`blank-${i}`} />
+        ))}
+        {days.map((key) => {
+          const count = activityMap.get(key) || 0;
+          const level = intensity(count);
+          return (
+            <div
+              key={key}
+              title={`${key} · ${count} action${count === 1 ? "" : "s"}`}
+              style={{
+                width: 12,
+                height: 12,
+                borderRadius: 2,
+                backgroundColor: colors[level],
+              }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function RecentActivity({
+  history,
+  isSelf,
+}: {
+  history: HistoryEntry[];
+  isSelf: boolean;
+}) {
+  const recent = history.slice(0, 20);
+  if (recent.length === 0) {
+    return (
+      <div className="rounded-lg border border-hair bg-paper p-5">
+        <div className="label mb-2">Recent activity</div>
+        <p className="text-[13px] text-muted">
+          {isSelf
+            ? "Nothing here yet — chat with the tutor or finish a lesson to get started."
+            : "No recent activity to show."}
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="rounded-lg border border-hair bg-paper p-5">
+      <div className="label mb-3">Recent activity</div>
+      <ul className="divide-y divide-hair">
+        {recent.map((h, i) => (
+          <li
+            key={i}
+            className="flex items-center justify-between py-2 text-[13px]"
+          >
+            <span className="text-ink">{labelForKind(h.kind)}</span>
+            <span className="text-muted">{relativeDate(h.createdAt)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function labelForKind(kind: string | undefined): string {
+  switch (kind) {
+    case "chat":
+      return "Chatted with the tutor";
+    case "explain":
+      return "Used Explain";
+    case "practice":
+      return "Practiced problems";
+    case "exam":
+      return "Took a mock exam";
+    case "interactive":
+      return "Used an interactive";
+    default:
+      return "Studied";
+  }
+}
+
+function ymd(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function relativeDate(ms: number): string {
+  const diff = Date.now() - ms;
+  if (diff < 60_000) return "just now";
+  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
+  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
+  if (diff < 7 * 86_400_000) return `${Math.floor(diff / 86_400_000)}d ago`;
+  return new Date(ms).toLocaleDateString();
+}
+
+function PlanChip({ plan }: { plan?: PublicProfile["plan"] }) {
+  if (!plan || plan === "learner") return null;
+  const label = plan === "hacker" ? "Hacker" : "Pro";
+  const cls =
+    plan === "hacker"
+      ? "border-violet-300 bg-violet-50 text-violet-800"
+      : "border-orange/40 bg-orange-tint text-orange-ink";
+  return (
+    <span
+      className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${cls}`}
+    >
+      {label}
+    </span>
   );
 }
 

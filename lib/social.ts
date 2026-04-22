@@ -16,6 +16,9 @@ export type PublicProfile = {
   avatarEmoji?: string | null;
   avatarColor?: string | null;
   visibility: "public" | "private";
+  plan?: "learner" | "pro" | "hacker" | null;
+  gradeLevel?: string | null;
+  interests?: string[];
   stats: {
     problemsSolved: number;
     longestStreak: number;
@@ -30,6 +33,62 @@ export type PublicProfile = {
   createdAt: number;
   updatedAt: number;
 };
+
+export const GRADE_OPTIONS = [
+  "Middle school",
+  "9th grade",
+  "10th grade",
+  "11th grade",
+  "12th grade",
+  "College",
+  "Graduate",
+  "Other",
+] as const;
+
+export const INTEREST_OPTIONS = [
+  "Math",
+  "Physics",
+  "Chemistry",
+  "Biology",
+  "Computer science",
+  "Engineering",
+  "Statistics",
+  "Economics",
+  "History",
+  "Government",
+  "English",
+  "Writing",
+  "Languages",
+  "Psychology",
+  "Art",
+  "Music",
+  "Research",
+  "Debate",
+  "Robotics",
+  "Competitive math",
+  "College prep",
+  "Test prep",
+] as const;
+
+export const MAX_INTERESTS = 6;
+
+export function sanitizeInterests(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  const allowed = new Set<string>(INTEREST_OPTIONS);
+  const out: string[] = [];
+  for (const v of raw) {
+    if (typeof v === "string" && allowed.has(v) && !out.includes(v)) {
+      out.push(v);
+      if (out.length >= MAX_INTERESTS) break;
+    }
+  }
+  return out;
+}
+
+export function sanitizeGradeLevel(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  return (GRADE_OPTIONS as readonly string[]).includes(raw) ? raw : null;
+}
 
 export const AVATAR_EMOJI_OPTIONS = [
   "🦊", "🐻", "🐼", "🐸", "🦁", "🐯", "🐨", "🦉", "🐙", "🐳",
@@ -116,6 +175,7 @@ export type DirectMessage = {
 
 export type NotificationKind =
   | "follow"
+  | "follow_request"
   | "message"
   | "comment_reply"
   | "system";

@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 type Tab = { href: string; label: string };
 
 const TABS: Tab[] = [
-  { href: "/social", label: "Feed" },
+  { href: "/social", label: "Forums" },
   { href: "/leaderboard", label: "Leaderboards" },
   { href: "/messages", label: "Messages" },
 ];

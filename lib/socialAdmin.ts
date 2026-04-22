@@ -15,6 +15,8 @@ import {
   usernameFromEmail,
   AVATAR_COLOR_OPTIONS,
   AVATAR_EMOJI_OPTIONS,
+  sanitizeGradeLevel,
+  sanitizeInterests,
   type PublicProfile,
 } from "@/lib/social";
 
@@ -72,6 +74,9 @@ export async function ensurePublicProfile(
     avatarColor:
       AVATAR_COLOR_OPTIONS[seedHash % AVATAR_COLOR_OPTIONS.length],
     visibility: "public",
+    plan: null,
+    gradeLevel: null,
+    interests: [],
     stats: {
       problemsSolved: 0,
       longestStreak: 0,
@@ -109,6 +114,7 @@ export async function getPublicProfile(
 }
 
 function hydrateProfile(d: any): PublicProfile {
+  const plan = d.plan === "pro" || d.plan === "hacker" || d.plan === "learner" ? d.plan : null;
   return {
     uid: d.uid,
     username: d.username,
@@ -118,6 +124,9 @@ function hydrateProfile(d: any): PublicProfile {
     avatarEmoji: d.avatarEmoji ?? null,
     avatarColor: d.avatarColor ?? null,
     visibility: d.visibility || "public",
+    plan,
+    gradeLevel: sanitizeGradeLevel(d.gradeLevel),
+    interests: sanitizeInterests(d.interests),
     stats: {
       problemsSolved: d.stats?.problemsSolved || 0,
       longestStreak: d.stats?.longestStreak || 0,
@@ -250,7 +259,12 @@ export async function writeNotification(
   db: AdminDb,
   recipientUid: string,
   params: {
-    kind: "follow" | "message" | "comment_reply" | "system";
+    kind:
+      | "follow"
+      | "follow_request"
+      | "message"
+      | "comment_reply"
+      | "system";
     fromUid?: string;
     fromUsername?: string;
     fromDisplayName?: string;

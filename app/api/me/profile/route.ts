@@ -8,17 +8,35 @@ import {
   validateUsername,
   AVATAR_COLOR_OPTIONS,
   AVATAR_EMOJI_OPTIONS,
+  sanitizeGradeLevel,
+  sanitizeInterests,
 } from "@/lib/social";
+import { getPlan } from "@/lib/userPlan";
 
 export const runtime = "nodejs";
+
+/** Write the caller's current plan into their public profile. */
+async function syncPlanToProfile(db: FirebaseFirestore.Firestore, uid: string) {
+  try {
+    const { plan } = await getPlan(uid);
+    await db
+      .collection("publicProfiles")
+      .doc(uid)
+      .set({ plan, updatedAt: Date.now() }, { merge: true });
+  } catch {
+    // Plan sync is best-effort; don't fail the profile request on it.
+  }
+}
 
 /** GET /api/me/profile — ensure + return the caller's public profile. */
 export async function GET(req: Request) {
   const authed = await requireAuthedUser(req);
   if ("error" in authed) return authed.error;
   const db = adminDbOrThrow();
-  const profile = await ensurePublicProfile(db, authed.user.uid, authed.user.email);
-  return NextResponse.json({ profile });
+  await ensurePublicProfile(db, authed.user.uid, authed.user.email);
+  await syncPlanToProfile(db, authed.user.uid);
+  const snap = await db.collection("publicProfiles").doc(authed.user.uid).get();
+  return NextResponse.json({ profile: snap.data() });
 }
 
 /** PATCH /api/me/profile — update the caller's profile fields. */
@@ -77,6 +95,28 @@ export async function PATCH(req: Request) {
     }
   }
 
+  if ("gradeLevel" in (body || {})) {
+    if (body.gradeLevel === null || body.gradeLevel === "") {
+      updates.gradeLevel = null;
+    } else {
+      const g = sanitizeGradeLevel(body.gradeLevel);
+      if (!g) {
+        return NextResponse.json({ error: "Bad gradeLevel" }, { status: 400 });
+      }
+      updates.gradeLevel = g;
+    }
+  }
+
+  if ("interests" in (body || {})) {
+    if (body.interests === null) {
+      updates.interests = [];
+    } else if (Array.isArray(body.interests)) {
+      updates.interests = sanitizeInterests(body.interests);
+    } else {
+      return NextResponse.json({ error: "Bad interests" }, { status: 400 });
+    }
+  }
+
   if (typeof body?.username === "string") {
     const err = validateUsername(body.username);
     if (err) return NextResponse.json({ error: err }, { status: 400 });
@@ -96,6 +136,7 @@ export async function PATCH(req: Request) {
   const db = adminDbOrThrow();
   await ensurePublicProfile(db, user.uid, user.email);
   await db.collection("publicProfiles").doc(user.uid).set(updates, { merge: true });
+  await syncPlanToProfile(db, user.uid);
 
   const snap = await db.collection("publicProfiles").doc(user.uid).get();
   return NextResponse.json({ profile: snap.data() });

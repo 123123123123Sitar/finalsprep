@@ -4,19 +4,24 @@ import { updateProfile } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 import SiteNav from "@/app/components/SiteNav";
 import ThemePicker from "@/app/components/ThemePicker";
+import UserAvatar from "@/app/components/UserAvatar";
 import { useAuth } from "@/app/components/AuthProvider";
 import PageLoader from "@/app/components/PageLoader";
 import { getDb, getFirebaseAuth } from "@/lib/firebase";
 import {
-  AI_CUSTOM_INSTRUCTIONS_LIMIT,
-  AI_MODE_OPTIONS,
-  AI_PERSONALITY_OPTIONS,
-  AI_VERBOSITY_OPTIONS,
   DEFAULT_AI_PREFS,
   normalizeAiPrefs,
   type AiPrefs,
 } from "@/lib/aiPrefs";
 import { planLabel } from "@/lib/plans";
+import {
+  AVATAR_COLOR_OPTIONS,
+  AVATAR_EMOJI_OPTIONS,
+  GRADE_OPTIONS,
+  INTEREST_OPTIONS,
+  MAX_INTERESTS,
+  validateUsername,
+} from "@/lib/social";
 
 type Prefs = AiPrefs & {
   selectedCourses: string[];
@@ -28,8 +33,13 @@ const DEFAULT_PREFS: Prefs = {
 };
 
 export default function AccountPage() {
-  const { user, loading, configured, plan, signOut } = useAuth();
+  const { user, loading, configured, plan, signOut, getIdToken } = useAuth();
   const [displayName, setDisplayName] = useState("");
+  const [username, setUsername] = useState("");
+  const [avatarEmoji, setAvatarEmoji] = useState<string | null>(null);
+  const [avatarColor, setAvatarColor] = useState<string | null>(null);
+  const [gradeLevel, setGradeLevel] = useState<string | null>(null);
+  const [interests, setInterests] = useState<string[]>([]);
   const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
   const [loadingPrefs, setLoadingPrefs] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -47,6 +57,41 @@ export default function AccountPage() {
   useEffect(() => {
     if (user?.displayName) setDisplayName(user.displayName);
   }, [user?.displayName]);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const token = await getIdToken();
+        if (!token) return;
+        const res = await fetch("/api/me/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled) return;
+        const p = data?.profile;
+        if (p) {
+          if (typeof p.username === "string") setUsername(p.username);
+          setAvatarEmoji(p.avatarEmoji ?? null);
+          setAvatarColor(p.avatarColor ?? null);
+          setGradeLevel(typeof p.gradeLevel === "string" ? p.gradeLevel : null);
+          setInterests(Array.isArray(p.interests) ? p.interests : []);
+          if (!displayName && typeof p.displayName === "string") {
+            setDisplayName(p.displayName);
+          }
+        }
+      } catch {
+        // Profile surface stays usable even if this fetch fails.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // displayName intentionally excluded — we only want the initial seed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, getIdToken]);
 
   useEffect(() => {
     if (!user) {
@@ -91,6 +136,14 @@ export default function AccountPage() {
 
   async function save() {
     if (!user) return;
+    const trimmedUsername = username.trim();
+    if (trimmedUsername) {
+      const usernameErr = validateUsername(trimmedUsername);
+      if (usernameErr) {
+        setMsg({ kind: "err", text: usernameErr });
+        return;
+      }
+    }
     setSaving(true);
     setMsg(null);
     try {
@@ -99,6 +152,33 @@ export default function AccountPage() {
         await updateProfile(auth.currentUser, {
           displayName: displayName.trim(),
         });
+      }
+      const token = await getIdToken();
+      if (token) {
+        const res = await fetch("/api/me/profile", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            displayName: displayName.trim() || undefined,
+            username: trimmedUsername || undefined,
+            avatarEmoji,
+            avatarColor,
+            gradeLevel,
+            interests,
+          }),
+        });
+        const data = await res.json().catch(() => null);
+        if (!res.ok) {
+          setMsg({
+            kind: "err",
+            text: data?.error || "Could not save profile.",
+          });
+          setSaving(false);
+          return;
+        }
       }
       const db = getDb();
       if (db) {
@@ -195,8 +275,163 @@ export default function AccountPage() {
               maxLength={60}
             />
             <p className="mt-2 text-xs text-muted">
-              Shown on the top of chat replies. Private — never sent to other
-              users.
+              Shown on the top of chat replies and your public profile.
+            </p>
+          </div>
+
+          {/* Username */}
+          <div>
+            <label className="label mb-2 block">Username</label>
+            <div className="flex items-center">
+              <span className="rounded-l-md border border-r-0 border-hair bg-offwhite px-3 py-3 text-[15px] text-muted">
+                @
+              </span>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="your_handle"
+                className="w-full rounded-r-md border border-hair bg-paper px-4 py-3 text-[15px] text-ink outline-none focus:border-orange"
+                maxLength={24}
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+              />
+            </div>
+            <p className="mt-2 text-xs text-muted">
+              Shown on your profile URL. Letters, numbers, dot, or underscore —
+              3 to 24 characters. Must be unique.
+            </p>
+          </div>
+
+          {/* Avatar */}
+          <div className="rounded-xl border border-hair bg-offwhite p-5">
+            <div className="label mb-2">Profile picture</div>
+            <p className="mb-4 text-[14px] text-body">
+              Pick an emoji and accent color shown next to your name on
+              profiles, the feed, and comments.
+            </p>
+            <div className="flex items-center gap-4">
+              <UserAvatar
+                seed={user.uid}
+                label={displayName || username || user.email || "You"}
+                emoji={avatarEmoji}
+                color={avatarColor}
+                size="lg"
+              />
+              <div className="flex flex-wrap gap-2">
+                {AVATAR_COLOR_OPTIONS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setAvatarColor(c)}
+                    aria-label={`Color ${c}`}
+                    className={`h-6 w-6 rounded-full border-2 transition ${
+                      avatarColor === c
+                        ? "border-ink scale-110"
+                        : "border-transparent hover:scale-105"
+                    }`}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-10 gap-1">
+              <button
+                type="button"
+                onClick={() => setAvatarEmoji(null)}
+                className={`grid h-8 w-8 place-items-center rounded-md border text-[11px] ${
+                  avatarEmoji === null
+                    ? "border-orange bg-orange-tint text-orange-ink"
+                    : "border-hair text-muted hover:bg-paper"
+                }`}
+                title="Use initial"
+              >
+                A
+              </button>
+              {AVATAR_EMOJI_OPTIONS.map((e) => (
+                <button
+                  key={e}
+                  type="button"
+                  onClick={() => setAvatarEmoji(e)}
+                  className={`grid h-8 w-8 place-items-center rounded-md border text-[16px] ${
+                    avatarEmoji === e
+                      ? "border-orange bg-orange-tint"
+                      : "border-hair hover:bg-paper"
+                  }`}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Grade level + interests */}
+          <div className="rounded-xl border border-hair bg-offwhite p-5">
+            <div className="label mb-2">Grade level</div>
+            <p className="mb-3 text-[14px] text-body">
+              Helps the AI pitch examples at the right depth, and lets us
+              recommend people studying the same material.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {GRADE_OPTIONS.map((g) => {
+                const active = gradeLevel === g;
+                return (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => setGradeLevel(active ? null : g)}
+                    className={`rounded-full border px-3 py-1 text-[13px] transition ${
+                      active
+                        ? "border-orange bg-orange-tint text-orange-ink"
+                        : "border-hair bg-paper text-muted hover:border-orange/60 hover:text-ink"
+                    }`}
+                  >
+                    {g}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-hair bg-offwhite p-5">
+            <div className="label mb-2">Interests</div>
+            <p className="mb-3 text-[14px] text-body">
+              Pick up to {MAX_INTERESTS}. The AI tutor will lean on these when
+              choosing analogies, and they're used to recommend classmates to
+              follow.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {INTEREST_OPTIONS.map((i) => {
+                const active = interests.includes(i);
+                const atLimit = interests.length >= MAX_INTERESTS && !active;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    disabled={atLimit}
+                    onClick={() => {
+                      if (active) {
+                        setInterests((prev) => prev.filter((x) => x !== i));
+                      } else {
+                        setInterests((prev) =>
+                          prev.length >= MAX_INTERESTS ? prev : [...prev, i]
+                        );
+                      }
+                    }}
+                    className={`rounded-full border px-3 py-1 text-[13px] transition disabled:opacity-40 ${
+                      active
+                        ? "border-orange bg-orange-tint text-orange-ink"
+                        : "border-hair bg-paper text-muted hover:border-orange/60 hover:text-ink"
+                    }`}
+                  >
+                    {active ? "✓ " : ""}{i}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-3 text-xs text-muted">
+              {interests.length} / {MAX_INTERESTS} selected
             </p>
           </div>
 

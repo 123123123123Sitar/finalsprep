@@ -4,10 +4,10 @@ import SiteNav from "@/app/components/SiteNav";
 import CommunityTabs from "@/app/components/CommunityTabs";
 import UserAvatar from "@/app/components/UserAvatar";
 import { useAuth } from "@/app/components/AuthProvider";
-import {
-  relativeTime,
-  type ActivityItem,
-} from "@/lib/social";
+import { getDb } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { allSubforums, type ForumPost } from "@/lib/forums";
+import ForumPostRow from "@/app/components/ForumPostRow";
 
 type SearchResult = {
   uid: string;
@@ -19,33 +19,52 @@ type SearchResult = {
   stats: { problemsSolved: number; followersCount: number };
 };
 
-export default function SocialPage() {
+type Recommendation = {
+  uid: string;
+  username: string;
+  displayName: string;
+  avatarEmoji?: string | null;
+  avatarColor?: string | null;
+  reason: string;
+};
+
+export default function SocialHomePage() {
   const { user, getIdToken } = useAuth();
-  const [feed, setFeed] = useState<ActivityItem[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [postText, setPostText] = useState("");
-  const [posting, setPosting] = useState(false);
+
+  const [hot, setHot] = useState<ForumPost[] | null>(null);
+  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
 
   const [search, setSearch] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[] | null>(null);
+  const [recs, setRecs] = useState<Recommendation[] | null>(null);
 
-  const loadFeed = useCallback(async () => {
-    try {
-      const token = await getIdToken();
-      const res = await fetch("/api/feed", {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Couldn't load feed");
-      setFeed(data.items || []);
-    } catch (e: any) {
-      setError(e?.message || "Couldn't load feed");
-    }
-  }, [getIdToken]);
+  const loadHot = useCallback(async () => {
+    const res = await fetch("/api/forum/posts?sort=hot&limit=20");
+    const data = await res.json();
+    setHot(data.posts || []);
+  }, []);
 
   useEffect(() => {
-    loadFeed();
-  }, [loadFeed]);
+    loadHot();
+  }, [loadHot]);
+
+  useEffect(() => {
+    if (!user) {
+      setSelectedCourses([]);
+      return;
+    }
+    const db = getDb();
+    if (!db) return;
+    (async () => {
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid, "profile", "prefs"));
+        const cs = (snap.data() as any)?.selectedCourses;
+        if (Array.isArray(cs)) setSelectedCourses(cs.filter((s) => typeof s === "string"));
+      } catch {
+        // Non-fatal; just won't pin the user's courses to the top.
+      }
+    })();
+  }, [user]);
 
   useEffect(() => {
     const q = search.trim();
@@ -65,32 +84,40 @@ export default function SocialPage() {
     };
   }, [search]);
 
-  async function shareProgress() {
+  useEffect(() => {
     if (!user) {
-      window.location.href = "/signin?next=/social";
+      setRecs(null);
       return;
     }
-    const content = postText.trim();
-    if (content.length < 2) return;
-    setPosting(true);
-    try {
-      const token = await getIdToken();
-      const res = await fetch("/api/feed/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ content }),
-      });
-      if (res.ok) {
-        setPostText("");
-        loadFeed();
+    let alive = true;
+    (async () => {
+      try {
+        const token = await getIdToken();
+        if (!token) return;
+        const res = await fetch("/api/recommendations/users", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (alive) setRecs(data.users || []);
+      } catch {
+        // Sidebar card silently hides on failure.
       }
-    } finally {
-      setPosting(false);
-    }
-  }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [user, getIdToken]);
+
+  const subforums = allSubforums();
+  const pinned = new Set(selectedCourses);
+  // Surface the user's courses + general at the top; rest stays discoverable.
+  const primary = subforums.filter(
+    (s) => s.kind === "general" || pinned.has(s.slug)
+  );
+  const secondary = subforums.filter(
+    (s) => s.kind !== "general" && !pinned.has(s.slug)
+  );
 
   return (
     <main className="min-h-screen bg-paper">
@@ -100,73 +127,69 @@ export default function SocialPage() {
         <div>
           <header className="mb-6">
             <div className="label">Community</div>
-            <h1 className="mt-1 font-serif text-4xl text-ink">Feed</h1>
+            <h1 className="mt-1 font-serif text-4xl text-ink">Forums</h1>
             <p className="mt-2 max-w-xl text-[15px] text-body">
-              Progress updates from students you follow, plus what's hot in the
-              community.
+              One subforum per course plus a general room. Ask questions, share
+              resources, organize study groups.
             </p>
           </header>
 
-          {/* Composer */}
-          {user && (
-            <div className="mb-6 rounded-xl border border-hair bg-paper p-4">
-              <div className="flex items-start gap-3">
-                <UserAvatar
-                  seed={user.uid}
-                  label={user.email || "?"}
-                  size="md"
-                />
-                <div className="min-w-0 flex-1">
-                  <textarea
-                    value={postText}
-                    onChange={(e) => setPostText(e.target.value)}
-                    placeholder="Share what you're studying…"
-                    rows={2}
-                    className="w-full resize-none rounded-md border border-hair bg-offwhite/40 px-3 py-2 text-[14px] text-ink placeholder:text-dim focus:border-orange focus:bg-paper focus:outline-none"
-                    maxLength={400}
-                  />
-                  <div className="mt-2 flex items-center justify-between text-[12px] text-muted">
-                    <span>{postText.length}/400</span>
-                    <button
-                      onClick={shareProgress}
-                      disabled={posting || postText.trim().length < 2}
-                      className="btn-primary px-3 py-1 text-[13px] disabled:opacity-50"
-                    >
-                      {posting ? "Posting…" : "Share"}
-                    </button>
-                  </div>
-                </div>
-              </div>
+          <section className="mb-8">
+            <div className="mb-2 flex items-baseline justify-between">
+              <div className="label">Your forums</div>
+              <span className="text-[12px] text-muted">{primary.length}</span>
             </div>
-          )}
-
-          {error && (
-            <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              {error}
-            </div>
-          )}
-
-          {feed === null ? (
-            <div className="py-10 text-center text-sm text-muted">
-              Loading…
-            </div>
-          ) : feed.length === 0 ? (
-            <div className="rounded-xl bg-offwhite/60 p-10 text-center">
-              <div className="text-[15px] text-ink">No activity yet.</div>
-              <p className="mt-2 text-[13px] text-muted">
-                Follow a few classmates, or solve a problem to kick off your feed.
-              </p>
-            </div>
-          ) : (
-            <ul className="space-y-3">
-              {feed.map((a) => (
-                <FeedCard key={a.id} activity={a} />
+            <ul className="grid gap-2 sm:grid-cols-2">
+              {primary.map((s) => (
+                <SubforumCard key={s.slug} slug={s.slug} title={s.title} description={s.description} />
               ))}
             </ul>
-          )}
+
+            {secondary.length > 0 && (
+              <>
+                <div className="mt-6 mb-2 flex items-baseline justify-between">
+                  <div className="label">Browse all courses</div>
+                  <span className="text-[12px] text-muted">{secondary.length}</span>
+                </div>
+                <ul className="grid gap-2 sm:grid-cols-2">
+                  {secondary.map((s) => (
+                    <SubforumCard key={s.slug} slug={s.slug} title={s.title} description={s.description} />
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
+
+          <section>
+            <div className="mb-3 flex items-baseline justify-between">
+              <div className="label">Hot across all forums</div>
+              <a href="/social" className="text-[12px] text-muted hover:text-ink">
+                Refresh
+              </a>
+            </div>
+            {hot === null ? (
+              <div className="py-10 text-center text-sm text-muted">Loading…</div>
+            ) : hot.length === 0 ? (
+              <div className="rounded-xl bg-offwhite/60 p-10 text-center">
+                <div className="text-[15px] text-ink">
+                  No posts anywhere yet.
+                </div>
+                <p className="mt-2 text-[13px] text-muted">
+                  Pick a forum and start the conversation.
+                </p>
+              </div>
+            ) : (
+              <ul className="space-y-2">
+                {hot.map((p) => (
+                  <li key={p.id}>
+                    <ForumPostRow post={p} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
 
-        {/* Sidebar: search + quick links */}
         <aside className="space-y-5">
           <div className="rounded-xl border border-hair bg-paper p-4">
             <div className="label mb-2">Find people</div>
@@ -201,7 +224,7 @@ export default function SocialPage() {
                           {r.displayName}
                         </div>
                         <div className="truncate text-[11px] text-muted">
-                          @{r.username} · {r.stats.problemsSolved} solves
+                          @{r.username}
                         </div>
                       </div>
                     </a>
@@ -210,6 +233,46 @@ export default function SocialPage() {
               </div>
             )}
           </div>
+
+          {user && recs && recs.length > 0 && (
+            <div className="rounded-xl border border-hair bg-paper p-4">
+              <div className="label mb-2">People you might like</div>
+              <p className="mb-3 text-[12px] text-muted">
+                Based on your courses and interests.
+              </p>
+              <ul className="space-y-2">
+                {recs.map((r) => (
+                  <li key={r.uid}>
+                    <a
+                      href={`/users/${r.uid}`}
+                      className="flex items-start gap-2 rounded-md px-2 py-1.5 hover:bg-offwhite"
+                    >
+                      <UserAvatar
+                        seed={r.uid}
+                        label={r.displayName || r.username}
+                        emoji={r.avatarEmoji}
+                        color={r.avatarColor}
+                        size="sm"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-[13px] text-ink">
+                          {r.displayName}
+                        </div>
+                        <div className="truncate text-[11px] text-muted">
+                          @{r.username}
+                        </div>
+                        {r.reason && (
+                          <div className="mt-0.5 truncate text-[11px] text-orange-ink">
+                            {r.reason}
+                          </div>
+                        )}
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {user && (
             <div className="rounded-xl border border-hair bg-paper p-4">
@@ -223,6 +286,14 @@ export default function SocialPage() {
                     👤 Your profile
                   </a>
                 </li>
+                <li>
+                  <a
+                    href="/account"
+                    className="block rounded-md px-2 py-1.5 text-body hover:bg-offwhite hover:text-ink"
+                  >
+                    ⚙️ Account settings
+                  </a>
+                </li>
               </ul>
             </div>
           )}
@@ -232,59 +303,32 @@ export default function SocialPage() {
   );
 }
 
-function FeedCard({ activity }: { activity: ActivityItem }) {
-  const verb = verbFor(activity);
+function SubforumCard({
+  slug,
+  title,
+  description,
+}: {
+  slug: string;
+  title: string;
+  description: string;
+}) {
   return (
-    <li className="rounded-xl border border-hair bg-paper p-4">
-      <div className="flex items-start gap-3">
-        <a href={`/users/${activity.uid}`} className="shrink-0">
-          <UserAvatar
-            seed={activity.uid}
-            label={activity.displayName || activity.username}
-            size="md"
-          />
-        </a>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5 text-[14px]">
-            <a
-              href={`/users/${activity.uid}`}
-              className="font-medium text-ink hover:underline"
-            >
-              {activity.displayName || activity.username}
-            </a>
-            <span className="text-muted">{verb}</span>
-            <span className="text-[12px] text-dim">
-              · {relativeTime(activity.createdAt)}
-            </span>
-          </div>
-          <p className="mt-1 text-[14px] text-body">{activity.content}</p>
-          {activity.course && (
-            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-offwhite px-2 py-0.5 text-[11px] text-muted">
-              <span>📚</span>
-              <span>{activity.course}</span>
-              {typeof activity.unit === "number" && (
-                <span>· Unit {activity.unit}</span>
-              )}
-            </div>
-          )}
+    <li>
+      <a
+        href={`/social/f/${slug}`}
+        className="flex h-full flex-col rounded-xl border border-hair bg-paper p-4 hover:border-orange/40"
+      >
+        <div className="flex items-center gap-2">
+          <span className="rounded-md bg-offwhite px-2 py-0.5 text-[11px] font-medium text-muted">
+            f/{slug}
+          </span>
+          <span className="truncate text-[14px] font-medium text-ink">
+            {title}
+          </span>
         </div>
-      </div>
+        <p className="mt-2 line-clamp-2 text-[13px] text-muted">{description}</p>
+      </a>
     </li>
   );
 }
 
-function verbFor(a: ActivityItem): string {
-  switch (a.kind) {
-    case "solve":
-      return "solved a problem";
-    case "mastered_unit":
-      return "hit a milestone";
-    case "streak_milestone":
-      return "extended their streak";
-    case "rank_up":
-      return "moved up the leaderboard";
-    case "custom_post":
-    default:
-      return "";
-  }
-}

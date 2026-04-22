@@ -133,28 +133,40 @@ export default function NotificationsBell() {
             <ul className="max-h-[60vh] divide-y divide-hair overflow-y-auto">
               {items.map((n) => (
                 <li key={n.id}>
-                  <a
-                    href={n.link || "#"}
-                    onClick={() => setOpen(false)}
-                    className={`block rounded-md px-2 py-2 hover:bg-offwhite ${
-                      n.read ? "" : "bg-orange-tint/30"
-                    }`}
-                  >
-                    <div className="flex items-start gap-2">
-                      <span
-                        aria-hidden="true"
-                        className="mt-0.5 text-[14px]"
-                      >
-                        {kindGlyph(n.kind)}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <div className="text-[13px] text-ink">{n.text}</div>
-                        <div className="mt-0.5 text-[11px] text-muted">
-                          {relativeTime(n.createdAt)}
+                  {n.kind === "follow_request" && n.fromUid ? (
+                    <FollowRequestRow
+                      notification={n}
+                      getIdToken={getIdToken}
+                      onResolved={() => {
+                        setItems((prev) =>
+                          prev ? prev.filter((x) => x.id !== n.id) : prev
+                        );
+                      }}
+                    />
+                  ) : (
+                    <a
+                      href={n.link || "#"}
+                      onClick={() => setOpen(false)}
+                      className={`block rounded-md px-2 py-2 hover:bg-offwhite ${
+                        n.read ? "" : "bg-orange-tint/30"
+                      }`}
+                    >
+                      <div className="flex items-start gap-2">
+                        <span
+                          aria-hidden="true"
+                          className="mt-0.5 text-[14px]"
+                        >
+                          {kindGlyph(n.kind)}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[13px] text-ink">{n.text}</div>
+                          <div className="mt-0.5 text-[11px] text-muted">
+                            {relativeTime(n.createdAt)}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </a>
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
@@ -169,6 +181,8 @@ function kindGlyph(kind: AppNotification["kind"]): string {
   switch (kind) {
     case "follow":
       return "👤";
+    case "follow_request":
+      return "👋";
     case "message":
       return "✉️";
     case "comment_reply":
@@ -176,4 +190,87 @@ function kindGlyph(kind: AppNotification["kind"]): string {
     default:
       return "🔔";
   }
+}
+
+function FollowRequestRow({
+  notification,
+  getIdToken,
+  onResolved,
+}: {
+  notification: AppNotification;
+  getIdToken: () => Promise<string | null>;
+  onResolved: () => void;
+}) {
+  const [busy, setBusy] = useState<"accept" | "reject" | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // The follow doc id mirrors the request ID: `${followerUid}__${targetUid}`.
+  const followerUid = notification.fromUid!;
+  const recipientUid = notification.uid;
+  const requestId = `${followerUid}__${recipientUid}`;
+
+  async function act(kind: "accept" | "reject") {
+    setBusy(kind);
+    setError(null);
+    try {
+      const token = await getIdToken();
+      if (!token) return;
+      const res = await fetch(`/api/follow-requests/${requestId}`, {
+        method: kind === "accept" ? "POST" : "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setError(data?.error || "Couldn't update request");
+        return;
+      }
+      onResolved();
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  return (
+    <div
+      className={`rounded-md px-2 py-2 ${
+        notification.read ? "" : "bg-orange-tint/30"
+      }`}
+    >
+      <div className="flex items-start gap-2">
+        <span aria-hidden="true" className="mt-0.5 text-[14px]">
+          👋
+        </span>
+        <div className="min-w-0 flex-1">
+          <a
+            href={notification.link || `/users/${followerUid}`}
+            className="block text-[13px] text-ink hover:underline"
+          >
+            {notification.text}
+          </a>
+          <div className="mt-0.5 text-[11px] text-muted">
+            {relativeTime(notification.createdAt)}
+          </div>
+          <div className="mt-2 flex gap-2">
+            <button
+              onClick={() => act("accept")}
+              disabled={busy !== null}
+              className="rounded-md bg-ink px-2.5 py-1 text-[12px] font-medium text-paper hover:bg-ink/90 disabled:opacity-50"
+            >
+              {busy === "accept" ? "…" : "Accept"}
+            </button>
+            <button
+              onClick={() => act("reject")}
+              disabled={busy !== null}
+              className="rounded-md border border-hair px-2.5 py-1 text-[12px] text-muted hover:border-red-300 hover:text-red-700 disabled:opacity-50"
+            >
+              {busy === "reject" ? "…" : "Reject"}
+            </button>
+          </div>
+          {error && (
+            <div className="mt-1 text-[11px] text-red-600">{error}</div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }

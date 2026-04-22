@@ -1,15 +1,31 @@
 import { NextResponse } from "next/server";
 import { getAuthedUser } from "@/lib/authGuard";
-import { adminDbOrThrow, getPublicProfile } from "@/lib/socialAdmin";
+import {
+  adminDbOrThrow,
+  ensurePublicProfile,
+  getPublicProfile,
+} from "@/lib/socialAdmin";
 
 export const runtime = "nodejs";
+
+type CourseProgress = {
+  courseSlug: string;
+  completed: number;
+};
+
+type HistoryEntry = {
+  kind?: string;
+  tokens?: number;
+  createdAt: number;
+};
 
 /**
  * GET /api/users/{uid} — public profile view.
  *
- * Also returns whether the caller (if signed in) is following this user,
- * so the profile page can render the Follow/Unfollow button correctly
- * without a second round-trip.
+ * Returns the profile + the caller's follow relationship. Activity data
+ * (recent AI history + a 90-day heatmap) is only included when the caller
+ * is the profile owner OR an accepted follower — otherwise the client
+ * shows a "locked" placeholder.
  */
 export async function GET(
   req: Request,
@@ -22,33 +38,97 @@ export async function GET(
     return NextResponse.json({ error: "Not configured" }, { status: 500 });
   }
 
-  const profile = await getPublicProfile(db, params.uid);
+  const caller = await getAuthedUser(req);
+  const isSelf = !!caller && caller.uid === params.uid;
+
+  let profile = await getPublicProfile(db, params.uid);
+  if (!profile && isSelf && caller) {
+    profile = await ensurePublicProfile(db, caller.uid, caller.email || null);
+  }
   if (!profile) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const caller = await getAuthedUser(req);
   let isFollowing = false;
-  let isSelf = false;
-  if (caller) {
-    isSelf = caller.uid === params.uid;
-    if (!isSelf) {
-      const followId = `${caller.uid}__${params.uid}`;
-      const snap = await db.collection("follows").doc(followId).get();
-      isFollowing = snap.exists;
+  let isRequested = false;
+  if (caller && !isSelf) {
+    const followId = `${caller.uid}__${params.uid}`;
+    const snap = await db.collection("follows").doc(followId).get();
+    if (snap.exists) {
+      const status = (snap.data() as any)?.status;
+      isFollowing = status === "accepted";
+      isRequested = status === "pending";
     }
   }
 
-  // Course-level stats to show on the profile.
-  const statsSnap = await db
-    .collection("leaderboardStats")
-    .where("uid", "==", params.uid)
-    .limit(20)
+  // Selected courses + completion counts are always public.
+  const prefsSnap = await db
+    .collection("users")
+    .doc(params.uid)
+    .collection("profile")
+    .doc("prefs")
     .get();
-  const courseStats = statsSnap.docs
-    .map((d) => d.data() as any)
-    .map((d) => ({ courseSlug: d.courseSlug, problems: d.problems || 0 }))
-    .sort((a, b) => b.problems - a.problems);
+  const selectedCourses: string[] = Array.isArray(
+    (prefsSnap.data() as any)?.selectedCourses
+  )
+    ? ((prefsSnap.data() as any).selectedCourses as string[]).filter(
+        (s) => typeof s === "string"
+      )
+    : [];
 
-  return NextResponse.json({ profile, isFollowing, isSelf, courseStats });
+  const lessonsSnap = await db
+    .collection("users")
+    .doc(params.uid)
+    .collection("profile")
+    .doc("lessons")
+    .get();
+  const completedSlugs: string[] = Array.isArray(
+    (lessonsSnap.data() as any)?.completedSlugs
+  )
+    ? ((lessonsSnap.data() as any).completedSlugs as string[]).filter(
+        (s) => typeof s === "string"
+      )
+    : [];
+
+  const courses: CourseProgress[] = selectedCourses.map((slug) => {
+    const prefix = `ced:${slug}:`;
+    const completed = completedSlugs.filter((s) => s.startsWith(prefix)).length;
+    return { courseSlug: slug, completed };
+  });
+
+  // Activity data is gated — only the user themself or an accepted
+  // follower can see the heatmap / recent list.
+  const canSeeActivity = isSelf || isFollowing;
+  let history: HistoryEntry[] = [];
+  if (canSeeActivity) {
+    const histSnap = await db
+      .collection("users")
+      .doc(params.uid)
+      .collection("aiHistory")
+      .limit(500)
+      .get();
+    history = histSnap.docs
+      .map((d) => {
+        const data = d.data() as any;
+        const createdAt =
+          typeof data.createdAt === "number"
+            ? data.createdAt
+            : typeof data.createdAt?.toMillis === "function"
+            ? data.createdAt.toMillis()
+            : 0;
+        return { kind: data.kind, tokens: data.tokens, createdAt };
+      })
+      .filter((h) => h.createdAt > 0)
+      .sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  return NextResponse.json({
+    profile,
+    isFollowing,
+    isRequested,
+    isSelf,
+    canSeeActivity,
+    courses,
+    history,
+  });
 }

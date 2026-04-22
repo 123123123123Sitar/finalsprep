@@ -7,6 +7,9 @@ export type AiPrefs = {
   aiMode: AiMode;
   aiPersonality: AiPersonality;
   aiCustomInstructions: string;
+  /** Optional — pulled from the user's publicProfile for personalization. */
+  interests?: string[];
+  gradeLevel?: string | null;
 };
 
 export const AI_CUSTOM_INSTRUCTIONS_LIMIT = 500;
@@ -158,6 +161,16 @@ export function buildAiPreferencePrompt(prefs: AiPrefs): string {
     `- ${modePrompt(prefs.aiMode)}`,
     `- ${personalityPrompt(prefs.aiPersonality)}`,
   ];
+  if (prefs.gradeLevel) {
+    lines.push(
+      `- Student context: ${prefs.gradeLevel}. Pitch vocabulary, examples, and depth to that level.`
+    );
+  }
+  if (prefs.interests && prefs.interests.length > 0) {
+    lines.push(
+      `- Interests: ${prefs.interests.join(", ")}. When choosing analogies or examples, prefer ones that connect to these interests, but never force it.`
+    );
+  }
   if (prefs.aiCustomInstructions) {
     lines.push(
       "- Additional custom instructions from the user:",
