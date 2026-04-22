@@ -71,6 +71,12 @@ export default function UserProfilePage({
     load();
   }, [authLoading, load]);
 
+  useEffect(() => {
+    if (data?.isSelf && typeof window !== "undefined") {
+      window.location.replace("/account");
+    }
+  }, [data?.isSelf]);
+
   function openEdit() {
     if (!data) return;
     setEditDisplayName(data.profile.displayName);

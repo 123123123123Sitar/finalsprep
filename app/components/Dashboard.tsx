@@ -569,18 +569,18 @@ function CourseCard({
       href={href}
       className="group flex flex-col rounded-xl border border-hair bg-paper p-5 transition hover:-translate-y-0.5 hover:border-orange hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.25)]"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <CourseIcon slug={course.slug} category={course.category} size="md" />
-          <div className="min-w-0 font-serif text-xl text-ink group-hover:text-orange">
+      <div className="flex min-w-0 items-start gap-3">
+        <CourseIcon slug={course.slug} category={course.category} size="md" />
+        <div className="min-w-0 flex-1">
+          <div className="font-serif text-xl text-ink group-hover:text-orange">
             {course.title}
           </div>
+          {countdown && (
+            <div className="mt-0.5 text-[11px] font-medium text-orange-ink">
+              {countdown}
+            </div>
+          )}
         </div>
-        {countdown && (
-          <span className="shrink-0 rounded-full border border-orange/30 bg-orange-tint px-2 py-1 text-[10px] font-medium text-orange-ink">
-            {countdown}
-          </span>
-        )}
       </div>
 
       <div className="mt-4">

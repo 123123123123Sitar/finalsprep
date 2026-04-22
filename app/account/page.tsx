@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { updateProfile } from "firebase/auth";
 import { doc, getDoc, setDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 import SiteNav from "@/app/components/SiteNav";
 import ThemePicker from "@/app/components/ThemePicker";
 import UserAvatar from "@/app/components/UserAvatar";
+import CourseIcon from "@/app/components/CourseIcon";
 import { useAuth } from "@/app/components/AuthProvider";
 import PageLoader from "@/app/components/PageLoader";
 import { getDb, getFirebaseAuth } from "@/lib/firebase";
@@ -21,7 +22,10 @@ import {
   INTEREST_OPTIONS,
   MAX_INTERESTS,
   validateUsername,
+  type PublicProfile,
 } from "@/lib/social";
+import { COURSES } from "@/lib/topics";
+import { getHeatmapDays } from "@/lib/insights";
 
 type Prefs = AiPrefs & {
   selectedCourses: string[];
@@ -32,10 +36,19 @@ const DEFAULT_PREFS: Prefs = {
   ...DEFAULT_AI_PREFS,
 };
 
+type CourseProgress = { courseSlug: string; completed: number };
+type HistoryEntry = { kind?: string; tokens?: number; createdAt: number };
+type SelfProfileView = {
+  profile: PublicProfile;
+  courses: CourseProgress[];
+  history: HistoryEntry[];
+};
+
 export default function AccountPage() {
   const { user, loading, configured, plan, signOut, getIdToken } = useAuth();
   const [displayName, setDisplayName] = useState("");
   const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
   const [avatarEmoji, setAvatarEmoji] = useState<string | null>(null);
   const [avatarColor, setAvatarColor] = useState<string | null>(null);
   const [gradeLevel, setGradeLevel] = useState<string | null>(null);
@@ -47,6 +60,7 @@ export default function AccountPage() {
     null
   );
   const [bonusBalance, setBonusBalance] = useState<number | null>(null);
+  const [profileView, setProfileView] = useState<SelfProfileView | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -74,6 +88,7 @@ export default function AccountPage() {
         const p = data?.profile;
         if (p) {
           if (typeof p.username === "string") setUsername(p.username);
+          if (typeof p.bio === "string") setBio(p.bio);
           setAvatarEmoji(p.avatarEmoji ?? null);
           setAvatarColor(p.avatarColor ?? null);
           setGradeLevel(typeof p.gradeLevel === "string" ? p.gradeLevel : null);
@@ -121,6 +136,32 @@ export default function AccountPage() {
 
   useEffect(() => {
     if (!user) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const token = await getIdToken();
+        const res = await fetch(`/api/users/${user.uid}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled) return;
+        setProfileView({
+          profile: data.profile,
+          courses: Array.isArray(data.courses) ? data.courses : [],
+          history: Array.isArray(data.history) ? data.history : [],
+        });
+      } catch {
+        // Profile preview is best-effort.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, getIdToken]);
+
+  useEffect(() => {
+    if (!user) return;
     const db = getDb();
     if (!db) return;
     const unsub = onSnapshot(
@@ -164,6 +205,7 @@ export default function AccountPage() {
           body: JSON.stringify({
             displayName: displayName.trim() || undefined,
             username: trimmedUsername || undefined,
+            bio,
             avatarEmoji,
             avatarColor,
             gradeLevel,
@@ -255,14 +297,39 @@ export default function AccountPage() {
       <section className="mx-auto max-w-2xl px-6 py-16">
         <div className="label mb-3">Account</div>
         <h1 className="font-serif text-[44px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[52px]">
-          Your settings.
+          Your profile.
         </h1>
         <p className="mt-3 text-[15px] text-muted">
           Signed in as <span className="text-ink">{user.email}</span>. Current
           plan: <span className="text-ink">{planLabel(plan)}</span>.
         </p>
 
-        <div className="mt-10 space-y-10">
+        {profileView && (
+          <div className="mt-8 space-y-6">
+            <ProfilePreview
+              profile={profileView.profile}
+              bio={bio}
+              displayName={displayName}
+              username={username}
+              avatarEmoji={avatarEmoji}
+              avatarColor={avatarColor}
+              gradeLevel={gradeLevel}
+              interests={interests}
+            />
+            <CoursesInProgress courses={profileView.courses} />
+            <ActivityHeatmap history={profileView.history} />
+            <RecentActivityList history={profileView.history} />
+          </div>
+        )}
+
+        <div className="mt-12">
+          <div className="label mb-3">Settings</div>
+          <h2 className="font-serif text-2xl text-ink">
+            Update your account.
+          </h2>
+        </div>
+
+        <div className="mt-6 space-y-10">
           {/* Display name */}
           <div>
             <label className="label mb-2 block">Display name</label>
@@ -301,6 +368,22 @@ export default function AccountPage() {
             <p className="mt-2 text-xs text-muted">
               Shown on your profile URL. Letters, numbers, dot, or underscore,
               3 to 24 characters. Must be unique.
+            </p>
+          </div>
+
+          {/* Bio */}
+          <div>
+            <label className="label mb-2 block">Bio</label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="A line or two about what you're studying."
+              rows={3}
+              maxLength={280}
+              className="w-full resize-none rounded-md border border-hair bg-paper px-4 py-3 text-[15px] text-ink outline-none focus:border-orange"
+            />
+            <p className="mt-2 text-xs text-muted">
+              Shown on your public profile. {bio.length} / 280
             </p>
           </div>
 
@@ -528,4 +611,273 @@ export default function AccountPage() {
       </section>
     </main>
   );
+}
+
+function ProfilePreview({
+  profile,
+  bio,
+  displayName,
+  username,
+  avatarEmoji,
+  avatarColor,
+  gradeLevel,
+  interests,
+}: {
+  profile: PublicProfile;
+  bio: string;
+  displayName: string;
+  username: string;
+  avatarEmoji: string | null;
+  avatarColor: string | null;
+  gradeLevel: string | null;
+  interests: string[];
+}) {
+  const name = displayName || profile.displayName || username || profile.username;
+  return (
+    <div className="rounded-xl border border-hair bg-offwhite p-5">
+      <div className="flex items-start gap-4">
+        <UserAvatar
+          seed={profile.uid}
+          label={name}
+          emoji={avatarEmoji}
+          color={avatarColor}
+          size="lg"
+        />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="font-serif text-xl text-ink">{name}</h3>
+            {gradeLevel && (
+              <span className="rounded-full border border-hair bg-paper px-2 py-0.5 text-[11px] font-medium text-muted">
+                {gradeLevel}
+              </span>
+            )}
+          </div>
+          {username && (
+            <div className="mt-0.5 text-[13px] text-muted">@{username}</div>
+          )}
+          {bio && (
+            <p className="mt-3 whitespace-pre-wrap text-[14px] text-body">
+              {bio}
+            </p>
+          )}
+          {interests.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {interests.map((i) => (
+                <span
+                  key={i}
+                  className="rounded-full border border-hair bg-paper px-2.5 py-0.5 text-[11px] text-muted"
+                >
+                  {i}
+                </span>
+              ))}
+            </div>
+          )}
+          <div className="mt-4 flex gap-6 text-[13px]">
+            <PreviewStat label="Followers" value={profile.stats?.followersCount || 0} />
+            <PreviewStat label="Following" value={profile.stats?.followingCount || 0} />
+            <PreviewStat label="Longest streak" value={profile.stats?.longestStreak || 0} />
+          </div>
+        </div>
+      </div>
+      <div className="mt-4 text-right">
+        <a
+          href={`/users/${profile.uid}`}
+          className="text-[12px] text-muted underline hover:text-ink"
+        >
+          View public profile →
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function PreviewStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div>
+      <div className="font-semibold text-ink">{value}</div>
+      <div className="text-[11px] uppercase tracking-wider text-muted">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function CoursesInProgress({ courses }: { courses: CourseProgress[] }) {
+  if (courses.length === 0) return null;
+  return (
+    <div className="rounded-xl border border-hair bg-offwhite p-5">
+      <div className="label mb-3">Courses in progress</div>
+      <ul className="grid gap-2 sm:grid-cols-2">
+        {courses.map((c) => {
+          const meta = COURSES.find((x) => x.slug === c.courseSlug);
+          const total = meta
+            ? meta.units.reduce((s, u) => s + (u.topics?.length || 0), 0)
+            : 0;
+          const pct =
+            total > 0 ? Math.min(100, Math.round((c.completed / total) * 100)) : 0;
+          return (
+            <li
+              key={c.courseSlug}
+              className="rounded-lg border border-hair bg-paper px-4 py-3"
+            >
+              <div className="flex items-center gap-3">
+                <CourseIcon slug={c.courseSlug} category={meta?.category} size="sm" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <a
+                      href={`/study?course=${c.courseSlug}`}
+                      className="truncate text-[14px] text-ink hover:underline"
+                    >
+                      {meta?.title || c.courseSlug}
+                    </a>
+                    <span className="text-[12px] text-muted">
+                      {c.completed}
+                      {total > 0 ? ` / ${total}` : ""}
+                    </span>
+                  </div>
+                  {total > 0 && (
+                    <div className="mt-2 h-1.5 w-full rounded-full bg-hair">
+                      <div
+                        className="h-full rounded-full bg-orange"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function ActivityHeatmap({ history }: { history: HistoryEntry[] }) {
+  const activityMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const h of history) {
+      const d = new Date(h.createdAt);
+      const key = ymdKey(d);
+      map.set(key, (map.get(key) || 0) + 1);
+    }
+    return map;
+  }, [history]);
+
+  const days = getHeatmapDays(90);
+  const firstDate = new Date(days[0]);
+  const leadingBlanks = firstDate.getDay();
+  const max = Math.max(1, ...Array.from(activityMap.values()));
+
+  function intensity(count: number) {
+    if (count === 0) return 0;
+    const ratio = count / max;
+    if (ratio >= 0.75) return 4;
+    if (ratio >= 0.5) return 3;
+    if (ratio >= 0.25) return 2;
+    return 1;
+  }
+
+  const colors = [
+    "rgb(var(--hair))",
+    "rgb(var(--orange) / 0.3)",
+    "rgb(var(--orange) / 0.55)",
+    "rgb(var(--orange) / 0.8)",
+    "rgb(var(--orange))",
+  ];
+
+  const activeDays = Array.from(activityMap.values()).filter((v) => v > 0).length;
+
+  return (
+    <div className="rounded-xl border border-hair bg-offwhite p-5">
+      <div className="flex items-baseline justify-between">
+        <div className="label">Activity · last 90 days</div>
+        <div className="text-[11px] text-muted">
+          {activeDays} active day{activeDays === 1 ? "" : "s"}
+        </div>
+      </div>
+      <div
+        className="mt-4 grid gap-[3px]"
+        style={{
+          gridTemplateRows: "repeat(7, 12px)",
+          gridAutoFlow: "column",
+          gridAutoColumns: "12px",
+        }}
+      >
+        {Array.from({ length: leadingBlanks }).map((_, i) => (
+          <div key={`blank-${i}`} />
+        ))}
+        {days.map((key) => {
+          const count = activityMap.get(key) || 0;
+          const level = intensity(count);
+          return (
+            <div
+              key={key}
+              title={`${key} · ${count} action${count === 1 ? "" : "s"}`}
+              style={{
+                width: 12,
+                height: 12,
+                borderRadius: 2,
+                backgroundColor: colors[level],
+              }}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function RecentActivityList({ history }: { history: HistoryEntry[] }) {
+  const recent = history.slice(0, 10);
+  if (recent.length === 0) return null;
+  return (
+    <div className="rounded-xl border border-hair bg-offwhite p-5">
+      <div className="label mb-3">Recent activity</div>
+      <ul className="divide-y divide-hair">
+        {recent.map((h, i) => (
+          <li
+            key={i}
+            className="flex items-center justify-between py-2 text-[13px]"
+          >
+            <span className="text-ink">{labelForKind(h.kind)}</span>
+            <span className="text-muted">{relativeDate(h.createdAt)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function labelForKind(kind: string | undefined): string {
+  switch (kind) {
+    case "chat":
+      return "Chatted with the tutor";
+    case "explain":
+      return "Used Explain";
+    case "practice":
+      return "Practiced problems";
+    case "exam":
+      return "Took a mock exam";
+    case "interactive":
+      return "Used an interactive";
+    default:
+      return "Studied";
+  }
+}
+
+function ymdKey(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function relativeDate(ms: number): string {
+  const diff = Date.now() - ms;
+  if (diff < 60_000) return "just now";
+  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
+  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
+  if (diff < 7 * 86_400_000) return `${Math.floor(diff / 86_400_000)}d ago`;
+  return new Date(ms).toLocaleDateString();
 }

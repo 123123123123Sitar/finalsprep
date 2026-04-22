@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAuthedUser } from "@/lib/authGuard";
 import { adminDbOrThrow } from "@/lib/socialAdmin";
 import type { AppNotification } from "@/lib/social";
+import { evaluateReminders } from "@/lib/reminders";
 
 export const runtime = "nodejs";
 
@@ -12,6 +13,13 @@ export async function GET(req: Request) {
   const { user } = authed;
 
   const db = adminDbOrThrow();
+
+  try {
+    await evaluateReminders(db, user.uid);
+  } catch (err) {
+    console.error("[notifications] reminder evaluation failed", err);
+  }
+
   // Avoid `where + orderBy` to skip the composite-index requirement;
   // at a per-user cap of 50 notifications, in-memory sort is trivial.
   const snap = await db
