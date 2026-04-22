@@ -1,12 +1,12 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getAuthedUser } from "@/lib/authGuard";
 import { getPlan } from "@/lib/userPlan";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
 
 export const runtime = "nodejs";
-// First request downloads whisper-tiny.en (~40MB) + initializes ONNX, which
-// can take 2-3 minutes on a cold box. Every subsequent request is ~1s.
-// Bump way past Next's 10s default so the cold start doesn't abort.
-export const maxDuration = 300;
+export const maxDuration = 60;
+
+const SAMPLE_RATE = 16000;
 
 function jsonError(status: number, body: Record<string, unknown>) {
   return new Response(JSON.stringify(body), {
@@ -15,32 +15,36 @@ function jsonError(status: number, body: Record<string, unknown>) {
   });
 }
 
-// Lazy-loaded Whisper pipeline. The model (~40MB) downloads once on the
-// server's first request and is cached in node_modules/.cache or
-// ~/.cache/huggingface. Subsequent requests are fully local to the server.
-// We kick off the download eagerly at module-load so the first user doesn't
-// eat the 2-3 minute cold-start wait.
-let whisperPromise: Promise<any> | null = null;
-function getWhisper() {
-  if (whisperPromise) return whisperPromise;
-  whisperPromise = (async () => {
-    const mod = await import("@huggingface/transformers");
-    const { pipeline } = mod as any;
-    return pipeline(
-      "automatic-speech-recognition",
-      "Xenova/whisper-tiny.en",
-      { quantized: true }
-    );
-  })().catch((e) => {
-    whisperPromise = null;
-    throw e;
-  });
-  return whisperPromise;
+/**
+ * Convert a Float32 PCM ([-1, 1], 16 kHz mono) payload into a complete
+ * little-endian 16-bit PCM WAV file.
+ */
+function float32ToWav(samples: Float32Array, sampleRate = SAMPLE_RATE): Buffer {
+  const dataBytes = samples.length * 2;
+  const buffer = Buffer.alloc(44 + dataBytes);
+
+  buffer.write("RIFF", 0);
+  buffer.writeUInt32LE(36 + dataBytes, 4);
+  buffer.write("WAVE", 8);
+  buffer.write("fmt ", 12);
+  buffer.writeUInt32LE(16, 16); // PCM chunk size
+  buffer.writeUInt16LE(1, 20); // PCM format
+  buffer.writeUInt16LE(1, 22); // mono
+  buffer.writeUInt32LE(sampleRate, 24);
+  buffer.writeUInt32LE(sampleRate * 2, 28); // byte rate
+  buffer.writeUInt16LE(2, 32); // block align
+  buffer.writeUInt16LE(16, 34); // bits per sample
+  buffer.write("data", 36);
+  buffer.writeUInt32LE(dataBytes, 40);
+
+  let offset = 44;
+  for (let i = 0; i < samples.length; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    buffer.writeInt16LE((s < 0 ? s * 0x8000 : s * 0x7fff) | 0, offset);
+    offset += 2;
+  }
+  return buffer;
 }
-// Fire the warmup now so the model is ready when the first mic press lands.
-void getWhisper().catch((e) => {
-  console.warn("[transcribe] whisper warmup failed (will retry on request)", e?.message || e);
-});
 
 export async function POST(req: Request) {
   const adminOn = isAdminConfigured();
@@ -57,35 +61,58 @@ export async function POST(req: Request) {
     });
   }
 
-  // Client posts raw Float32 PCM (16kHz mono) as the body, so the server
-  // can skip audio decoding entirely.
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  if (!apiKey) {
+    return jsonError(502, {
+      error: "Transcription unavailable",
+      message: "Voice transcription is offline right now.",
+    });
+  }
+
+  // Client posts raw Float32 PCM (16 kHz mono).
   const buf = await req.arrayBuffer();
   if (!buf || buf.byteLength < 3200) {
     return jsonError(400, { error: "Audio too short or missing." });
   }
-  // 60s of 16kHz mono float32 = 60 * 16000 * 4 = 3.84MB. Cap at 2 minutes.
-  if (buf.byteLength > 16000 * 4 * 120) {
+  if (buf.byteLength > SAMPLE_RATE * 4 * 120) {
     return jsonError(413, { error: "Audio too long. Keep clips under 2 min." });
   }
-
-  // ArrayBuffer → Float32Array view. Byte length must be a multiple of 4.
   if (buf.byteLength % 4 !== 0) {
     return jsonError(400, { error: "Invalid PCM payload." });
   }
+
   const samples = new Float32Array(buf);
+  const wav = float32ToWav(samples, SAMPLE_RATE);
+  const base64 = wav.toString("base64");
 
   try {
-    const asr = await getWhisper();
-    // whisper-tiny.en is english-only — passing `language` or `task` throws.
-    // `return_timestamps: false` still helps (skips the timestamp decoder).
-    const result = await asr(samples, { return_timestamps: false });
-    const text = (result?.text || "").trim();
+    const genAi = new GoogleGenerativeAI(apiKey);
+    const model = genAi.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      generationConfig: { maxOutputTokens: 512, temperature: 0 },
+    });
+    const result = await model.generateContent([
+      {
+        inlineData: {
+          mimeType: "audio/wav",
+          data: base64,
+        },
+      },
+      {
+        text:
+          "Transcribe the speech in this audio clip verbatim. Output only the " +
+          "transcript text with normal punctuation, no quotes, no prefaces, " +
+          "no translation. If there is no speech, output an empty string.",
+      },
+    ]);
+    const text = result.response.text().trim();
+
     return new Response(JSON.stringify({ transcript: text }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (e: any) {
-    console.error("[transcribe] whisper failed", e);
+    console.error("[transcribe] gemini failed", e);
     return jsonError(500, {
       error: "Transcription failed",
       message: e?.message || "Please try again.",
