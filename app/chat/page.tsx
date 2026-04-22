@@ -149,6 +149,16 @@ function ChatInner() {
   const abortRef = useRef<AbortController | null>(null);
   const [listening, setListening] = useState(false);
   const [voiceUnsupported, setVoiceUnsupported] = useState(false);
+  // Voice mode: when on, the tutor speaks its reply aloud via the browser's
+  // speechSynthesis API, and the request is charged at 1.5x. Pro/Hacker only.
+  const [voiceMode, setVoiceMode] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
+  const [voiceURI, setVoiceURI] = useState<string>("");
+  const [voiceRate, setVoiceRate] = useState<number>(1);
+  const [voicePitch, setVoicePitch] = useState<number>(1);
+  const [voiceList, setVoiceList] = useState<SpeechSynthesisVoice[]>([]);
+  const [voiceSettingsOpen, setVoiceSettingsOpen] = useState(false);
+  const spokenUpToRef = useRef<number>(0);
 
   // Load past conversations once user is ready
   useEffect(() => {
@@ -389,6 +399,10 @@ function ChatInner() {
     setLoading(true);
     setError("");
     setLimitHit(false);
+    if (voiceMode && plan !== "learner") {
+      stopSpeaking();
+      spokenUpToRef.current = 0;
+    }
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -404,6 +418,7 @@ function ChatInner() {
         body: JSON.stringify({
           messages: withUser,
           thinking: plan !== "learner" && thinking,
+          voiceMode: plan !== "learner" && voiceMode,
           aiPrefs,
           ...(pendingImages.length > 0
             ? {
@@ -457,6 +472,7 @@ function ChatInner() {
             next[next.length - 1] = { ...last, content: acc, streaming: true };
             return next;
           });
+          if (voiceMode && plan !== "learner") speakNewFrom(acc);
         }
       } catch (streamErr: any) {
         if (streamErr?.name === "AbortError" || controller.signal.aborted) {
@@ -478,6 +494,9 @@ function ChatInner() {
         setMessages(withUser);
       } else {
         setMessages(finalMessages);
+        if (voiceMode && plan !== "learner" && acc.length > 0 && !aborted) {
+          flushRemainingSpeech(acc);
+        }
         const savedId = await persist(finalMessages);
         // First exchange of a new conversation → ask the AI to title it.
         const isFirstExchange =
@@ -691,17 +710,197 @@ function ChatInner() {
     }
   }
 
-  function toggleMic() {
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    function loadVoices() {
+      const all = window.speechSynthesis.getVoices();
+      const english = all.filter((v) => /^en[-_]?/i.test(v.lang));
+      const ordered = english.sort((a, b) => {
+        const aq = voiceQualityScore(a);
+        const bq = voiceQualityScore(b);
+        if (aq !== bq) return bq - aq;
+        return a.name.localeCompare(b.name);
+      });
+      setVoiceList(ordered);
+      setVoiceURI((current) => {
+        if (current && ordered.some((v) => v.voiceURI === current)) return current;
+        try {
+          const saved = window.localStorage.getItem("fp-voice-uri");
+          if (saved && ordered.some((v) => v.voiceURI === saved)) return saved;
+        } catch {}
+        return ordered[0]?.voiceURI || "";
+      });
+    }
+    try {
+      const savedRate = Number(window.localStorage.getItem("fp-voice-rate"));
+      if (Number.isFinite(savedRate) && savedRate > 0) setVoiceRate(savedRate);
+      const savedPitch = Number(window.localStorage.getItem("fp-voice-pitch"));
+      if (Number.isFinite(savedPitch) && savedPitch > 0) setVoicePitch(savedPitch);
+    } catch {}
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    return () => {
+      if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if (voiceURI) window.localStorage.setItem("fp-voice-uri", voiceURI);
+      window.localStorage.setItem("fp-voice-rate", String(voiceRate));
+      window.localStorage.setItem("fp-voice-pitch", String(voicePitch));
+    } catch {}
+  }, [voiceURI, voiceRate, voicePitch]);
+
+  function voiceQualityScore(v: SpeechSynthesisVoice): number {
+    // Prefer premium / neural voices shipped on macOS, iOS, and modern
+    // Chrome. These three signals cover the common high-quality engines.
+    const n = v.name.toLowerCase();
+    const uri = (v.voiceURI || "").toLowerCase();
+    let score = 0;
+    if (/premium|enhanced|neural|natural|wavenet/.test(n + " " + uri)) score += 100;
+    if (v.localService) score += 10;
+    // macOS / iOS favorites.
+    if (/(samantha|ava|zoe|serena|karen|daniel|moira|tessa|allison)/i.test(n)) {
+      score += 40;
+    }
+    // Chrome's "Google US English" is decent.
+    if (/google us english|google uk english female/i.test(n)) score += 30;
+    // Penalize default robotic voices.
+    if (/microsoft.+desktop|espeak|robo/i.test(n)) score -= 50;
+    return score;
+  }
+
+  function stripForSpeech(text: string): string {
+    // Strip markdown artifacts, code fences, and LaTeX delimiters so the TTS
+    // engine doesn't read "star star bold star star" or a pile of backslashes.
+    return text
+      .replace(/```[\s\S]*?```/g, " code block. ")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/\$\$([\s\S]*?)\$\$/g, " $1 ")
+      .replace(/\$([^$]+)\$/g, " $1 ")
+      .replace(/\\\(([^)]+)\\\)/g, " $1 ")
+      .replace(/\\\[([\s\S]*?)\\\]/g, " $1 ")
+      .replace(/[*_#>~]/g, " ")
+      .replace(/\\[a-zA-Z]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function applyVoiceTo(utter: SpeechSynthesisUtterance) {
+    utter.rate = voiceRate;
+    utter.pitch = voicePitch;
+    const chosen = voiceList.find((v) => v.voiceURI === voiceURI);
+    if (chosen) {
+      utter.voice = chosen;
+      utter.lang = chosen.lang;
+    }
+  }
+
+  function speakText(text: string) {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    const clean = stripForSpeech(text);
+    if (!clean) return;
+    try {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(clean);
+      applyVoiceTo(utter);
+      utter.onstart = () => setSpeaking(true);
+      utter.onend = () => setSpeaking(false);
+      utter.onerror = () => setSpeaking(false);
+      window.speechSynthesis.speak(utter);
+    } catch {}
+  }
+
+  function enqueueSpeechSentence(sentence: string) {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    const clean = stripForSpeech(sentence);
+    if (!clean) return;
+    try {
+      const utter = new SpeechSynthesisUtterance(clean);
+      applyVoiceTo(utter);
+      utter.onstart = () => setSpeaking(true);
+      utter.onend = () => {
+        if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+          setSpeaking(false);
+        }
+      };
+      utter.onerror = () => {
+        if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+          setSpeaking(false);
+        }
+      };
+      window.speechSynthesis.speak(utter);
+    } catch {}
+  }
+
+  function speakNewFrom(full: string) {
+    // During streaming: find any complete sentences newly available past
+    // spokenUpToRef and queue them. Speech synthesis handles the queue.
+    const newText = full.slice(spokenUpToRef.current);
+    if (!newText) return;
+    // Sentence boundary: . ! ? or two consecutive newlines, then whitespace
+    // or end. Keep the boundary char in the spoken chunk.
+    const boundary = /[.!?](?=\s|$)|\n\n/g;
+    let lastEnd = 0;
+    let match: RegExpExecArray | null;
+    while ((match = boundary.exec(newText))) {
+      const endIdx = match.index + match[0].length;
+      const sentence = newText.slice(lastEnd, endIdx).trim();
+      if (sentence.length >= 4) enqueueSpeechSentence(sentence);
+      lastEnd = endIdx;
+    }
+    if (lastEnd > 0) {
+      spokenUpToRef.current += lastEnd;
+    }
+  }
+
+  function flushRemainingSpeech(full: string) {
+    const tail = full.slice(spokenUpToRef.current).trim();
+    if (tail.length >= 2) enqueueSpeechSentence(tail);
+    spokenUpToRef.current = full.length;
+  }
+
+  function stopSpeaking() {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+    try {
+      window.speechSynthesis.cancel();
+    } catch {}
+    setSpeaking(false);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        try {
+          window.speechSynthesis.cancel();
+        } catch {}
+      }
+    };
+  }, []);
+
+  // Voice input uses the browser's Web Speech API (free, no server key
+  // needed). The flaky bits are (a) sessions ending after a pause — fixed by
+  // continuous mode — and (b) transient "network" errors when Chrome's
+  // speech proxy rejects the first bytes — fixed by auto-restarting up to
+  // two times. We collect final transcripts across results, and auto-send
+  // them when voice mode is active.
+  async function toggleMic() {
     if (listening) {
-      try {
-        recognitionRef.current?.stop();
-      } catch {}
-      setListening(false);
+      const rec: any = recognitionRef.current;
+      if (rec) {
+        rec.__userStopped = true;
+        try {
+          rec.stop();
+        } catch {}
+      }
       return;
     }
     const SR: any =
       (typeof window !== "undefined" && (window as any).SpeechRecognition) ||
-      (typeof window !== "undefined" && (window as any).webkitSpeechRecognition);
+      (typeof window !== "undefined" &&
+        (window as any).webkitSpeechRecognition);
     if (!SR) {
       setVoiceUnsupported(true);
       setError(
@@ -710,30 +909,68 @@ function ChatInner() {
       return;
     }
     try {
-      const rec = new SR();
+      const rec: any = new SR();
       rec.lang = "en-US";
-      rec.continuous = false;
+      rec.continuous = true;
       rec.interimResults = true;
       rec.maxAlternatives = 1;
       let finalText = "";
+      let interimText = "";
+      let retries = 0;
+      let restarting = false;
+      rec.__userStopped = false;
       rec.onresult = (event: any) => {
-        let interim = "";
+        interimText = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          const res = event.results[i];
-          if (res.isFinal) finalText += res[0].transcript;
-          else interim += res[0].transcript;
+          const r = event.results[i];
+          if (r.isFinal) finalText += r[0].transcript + " ";
+          else interimText += r[0].transcript;
         }
-        setInput(() => (finalText + interim).replace(/\s+/g, " ").trimStart());
+        const live = (finalText + interimText).replace(/\s+/g, " ").trimStart();
+        if (!voiceMode) setInput(live);
       };
       rec.onerror = (e: any) => {
-        setListening(false);
-        if (e?.error && e.error !== "no-speech" && e.error !== "aborted") {
-          setError(`Voice error: ${e.error}`);
+        const err = e?.error;
+        if (err === "no-speech" || err === "aborted") return;
+        if (err === "network" && retries < 2) {
+          retries++;
+          restarting = true;
+          setTimeout(() => {
+            try {
+              rec.start();
+            } catch {
+              restarting = false;
+            }
+          }, 300);
+          return;
         }
+        setError(
+          err === "not-allowed" || err === "service-not-allowed"
+            ? "Microphone permission denied."
+            : err === "network"
+            ? "Voice service unreachable. Check your connection and try again."
+            : `Voice error: ${err}`
+        );
       };
       rec.onend = () => {
+        if (restarting) {
+          restarting = false;
+          return;
+        }
         setListening(false);
-        setTimeout(() => inputRef.current?.focus(), 0);
+        const transcript = finalText.trim();
+        if (!transcript) {
+          if (rec.__userStopped) {
+            // User stopped without saying anything useful; stay quiet.
+          }
+          return;
+        }
+        if (voiceMode && plan !== "learner") {
+          void send(transcript);
+        } else {
+          setInput(transcript);
+          setTimeout(() => inputRef.current?.focus(), 0);
+        }
       };
       recognitionRef.current = rec;
       rec.start();
@@ -748,7 +985,11 @@ function ChatInner() {
   useEffect(() => {
     return () => {
       try {
-        recognitionRef.current?.stop();
+        const rec: any = recognitionRef.current;
+        if (rec) {
+          rec.__userStopped = true;
+          rec.stop();
+        }
       } catch {}
     };
   }, []);
@@ -1051,7 +1292,7 @@ function ChatInner() {
               )}
             </div>
             {!planLoading && plan !== "learner" && (
-              <div className="mt-2 flex items-center justify-center">
+              <div className="mt-2 flex items-center justify-center gap-2">
                 <button
                   type="button"
                   onClick={() => setThinking((v) => !v)}
@@ -1069,6 +1310,29 @@ function ChatInner() {
                   <span aria-hidden="true">{thinking ? "✨" : "○"}</span>
                   Thinking {thinking ? "on" : "off"}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    stopSpeaking();
+                    setVoiceMode(true);
+                  }}
+                  className="inline-flex items-center gap-1 rounded-full border border-hair bg-paper px-2 py-0.5 text-[11px] text-muted transition hover:text-ink"
+                  title="Open Voice mode (1.5× tokens). Talk to the tutor and hear replies."
+                >
+                  <span aria-hidden="true">🔊</span>
+                  Voice mode
+                </button>
+                {speaking && (
+                  <button
+                    type="button"
+                    onClick={stopSpeaking}
+                    className="inline-flex items-center gap-1 rounded-full border border-hair bg-paper px-2 py-0.5 text-[11px] text-muted hover:text-ink"
+                    title="Stop speaking"
+                  >
+                    <span aria-hidden="true">⏹</span>
+                    Stop
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -1101,6 +1365,432 @@ function ChatInner() {
           onClose={() => setSettingsOpen(false)}
           onSaved={(next) => setAiPrefs(next)}
         />
+      )}
+
+      {voiceMode && plan !== "learner" && (
+        <VoiceModeOverlay
+          listening={listening}
+          speaking={speaking}
+          streaming={streaming}
+          loading={loading}
+          lastUser={
+            [...messages].reverse().find((m) => m.role === "user")?.content ||
+            ""
+          }
+          lastAssistant={
+            [...messages].reverse().find((m) => m.role === "assistant")
+              ?.content || ""
+          }
+          onToggleMic={toggleMic}
+          onStopSpeaking={stopSpeaking}
+          onStopStream={stopStream}
+          onClose={() => {
+            try {
+              const rec: any = recognitionRef.current;
+              if (rec) {
+                rec.__userStopped = true;
+                rec.stop();
+              }
+            } catch {}
+            stopSpeaking();
+            setVoiceMode(false);
+          }}
+          voiceList={voiceList}
+          voiceURI={voiceURI}
+          setVoiceURI={setVoiceURI}
+          voiceRate={voiceRate}
+          setVoiceRate={setVoiceRate}
+          voicePitch={voicePitch}
+          setVoicePitch={setVoicePitch}
+          previewVoice={() => {
+            try {
+              if (typeof window === "undefined") return;
+              const s = window.speechSynthesis;
+              if (!s) return;
+              s.cancel();
+              const u = new SpeechSynthesisUtterance(
+                "This is how I'll sound while we study together."
+              );
+              applyVoiceTo(u);
+              s.speak(u);
+            } catch {}
+          }}
+          settingsOpen={voiceSettingsOpen}
+          setSettingsOpen={setVoiceSettingsOpen}
+          error={error}
+          onSendText={(t) => {
+            const text = t.trim();
+            if (!text) return;
+            void send(text);
+          }}
+          busy={loading || streaming}
+        />
+      )}
+    </div>
+  );
+}
+
+function VoiceModeOverlay({
+  listening,
+  speaking,
+  streaming,
+  loading,
+  lastUser,
+  lastAssistant,
+  onToggleMic,
+  onStopSpeaking,
+  onStopStream,
+  onClose,
+  voiceList,
+  voiceURI,
+  setVoiceURI,
+  voiceRate,
+  setVoiceRate,
+  voicePitch,
+  setVoicePitch,
+  previewVoice,
+  settingsOpen,
+  setSettingsOpen,
+  error,
+  onSendText,
+  busy,
+}: {
+  listening: boolean;
+  speaking: boolean;
+  streaming: boolean;
+  loading: boolean;
+  lastUser: string;
+  lastAssistant: string;
+  onToggleMic: () => void;
+  onStopSpeaking: () => void;
+  onStopStream: () => void;
+  onClose: () => void;
+  voiceList: SpeechSynthesisVoice[];
+  voiceURI: string;
+  setVoiceURI: (v: string) => void;
+  voiceRate: number;
+  setVoiceRate: (v: number) => void;
+  voicePitch: number;
+  setVoicePitch: (v: number) => void;
+  previewVoice: () => void;
+  settingsOpen: boolean;
+  setSettingsOpen: (v: boolean) => void;
+  error: string;
+  onSendText: (text: string) => void;
+  busy: boolean;
+}) {
+  const [typed, setTyped] = useState("");
+  const state: "listening" | "thinking" | "speaking" | "idle" = listening
+    ? "listening"
+    : speaking
+    ? "speaking"
+    : loading || streaming
+    ? "thinking"
+    : "idle";
+  const stateLabel: Record<typeof state, string> = {
+    listening: "Listening…",
+    thinking: "Thinking…",
+    speaking: "Speaking…",
+    idle: "Tap the mic to speak, or type below",
+  } as const;
+  const orbBase =
+    "absolute inset-0 rounded-full bg-gradient-to-br from-sky-400 via-indigo-500 to-fuchsia-500";
+  const orbAnim =
+    state === "listening"
+      ? "animate-pulse"
+      : state === "speaking"
+      ? "animate-[pulse_1.1s_ease-in-out_infinite]"
+      : state === "thinking"
+      ? "animate-[spin_6s_linear_infinite]"
+      : "";
+  return (
+    <div className="fixed inset-0 z-[60] flex flex-col bg-[#0b0f1a] text-white">
+      <div className="flex items-center justify-between px-5 py-4">
+        <button
+          type="button"
+          onClick={() => setSettingsOpen(!settingsOpen)}
+          className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[13px] text-white/80 hover:bg-white/10"
+          aria-label="Voice settings"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            />
+          </svg>
+          Voice settings
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Exit voice mode"
+          className="grid h-9 w-9 place-items-center rounded-full border border-white/15 bg-white/5 text-white/80 hover:bg-white/10"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path
+              d="M6 6l12 12M18 6L6 18"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div className="flex flex-1 flex-col items-center justify-center px-6 pb-6">
+        <div className="relative h-44 w-44 sm:h-56 sm:w-56">
+          <div className={`${orbBase} ${orbAnim} opacity-90 blur-[2px]`} />
+          <div className="absolute inset-3 rounded-full bg-gradient-to-br from-sky-300/30 via-indigo-400/30 to-fuchsia-400/30 backdrop-blur-sm" />
+          <div className="absolute inset-8 rounded-full bg-white/5 ring-1 ring-white/10" />
+          {state === "listening" && (
+            <div className="absolute inset-0 rounded-full ring-4 ring-sky-400/40 animate-ping" />
+          )}
+        </div>
+        <div className="mt-6 text-[15px] font-medium text-white/90">
+          {stateLabel[state]}
+        </div>
+        <div className="mt-1 min-h-[16px] text-[12px] text-white/50">
+          {state === "idle" &&
+            "1.5× tokens per reply. Tap mic, speak, tap again to send."}
+        </div>
+
+        <div className="mt-8 w-full max-w-2xl space-y-3">
+          {lastUser && (
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+              <div className="mb-1 text-[11px] uppercase tracking-wide text-white/40">
+                You
+              </div>
+              <div className="whitespace-pre-wrap text-[14px] text-white/90">
+                {lastUser}
+              </div>
+            </div>
+          )}
+          {lastAssistant && (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3">
+              <div className="mb-1 text-[11px] uppercase tracking-wide text-white/40">
+                Tutor
+              </div>
+              <div className="whitespace-pre-wrap text-[14px] text-white/90">
+                {lastAssistant}
+                {(streaming || speaking) && (
+                  <span className="ml-1 inline-block h-3 w-[2px] animate-pulse bg-white/60 align-middle" />
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center gap-3 px-6 pb-10">
+        {error && (
+          <div className="max-w-xl rounded-xl border border-amber-400/30 bg-amber-500/10 px-3 py-2 text-center text-[13px] text-amber-100">
+            <div>{error}</div>
+            {/network|Voice error/i.test(error) && (
+              <div className="mt-1 text-[12px] text-amber-100/70">
+                Your browser's speech service can't be reached. Type below
+                instead, or try Safari — the tutor will still speak replies.
+              </div>
+            )}
+          </div>
+        )}
+        <div className="flex items-center gap-4">
+          {speaking && (
+            <button
+              type="button"
+              onClick={onStopSpeaking}
+              className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[13px] text-white/80 hover:bg-white/10"
+            >
+              Stop speaking
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onToggleMic}
+            disabled={loading || streaming}
+            aria-label={listening ? "Stop recording" : "Start recording"}
+            className={`relative grid h-20 w-20 place-items-center rounded-full transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 ${
+              listening
+                ? "bg-red-500 text-white shadow-[0_0_60px_rgba(239,68,68,0.5)]"
+                : "bg-white text-slate-900 shadow-[0_0_40px_rgba(255,255,255,0.25)] hover:bg-white/90"
+            }`}
+          >
+            {listening && (
+              <span className="absolute inset-0 rounded-full bg-red-500/60 animate-ping" />
+            )}
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              className="relative"
+              aria-hidden
+            >
+              {listening ? (
+                <rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor" />
+              ) : (
+                <>
+                  <rect
+                    x="9"
+                    y="3"
+                    width="6"
+                    height="12"
+                    rx="3"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                  />
+                  <path
+                    d="M5 11a7 7 0 0 0 14 0M12 18v3"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </>
+              )}
+            </svg>
+          </button>
+          {(streaming || loading) && (
+            <button
+              type="button"
+              onClick={onStopStream}
+              className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[13px] text-white/80 hover:bg-white/10"
+            >
+              Stop reply
+            </button>
+          )}
+        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!typed.trim() || busy) return;
+            onSendText(typed);
+            setTyped("");
+          }}
+          className="flex w-full max-w-xl items-center gap-2"
+        >
+          <input
+            type="text"
+            value={typed}
+            onChange={(e) => setTyped(e.target.value)}
+            placeholder="Or type a message…"
+            disabled={busy}
+            className="flex-1 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[14px] text-white placeholder-white/40 outline-none focus:border-white/30 disabled:opacity-50"
+          />
+          <button
+            type="submit"
+            disabled={!typed.trim() || busy}
+            aria-label="Send typed message"
+            className="grid h-10 w-10 place-items-center rounded-full bg-white text-slate-900 hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 19V5M6 11l6-6 6 6"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      {settingsOpen && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 px-4"
+          onClick={() => setSettingsOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-white/10 bg-[#0f1525] p-5 text-white"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div className="text-[15px] font-semibold">Voice settings</div>
+              <button
+                type="button"
+                onClick={() => setSettingsOpen(false)}
+                className="rounded-full p-1 text-white/60 hover:text-white"
+                aria-label="Close settings"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M6 6l12 12M18 6L6 18"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="mt-4 space-y-4">
+              <label className="block">
+                <div className="mb-1 text-[12px] uppercase tracking-wide text-white/50">
+                  Voice
+                </div>
+                <select
+                  value={voiceURI}
+                  onChange={(e) => setVoiceURI(e.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[14px] text-white outline-none"
+                >
+                  {voiceList.length === 0 && (
+                    <option value="">Loading voices…</option>
+                  )}
+                  {voiceList.map((v) => (
+                    <option
+                      key={v.voiceURI}
+                      value={v.voiceURI}
+                      className="bg-[#0f1525]"
+                    >
+                      {v.name} {v.lang ? `(${v.lang})` : ""}
+                    </option>
+                  ))}
+                </select>
+                <div className="mt-1 text-[11px] text-white/40">
+                  Voice quality varies by browser and OS. Premium/neural voices
+                  sound most natural.
+                </div>
+              </label>
+              <label className="block">
+                <div className="mb-1 flex items-center justify-between text-[12px] uppercase tracking-wide text-white/50">
+                  <span>Rate</span>
+                  <span className="text-white/70">{voiceRate.toFixed(2)}×</span>
+                </div>
+                <input
+                  type="range"
+                  min={0.75}
+                  max={1.4}
+                  step={0.05}
+                  value={voiceRate}
+                  onChange={(e) => setVoiceRate(parseFloat(e.target.value))}
+                  className="w-full accent-sky-400"
+                />
+              </label>
+              <label className="block">
+                <div className="mb-1 flex items-center justify-between text-[12px] uppercase tracking-wide text-white/50">
+                  <span>Pitch</span>
+                  <span className="text-white/70">{voicePitch.toFixed(2)}</span>
+                </div>
+                <input
+                  type="range"
+                  min={0.7}
+                  max={1.3}
+                  step={0.05}
+                  value={voicePitch}
+                  onChange={(e) => setVoicePitch(parseFloat(e.target.value))}
+                  className="w-full accent-sky-400"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={previewVoice}
+                className="w-full rounded-lg bg-sky-500 px-3 py-2 text-[14px] font-medium text-white hover:bg-sky-400"
+              >
+                Test voice
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

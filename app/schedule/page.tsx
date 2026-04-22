@@ -61,6 +61,20 @@ export default function SchedulePage() {
   }>({ day: new Date().getDay(), subject: "", start: "18:00", end: "19:00" });
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  type PlanBlock = {
+    day: number;
+    startMin: number;
+    endMin: number;
+    subject: string;
+    focus?: string;
+  };
+  const [planLoading, setPlanLoading] = useState(false);
+  const [planError, setPlanError] = useState<string | null>(null);
+  const [planPreview, setPlanPreview] = useState<{
+    rationale: string;
+    blocks: PlanBlock[];
+  } | null>(null);
+
   useEffect(() => {
     if (!loading && !user) {
       window.location.href = "/signin?next=/schedule";
@@ -369,6 +383,64 @@ export default function SchedulePage() {
     }));
   }
 
+  async function generatePlan() {
+    if (!user) return;
+    setPlanError(null);
+    setPlanLoading(true);
+    try {
+      const token = await getIdToken();
+      const res = await fetch("/api/schedule/plan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          dailyGoalMinutes: schedule.dailyGoalMinutes || 60,
+        }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setPlanError(data?.message || data?.error || "Could not generate plan.");
+        return;
+      }
+      const blocks: PlanBlock[] = Array.isArray(data?.blocks) ? data.blocks : [];
+      if (blocks.length === 0) {
+        setPlanError("AI returned no valid blocks. Try again.");
+        return;
+      }
+      setPlanPreview({
+        rationale: typeof data?.rationale === "string" ? data.rationale : "",
+        blocks,
+      });
+    } catch (e: any) {
+      setPlanError(e?.message || "Could not generate plan.");
+    } finally {
+      setPlanLoading(false);
+    }
+  }
+
+  function applyPlan(mode: "replace" | "append") {
+    if (!planPreview) return;
+    const newBlocks: StudyBlock[] = planPreview.blocks.map((b) => ({
+      id: Math.random().toString(36).slice(2, 10),
+      day: b.day,
+      startMin: b.startMin,
+      endMin: b.endMin,
+      subject: b.focus ? `${b.subject} · ${b.focus}` : b.subject,
+    }));
+    setSchedule((prev) => ({
+      ...prev,
+      blocks: mode === "replace" ? newBlocks : [...prev.blocks, ...newBlocks],
+    }));
+    setPlanPreview(null);
+    setMsg(
+      mode === "replace"
+        ? "Replaced your week with the AI plan."
+        : "Added AI blocks to your schedule."
+    );
+  }
+
   function toggleDay(d: number) {
     setSchedule((s) => ({
       ...s,
@@ -575,6 +647,79 @@ export default function SchedulePage() {
 
         {/* TODAY'S SESSIONS + CLAIM */}
         {todayPanel}
+
+        {/* AI-GENERATED STUDY PLAN */}
+        <div className="mt-10 rounded-xl border border-hair bg-paper p-6">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <div>
+              <div className="label">AI study plan</div>
+              <p className="mt-1 text-[14px] text-muted">
+                Generate a weekly plan based on your courses, exam dates, and
+                weak spots. Preview before it touches your schedule.
+              </p>
+            </div>
+            <button
+              onClick={generatePlan}
+              disabled={planLoading}
+              className="btn-primary disabled:opacity-50"
+            >
+              {planLoading ? "Generating…" : "Generate plan"}
+            </button>
+          </div>
+          {planError && (
+            <p className="mt-3 text-sm text-red-700">{planError}</p>
+          )}
+          {planPreview && (
+            <div className="mt-5 rounded-lg border border-orange/40 bg-orange-tint/40 p-4">
+              {planPreview.rationale && (
+                <p className="text-[14px] text-orange-ink">
+                  {planPreview.rationale}
+                </p>
+              )}
+              <ul className="mt-4 space-y-2">
+                {planPreview.blocks.map((b, i) => (
+                  <li
+                    key={i}
+                    className="flex items-center justify-between gap-3 rounded-md border border-hair bg-paper px-3 py-2 text-[14px]"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <span className="font-semibold text-ink">
+                        {b.subject}
+                      </span>
+                      {b.focus && (
+                        <span className="ml-2 text-muted">· {b.focus}</span>
+                      )}
+                    </div>
+                    <div className="shrink-0 text-[12px] text-muted">
+                      {WEEKDAYS[b.day]?.short || "?"} · {fmtTime(b.startMin)}–
+                      {fmtTime(b.endMin)}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  onClick={() => applyPlan("replace")}
+                  className="btn-primary"
+                >
+                  Replace my week
+                </button>
+                <button
+                  onClick={() => applyPlan("append")}
+                  className="btn-ghost"
+                >
+                  Add to my schedule
+                </button>
+                <button
+                  onClick={() => setPlanPreview(null)}
+                  className="btn-ghost"
+                >
+                  Discard
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* WEEKLY CALENDAR: time-blocked grid */}
         <div className="mt-12">

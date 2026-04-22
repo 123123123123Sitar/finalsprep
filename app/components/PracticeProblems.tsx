@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
 import type { PracticeProblem } from "@/lib/practice/types";
 import { addToWrongBank } from "@/lib/wrongBank";
 import { addWrongProblemToSrs } from "@/lib/srs";
 import { recordActivityClient } from "@/lib/activityClient";
+import { getDb } from "@/lib/firebase";
 import { useAuth } from "./AuthProvider";
 import MathRender from "./Math";
 import Whiteboard from "./Whiteboard";
@@ -110,6 +112,21 @@ export default function PracticeProblems({
   const [submittedIndexes, setSubmittedIndexes] = useState<Set<number>>(() => new Set());
   const [correctIndexes, setCorrectIndexes] = useState<Set<number>>(() => new Set());
   const [difficultyFilter, setDifficultyFilter] = useState<"all" | "easy" | "medium" | "hard">("all");
+  const [masteryUnlock, setMasteryUnlock] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const db = getDb();
+    if (!db) return;
+    const unsub = onSnapshot(
+      doc(db, "users", user.uid, "profile", "prefs"),
+      (snap) => {
+        const d = snap.data() as any;
+        setMasteryUnlock(!!d?.masteryUnlock);
+      }
+    );
+    return () => unsub();
+  }, [user]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -186,23 +203,53 @@ export default function PracticeProblems({
     (a, b) => (difficultyOrder[a.difficulty] || 999) - (difficultyOrder[b.difficulty] || 999)
   );
 
-  const filteredIndices = sortedProblems
-    .map((p, idx) => idx)
-    .filter((idx) =>
-      difficultyFilter === "all" || sortedProblems[idx].difficulty === difficultyFilter
-    );
-
-  const clampedIndex = Math.max(
-    0,
-    Math.min(currentIndex, filteredIndices[filteredIndices.length - 1] ?? 0)
-  );
-  const currentProblem = sortedProblems[clampedIndex];
-  const currentSubmitted = submittedIndexes.has(clampedIndex);
-
   const allEasyIndices = sortedProblems
     .map((p, idx) => idx)
     .filter((idx) => sortedProblems[idx].difficulty === "easy");
   const allEasyCorrect = allEasyIndices.every((idx) => correctIndexes.has(idx)) && allEasyIndices.length > 0;
+  const allMediumIndices = sortedProblems
+    .map((p, idx) => idx)
+    .filter((idx) => sortedProblems[idx].difficulty === "medium");
+  const allMediumCorrect =
+    allMediumIndices.every((idx) => correctIndexes.has(idx)) && allMediumIndices.length > 0;
+
+  // Mastery unlock gates: when enabled, users can't access medium problems
+  // until every easy is correct, and can't access hard until every medium is
+  // correct. When disabled, all difficulties are always unlocked.
+  const mediumLocked = masteryUnlock && !allEasyCorrect && allMediumIndices.length > 0;
+  const hardLocked =
+    masteryUnlock &&
+    (!allEasyCorrect || !allMediumCorrect) &&
+    sortedProblems.some((p) => p.difficulty === "hard");
+
+  function difficultyUnlocked(d: string): boolean {
+    if (d === "easy") return true;
+    if (d === "medium") return !mediumLocked;
+    if (d === "hard") return !hardLocked;
+    return true;
+  }
+
+  const effectiveFilter =
+    difficultyFilter !== "all" && !difficultyUnlocked(difficultyFilter)
+      ? "all"
+      : difficultyFilter;
+
+  const filteredIndices = sortedProblems
+    .map((p, idx) => idx)
+    .filter((idx) => {
+      const d = sortedProblems[idx].difficulty;
+      if (!difficultyUnlocked(d)) return false;
+      return effectiveFilter === "all" || d === effectiveFilter;
+    });
+
+  const clampedIndex = Math.max(
+    0,
+    filteredIndices.includes(currentIndex)
+      ? currentIndex
+      : filteredIndices[0] ?? 0
+  );
+  const currentProblem = sortedProblems[clampedIndex];
+  const currentSubmitted = submittedIndexes.has(clampedIndex);
 
   const target = Math.min(CREDIT_THRESHOLD, problems.length);
   const creditEarned = submittedCount >= target;
@@ -240,25 +287,56 @@ export default function PracticeProblems({
     <div className="max-w-3xl space-y-6">
       {/* Difficulty filter pills */}
       <div className="flex flex-wrap gap-2">
-        {(["all", "easy", "medium", "hard"] as const).map((level) => (
-          <button
-            key={level}
-            onClick={() => setDifficultyFilter(level)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-              difficultyFilter === level
-                ? "bg-orange text-white"
-                : "border border-hair bg-offwhite text-ink hover:border-orange"
-            }`}
-          >
-            {level.charAt(0).toUpperCase() + level.slice(1)}
-          </button>
-        ))}
+        {(["all", "easy", "medium", "hard"] as const).map((level) => {
+          const locked =
+            level !== "all" && level !== "easy" && !difficultyUnlocked(level);
+          return (
+            <button
+              key={level}
+              onClick={() => {
+                if (locked) return;
+                setDifficultyFilter(level);
+              }}
+              disabled={locked}
+              title={
+                locked
+                  ? level === "medium"
+                    ? "Get every easy problem correct to unlock medium."
+                    : "Get every medium problem correct to unlock hard."
+                  : undefined
+              }
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                difficultyFilter === level
+                  ? "bg-orange text-white"
+                  : locked
+                  ? "cursor-not-allowed border border-hair bg-offwhite/50 text-muted"
+                  : "border border-hair bg-offwhite text-ink hover:border-orange"
+              }`}
+            >
+              {locked ? "🔒 " : ""}
+              {level.charAt(0).toUpperCase() + level.slice(1)}
+            </button>
+          );
+        })}
       </div>
 
+      {masteryUnlock && (
+        <div className="rounded-md border border-hair bg-offwhite p-3 text-[12px] text-muted">
+          Mastery unlock is on. Medium unlocks after every easy is correct,
+          hard unlocks after every medium is correct. Toggle this in
+          <a href="/account" className="ml-1 underline">Account</a>.
+        </div>
+      )}
+
       {/* All easy solved message */}
-      {allEasyCorrect && difficultyFilter === "all" && (
+      {allEasyCorrect && difficultyFilter === "all" && !allMediumCorrect && (
         <div className="rounded-md border border-green-300 bg-green-50 p-3 text-[13px] text-green-800">
           ✓ All easy problems solved. Medium difficulty unlocked!
+        </div>
+      )}
+      {allMediumCorrect && difficultyFilter === "all" && (
+        <div className="rounded-md border border-green-300 bg-green-50 p-3 text-[13px] text-green-800">
+          ✓ All medium problems solved. Hard difficulty unlocked!
         </div>
       )}
 

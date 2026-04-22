@@ -183,6 +183,7 @@ export default function UserProfilePage({
               <h1 className="font-serif text-3xl text-ink">
                 {p.displayName || p.username}
               </h1>
+              <PlanChip plan={p.plan} size="md" />
               {!data.isSelf && (
                 <FollowButton
                   targetUid={p.uid}
@@ -210,7 +211,6 @@ export default function UserProfilePage({
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-2 text-[14px] text-muted">
               <span>@{p.username}</span>
-              <PlanChip plan={p.plan} />
               {p.gradeLevel && (
                 <span className="rounded-full border border-hair bg-offwhite px-2 py-0.5 text-[11px] font-medium text-muted">
                   {p.gradeLevel}
@@ -598,17 +598,33 @@ function relativeDate(ms: number): string {
   return new Date(ms).toLocaleDateString();
 }
 
-function PlanChip({ plan }: { plan?: PublicProfile["plan"] }) {
+function PlanChip({
+  plan,
+  size = "sm",
+}: {
+  plan?: PublicProfile["plan"];
+  size?: "sm" | "md";
+}) {
   if (!plan || plan === "learner") return null;
   const label = plan === "hacker" ? "Hacker" : "Pro";
   const cls =
     plan === "hacker"
-      ? "border-violet-300 bg-violet-50 text-violet-800"
+      ? "border-amber-400 bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-400 text-amber-950 shadow-[0_1px_2px_rgba(180,120,0,0.25)]"
       : "border-orange/40 bg-orange-tint text-orange-ink";
+  const sizing =
+    size === "md"
+      ? "px-2.5 py-0.5 text-[12px]"
+      : "px-2 py-0.5 text-[11px]";
   return (
     <span
-      className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${cls}`}
+      className={`inline-flex items-center gap-1 rounded-full border font-semibold ${sizing} ${cls}`}
+      title={
+        plan === "hacker"
+          ? "Hacker plan member"
+          : "Pro plan member"
+      }
     >
+      {plan === "hacker" && <span aria-hidden>★</span>}
       {label}
     </span>
   );

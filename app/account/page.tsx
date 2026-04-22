@@ -61,6 +61,7 @@ export default function AccountPage() {
   );
   const [bonusBalance, setBonusBalance] = useState<number | null>(null);
   const [profileView, setProfileView] = useState<SelfProfileView | null>(null);
+  const [masteryUnlock, setMasteryUnlock] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -123,8 +124,11 @@ export default function AccountPage() {
       try {
         const snap = await getDoc(doc(db, "users", user.uid, "profile", "prefs"));
         if (cancelled) return;
-        const data = snap.data() as Partial<Prefs> | undefined;
-        if (data) setPrefs({ ...DEFAULT_PREFS, ...data, ...normalizeAiPrefs(data) });
+        const data = snap.data() as (Partial<Prefs> & { masteryUnlock?: boolean }) | undefined;
+        if (data) {
+          setPrefs({ ...DEFAULT_PREFS, ...data, ...normalizeAiPrefs(data) });
+          setMasteryUnlock(!!data.masteryUnlock);
+        }
       } finally {
         if (!cancelled) setLoadingPrefs(false);
       }
@@ -234,6 +238,7 @@ export default function AccountPage() {
           {
             ...rest,
             ...normalizedAiPrefs,
+            masteryUnlock,
             updatedAt: serverTimestamp(),
           },
           { merge: true }
@@ -519,6 +524,26 @@ export default function AccountPage() {
           </div>
 
           <div className="rounded-xl border border-hair bg-offwhite p-5">
+            <div className="label mb-2">Practice mastery unlock</div>
+            <p className="mb-3 text-[14px] text-body">
+              When on, medium problems stay locked until you get every easy
+              one correct, and hard stays locked until you get every medium
+              correct. Helps enforce progression for exam prep.
+            </p>
+            <label className="flex cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                checked={masteryUnlock}
+                onChange={(e) => setMasteryUnlock(e.target.checked)}
+                className="h-4 w-4 rounded border-hair accent-orange"
+              />
+              <span className="text-[14px] text-ink">
+                Enable mastery unlock for practice problems
+              </span>
+            </label>
+          </div>
+
+          <div className="rounded-xl border border-hair bg-offwhite p-5">
             <div className="label mb-2">Appearance</div>
             <p className="mb-3 text-[14px] text-body">
               Pick a theme for the whole app. Syncs across devices when you're
@@ -646,6 +671,7 @@ function ProfilePreview({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-serif text-xl text-ink">{name}</h3>
+            <PlanChip plan={profile.plan} />
             {gradeLevel && (
               <span className="rounded-full border border-hair bg-paper px-2 py-0.5 text-[11px] font-medium text-muted">
                 {gradeLevel}
@@ -699,6 +725,23 @@ function PreviewStat({ label, value }: { label: string; value: number }) {
         {label}
       </div>
     </div>
+  );
+}
+
+function PlanChip({ plan }: { plan?: PublicProfile["plan"] }) {
+  if (!plan || plan === "learner") return null;
+  const label = plan === "hacker" ? "Hacker" : "Pro";
+  const cls =
+    plan === "hacker"
+      ? "border-amber-400 bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-400 text-amber-950 shadow-[0_1px_2px_rgba(180,120,0,0.25)]"
+      : "border-orange/40 bg-orange-tint text-orange-ink";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${cls}`}
+    >
+      {plan === "hacker" && <span aria-hidden>★</span>}
+      {label}
+    </span>
   );
 }
 

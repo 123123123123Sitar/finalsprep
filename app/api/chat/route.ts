@@ -150,6 +150,10 @@ export async function POST(req: Request) {
   // Thinking mode: only Pro/Hacker users can enable it. Learners ignored.
   const thinking =
     (plan === "pro" || plan === "hacker") && body?.thinking === true;
+  // Voice mode: only Pro/Hacker can enable it; adds a 1.5x cost multiplier
+  // on top of whatever model is picked. Learners silently ignored.
+  const voiceMode =
+    (plan === "pro" || plan === "hacker") && body?.voiceMode === true;
   // Cheap pre-check so learners hit Claude immediately when Gemini is
   // globally rate-limited; the in-stream fallback below still handles a
   // 429 racing past this check.
@@ -269,6 +273,7 @@ export async function POST(req: Request) {
     meta: {
       provider: picked.provider,
       thinking,
+      voiceMode,
       hasImages: Array.isArray(body?.images) && body.images.length > 0,
       aiVerbosity: aiPrefs.aiVerbosity,
       aiMode: aiPrefs.aiMode,
@@ -490,7 +495,7 @@ export async function POST(req: Request) {
           outputTokens,
           hasImages,
           plan,
-          multiplier: picked.costMultiplier,
+          multiplier: picked.costMultiplier * (voiceMode ? 1.5 : 1),
         });
         if (user?.uid) {
           // Drain daily budget first, overflow from the bonus bank.
@@ -516,6 +521,7 @@ export async function POST(req: Request) {
             metadata: {
               provider: picked.provider,
               thinking,
+              voiceMode,
               contextMessages: messages.length,
               aiVerbosity: aiPrefs.aiVerbosity,
               aiMode: aiPrefs.aiMode,

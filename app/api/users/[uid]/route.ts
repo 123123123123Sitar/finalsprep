@@ -5,6 +5,7 @@ import {
   ensurePublicProfile,
   getPublicProfile,
 } from "@/lib/socialAdmin";
+import { getPlan } from "@/lib/userPlan";
 
 export const runtime = "nodejs";
 
@@ -68,6 +69,15 @@ export async function GET(
   }
   if (!profile) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  // The `plan` field on publicProfiles isn't kept in sync with purchases,
+  // so hydrate it from the authoritative source before returning.
+  try {
+    const fresh = await getPlan(params.uid);
+    if (fresh?.plan) profile.plan = fresh.plan;
+  } catch (e) {
+    console.error("[api/users] getPlan failed", e);
   }
 
   let isFollowing = false;
