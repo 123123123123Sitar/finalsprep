@@ -7,6 +7,7 @@ import { subscribeSelectedCourses } from "@/lib/selectedCourses";
 import { COURSES, unitsForCourse, type CourseSlug } from "@/lib/topics";
 import { getDb } from "@/lib/firebase";
 import { buildExam, type ExamProblem, type ExamAttempt } from "@/lib/mockExam";
+import { saveExamResult } from "@/lib/examResults";
 import PageLoader from "@/app/components/PageLoader";
 
 type Phase = "setup" | "active" | "results";
@@ -78,6 +79,20 @@ export default function ExamPage() {
     }, 1000);
     return () => clearInterval(interval);
   }, [phase, timerMinutes]);
+
+  // Persist exam result to Firestore when entering results phase
+  useEffect(() => {
+    if (phase !== "results" || !user || exam.length === 0) return;
+    const correct = attempts.filter((a) => a.isCorrect).length;
+    const percentage = Math.round((correct / exam.length) * 100);
+    saveExamResult(user.uid, {
+      courseSlug: selectedCourseSlug,
+      score: correct,
+      total: exam.length,
+      percentage,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   function startExam() {
     if (!selectedCourseSlug) return;

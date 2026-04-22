@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { getAuthedUser } from "@/lib/authGuard";
 import { isAdminConfigured, getAdminDb } from "@/lib/firebaseAdmin";
-import { addToTokenBank, getTokenBank } from "@/lib/tokenBank";
+import { addToTokenBank } from "@/lib/tokenBank";
 import { logEvent } from "@/lib/events";
-import { reloadReward, ymdLocal } from "@/lib/schedule";
+import {
+  claimReward,
+  ymdLocal,
+  qualifyingBlocks,
+  blocksOnDay,
+  lastBlockEndMin,
+  MIN_BLOCK_MINUTES,
+  ACTIVITY_COVERAGE_THRESHOLD,
+  type StudyBlock,
+} from "@/lib/schedule";
 import { bumpStreak } from "@/lib/streaks";
 
 export const runtime = "nodejs";
@@ -32,41 +41,135 @@ export async function POST(req: Request) {
     );
   }
 
-  const ref = db.doc(`users/${user.uid}/profile/schedule`);
   const today = ymdLocal();
+  const scheduleRef = db.doc(`users/${user.uid}/profile/schedule`);
+  const pingsRef = db.doc(`users/${user.uid}/profile/activityPings_${today}`);
+  const completionsRef = db.doc(
+    `users/${user.uid}/profile/blockCompletions_${today}`
+  );
 
-  // Engagement-based reward: client reports completed minutes for today's
-  // sessions. We clamp and compute tokens server-side so the UI can't just
-  // pass an arbitrary number.
-  let minutes = 0;
+  const [scheduleSnap, pingsSnap, completionsSnap] = await Promise.all([
+    scheduleRef.get(),
+    pingsRef.get(),
+    completionsRef.get(),
+  ]);
+
+  if (!scheduleSnap.exists) {
+    return NextResponse.json(
+      { ok: false, reason: "no_schedule" },
+      { status: 409 }
+    );
+  }
+  const scheduleData = scheduleSnap.data() as any;
+  if (scheduleData?.lastClaimDate === today) {
+    return NextResponse.json(
+      { ok: false, reason: "already_claimed_today" },
+      { status: 409 }
+    );
+  }
+
+  const blocks: StudyBlock[] = Array.isArray(scheduleData?.blocks)
+    ? scheduleData.blocks
+    : [];
+  const now = new Date();
+  const todayWd = now.getDay();
+  const todaysBlocks = blocksOnDay(blocks, todayWd);
+
+  // End-of-day gate: can't claim until the last scheduled block of today
+  // has ended in the user's local timezone.
+  const lastEnd = lastBlockEndMin(blocks, todayWd);
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  if (lastEnd !== null && nowMin < lastEnd) {
+    return NextResponse.json(
+      {
+        ok: false,
+        reason: "day_not_over",
+        details: { lastEndMin: lastEnd, nowMin },
+      },
+      { status: 409 }
+    );
+  }
+
+  const pingMinutes: number[] = pingsSnap.exists
+    ? (pingsSnap.data() as any)?.minutes || []
+    : [];
+  const pingSet = new Set<number>(pingMinutes);
+
+  const completedIds: string[] = completionsSnap.exists
+    ? (completionsSnap.data() as any)?.completedBlockIds || []
+    : [];
+  const completedSet = new Set<string>(completedIds);
+
+  const evaluated = qualifyingBlocks(todaysBlocks, completedSet, pingSet);
+  const qualifying = evaluated.filter((e) => !e.reason);
+  const qualifyingMinutes = qualifying.reduce(
+    (sum, e) => sum + (e.block.endMin - e.block.startMin),
+    0
+  );
+
+  if (qualifyingMinutes <= MIN_BLOCK_MINUTES) {
+    return NextResponse.json(
+      {
+        ok: false,
+        reason: "no_qualifying_blocks",
+        details: {
+          minBlockMinutes: MIN_BLOCK_MINUTES,
+          coverageThreshold: ACTIVITY_COVERAGE_THRESHOLD,
+          blocks: evaluated.map((e) => ({
+            id: e.block.id,
+            subject: e.block.subject,
+            minutes: e.block.endMin - e.block.startMin,
+            coverage: Math.round(e.coverage * 100) / 100,
+            reason: e.reason,
+          })),
+        },
+      },
+      { status: 409 }
+    );
+  }
+
+  // Scan today's AI usage so we can apply the focus bonus (which needs an
+  // AI-tools-used signal) and the depletion bonus (scales with tokens spent).
+  const startOfDay = new Date(now);
+  startOfDay.setHours(0, 0, 0, 0);
+  const startMs = startOfDay.getTime();
+  let aiTokensUsedToday = 0;
+  let usedAiTools = false;
   try {
-    const body = await req.json().catch(() => ({}));
-    if (typeof body?.minutes === "number" && Number.isFinite(body.minutes)) {
-      minutes = Math.max(0, Math.min(Math.round(body.minutes), 240));
+    const aiSnap = await db
+      .collection("users")
+      .doc(user.uid)
+      .collection("aiHistory")
+      .where("createdAt", ">=", startMs)
+      .get();
+    for (const d of aiSnap.docs) {
+      const data = d.data() as any;
+      usedAiTools = true;
+      if (typeof data?.tokens === "number") {
+        aiTokensUsedToday += Math.max(0, data.tokens);
+      }
     }
   } catch {}
 
-  // Pull current bonus-bank balance so we can scale the reward by how
-  // depleted the user actually is. A student who's burned through their
-  // bonus pool gets a bigger reload than one sitting on unused tokens.
-  const bank = await getTokenBank(user.uid);
-  const { amount: credited, base, multiplier } = reloadReward(
-    minutes,
-    bank.balance
-  );
+  const reward = claimReward({
+    minutes: qualifyingMinutes,
+    usedAiTools,
+    aiTokensUsedToday,
+  });
+  const credited = reward.amount;
 
   let claimed = false;
   let reason: string | undefined;
   try {
     await db.runTransaction(async (tx) => {
-      const snap = await tx.get(ref);
+      const snap = await tx.get(scheduleRef);
       const data = (snap.exists ? snap.data() : {}) as any;
       if (data?.lastClaimDate === today) {
         reason = "already_claimed_today";
         return;
       }
       tx.set(
-        ref,
+        scheduleRef,
         {
           lastClaimDate: today,
           totalClaims: (data?.totalClaims || 0) + 1,
@@ -85,28 +188,38 @@ export async function POST(req: Request) {
 
   if (claimed) {
     await addToTokenBank(user.uid, credited, "schedule.claim");
-    // Bump streak if they studied for at least 10 minutes
-    void bumpStreak(user.uid, minutes);
+    void bumpStreak(user.uid, qualifyingMinutes);
     void logEvent({
-      kind: "chat.send", // reuse for now; add "schedule.claim" later
+      kind: "chat.send",
       uid: user.uid,
       email: user.email,
       meta: {
         kind: "schedule.claim",
         tokens: credited,
-        minutes,
-        base,
-        multiplier,
-        priorBalance: bank.balance,
+        minutes: qualifyingMinutes,
+        base: reward.base,
+        perMinute: reward.perMinute,
+        subtotal: reward.subtotal,
+        focusBonus: reward.focusBonus,
+        depletionBonus: reward.depletionBonus,
+        usedAiTools,
+        aiTokensUsedToday,
+        qualifyingBlockIds: qualifying.map((q) => q.block.id).join(","),
+        qualifyingBlockCount: qualifying.length,
       },
     });
     return NextResponse.json({
       ok: true,
       credited,
-      minutes,
-      base,
-      multiplier,
-      priorBalance: bank.balance,
+      minutes: qualifyingMinutes,
+      base: reward.base,
+      perMinute: reward.perMinute,
+      subtotal: reward.subtotal,
+      focusBonus: reward.focusBonus,
+      depletionBonus: reward.depletionBonus,
+      usedAiTools,
+      aiTokensUsedToday,
+      qualifyingBlockIds: qualifying.map((q) => q.block.id),
     });
   }
 

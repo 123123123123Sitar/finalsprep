@@ -33,6 +33,55 @@ export type Schedule = {
   blocks: StudyBlock[];
 };
 
+/** Minimum duration for a block to qualify toward bonus tokens. */
+export const MIN_BLOCK_MINUTES = 30;
+
+/** Fraction of a block's minutes that must be covered by activity pings. */
+export const ACTIVITY_COVERAGE_THRESHOLD = 0.7;
+
+export type ActivityPings = {
+  date: string;      // YYYY-MM-DD (local)
+  minutes: number[]; // sorted unique minute-of-day indices
+  lastPingAt: number;
+};
+
+export type BlockCompletions = {
+  date: string;
+  completedBlockIds: string[];
+};
+
+/**
+ * A block qualifies for reward if:
+ *   (1) its duration is strictly greater than MIN_BLOCK_MINUTES, AND
+ *   (2) the user marked it completed today, AND
+ *   (3) at least ACTIVITY_COVERAGE_THRESHOLD of its minute-of-day slots
+ *       are present in today's activity ping set.
+ */
+export function qualifyingBlocks(
+  blocks: StudyBlock[],
+  completedIds: Set<string>,
+  pingSet: Set<number>
+): { block: StudyBlock; coverage: number; reason?: string }[] {
+  return blocks.map((b) => {
+    const mins = b.endMin - b.startMin;
+    if (mins <= MIN_BLOCK_MINUTES) {
+      return { block: b, coverage: 0, reason: "too_short" };
+    }
+    if (!completedIds.has(b.id)) {
+      return { block: b, coverage: 0, reason: "not_completed" };
+    }
+    let hits = 0;
+    for (let m = b.startMin; m < b.endMin; m++) {
+      if (pingSet.has(m)) hits += 1;
+    }
+    const coverage = mins > 0 ? hits / mins : 0;
+    if (coverage < ACTIVITY_COVERAGE_THRESHOLD) {
+      return { block: b, coverage, reason: "insufficient_activity" };
+    }
+    return { block: b, coverage };
+  });
+}
+
 export const DEFAULT_SCHEDULE: Schedule = {
   days: [1, 2, 3, 4, 5], // weekdays (legacy)
   dailyGoalMinutes: 30,
@@ -43,58 +92,91 @@ export const DEFAULT_SCHEDULE: Schedule = {
 
 export const DAILY_CLAIM_TOKENS = 50;
 
-/** Balance at which the depletion bonus starts dropping to zero. */
-export const RELOAD_FULL_BALANCE = 2000;
-/** Maximum extra multiplier applied to a fully-depleted user. */
-export const RELOAD_MAX_BONUS = 1.5; // → up to 2.5× base
+/** Flat participation award for claiming a qualifying day. */
+export const BASE_CLAIM_TOKENS = 50;
+/** Minutes before per-minute tokens start accumulating. */
+export const PER_MINUTE_START = 60;
+/** Minute threshold for the focus bonus. */
+export const FOCUS_BONUS_MINUTES = 60;
+/** Focus bonus when above threshold without AI use. */
+export const FOCUS_BONUS_NO_AI = 0.1;
+/** Focus bonus when above threshold AND the user used AI tools today. */
+export const FOCUS_BONUS_WITH_AI = 0.2;
+/** Daily AI-token usage at which the depletion bonus maxes out. */
+export const DEPLETION_FULL_USE = 2000;
+/** Max depletion multiplier (e.g. 0.25 → up to +25%). */
+export const DEPLETION_MAX_BONUS = 0.25;
 /** Hard ceiling on a single claim regardless of inputs. */
-export const RELOAD_REWARD_CAP = 400;
+export const MAX_CLAIM_TOKENS = 300;
 
 /**
- * Token reward for a completed study session based on engagement.
+ * Token reward for a claim.
  *
- *   - 1 token per minute of planned work
- *   - +25% bonus for sessions of 45 minutes or longer (deep-focus bonus)
- *   - hard cap at 150 tokens per day to keep abuse cheap
+ *   subtotal = BASE_CLAIM_TOKENS + max(0, minutes - PER_MINUTE_START)
+ *   focus    = 1 + (usedAi && minutes > 60 ? 0.20 : minutes > 60 ? 0.10 : 0)
+ *   deplete  = 1 + min(aiTokensUsedToday / DEPLETION_FULL_USE, 1) * 0.25
+ *   amount   = min(round(subtotal * focus * deplete), MAX_CLAIM_TOKENS)
+ *
+ * Examples (minutes = 75, usedAi = true):
+ *   aiTokensUsed    0 →  (50 + 15) * 1.20 * 1.00 → 78
+ *   aiTokensUsed 1000 →  (50 + 15) * 1.20 * 1.125 → 88
+ *   aiTokensUsed 2000 →  (50 + 15) * 1.20 * 1.25 → 98
+ *
+ * Minutes = 180, usedAi = true, aiTokensUsed = 2000:
+ *   (50 + 120) * 1.20 * 1.25 → 255
  */
-export function engagementTokens(minutes: number): number {
-  if (!Number.isFinite(minutes) || minutes <= 0) return 0;
-  const capped = Math.min(minutes, 180);
-  const base = Math.round(capped);
-  const bonus = capped >= 45 ? Math.round(capped * 0.25) : 0;
-  return Math.min(base + bonus, 150);
+export function claimReward(params: {
+  minutes: number;
+  usedAiTools: boolean;
+  aiTokensUsedToday: number;
+}): {
+  amount: number;
+  base: number;
+  perMinute: number;
+  subtotal: number;
+  focusBonus: number;
+  depletionBonus: number;
+} {
+  const minutes = Math.max(0, Math.floor(params.minutes || 0));
+  const perMinute = Math.max(0, minutes - PER_MINUTE_START);
+  const subtotal = BASE_CLAIM_TOKENS + perMinute;
+
+  let focusBonus = 0;
+  if (minutes > FOCUS_BONUS_MINUTES) {
+    focusBonus = params.usedAiTools ? FOCUS_BONUS_WITH_AI : FOCUS_BONUS_NO_AI;
+  }
+
+  const use = Math.max(0, params.aiTokensUsedToday || 0);
+  const depletionBonus =
+    Math.min(1, use / DEPLETION_FULL_USE) * DEPLETION_MAX_BONUS;
+
+  const amount = Math.min(
+    Math.round(subtotal * (1 + focusBonus) * (1 + depletionBonus)),
+    MAX_CLAIM_TOKENS
+  );
+
+  return {
+    amount,
+    base: BASE_CLAIM_TOKENS,
+    perMinute,
+    subtotal,
+    focusBonus,
+    depletionBonus,
+  };
 }
 
 /**
- * Scale a claim reward by how depleted the user's token bank is, so a
- * student who has actually been burning through tokens gets a bigger
- * reload than someone sitting on a pile of unused rewards.
- *
- *   depletion = clamp(1 - balance / RELOAD_FULL_BALANCE, 0, 1)
- *   multiplier = 1 + RELOAD_MAX_BONUS · depletion
- *
- * Examples (base = 100):
- *   balance 0    → 2.5× →  250
- *   balance 500  → 2.125× → 213
- *   balance 1000 → 1.75× → 175
- *   balance 2000 → 1.0×  → 100
+ * Returns the minute-of-day at which the last scheduled block of `day`
+ * ends, or null if nothing is scheduled that day. Claims are gated until
+ * this moment so the user has actually finished all planned sessions.
  */
-export function reloadReward(
-  minutes: number,
-  currentBalance: number
-): { amount: number; base: number; multiplier: number } {
-  const base = minutes > 0 ? engagementTokens(minutes) : DAILY_CLAIM_TOKENS;
-  const safeBalance = Math.max(0, currentBalance || 0);
-  const depletion = Math.max(
-    0,
-    Math.min(1, 1 - safeBalance / RELOAD_FULL_BALANCE)
-  );
-  const multiplier = 1 + RELOAD_MAX_BONUS * depletion;
-  const amount = Math.min(
-    Math.round(base * multiplier),
-    RELOAD_REWARD_CAP
-  );
-  return { amount, base, multiplier };
+export function lastBlockEndMin(
+  blocks: StudyBlock[],
+  day: number
+): number | null {
+  const today = blocksOnDay(blocks, day);
+  if (today.length === 0) return null;
+  return today.reduce((max, b) => (b.endMin > max ? b.endMin : max), 0);
 }
 
 export function blocksOnDay(blocks: StudyBlock[], day: number): StudyBlock[] {

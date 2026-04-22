@@ -12,11 +12,14 @@ import { useAuth } from "@/app/components/AuthProvider";
 import { getDb } from "@/lib/firebase";
 import PageLoader from "@/app/components/PageLoader";
 import {
-  DAILY_CLAIM_TOKENS,
   DEFAULT_SCHEDULE,
   WEEKDAYS,
+  MIN_BLOCK_MINUTES,
+  ACTIVITY_COVERAGE_THRESHOLD,
+  MAX_CLAIM_TOKENS,
   blocksOnDay,
-  engagementTokens,
+  claimReward,
+  lastBlockEndMin,
   fmtTime,
   ymdLocal,
   type Schedule,
@@ -36,13 +39,20 @@ export default function SchedulePage() {
     tokens: number;
     minutes: number;
     base?: number;
-    multiplier?: number;
+    perMinute?: number;
+    subtotal?: number;
+    focusBonus?: number;
+    depletionBonus?: number;
+    usedAiTools?: boolean;
+    aiTokensUsedToday?: number;
   }>({
     open: false,
     tokens: 0,
     minutes: 0,
   });
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
+  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
+  const [pingMinutes, setPingMinutes] = useState<Set<number>>(new Set());
   const [newBlock, setNewBlock] = useState<{
     day: number;
     subject: string;
@@ -117,6 +127,97 @@ export default function SchedulePage() {
     return () => unsub();
   }, [user]);
 
+  // Subscribe to today's completions + activity pings so UI updates live
+  useEffect(() => {
+    if (!user) return;
+    const db = getDb();
+    if (!db) return;
+    const today = ymdLocal();
+    const unsubDone = onSnapshot(
+      doc(db, "users", user.uid, "profile", `blockCompletions_${today}`),
+      (snap) => {
+        const d = snap.data() as any;
+        const ids: string[] = Array.isArray(d?.completedBlockIds)
+          ? d.completedBlockIds
+          : [];
+        setCompletedIds(new Set(ids));
+      }
+    );
+    const unsubPings = onSnapshot(
+      doc(db, "users", user.uid, "profile", `activityPings_${today}`),
+      (snap) => {
+        const d = snap.data() as any;
+        const mins: number[] = Array.isArray(d?.minutes) ? d.minutes : [];
+        setPingMinutes(new Set(mins));
+      }
+    );
+    return () => {
+      unsubDone();
+      unsubPings();
+    };
+  }, [user]);
+
+  // Activity ping loop — ping every 60s while tab is visible.
+  useEffect(() => {
+    if (!user) return;
+    let alive = true;
+    async function ping() {
+      if (!alive || document.hidden) return;
+      try {
+        const token = await getIdToken();
+        await fetch("/api/schedule/ping", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+      } catch {}
+    }
+    ping();
+    const id = setInterval(ping, 60_000);
+    const onVis = () => {
+      if (!document.hidden) ping();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      alive = false;
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, [user, getIdToken]);
+
+  async function toggleComplete(block: StudyBlock) {
+    if (!user) return;
+    const wasComplete = completedIds.has(block.id);
+    // Optimistic update
+    setCompletedIds((prev) => {
+      const next = new Set(prev);
+      if (wasComplete) next.delete(block.id);
+      else next.add(block.id);
+      return next;
+    });
+    try {
+      const token = await getIdToken();
+      await fetch("/api/schedule/complete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ blockId: block.id, completed: !wasComplete }),
+      });
+    } catch {
+      // Revert on failure
+      setCompletedIds((prev) => {
+        const next = new Set(prev);
+        if (wasComplete) next.add(block.id);
+        else next.delete(block.id);
+        return next;
+      });
+    }
+  }
+
   // Auto-save schedule whenever it changes
   useEffect(() => {
     if (!user) return;
@@ -168,19 +269,59 @@ export default function SchedulePage() {
       });
       const j = await res.json();
       if (!res.ok || !j.ok) {
-        setMsg(
-          j.reason === "already_claimed_today"
-            ? "You already claimed today. Come back tomorrow."
-            : j.error || "Couldn't claim."
-        );
+        if (j.reason === "already_claimed_today") {
+          setMsg("You already claimed today. Come back tomorrow.");
+        } else if (j.reason === "day_not_over") {
+          const end = j.details?.lastEndMin;
+          setMsg(
+            typeof end === "number"
+              ? `Come back after ${fmtTime(end)} — claim opens once every block ends.`
+              : "Finish all of today's blocks first."
+          );
+        } else if (j.reason === "no_qualifying_blocks") {
+          const details = j.details?.blocks || [];
+          const reasons = details
+            .filter((b: any) => b.reason)
+            .map((b: any) => {
+              if (b.reason === "too_short")
+                return `${b.subject}: under ${MIN_BLOCK_MINUTES + 1} min`;
+              if (b.reason === "not_completed")
+                return `${b.subject}: not marked done`;
+              if (b.reason === "insufficient_activity")
+                return `${b.subject}: only ${Math.round(
+                  b.coverage * 100
+                )}% active (need ${Math.round(
+                  ACTIVITY_COVERAGE_THRESHOLD * 100
+                )}%)`;
+              return `${b.subject}: ${b.reason}`;
+            });
+          setMsg(
+            reasons.length > 0
+              ? `Can't claim yet — ${reasons.join("; ")}`
+              : "No qualifying blocks yet."
+          );
+        } else if (j.reason === "no_schedule") {
+          setMsg("Add a study block first.");
+        } else {
+          setMsg(j.error || "Couldn't claim.");
+        }
       } else {
         setMsg(null);
         setCelebrate({
           open: true,
-          tokens: j.credited || DAILY_CLAIM_TOKENS,
+          tokens: j.credited || 0,
           minutes: j.minutes || minutes,
           base: typeof j.base === "number" ? j.base : undefined,
-          multiplier: typeof j.multiplier === "number" ? j.multiplier : undefined,
+          perMinute: typeof j.perMinute === "number" ? j.perMinute : undefined,
+          subtotal: typeof j.subtotal === "number" ? j.subtotal : undefined,
+          focusBonus: typeof j.focusBonus === "number" ? j.focusBonus : undefined,
+          depletionBonus:
+            typeof j.depletionBonus === "number" ? j.depletionBonus : undefined,
+          usedAiTools: !!j.usedAiTools,
+          aiTokensUsedToday:
+            typeof j.aiTokensUsedToday === "number"
+              ? j.aiTokensUsedToday
+              : undefined,
         });
       }
     } finally {
@@ -197,6 +338,12 @@ export default function SchedulePage() {
     }
     if (e <= s) {
       setMsg("End time must be after start time.");
+      return;
+    }
+    if (e - s <= MIN_BLOCK_MINUTES) {
+      setMsg(
+        `Blocks must be longer than ${MIN_BLOCK_MINUTES} minutes to earn tokens.`
+      );
       return;
     }
     if (!newBlock.subject.trim()) {
@@ -254,8 +401,43 @@ export default function SchedulePage() {
   const claimedToday = schedule.lastClaimDate === today;
   const todayWd = new Date().getDay();
   const todays = blocksOnDay(schedule.blocks, todayWd);
-  const totalMins = todays.reduce((sum, b) => sum + (b.endMin - b.startMin), 0);
-  const estTokens = engagementTokens(totalMins);
+
+  // Per-block qualification status (must be > MIN_BLOCK_MINUTES, marked done,
+  // and have ≥ ACTIVITY_COVERAGE_THRESHOLD of its minutes observed active).
+  const perBlock = todays.map((b) => {
+    const mins = b.endMin - b.startMin;
+    let hits = 0;
+    for (let m = b.startMin; m < b.endMin; m++) {
+      if (pingMinutes.has(m)) hits += 1;
+    }
+    const coverage = mins > 0 ? hits / mins : 0;
+    const tooShort = mins <= MIN_BLOCK_MINUTES;
+    const done = completedIds.has(b.id);
+    const active = coverage >= ACTIVITY_COVERAGE_THRESHOLD;
+    const qualifies = !tooShort && done && active;
+    return { block: b, mins, coverage, tooShort, done, active, qualifies };
+  });
+
+  const qualifyingMins = perBlock
+    .filter((p) => p.qualifies)
+    .reduce((sum, p) => sum + p.mins, 0);
+
+  // End-of-day gate: last scheduled block must have ended.
+  const lastEnd = lastBlockEndMin(schedule.blocks, todayWd);
+  const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+  const dayOver = lastEnd === null || nowMin >= lastEnd;
+
+  // Preview doesn't yet know today's AI usage — show a no-AI, no-depletion
+  // estimate so the user sees a sensible lower bound. The server uses the
+  // true values when credit is issued.
+  const previewReward = claimReward({
+    minutes: qualifyingMins,
+    usedAiTools: false,
+    aiTokensUsedToday: 0,
+  });
+  const estTokens = previewReward.amount;
+  const canClaim =
+    qualifyingMins > MIN_BLOCK_MINUTES && !claimedToday && dayOver;
 
   const todayPanel = (
     <div className="mt-8 rounded-xl border-2 border-orange/40 bg-orange-tint p-6">
@@ -271,31 +453,61 @@ export default function SchedulePage() {
         <div className="text-right">
           <div className="font-serif text-3xl text-orange-ink">+{estTokens}</div>
           <div className="text-[10px] font-semibold uppercase tracking-wider text-orange-ink/70">
-            tokens from {totalMins}m
+            tokens from {qualifyingMins}m qualifying
           </div>
         </div>
       </div>
 
       {todays.length > 0 && (
         <ul className="mt-5 space-y-2">
-          {todays.map((b) => {
-            const mins = b.endMin - b.startMin;
+          {perBlock.map((p) => {
+            const { block: b, mins, coverage, tooShort, done, active, qualifies } = p;
+            const coveragePct = Math.round(coverage * 100);
+            let hint = "";
+            if (tooShort) hint = `Too short — needs more than ${MIN_BLOCK_MINUTES} min`;
+            else if (!done) hint = "Mark as done when you finish";
+            else if (!active)
+              hint = `Need ${Math.round(ACTIVITY_COVERAGE_THRESHOLD * 100)}% active time (currently ${coveragePct}%)`;
+            else hint = "Ready to claim";
             return (
               <li
                 key={b.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-hair bg-paper px-4 py-3"
+                className={`flex items-center justify-between gap-3 rounded-lg border px-4 py-3 ${
+                  qualifies
+                    ? "border-orange/40 bg-paper"
+                    : "border-hair bg-paper"
+                }`}
               >
-                <div className="flex-1">
-                  <div className="text-[15px] text-ink">
-                    <strong>{b.subject}</strong>
-                    <span className="ml-2 text-muted">
-                      {fmtTime(b.startMin)}–{fmtTime(b.endMin)}
-                    </span>
+                <label className="flex flex-1 cursor-pointer items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={done}
+                    onChange={() => toggleComplete(b)}
+                    disabled={tooShort}
+                    className="mt-1 h-4 w-4 rounded border-hair accent-orange disabled:opacity-40"
+                  />
+                  <div className="flex-1">
+                    <div className="text-[15px] text-ink">
+                      <strong className={done ? "line-through opacity-70" : ""}>
+                        {b.subject}
+                      </strong>
+                      <span className="ml-2 text-muted">
+                        {fmtTime(b.startMin)}–{fmtTime(b.endMin)}
+                      </span>
+                    </div>
+                    <div className="text-[11px] uppercase tracking-wider text-muted">
+                      {mins} min · active {coveragePct}%
+                    </div>
+                    <div
+                      className={`mt-1 text-[11px] ${
+                        qualifies ? "text-orange-ink" : "text-muted"
+                      }`}
+                    >
+                      {qualifies ? "✓ " : "• "}
+                      {hint}
+                    </div>
                   </div>
-                  <div className="text-[11px] uppercase tracking-wider text-muted">
-                    {mins} min · worth {engagementTokens(mins)} tokens
-                  </div>
-                </div>
+                </label>
               </li>
             );
           })}
@@ -309,15 +521,24 @@ export default function SchedulePage() {
           </span>
         ) : (
           <button
-            onClick={() => claim(totalMins > 0 ? totalMins : schedule.dailyGoalMinutes)}
-            disabled={claiming}
-            className={`btn-primary disabled:opacity-50${todays.length > 0 ? " animate-glowPulse" : ""}`}
+            onClick={() => claim(qualifyingMins)}
+            disabled={claiming || !canClaim}
+            className={`btn-primary disabled:opacity-50${canClaim ? " animate-glowPulse" : ""}`}
+            title={
+              canClaim
+                ? ""
+                : !dayOver && lastEnd !== null
+                ? `Claim opens at ${fmtTime(lastEnd)} — finish every block first.`
+                : `Finish a block over ${MIN_BLOCK_MINUTES} min, mark it done, and stay active for ${Math.round(ACTIVITY_COVERAGE_THRESHOLD * 100)}% of it.`
+            }
           >
             {claiming
               ? "Claiming…"
-              : totalMins > 0
-              ? `Claim +${estTokens} tokens`
-              : `Claim ${DAILY_CLAIM_TOKENS} tokens`}
+              : canClaim
+              ? `Claim ~${estTokens}+ tokens`
+              : !dayOver && lastEnd !== null
+              ? `Opens at ${fmtTime(lastEnd)}`
+              : `Finish a qualifying block`}
           </button>
         )}
         {msg && <span className="text-sm text-orange-ink">{msg}</span>}
@@ -425,8 +646,11 @@ export default function SchedulePage() {
             </button>
           </div>
           <p className="mt-3 text-xs text-muted">
-            Select a course you're enrolled in, then pick a day and time. 45+ minute sessions
-            earn a 25% deep-focus bonus.
+            Blocks must be longer than {MIN_BLOCK_MINUTES} minutes to earn tokens.
+            Mark each block done and stay active in the app for at least{" "}
+            {Math.round(ACTIVITY_COVERAGE_THRESHOLD * 100)}% of its time. Claim
+            opens after your last block ends — 50 base + 1 token per minute past
+            the first hour, plus focus and depletion bonuses up to {MAX_CLAIM_TOKENS} total.
           </p>
         </div>
       </section>
@@ -436,7 +660,11 @@ export default function SchedulePage() {
           tokens={celebrate.tokens}
           minutes={celebrate.minutes}
           base={celebrate.base}
-          multiplier={celebrate.multiplier}
+          perMinute={celebrate.perMinute}
+          subtotal={celebrate.subtotal}
+          focusBonus={celebrate.focusBonus}
+          depletionBonus={celebrate.depletionBonus}
+          usedAiTools={celebrate.usedAiTools}
           onClose={() => setCelebrate({ open: false, tokens: 0, minutes: 0 })}
         />
       )}
@@ -568,19 +796,27 @@ function ClaimCelebration({
   tokens,
   minutes,
   base,
-  multiplier,
+  perMinute,
+  subtotal,
+  focusBonus,
+  depletionBonus,
+  usedAiTools,
   onClose,
 }: {
   tokens: number;
   minutes: number;
   base?: number;
-  multiplier?: number;
+  perMinute?: number;
+  subtotal?: number;
+  focusBonus?: number;
+  depletionBonus?: number;
+  usedAiTools?: boolean;
   onClose: () => void;
 }) {
-  const hasBonus =
-    typeof base === "number" &&
-    typeof multiplier === "number" &&
-    multiplier > 1.01;
+  const hasBreakdown = typeof subtotal === "number";
+  const showFocus = typeof focusBonus === "number" && focusBonus > 0;
+  const showDepletion =
+    typeof depletionBonus === "number" && depletionBonus > 0.005;
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -663,9 +899,26 @@ function ClaimCelebration({
             tokens
           </span>
         </div>
-        {hasBonus && (
-          <div className="mt-3 text-[12px] text-orange-ink">
-            Base {base} × {multiplier!.toFixed(2)} usage bonus
+        {hasBreakdown && (
+          <div className="mt-3 space-y-1 text-[12px] text-orange-ink">
+            <div>
+              {base} base{" "}
+              {typeof perMinute === "number" && perMinute > 0
+                ? `+ ${perMinute} per-min`
+                : ""}{" "}
+              → {subtotal} subtotal
+            </div>
+            {showFocus && (
+              <div>
+                +{Math.round((focusBonus || 0) * 100)}% focus bonus
+                {usedAiTools ? " (used AI tools)" : ""}
+              </div>
+            )}
+            {showDepletion && (
+              <div>
+                +{Math.round((depletionBonus || 0) * 100)}% depletion bonus
+              </div>
+            )}
           </div>
         )}
 
