@@ -94,9 +94,9 @@ export default function PrivacyPage() {
             FinalsPrep is targeted at high school and college students.
             Students under 13 should not use FinalsPrep without a parent's
             consent. If you're a parent and you believe we have your
-            under-13 child's data, email{" "}
-            <a className="text-orange underline" href="mailto:finalsprephelp@gmail.com">
-              finalsprephelp@gmail.com
+            under-13 child's data, send a note through the{" "}
+            <a className="text-orange underline" href="/contact?topic=support">
+              contact form
             </a>{" "}
             and we will delete it.
           </p>
@@ -107,9 +107,9 @@ export default function PrivacyPage() {
           <p>
             You can: download your chat history, delete individual
             conversations from the history sidebar, delete your entire
-            account (email{" "}
-            <a className="text-orange underline" href="mailto:finalsprephelp@gmail.com">
-              finalsprephelp@gmail.com
+            account (submit an account-deletion request via the{" "}
+            <a className="text-orange underline" href="/contact?topic=support">
+              contact form
             </a>{" "}
             and we'll purge it within 7 days). Paid plans are one-time
             purchases and do not auto-renew, so there is no subscription
@@ -138,9 +138,9 @@ export default function PrivacyPage() {
 
           <h2 className="mt-10 font-serif text-2xl text-ink">8. Contact</h2>
           <p>
-            Questions:{" "}
-            <a className="text-orange underline" href="mailto:finalsprephelp@gmail.com">
-              finalsprephelp@gmail.com
+            Questions, data access requests, or deletion requests:{" "}
+            <a className="text-orange underline" href="/contact">
+              finalsprep.app/contact
             </a>
             .
           </p>

@@ -17,9 +17,9 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
           Sign-in is temporarily unavailable.
         </h2>
         <p className="mt-4 text-muted">
-          Try again in a few minutes, or email{" "}
-          <a className="underline" href="mailto:finalsprephelp@gmail.com">
-            finalsprephelp@gmail.com
+          Try again in a few minutes, or{" "}
+          <a className="underline" href="/contact?topic=support">
+            contact support
           </a>{" "}
           if it persists.
         </p>

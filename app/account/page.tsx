@@ -272,9 +272,9 @@ export default function AccountPage() {
             Account access is temporarily unavailable.
           </h2>
           <p className="mt-4 text-muted">
-            Try again in a few minutes, or email{" "}
-            <a className="underline" href="mailto:finalsprephelp@gmail.com">
-              finalsprephelp@gmail.com
+            Try again in a few minutes, or{" "}
+            <a className="underline" href="/contact?topic=support">
+              contact support
             </a>{" "}
             if it persists.
           </p>
@@ -578,6 +578,35 @@ export default function AccountPage() {
             >
               Open chat settings →
             </a>
+          </div>
+
+          <div className="rounded-xl border border-hair bg-offwhite p-5">
+            <div className="label mb-2">Customer support</div>
+            <p className="text-[15px] text-body">
+              Need help with your account, billing, a bug, or a feature request?
+              Send a message through the contact form and we'll route it to the
+              right person. Most replies go out within a business day.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <a
+                href="/contact?topic=support"
+                className="btn-primary inline-flex text-sm"
+              >
+                Contact support →
+              </a>
+              <a
+                href="/contact?topic=report-issue"
+                className="btn-ghost inline-flex text-sm"
+              >
+                Report an issue
+              </a>
+              <a
+                href="/contact?topic=billing"
+                className="btn-ghost inline-flex text-sm"
+              >
+                Billing & refunds
+              </a>
+            </div>
           </div>
 
           {/* Plan status */}

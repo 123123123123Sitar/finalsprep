@@ -399,19 +399,19 @@ function prettyFirebaseError(
     case "auth/network-request-failed":
       return "Network error. Check your connection and try again.";
     case "auth/operation-not-allowed":
-      return "Email/password sign-in isn't enabled right now. Email finalsprephelp@gmail.com if it persists.";
+      return "Email/password sign-in isn't enabled right now. Visit /contact (support) if it persists.";
     case "auth/app-not-authorized":
     case "auth/unauthorized-domain":
-      return "This domain isn't authorized for sign-in. Email finalsprephelp@gmail.com if you're seeing this on the live site.";
+      return "This domain isn't authorized for sign-in. Visit /contact (support) if you're seeing this on the live site.";
     case "auth/popup-blocked":
       return "Your browser blocked the sign-in popup. Allow popups for this site and try again.";
     case "auth/account-exists-with-different-credential":
       return "An account with this email already exists using a different sign-in method. Try the other method first.";
     case "auth/configuration-not-found":
-      return "Sign-in isn't fully configured yet. Email finalsprephelp@gmail.com if it persists.";
+      return "Sign-in isn't fully configured yet. Visit /contact (support) if it persists.";
     case "auth/invalid-api-key":
     case "auth/api-key-not-valid":
-      return "Sign-in is temporarily unavailable. Try again in a few minutes, or email finalsprephelp@gmail.com if it persists.";
+      return "Sign-in is temporarily unavailable. Try again in a few minutes, or visit /contact (support) if it persists.";
     case "auth/user-disabled":
       return "This account has been disabled.";
     default:

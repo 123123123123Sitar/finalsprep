@@ -74,10 +74,10 @@ export default function TermsPage() {
             you revert to the free tier until you choose to buy again.
           </p>
           <p>
-            Refunds: if you're unhappy within 7 days of your purchase,
-            email{" "}
-            <a className="text-orange underline" href="mailto:finalsprephelp@gmail.com">
-              finalsprephelp@gmail.com
+            Refunds: if you're unhappy within 7 days of your purchase, send
+            us a note through the{" "}
+            <a className="text-orange underline" href="/contact?topic=billing">
+              contact form (Billing &amp; refunds)
             </a>{" "}
             and we will refund the last charge, no questions asked.
           </p>
@@ -132,9 +132,13 @@ export default function TermsPage() {
 
           <h2 className="mt-10 font-serif text-2xl text-ink">10. Contact</h2>
           <p>
-            <a className="text-orange underline" href="mailto:finalsprephelp@gmail.com">
-              finalsprephelp@gmail.com
+            Use the{" "}
+            <a className="text-orange underline" href="/contact">
+              FinalsPrep contact form
             </a>
+            . It routes your message based on the inquiry type you pick
+            (support, billing, corporate, etc.) and logs a ticket so we can
+            follow up.
           </p>
         </div>
       </article>

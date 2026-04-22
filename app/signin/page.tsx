@@ -40,10 +40,9 @@ function SignInPageInner() {
               Sign-in is temporarily unavailable.
             </h2>
             <p className="mt-4 text-muted">
-              We're working on it. Please try again in a few minutes, or
-              email{" "}
-              <a className="underline" href="mailto:finalsprephelp@gmail.com">
-                finalsprephelp@gmail.com
+              We're working on it. Please try again in a few minutes, or{" "}
+              <a className="underline" href="/contact?topic=support">
+                contact support
               </a>{" "}
               if it persists.
             </p>

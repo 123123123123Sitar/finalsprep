@@ -176,9 +176,9 @@ export default function CheckoutPopup(props: Props) {
       <p className="mt-6 text-xs text-muted">
         Payments are processed securely through our payment provider. Pay
         with a credit or debit card and we never see your card number.
-        7-day refund, no questions. Email{" "}
-        <a className="underline" href="mailto:finalsprephelp@gmail.com">
-          finalsprephelp@gmail.com
+        7-day refund, no questions. Reach us via{" "}
+        <a className="underline" href="/contact?topic=billing">
+          /contact
         </a>
         .
       </p>
@@ -192,9 +192,9 @@ function NotConfigured({ priceUsd }: { priceUsd: number }) {
       <h1 className="font-serif text-3xl text-ink">Checkout isn't configured yet.</h1>
       <p className="mt-3 text-body">
         The product link for this <strong className="text-ink">${priceUsd.toFixed(2)}</strong>{" "}
-        item isn't set. Email{" "}
-        <a className="underline" href="mailto:finalsprephelp@gmail.com">
-          finalsprephelp@gmail.com
+        item isn't set. Send us a note via{" "}
+        <a className="underline" href="/contact?topic=billing">
+          /contact
         </a>{" "}
         and we'll activate your plan manually within a few hours.
       </p>
