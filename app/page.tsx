@@ -8,6 +8,7 @@ import PageLoader from "@/app/components/PageLoader";
 import ScrollCinema from "@/app/components/ScrollCinema";
 import CedCinema from "@/app/components/CedCinema";
 import AuroraBackground from "@/app/components/AuroraBackground";
+import MarketingBackground from "@/app/components/MarketingBackground";
 import { firstApExamDate } from "@/lib/examDates";
 
 /**
@@ -90,14 +91,141 @@ function MarketingHome() {
   }
 
   return (
-    <main className="bg-paper text-body">
+    <main className="relative bg-paper/60 text-body" style={{ scrollBehavior: "smooth" }}>
+      <MarketingBackground />
+      <style>{`
+        /* Soft divider replaces the hard <hr>. Fades in as the visitor
+           scrolls near it so section transitions feel flowing rather
+           than chopped. */
+        .section-divider {
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgb(var(--hair)) 20%,
+            rgb(var(--hair)) 80%,
+            transparent 100%
+          );
+          opacity: 0.5;
+        }
+        /* Tilt-on-hover for cards with 3D feel */
+        .tilt-card {
+          transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1),
+                      box-shadow 600ms cubic-bezier(0.22, 1, 0.36, 1),
+                      border-color 300ms ease;
+          transform-style: preserve-3d;
+          will-change: transform;
+        }
+        .tilt-card:hover {
+          transform: perspective(900px) translateY(-6px) rotateX(1.5deg) rotateY(-1.5deg);
+          box-shadow: 0 30px 80px -36px rgba(0, 0, 0, 0.40);
+        }
+        /* Spotlight follows the cursor within pricing cards */
+        .spotlight-card {
+          position: relative;
+          overflow: hidden;
+          isolation: isolate;
+        }
+        .spotlight-card::before {
+          content: "";
+          position: absolute;
+          inset: -1px;
+          border-radius: inherit;
+          background: radial-gradient(
+            400px circle at var(--mx, 50%) var(--my, 50%),
+            rgba(249, 115, 22, 0.16),
+            transparent 40%
+          );
+          opacity: 0;
+          transition: opacity 400ms ease;
+          pointer-events: none;
+          z-index: 0;
+        }
+        .spotlight-card:hover::before { opacity: 1; }
+        .spotlight-card > * { position: relative; z-index: 1; }
+        /* Gradient text that slowly shifts its stop positions */
+        .gradient-sweep {
+          background: linear-gradient(
+            90deg,
+            rgb(var(--ink)) 0%,
+            rgb(var(--ink)) 35%,
+            rgb(var(--orange)) 50%,
+            rgb(var(--ink)) 65%,
+            rgb(var(--ink)) 100%
+          );
+          background-size: 300% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          animation: gradientSweep 8s ease-in-out infinite;
+        }
+        @keyframes gradientSweep {
+          0%, 100% { background-position: 100% 0; }
+          50% { background-position: 0 0; }
+        }
+        /* Slide-up entrance with stagger for feature + coverage cards */
+        .stagger-in {
+          opacity: 0;
+          transform: translateY(32px);
+          transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+                      transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .stagger-in.in {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        /* Soft floating motion for decorative elements */
+        @keyframes subtleFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+        .animate-subtleFloat { animation: subtleFloat 6s ease-in-out infinite; }
+        /* Fade-in for FAQ items as they open */
+        details.faq-item summary::-webkit-details-marker { display: none; }
+        details.faq-item[open] .faq-answer {
+          animation: fadeUpSm 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        /* Marquee for the closing CTA section */
+        .marquee-bg {
+          position: relative;
+          overflow: hidden;
+        }
+        .marquee-bg::after {
+          content: "";
+          position: absolute;
+          inset: -20%;
+          background: conic-gradient(
+            from 0deg at 50% 50%,
+            rgba(249, 115, 22, 0) 0deg,
+            rgba(249, 115, 22, 0.10) 60deg,
+            rgba(194, 65, 12, 0.14) 120deg,
+            rgba(249, 115, 22, 0) 220deg,
+            rgba(249, 115, 22, 0) 360deg
+          );
+          filter: blur(60px);
+          opacity: 0.5;
+          animation: auroraDrift 28s linear infinite;
+          pointer-events: none;
+          z-index: 0;
+        }
+        .marquee-bg > * { position: relative; z-index: 1; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .gradient-sweep, .marquee-bg::after, .animate-subtleFloat {
+            animation: none !important;
+          }
+          .tilt-card:hover {
+            transform: none;
+          }
+        }
+      `}</style>
       <SiteNav sticky>
         <a href="#coverage" className="nav-link hidden sm:inline">Coverage</a>
         <a href="#price" className="nav-link hidden sm:inline">Pricing</a>
       </SiteNav>
 
       {/* TOP BANNER - AP sale urgency */}
-      <div className="animate-slideDown border-b border-hair bg-orange-tint">
+      <div className="animate-slideDown relative border-b border-hair bg-orange-tint">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-2 px-6 py-2 text-xs text-orange-ink">
           <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-orange" />
           <span className="font-semibold">AP sale:</span>
@@ -180,7 +308,7 @@ function MarketingHome() {
       {/* Cinematic scroll-synced demo: CED + interactive tools */}
       <CedCinema />
 
-      <hr className="rule mx-auto max-w-5xl" />
+      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* FEATURE PREVIEWS - visual mockups of what's actually in the app */}
       <section id="features" className="relative mx-auto max-w-6xl overflow-hidden px-6 py-20">
@@ -259,7 +387,7 @@ function MarketingHome() {
         </div>
       </section>
 
-      <hr className="rule mx-auto max-w-5xl" />
+      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* COMMON MISTAKES */}
       <section className="mx-auto max-w-5xl px-6 py-16">
@@ -314,7 +442,7 @@ function MarketingHome() {
         </Reveal>
       </section>
 
-      <hr className="rule mx-auto max-w-5xl" />
+      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* HOW IT WORKS */}
       <section id="how" className="mx-auto max-w-5xl px-6 py-16">
@@ -348,7 +476,7 @@ function MarketingHome() {
         </Reveal>
       </section>
 
-      <hr className="rule mx-auto max-w-5xl" />
+      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* COVERAGE - every AP we cover, organized by category */}
       <section id="coverage" className="mx-auto max-w-5xl px-6 py-16">
@@ -416,7 +544,14 @@ function MarketingHome() {
               from={i % 2 === 0 ? "left" : "right"}
               delay={i * 120}
             >
-              <div className="card-hover h-full rounded-lg border border-hair bg-paper p-6">
+              <div
+                onMouseMove={(e) => {
+                  const r = e.currentTarget.getBoundingClientRect();
+                  e.currentTarget.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+                  e.currentTarget.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+                }}
+                className="tilt-card spotlight-card h-full rounded-lg border border-hair bg-paper/90 p-6 backdrop-blur-sm hover:border-orange/40"
+              >
                 <div className="label">{group.label}</div>
                 <ul className="mt-3 space-y-2">
                   {group.courses.map((c) => (
@@ -456,7 +591,7 @@ function MarketingHome() {
         </Reveal>
       </section>
 
-      <hr className="rule mx-auto max-w-5xl" />
+      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* PRICING */}
       <section id="price" className="mx-auto max-w-6xl px-6 py-20">
@@ -478,7 +613,14 @@ function MarketingHome() {
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {/* LEARNER */}
           <Reveal from="left" delay={0}>
-          <div className="card-hover h-full rounded-xl border border-hair bg-paper p-7">
+          <div
+            onMouseMove={(e) => {
+              const r = e.currentTarget.getBoundingClientRect();
+              e.currentTarget.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+              e.currentTarget.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+            }}
+            className="tilt-card spotlight-card h-full rounded-xl border border-hair bg-paper/90 p-7 backdrop-blur-sm"
+          >
             <div className="label">Learner</div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="font-serif text-6xl font-normal text-ink">$0</span>
@@ -506,7 +648,14 @@ function MarketingHome() {
 
           {/* PRO - recommended */}
           <Reveal from="up" delay={120}>
-          <div className="card-hover relative h-full rounded-xl border-2 border-ink bg-paper p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)]">
+          <div
+            onMouseMove={(e) => {
+              const r = e.currentTarget.getBoundingClientRect();
+              e.currentTarget.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+              e.currentTarget.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+            }}
+            className="tilt-card spotlight-card relative h-full rounded-xl border-2 border-ink bg-paper/95 p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)] backdrop-blur-sm"
+          >
             <span className="absolute right-4 top-4 animate-bounceIn rounded-full bg-orange px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
               Most popular
             </span>
@@ -549,7 +698,14 @@ function MarketingHome() {
 
           {/* HACKER */}
           <Reveal from="right" delay={240}>
-          <div className="card-hover relative h-full rounded-xl border border-hair bg-gradient-to-b from-amber-50 to-white p-7">
+          <div
+            onMouseMove={(e) => {
+              const r = e.currentTarget.getBoundingClientRect();
+              e.currentTarget.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+              e.currentTarget.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+            }}
+            className="tilt-card spotlight-card relative h-full rounded-xl border border-hair bg-gradient-to-b from-amber-50/95 to-white/95 p-7 backdrop-blur-sm"
+          >
             <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
               <CrownIcon className="h-3 w-3" /> Premium
             </span>
@@ -713,7 +869,7 @@ function MarketingHome() {
 
 
 
-      <hr className="rule mx-auto max-w-5xl" />
+      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* FAQ */}
       <section className="mx-auto max-w-5xl px-6 py-16">
@@ -730,37 +886,57 @@ function MarketingHome() {
               ["What if the tutor gets something wrong?", "Tell it in the next message and it will correct itself. If you hit a problem in scope where the explanation was genuinely bad, email finalsprephelp@gmail.com and we'll refund the purchase."],
               ["What if I want a refund?", "Reply to your receipt within 7 days. No questions asked."],
               ["How does this compare to a human tutor?", "$16/month is less than one hour with a human tutor, and a real tutor isn't available at 11pm the night before your exam. Use a real tutor for big conceptual gaps; use this for getting unstuck on homework."],
-            ].map(([q, a]) => (
-              <details key={q} className="group border-b border-hair pb-4">
-                <summary className="flex cursor-pointer items-center justify-between py-2 text-ink">
-                  <span className="font-medium">{q}</span>
-                  <span className="ml-4 text-muted transition-transform group-open:rotate-45">+</span>
-                </summary>
-                <p className="mt-2 max-w-2xl pr-8 text-body">{a}</p>
-              </details>
+            ].map(([q, a], i) => (
+              <Reveal key={q} from="up" delay={i * 60}>
+                <details className="faq-item group rounded-lg border border-hair bg-paper/80 px-4 backdrop-blur-sm transition-colors duration-300 hover:border-orange/30 open:border-orange/50 open:bg-paper/95">
+                  <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-ink">
+                    <span className="font-medium">{q}</span>
+                    <span className="ml-4 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-hair text-muted transition-all duration-300 group-open:rotate-45 group-open:border-orange group-open:bg-orange group-open:text-white">
+                      +
+                    </span>
+                  </summary>
+                  <p className="faq-answer mb-4 max-w-2xl pr-8 text-body">{a}</p>
+                </details>
+              </Reveal>
             ))}
           </div>
         </div>
         </Reveal>
       </section>
 
-      <hr className="rule mx-auto max-w-5xl" />
+      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* CLOSING */}
-      <section className="mx-auto max-w-5xl px-6 py-20">
-        <Reveal from="up">
-        <div className="max-w-2xl">
-          <h2 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
-            Your next exam is <span className="sweep-underline italic">closer</span> than you think.
+      <section className="marquee-bg relative mx-auto max-w-5xl px-6 py-24 sm:py-32">
+        <Reveal from="scale">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="label mb-4 inline-flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inset-0 animate-pulseSoft rounded-full bg-orange/60" />
+              <span className="relative m-auto h-1 w-1 rounded-full bg-orange" />
+            </span>
+            One last thing
+          </div>
+          <h2 className="font-serif text-5xl font-normal leading-[1.05] tracking-tight text-ink sm:text-6xl md:text-7xl">
+            Your next exam is{" "}
+            <span className="gradient-sweep italic">closer</span>
+            <br />
+            than you think.
           </h2>
-          <p className="mt-5 text-[17px] text-body">
+          <p className="mx-auto mt-7 max-w-xl text-[18px] leading-relaxed text-body">
             It takes less time to paste a problem in than to read the rest
-            of this page. Try the free tier first. If it helps, $16/month
-            is one click away.
+            of this page. Try the free tier first. If it helps,{" "}
+            <strong className="text-ink">$16/month</strong> is one click away.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="/study" className="btn-primary text-base">Open the solver</a>
-            <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-ghost text-base">
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <a href="/study" className="btn-primary animate-glowPulse text-base">
+              Open the solver
+            </a>
+            <button
+              onClick={() => buy("pro-monthly")}
+              disabled={loading}
+              className="btn-ghost text-base"
+            >
               Skip ahead - $16/mo
             </button>
           </div>
@@ -801,12 +977,22 @@ function FeaturePreview({
   from: "left" | "right";
   delay?: number;
 }) {
+  function onMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mx = ((e.clientX - rect.left) / rect.width) * 100;
+    const my = ((e.clientY - rect.top) / rect.height) * 100;
+    e.currentTarget.style.setProperty("--mx", `${mx}%`);
+    e.currentTarget.style.setProperty("--my", `${my}%`);
+  }
   return (
     <Reveal from={from} delay={delay}>
-      <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-hair bg-paper transition-all duration-500 hover:-translate-y-1 hover:border-orange/50 hover:shadow-[0_28px_70px_-30px_rgba(0,0,0,0.35)]">
+      <div
+        onMouseMove={onMove}
+        className="tilt-card spotlight-card group flex h-full flex-col overflow-hidden rounded-2xl border border-hair bg-paper/90 backdrop-blur-sm hover:border-orange/50"
+      >
         <div className="relative aspect-[16/10] overflow-hidden border-b border-hair bg-offwhite">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(194,65,12,0.10),transparent_55%),radial-gradient(circle_at_bottom_right,rgba(0,0,0,0.04),transparent_60%)]" />
-          <div className="relative h-full w-full transition-transform duration-700 group-hover:scale-[1.02]">
+          <div className="relative h-full w-full transition-transform duration-700 group-hover:scale-[1.03]">
             {mock}
           </div>
         </div>
