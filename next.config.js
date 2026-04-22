@@ -1,6 +1,28 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // @huggingface/transformers runs client-side only (Whisper WASM).
+  // Keep it out of the server bundle so Next doesn't try to resolve
+  // its native deps.
+  experimental: {
+    serverComponentsExternalPackages: [
+      "@huggingface/transformers",
+      "onnxruntime-node",
+      "onnxruntime-web",
+      "sharp",
+    ],
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...(config.resolve.fallback || {}),
+        fs: false,
+        path: false,
+        crypto: false,
+      };
+    }
+    return config;
+  },
   // Proxy Firebase Auth handler/iframe through our own domain so the
   // Google OAuth consent screen shows "www.finalsprep.com" instead of
   // the default "<project>.firebaseapp.com". The Firebase client will

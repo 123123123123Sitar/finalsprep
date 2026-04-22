@@ -27,6 +27,7 @@ import {
   updateConversation,
   type StoredConversation,
 } from "@/lib/chatStore";
+import { latexToSpeech } from "@/lib/latexSpeech";
 import { postScoreEvent } from "@/lib/postScoreEvent";
 import { subscribeSelectedCourses } from "@/lib/selectedCourses";
 import {
@@ -159,6 +160,21 @@ function ChatInner() {
   const [voiceList, setVoiceList] = useState<SpeechSynthesisVoice[]>([]);
   const [voiceSettingsOpen, setVoiceSettingsOpen] = useState(false);
   const spokenUpToRef = useRef<number>(0);
+  // Paced transcript reveal: in voice mode the on-screen text grows only as
+  // fast as TTS speaks it, so it feels like a live captioning track. Each
+  // utterance carries its [displayStart, displayEnd] range into the reply
+  // text; onstart/onboundary/onend events advance `voiceDisplayLen`.
+  const [voiceDisplayLen, setVoiceDisplayLen] = useState<number>(0);
+  const activeSpeechRef = useRef<{
+    displayStart: number;
+    displayEnd: number;
+    cleanLen: number;
+  } | null>(null);
+  // MediaRecorder → Float32 PCM → POST /api/chat/transcribe (server runs
+  // Whisper). No Google speech service, no client model download.
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const [transcribing, setTranscribing] = useState(false);
 
   // Load past conversations once user is ready
   useEffect(() => {
@@ -402,6 +418,8 @@ function ChatInner() {
     if (voiceMode && plan !== "learner") {
       stopSpeaking();
       spokenUpToRef.current = 0;
+      setVoiceDisplayLen(0);
+      activeSpeechRef.current = null;
     }
 
     const controller = new AbortController();
@@ -494,8 +512,13 @@ function ChatInner() {
         setMessages(withUser);
       } else {
         setMessages(finalMessages);
-        if (voiceMode && plan !== "learner" && acc.length > 0 && !aborted) {
-          flushRemainingSpeech(acc);
+        if (voiceMode && plan !== "learner" && acc.length > 0) {
+          if (!aborted) {
+            flushRemainingSpeech(acc);
+          } else {
+            // Aborted mid-reply: show whatever was streamed in full.
+            setVoiceDisplayLen(finalMessages[finalMessages.length - 1].content.length);
+          }
         }
         const savedId = await persist(finalMessages);
         // First exchange of a new conversation → ask the AI to title it.
@@ -773,17 +796,19 @@ function ChatInner() {
   }
 
   function stripForSpeech(text: string): string {
-    // Strip markdown artifacts, code fences, and LaTeX delimiters so the TTS
-    // engine doesn't read "star star bold star star" or a pile of backslashes.
-    return text
+    // Strip markdown fences, unwrap math delimiters, then translate LaTeX
+    // commands into spoken words ("\\times" → "times", "\\frac{a}{b}" → "a
+    // over b") so TTS reads the math naturally instead of skipping it or
+    // saying "backslash times".
+    const unwrapped = text
       .replace(/```[\s\S]*?```/g, " code block. ")
       .replace(/`([^`]+)`/g, "$1")
       .replace(/\$\$([\s\S]*?)\$\$/g, " $1 ")
       .replace(/\$([^$]+)\$/g, " $1 ")
       .replace(/\\\(([^)]+)\\\)/g, " $1 ")
       .replace(/\\\[([\s\S]*?)\\\]/g, " $1 ")
-      .replace(/[*_#>~]/g, " ")
-      .replace(/\\[a-zA-Z]+/g, " ")
+      .replace(/[*#>~]/g, " ");
+    return latexToSpeech(unwrapped)
       .replace(/\s+/g, " ")
       .trim();
   }
@@ -813,20 +838,49 @@ function ChatInner() {
     } catch {}
   }
 
-  function enqueueSpeechSentence(sentence: string) {
+  function enqueueSpeechSentence(
+    sentence: string,
+    displayStart: number,
+    displayEnd: number
+  ) {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
     const clean = stripForSpeech(sentence);
-    if (!clean) return;
+    if (!clean) {
+      // Nothing to speak — still reveal the corresponding display text so
+      // the transcript doesn't freeze on math-only sentences.
+      setVoiceDisplayLen((prev) => Math.max(prev, displayEnd));
+      return;
+    }
+    const cleanLen = clean.length;
     try {
       const utter = new SpeechSynthesisUtterance(clean);
       applyVoiceTo(utter);
-      utter.onstart = () => setSpeaking(true);
+      utter.onstart = () => {
+        setSpeaking(true);
+        activeSpeechRef.current = { displayStart, displayEnd, cleanLen };
+        setVoiceDisplayLen((prev) => Math.max(prev, displayStart));
+      };
+      utter.onboundary = (ev: SpeechSynthesisEvent) => {
+        // Word-boundary events drive the typing-along effect.
+        if (ev.name && ev.name !== "word") return;
+        const active = activeSpeechRef.current;
+        if (!active || active.cleanLen === 0) return;
+        const frac = Math.min(1, ev.charIndex / active.cleanLen);
+        const newLen =
+          active.displayStart +
+          Math.round(frac * (active.displayEnd - active.displayStart));
+        setVoiceDisplayLen((prev) => Math.max(prev, newLen));
+      };
       utter.onend = () => {
+        setVoiceDisplayLen((prev) => Math.max(prev, displayEnd));
+        activeSpeechRef.current = null;
         if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
           setSpeaking(false);
         }
       };
       utter.onerror = () => {
+        setVoiceDisplayLen((prev) => Math.max(prev, displayEnd));
+        activeSpeechRef.current = null;
         if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
           setSpeaking(false);
         }
@@ -848,7 +902,13 @@ function ChatInner() {
     while ((match = boundary.exec(newText))) {
       const endIdx = match.index + match[0].length;
       const sentence = newText.slice(lastEnd, endIdx).trim();
-      if (sentence.length >= 4) enqueueSpeechSentence(sentence);
+      if (sentence.length >= 4) {
+        enqueueSpeechSentence(
+          sentence,
+          spokenUpToRef.current + lastEnd,
+          spokenUpToRef.current + endIdx
+        );
+      }
       lastEnd = endIdx;
     }
     if (lastEnd > 0) {
@@ -857,8 +917,15 @@ function ChatInner() {
   }
 
   function flushRemainingSpeech(full: string) {
-    const tail = full.slice(spokenUpToRef.current).trim();
-    if (tail.length >= 2) enqueueSpeechSentence(tail);
+    const start = spokenUpToRef.current;
+    const tail = full.slice(start).trim();
+    if (tail.length >= 2) {
+      enqueueSpeechSentence(tail, start, full.length);
+    } else {
+      // Nothing left to speak — reveal whatever remains so the transcript
+      // catches up to the final streamed text.
+      setVoiceDisplayLen((prev) => Math.max(prev, full.length));
+    }
     spokenUpToRef.current = full.length;
   }
 
@@ -868,6 +935,14 @@ function ChatInner() {
       window.speechSynthesis.cancel();
     } catch {}
     setSpeaking(false);
+    activeSpeechRef.current = null;
+    // When the user kills speech mid-reply, reveal the rest of the transcript
+    // immediately — otherwise they'd stare at partial text with no way to
+    // see what the tutor was going to say.
+    const tail = [...messages].reverse().find((m) => m.role === "assistant");
+    if (tail) {
+      setVoiceDisplayLen((prev) => Math.max(prev, tail.content.length));
+    }
   }
 
   useEffect(() => {
@@ -880,28 +955,41 @@ function ChatInner() {
     };
   }, []);
 
-  // Voice input uses the browser's Web Speech API (free, no server key
-  // needed). The flaky bits are (a) sessions ending after a pause — fixed by
-  // continuous mode — and (b) transient "network" errors when Chrome's
-  // speech proxy rejects the first bytes — fixed by auto-restarting up to
-  // two times. We collect final transcripts across results, and auto-send
-  // them when voice mode is active.
+  // Voice input uses MediaRecorder + a local Whisper model (WASM) via
+  // @huggingface/transformers. No Google speech service, no server
+  // transcription key - everything runs in the browser. First press
+  // downloads the ~40MB model (cached in IndexedDB); subsequent presses
+  // are fully offline and fast.
+  function pickRecorderMime(): string {
+    const MR: any =
+      typeof window !== "undefined" ? (window as any).MediaRecorder : null;
+    if (!MR || !MR.isTypeSupported) return "audio/webm";
+    const candidates = [
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/ogg;codecs=opus",
+      "audio/mp4",
+    ];
+    for (const c of candidates) {
+      try {
+        if (MR.isTypeSupported(c)) return c;
+      } catch {}
+    }
+    return "audio/webm";
+  }
+
   async function toggleMic() {
     if (listening) {
-      const rec: any = recognitionRef.current;
-      if (rec) {
-        rec.__userStopped = true;
-        try {
-          rec.stop();
-        } catch {}
-      }
+      try {
+        mediaRecorderRef.current?.stop();
+      } catch {}
       return;
     }
-    const SR: any =
-      (typeof window !== "undefined" && (window as any).SpeechRecognition) ||
-      (typeof window !== "undefined" &&
-        (window as any).webkitSpeechRecognition);
-    if (!SR) {
+    if (
+      typeof navigator === "undefined" ||
+      !navigator.mediaDevices?.getUserMedia ||
+      typeof (window as any).MediaRecorder === "undefined"
+    ) {
       setVoiceUnsupported(true);
       setError(
         "Voice input isn't supported in this browser. Chrome, Edge, or Safari work best."
@@ -909,86 +997,84 @@ function ChatInner() {
       return;
     }
     try {
-      const rec: any = new SR();
-      rec.lang = "en-US";
-      rec.continuous = true;
-      rec.interimResults = true;
-      rec.maxAlternatives = 1;
-      let finalText = "";
-      let interimText = "";
-      let retries = 0;
-      let restarting = false;
-      rec.__userStopped = false;
-      rec.onresult = (event: any) => {
-        interimText = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const r = event.results[i];
-          if (r.isFinal) finalText += r[0].transcript + " ";
-          else interimText += r[0].transcript;
-        }
-        const live = (finalText + interimText).replace(/\s+/g, " ").trimStart();
-        if (!voiceMode) setInput(live);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = pickRecorderMime();
+      const rec = new MediaRecorder(stream, { mimeType });
+      audioChunksRef.current = [];
+      rec.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) audioChunksRef.current.push(e.data);
       };
-      rec.onerror = (e: any) => {
-        const err = e?.error;
-        if (err === "no-speech" || err === "aborted") return;
-        if (err === "network" && retries < 2) {
-          retries++;
-          restarting = true;
-          setTimeout(() => {
-            try {
-              rec.start();
-            } catch {
-              restarting = false;
-            }
-          }, 300);
-          return;
-        }
-        setError(
-          err === "not-allowed" || err === "service-not-allowed"
-            ? "Microphone permission denied."
-            : err === "network"
-            ? "Voice service unreachable. Check your connection and try again."
-            : `Voice error: ${err}`
-        );
-      };
-      rec.onend = () => {
-        if (restarting) {
-          restarting = false;
-          return;
-        }
+      rec.onstop = async () => {
+        stream.getTracks().forEach((t) => {
+          try {
+            t.stop();
+          } catch {}
+        });
         setListening(false);
-        const transcript = finalText.trim();
-        if (!transcript) {
-          if (rec.__userStopped) {
-            // User stopped without saying anything useful; stay quiet.
+        const blob = new Blob(audioChunksRef.current, { type: mimeType });
+        audioChunksRef.current = [];
+        if (blob.size < 1000) return;
+        setTranscribing(true);
+        setError("");
+        try {
+          const { blobTo16kMono } = await import("@/lib/audioDecode");
+          const samples = await blobTo16kMono(blob);
+          const token = await getIdToken();
+          const res = await fetch("/api/chat/transcribe", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/octet-stream",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+            body: samples.buffer as ArrayBuffer,
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            setError(data?.message || data?.error || "Transcription failed.");
+            return;
           }
-          return;
-        }
-        if (voiceMode && plan !== "learner") {
-          void send(transcript);
-        } else {
-          setInput(transcript);
-          setTimeout(() => inputRef.current?.focus(), 0);
+          const data = await res.json();
+          const text = (data?.transcript || "").trim();
+          if (!text) {
+            setError("Didn't catch that. Try again a bit closer to the mic.");
+            return;
+          }
+          if (voiceMode && plan !== "learner") {
+            void send(text);
+          } else {
+            setInput((prev) => (prev ? `${prev} ${text}` : text));
+            setTimeout(() => inputRef.current?.focus(), 0);
+          }
+        } catch (e: any) {
+          console.error("[transcribe] failed", e);
+          setError(e?.message || "Transcription failed.");
+        } finally {
+          setTranscribing(false);
         }
       };
-      recognitionRef.current = rec;
+      rec.onerror = (ev: any) => {
+        setListening(false);
+        setError(ev?.error?.message || "Recording error.");
+      };
+      mediaRecorderRef.current = rec;
       rec.start();
       setListening(true);
       setError("");
     } catch (e: any) {
       setListening(false);
-      setError(e?.message || "Could not start voice input.");
+      setError(
+        e?.name === "NotAllowedError"
+          ? "Microphone permission denied."
+          : e?.message || "Could not start voice input."
+      );
     }
   }
 
   useEffect(() => {
     return () => {
       try {
-        const rec: any = recognitionRef.current;
-        if (rec) {
-          rec.__userStopped = true;
-          rec.stop();
+        if (mediaRecorderRef.current?.state === "recording") {
+          mediaRecorderRef.current.stop();
         }
       } catch {}
     };
@@ -1373,14 +1459,21 @@ function ChatInner() {
           speaking={speaking}
           streaming={streaming}
           loading={loading}
+          micDisabled={voiceUnsupported}
+          transcribing={transcribing}
           lastUser={
             [...messages].reverse().find((m) => m.role === "user")?.content ||
             ""
           }
-          lastAssistant={
-            [...messages].reverse().find((m) => m.role === "assistant")
-              ?.content || ""
-          }
+          lastAssistant={(() => {
+            const full =
+              [...messages].reverse().find((m) => m.role === "assistant")
+                ?.content || "";
+            // Cap to how much TTS has spoken so the transcript types along
+            // with the voice. Once the stream finishes and speech drains,
+            // flushRemainingSpeech pushes voiceDisplayLen to full length.
+            return full.slice(0, Math.min(full.length, voiceDisplayLen));
+          })()}
           onToggleMic={toggleMic}
           onStopSpeaking={stopSpeaking}
           onStopStream={stopStream}
@@ -1435,6 +1528,8 @@ function VoiceModeOverlay({
   speaking,
   streaming,
   loading,
+  micDisabled,
+  transcribing,
   lastUser,
   lastAssistant,
   onToggleMic,
@@ -1459,6 +1554,8 @@ function VoiceModeOverlay({
   speaking: boolean;
   streaming: boolean;
   loading: boolean;
+  micDisabled: boolean;
+  transcribing: boolean;
   lastUser: string;
   lastAssistant: string;
   onToggleMic: () => void;
@@ -1480,8 +1577,26 @@ function VoiceModeOverlay({
   busy: boolean;
 }) {
   const [typed, setTyped] = useState("");
-  const state: "listening" | "thinking" | "speaking" | "idle" = listening
+  const scrollRef = useRef<HTMLDivElement>(null);
+  // Auto-scroll transcripts as the assistant streams, unless the user has
+  // scrolled up to read earlier content — in which case respect their
+  // position and stop pinning to bottom until they reach it again.
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const nearBottom =
+      el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    if (nearBottom) el.scrollTop = el.scrollHeight;
+  }, [lastAssistant, lastUser]);
+  const state:
+    | "listening"
+    | "transcribing"
+    | "thinking"
+    | "speaking"
+    | "idle" = listening
     ? "listening"
+    : transcribing
+    ? "transcribing"
     : speaking
     ? "speaking"
     : loading || streaming
@@ -1489,9 +1604,12 @@ function VoiceModeOverlay({
     : "idle";
   const stateLabel: Record<typeof state, string> = {
     listening: "Listening…",
+    transcribing: "Transcribing…",
     thinking: "Thinking…",
     speaking: "Speaking…",
-    idle: "Tap the mic to speak, or type below",
+    idle: micDisabled
+      ? "Type a message — the tutor will speak the reply"
+      : "Tap the mic to speak, or type below",
   } as const;
   const orbBase =
     "absolute inset-0 rounded-full bg-gradient-to-br from-sky-400 via-indigo-500 to-fuchsia-500";
@@ -1500,7 +1618,7 @@ function VoiceModeOverlay({
       ? "animate-pulse"
       : state === "speaking"
       ? "animate-[pulse_1.1s_ease-in-out_infinite]"
-      : state === "thinking"
+      : state === "thinking" || state === "transcribing"
       ? "animate-[spin_6s_linear_infinite]"
       : "";
   return (
@@ -1539,8 +1657,8 @@ function VoiceModeOverlay({
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col items-center justify-center px-6 pb-6">
-        <div className="relative h-44 w-44 sm:h-56 sm:w-56">
+      <div className="flex flex-col items-center px-6 pt-2">
+        <div className="relative h-32 w-32 sm:h-40 sm:w-40">
           <div className={`${orbBase} ${orbAnim} opacity-90 blur-[2px]`} />
           <div className="absolute inset-3 rounded-full bg-gradient-to-br from-sky-300/30 via-indigo-400/30 to-fuchsia-400/30 backdrop-blur-sm" />
           <div className="absolute inset-8 rounded-full bg-white/5 ring-1 ring-white/10" />
@@ -1548,22 +1666,27 @@ function VoiceModeOverlay({
             <div className="absolute inset-0 rounded-full ring-4 ring-sky-400/40 animate-ping" />
           )}
         </div>
-        <div className="mt-6 text-[15px] font-medium text-white/90">
+        <div className="mt-4 text-[15px] font-medium text-white/90">
           {stateLabel[state]}
         </div>
         <div className="mt-1 min-h-[16px] text-[12px] text-white/50">
           {state === "idle" &&
-            "1.5× tokens per reply. Tap mic, speak, tap again to send."}
+            (micDisabled
+              ? "1.5× tokens per reply."
+              : "Tap mic, speak, tap again to send.")}
+          {state === "transcribing" && "Please wait…"}
         </div>
+      </div>
 
-        <div className="mt-8 w-full max-w-2xl space-y-3">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="mx-auto w-full max-w-2xl space-y-3">
           {lastUser && (
             <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
               <div className="mb-1 text-[11px] uppercase tracking-wide text-white/40">
                 You
               </div>
-              <div className="whitespace-pre-wrap text-[14px] text-white/90">
-                {lastUser}
+              <div className="text-[14px] text-white/90">
+                <MathRender auto>{lastUser}</MathRender>
               </div>
             </div>
           )}
@@ -1572,8 +1695,8 @@ function VoiceModeOverlay({
               <div className="mb-1 text-[11px] uppercase tracking-wide text-white/40">
                 Tutor
               </div>
-              <div className="whitespace-pre-wrap text-[14px] text-white/90">
-                {lastAssistant}
+              <div className="voice-md text-[14.5px]">
+                <Markdown>{lastAssistant}</Markdown>
                 {(streaming || speaking) && (
                   <span className="ml-1 inline-block h-3 w-[2px] animate-pulse bg-white/60 align-middle" />
                 )}
@@ -1596,28 +1719,31 @@ function VoiceModeOverlay({
           </div>
         )}
         <div className="flex items-center gap-4">
-          {speaking && (
-            <button
-              type="button"
-              onClick={onStopSpeaking}
-              className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[13px] text-white/80 hover:bg-white/10"
-            >
-              Stop speaking
-            </button>
-          )}
+          {!micDisabled && (
           <button
             type="button"
-            onClick={onToggleMic}
-            disabled={loading || streaming}
-            aria-label={listening ? "Stop recording" : "Start recording"}
+            onClick={speaking ? onStopSpeaking : onToggleMic}
+            disabled={!speaking && (loading || streaming || transcribing)}
+            aria-label={
+              speaking
+                ? "Stop speaking"
+                : listening
+                ? "Stop recording"
+                : "Start recording"
+            }
             className={`relative grid h-20 w-20 place-items-center rounded-full transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 ${
               listening
                 ? "bg-red-500 text-white shadow-[0_0_60px_rgba(239,68,68,0.5)]"
+                : speaking
+                ? "bg-sky-400 text-slate-900 shadow-[0_0_60px_rgba(56,189,248,0.5)]"
                 : "bg-white text-slate-900 shadow-[0_0_40px_rgba(255,255,255,0.25)] hover:bg-white/90"
             }`}
           >
             {listening && (
               <span className="absolute inset-0 rounded-full bg-red-500/60 animate-ping" />
+            )}
+            {speaking && (
+              <span className="absolute inset-0 rounded-full bg-sky-400/50 animate-ping" />
             )}
             <svg
               width="28"
@@ -1627,7 +1753,7 @@ function VoiceModeOverlay({
               className="relative"
               aria-hidden
             >
-              {listening ? (
+              {listening || speaking ? (
                 <rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor" />
               ) : (
                 <>
@@ -1650,6 +1776,7 @@ function VoiceModeOverlay({
               )}
             </svg>
           </button>
+          )}
           {(streaming || loading) && (
             <button
               type="button"
@@ -1673,8 +1800,9 @@ function VoiceModeOverlay({
             type="text"
             value={typed}
             onChange={(e) => setTyped(e.target.value)}
-            placeholder="Or type a message…"
+            placeholder={micDisabled ? "Type a message…" : "Or type a message…"}
             disabled={busy}
+            autoFocus={micDisabled}
             className="flex-1 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-[14px] text-white placeholder-white/40 outline-none focus:border-white/30 disabled:opacity-50"
           />
           <button

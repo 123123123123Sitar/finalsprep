@@ -144,7 +144,6 @@ export async function POST(req: Request) {
   const aiPrefs = user
     ? await getStoredAiPrefs(user.uid)
     : normalizeAiPrefs(body?.aiPrefs);
-  const systemPrompt = buildChatSystemPrompt(aiPrefs);
   const outputTokenLimit = maxOutputTokens("chat", aiPrefs.aiVerbosity);
 
   // Thinking mode: only Pro/Hacker users can enable it. Learners ignored.
@@ -154,6 +153,7 @@ export async function POST(req: Request) {
   // on top of whatever model is picked. Learners silently ignored.
   const voiceMode =
     (plan === "pro" || plan === "hacker") && body?.voiceMode === true;
+  const systemPrompt = buildChatSystemPrompt(aiPrefs, { voiceMode });
   // Cheap pre-check so learners hit Claude immediately when Gemini is
   // globally rate-limited; the in-stream fallback below still handles a
   // 429 racing past this check.

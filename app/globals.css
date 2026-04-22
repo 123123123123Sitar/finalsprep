@@ -368,6 +368,30 @@ button, a, input, textarea, details, summary, [role="button"] {
     @apply text-[17px] leading-[1.7] text-body;
   }
 
+  /* Voice-mode dark scope: re-skin Markdown's light-theme colors so
+     assistant replies stay readable on the #0b0f1a overlay. */
+  .voice-md { color: rgba(255,255,255,0.92); }
+  .voice-md :is(p, li, blockquote) { color: rgba(255,255,255,0.9); }
+  .voice-md :is(h1, h2, h3, h4, h5, h6) { color: #fff; }
+  .voice-md h6 { color: rgba(255,255,255,0.6); }
+  .voice-md strong { color: #fff; }
+  .voice-md em { color: rgba(255,255,255,0.95); }
+  .voice-md a { color: rgb(125 211 252); text-decoration-color: rgba(125,211,252,0.5); }
+  .voice-md a:hover { text-decoration-color: rgb(125 211 252); }
+  .voice-md blockquote {
+    border-left-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.9);
+  }
+  .voice-md hr { border-color: rgba(255,255,255,0.18); }
+  .voice-md :not(pre) > code {
+    background: rgba(255,255,255,0.08);
+    color: rgb(110 231 183);
+  }
+  .voice-md ul > li::marker,
+  .voice-md ol > li::marker { color: rgba(255,255,255,0.55); }
+  .voice-md .katex { color: #fff; }
+
   /* Animated nav underline */
   .nav-link {
     position: relative;

@@ -37,12 +37,18 @@ SCOPE: Algebra 1 & 2, pre-calc, trigonometry, calculus 1 & 2 (limits, derivative
 
 TONE: Warm, confident, never condescending. Imagine explaining to a tired student at 10pm before an exam. They're smart, they're stressed, and they need it to click fast.`;
 
+const VOICE_MODE_PROMPT = `VOICE MODE: The user's latest message was produced by an on-device Whisper transcription. Words may be misheard — especially variable names (x/y/z/n/k), Greek letters, numbers, function names, and physics terms. Apply the most charitable math/physics interpretation given the prior conversation. If the transcript is nearly-incoherent, pick the most plausible intended question and proceed — do NOT ask "did you mean ...?" unless two interpretations are genuinely equally likely. Your reply will be spoken aloud by the browser, so prefer shorter sentences and spell out math in words where it reads naturally ("x squared plus three x" is fine alongside the LaTeX). Still return LaTeX for the math itself so the on-screen transcript renders correctly.`;
+
 export function buildChatSystemPrompt(
-  prefs?: Partial<AiPrefs> | null
+  prefs?: Partial<AiPrefs> | null,
+  opts?: { voiceMode?: boolean }
 ): string {
-  return `${BASE_CHAT_SYSTEM_PROMPT}\n\n${buildAiPreferencePrompt(
-    normalizeAiPrefs(prefs)
-  )}`;
+  const parts = [
+    BASE_CHAT_SYSTEM_PROMPT,
+    buildAiPreferencePrompt(normalizeAiPrefs(prefs)),
+  ];
+  if (opts?.voiceMode) parts.push(VOICE_MODE_PROMPT);
+  return parts.join("\n\n");
 }
 
 export const CHAT_SYSTEM_PROMPT = buildChatSystemPrompt(DEFAULT_AI_PREFS);
