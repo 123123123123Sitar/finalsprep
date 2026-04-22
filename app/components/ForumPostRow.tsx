@@ -1,4 +1,5 @@
 import UserAvatar from "@/app/components/UserAvatar";
+import CourseIcon from "@/app/components/CourseIcon";
 import { relativeTime } from "@/lib/social";
 import type { ForumPost } from "@/lib/forums";
 
@@ -22,6 +23,9 @@ export default function ForumPostRow({ post }: { post: ForumPost }) {
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[12px] text-muted">
+            {post.forum !== "general" && (
+              <CourseIcon slug={post.forum} size="xs" />
+            )}
             <span>f/{post.forum}</span>
             <span>·</span>
             <span>

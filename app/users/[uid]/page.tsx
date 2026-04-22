@@ -11,6 +11,7 @@ import {
   type PublicProfile,
 } from "@/lib/social";
 import { COURSES } from "@/lib/topics";
+import CourseIcon from "@/app/components/CourseIcon";
 import { getHeatmapDays } from "@/lib/insights";
 
 type HistoryEntry = {
@@ -375,26 +376,31 @@ function CoursesSection({ courses }: { courses: CourseProgress[] }) {
               key={c.courseSlug}
               className="rounded-lg border border-hair bg-paper px-4 py-3"
             >
-              <div className="flex items-baseline justify-between gap-3">
-                <a
-                  href={`/study?course=${c.courseSlug}`}
-                  className="truncate text-[14px] text-ink hover:underline"
-                >
-                  {meta?.title || c.courseSlug}
-                </a>
-                <span className="text-[12px] text-muted">
-                  {c.completed}
-                  {total > 0 ? ` / ${total}` : ""}
-                </span>
-              </div>
-              {total > 0 && (
-                <div className="mt-2 h-1.5 w-full rounded-full bg-hair">
-                  <div
-                    className="h-full rounded-full bg-orange"
-                    style={{ width: `${pct}%` }}
-                  />
+              <div className="flex items-center gap-3">
+                <CourseIcon slug={c.courseSlug} category={meta?.category} size="sm" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline justify-between gap-3">
+                    <a
+                      href={`/study?course=${c.courseSlug}`}
+                      className="truncate text-[14px] text-ink hover:underline"
+                    >
+                      {meta?.title || c.courseSlug}
+                    </a>
+                    <span className="text-[12px] text-muted">
+                      {c.completed}
+                      {total > 0 ? ` / ${total}` : ""}
+                    </span>
+                  </div>
+                  {total > 0 && (
+                    <div className="mt-2 h-1.5 w-full rounded-full bg-hair">
+                      <div
+                        className="h-full rounded-full bg-orange"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </li>
           );
         })}

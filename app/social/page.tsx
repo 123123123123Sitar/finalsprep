@@ -8,6 +8,7 @@ import { getDb } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { allSubforums, type ForumPost } from "@/lib/forums";
 import ForumPostRow from "@/app/components/ForumPostRow";
+import CourseIcon from "@/app/components/CourseIcon";
 
 type SearchResult = {
   uid: string;
@@ -312,21 +313,44 @@ function SubforumCard({
   title: string;
   description: string;
 }) {
+  const isGeneral = slug === "general";
   return (
     <li>
       <a
         href={`/social/f/${slug}`}
-        className="flex h-full flex-col rounded-xl border border-hair bg-paper p-4 hover:border-orange/40"
+        className="flex h-full gap-3 rounded-xl border border-hair bg-paper p-4 hover:border-orange/40"
       >
-        <div className="flex items-center gap-2">
-          <span className="rounded-md bg-offwhite px-2 py-0.5 text-[11px] font-medium text-muted">
-            f/{slug}
+        {isGeneral ? (
+          <span
+            aria-hidden
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-orange-tint text-orange-ink"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.75}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-6 w-6"
+            >
+              <path d="M4 6 a 2 2 0 0 1 2 -2 h 12 a 2 2 0 0 1 2 2 v 9 a 2 2 0 0 1 -2 2 H 9 L 5 21 V 17 H 6 a 2 2 0 0 1 -2 -2 Z" />
+            </svg>
           </span>
-          <span className="truncate text-[14px] font-medium text-ink">
-            {title}
-          </span>
+        ) : (
+          <CourseIcon slug={slug} size="md" />
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="rounded-md bg-offwhite px-2 py-0.5 text-[11px] font-medium text-muted">
+              f/{slug}
+            </span>
+            <span className="truncate text-[14px] font-medium text-ink">
+              {title}
+            </span>
+          </div>
+          <p className="mt-1.5 line-clamp-2 text-[13px] text-muted">{description}</p>
         </div>
-        <p className="mt-2 line-clamp-2 text-[13px] text-muted">{description}</p>
       </a>
     </li>
   );

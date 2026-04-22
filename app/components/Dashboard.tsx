@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import SiteNav from "@/app/components/SiteNav";
+import CourseIcon from "@/app/components/CourseIcon";
 import { useAuth } from "@/app/components/AuthProvider";
 import { doc, onSnapshot, getDocs, query, orderBy, limit, collection } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
@@ -569,8 +570,11 @@ function CourseCard({
       className="group flex flex-col rounded-xl border border-hair bg-paper p-5 transition hover:-translate-y-0.5 hover:border-orange hover:shadow-[0_16px_40px_-24px_rgba(0,0,0,0.25)]"
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 font-serif text-xl text-ink group-hover:text-orange">
-          {course.title}
+        <div className="flex min-w-0 items-center gap-3">
+          <CourseIcon slug={course.slug} category={course.category} size="md" />
+          <div className="min-w-0 font-serif text-xl text-ink group-hover:text-orange">
+            {course.title}
+          </div>
         </div>
         {countdown && (
           <span className="shrink-0 rounded-full border border-orange/30 bg-orange-tint px-2 py-1 text-[10px] font-medium text-orange-ink">
