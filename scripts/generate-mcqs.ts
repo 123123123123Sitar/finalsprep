@@ -163,11 +163,19 @@ explanation.`;
 }
 
 function extractJson(text: string): string {
-  const trimmed = text.trim();
+  let s = text.trim();
   // Strip ```json fences if the model ignored instructions.
-  const fence = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (fence) return fence[1].trim();
-  return trimmed;
+  const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fence) s = fence[1].trim();
+  // Strip leading/trailing backticks if unmatched fence remnants survive.
+  s = s.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+  // Grab the first top-level JSON array if there's surrounding prose.
+  const start = s.indexOf("[");
+  const end = s.lastIndexOf("]");
+  if (start >= 0 && end > start) {
+    s = s.slice(start, end + 1);
+  }
+  return s;
 }
 
 function validateMcqs(raw: unknown, lessonSlug: string): RawMcq[] {
@@ -274,8 +282,10 @@ async function generateOne(
 ): Promise<RawMcq[]> {
   const prompt = buildPrompt(lesson);
   let lastErr: unknown;
-  for (let attempt = 0; attempt < 4; attempt++) {
-    for (const gen of gens) {
+  // Try every provider in order, up to 4 times each (parse/validation
+  // errors are often one-off model wobbles; retrying helps).
+  for (const gen of gens) {
+    for (let attempt = 0; attempt < 4; attempt++) {
       try {
         const text = await gen(prompt);
         const json = extractJson(text);
@@ -285,15 +295,12 @@ async function generateOne(
         lastErr = e;
         const msg = e?.message || String(e);
         const is429 = /429|quota|rate/i.test(msg);
-        if (is429) {
-          // Skip this provider for this attempt; try next.
-          continue;
-        }
-        // Validation / parse errors: retry with small delay.
-        break;
+        // On rate limit, skip to next provider immediately.
+        if (is429) break;
+        // Small backoff before retrying.
+        await sleep(800 * (attempt + 1));
       }
     }
-    await sleep(1200 * (attempt + 1));
   }
   throw new Error(
     `exhausted retries for ${lesson.slug}: ${
