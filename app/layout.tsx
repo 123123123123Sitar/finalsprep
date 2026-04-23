@@ -5,6 +5,7 @@ import { AuthProvider } from "@/app/components/AuthProvider";
 import { ThemeProvider } from "@/app/components/ThemeProvider";
 import { BookModeProvider } from "@/app/components/BookMode";
 import StudyTimeBanner from "@/app/components/StudyTimeBanner";
+import OnboardingFlow from "@/app/components/OnboardingFlow";
 
 // Runs before React hydrates so we don't flash the wrong theme or a
 // full SiteNav on pages that are embedded in a chat-extension overlay
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <BookModeProvider>
               <StudyTimeBanner />
               {children}
+              <OnboardingFlow />
             </BookModeProvider>
           </ThemeProvider>
         </AuthProvider>
