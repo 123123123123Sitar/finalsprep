@@ -2,7 +2,7 @@ node_modules
 .next
 out
 .env
-.env.local
+.env.*
 .DS_Store
 captures.jsonl
 .firebase-service-account.json

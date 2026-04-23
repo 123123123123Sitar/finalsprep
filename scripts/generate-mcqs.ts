@@ -11,8 +11,30 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import Anthropic from "@anthropic-ai/sdk";
-import { promises as fs } from "node:fs";
+import { promises as fs, readFileSync, existsSync } from "node:fs";
 import path from "node:path";
+
+// Minimal .env.local loader (Node 18 lacks --env-file).
+(() => {
+  const p = path.resolve(".env.local");
+  if (!existsSync(p)) return;
+  const src = readFileSync(p, "utf8");
+  for (const rawLine of src.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+    const eq = line.indexOf("=");
+    if (eq < 0) continue;
+    const k = line.slice(0, eq).trim();
+    let v = line.slice(eq + 1).trim();
+    if (
+      (v.startsWith('"') && v.endsWith('"')) ||
+      (v.startsWith("'") && v.endsWith("'"))
+    ) {
+      v = v.slice(1, -1);
+    }
+    if (!(k in process.env)) process.env[k] = v;
+  }
+})();
 
 import type { Lesson } from "../lib/topics";
 import { AP_BIOLOGY_LESSONS } from "../lib/lessons/ap-biology";
@@ -288,6 +310,12 @@ function escapeTsString(s: string): string {
 }
 
 function formatLessonMcqs(entries: LessonMcqs[], exportName: string): string {
+  if (entries.length === 0) {
+    return `import type { LessonMcqs } from "./types";
+
+export const ${exportName}: LessonMcqs[] = [];
+`;
+  }
   const body = entries
     .map((entry) => {
       const mcqLines = entry.mcqs
@@ -327,14 +355,17 @@ async function loadExisting(filePath: string): Promise<LessonMcqs[]> {
     const src = await fs.readFile(filePath, "utf8");
     const match = src.match(/=\s*(\[[\s\S]*\]);\s*$/m);
     if (!match) return [];
-    // Parse via a sandboxed Function to evaluate the TS array literal.
-    // The literal uses template strings which JSON.parse can't handle,
-    // so we re-use Node's evaluator in a minimal way.
     // eslint-disable-next-line no-new-func
     const fn = new Function(`return ${match[1]};`);
     const arr = fn();
     if (!Array.isArray(arr)) return [];
-    return arr;
+    return arr.filter(
+      (e): e is LessonMcqs =>
+        !!e &&
+        typeof e === "object" &&
+        typeof (e as any).lessonSlug === "string" &&
+        Array.isArray((e as any).mcqs)
+    );
   } catch {
     return [];
   }
