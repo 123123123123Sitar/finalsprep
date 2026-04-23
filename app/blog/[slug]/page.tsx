@@ -1,16 +1,19 @@
 // Individual blog post page. Server-rendered, statically generated at
-// build time via generateStaticParams below. Each post gets its own
-// <title>, <meta description>, OpenGraph tags, and JSON-LD Article
-// payload so search engines can index and pretty-render the posts.
+// build time via generateStaticParams. Each post gets its own <title>,
+// meta description, OpenGraph tags, and JSON-LD Article payload so
+// search engines can index and pretty-render the posts.
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import SiteNav from "@/app/components/SiteNav";
+import BlogMasthead from "@/app/components/BlogMasthead";
+import BlogComments from "@/app/components/BlogComments";
 import { LogoMark } from "@/app/components/Logo";
 import {
   getAllPostsSorted,
   getPostBySlug,
   getRelatedPosts,
+  tagToSlug,
   type BlogSection,
 } from "@/lib/blogPosts";
 
@@ -18,14 +21,10 @@ type Props = {
   params: { slug: string };
 };
 
-// Prerender every post at build time. If we add a slug later, Next will
-// pick it up automatically from the blogPosts list.
 export function generateStaticParams() {
   return getAllPostsSorted().map((p) => ({ slug: p.slug }));
 }
 
-// Per-post metadata. Next uses this to fill in the document head during
-// the static prerender, so each URL gets a unique title and description.
 export function generateMetadata({ params }: Props): Metadata {
   const post = getPostBySlug(params.slug);
   if (!post) {
@@ -33,10 +32,6 @@ export function generateMetadata({ params }: Props): Metadata {
       title: "Not found - FinalsPrep Blog",
     };
   }
-  // Prefer the explicit metaTitle (optimized for SERP length and
-  // keyword density) when present; otherwise fall back to the visible
-  // on-page title. This lets copywriters tune what Google shows without
-  // changing the H1 students actually read.
   const seoTitle = post.metaTitle ?? post.title;
   return {
     title: `${seoTitle} | FinalsPrep`,
@@ -64,16 +59,10 @@ export function generateMetadata({ params }: Props): Metadata {
 export default function BlogPostPage({ params }: Props) {
   const post = getPostBySlug(params.slug);
   if (!post) {
-    // Renders Next's default 404 page for unknown slugs.
     notFound();
   }
   const related = getRelatedPosts(post.slug, 3);
 
-  // JSON-LD Article payload. Crawlers that parse structured data (Google,
-  // Bing) use this to build rich search results and Discover cards.
-  // The headline here matches the on-page H1 (not the meta title) so the
-  // schema is consistent with the visible content, which is what Google
-  // prefers.
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -99,82 +88,134 @@ export default function BlogPostPage({ params }: Props) {
 
   return (
     <main className="bg-paper text-body">
-      <SiteNav />
+      <BlogMasthead compact />
 
-      {/* Structured data injected inline. React will render this as a
-          plain <script> tag in the HTML output. */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <article className="mx-auto max-w-3xl px-6 pt-12 pb-20">
-        {/* Breadcrumb lets the reader back out without hitting the nav
-            again, and gives search engines an explicit hierarchy. */}
-        <nav className="mb-6 flex items-center gap-1 text-[12px] text-muted">
-          <a href="/" className="hover:text-ink">
-            Home
-          </a>
-          <span aria-hidden>/</span>
-          <a href="/blog" className="hover:text-ink">
-            Blog
-          </a>
-          <span aria-hidden>/</span>
-          <span className="truncate text-body">{post.category}</span>
-        </nav>
+      {/* Back bar. A persistent, obvious "return to the blog" that sits
+          just under the masthead so readers never feel stranded. */}
+      <div className="border-b border-hair bg-offwhite/40">
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-6 py-3 text-[13px]">
+          <Link
+            href="/blog"
+            className="group inline-flex items-center gap-2 rounded-md px-2 py-1 text-body transition hover:bg-paper hover:text-ink"
+          >
+            <span
+              aria-hidden
+              className="transition-transform group-hover:-translate-x-0.5"
+            >
+              ←
+            </span>
+            Back to the blog
+          </Link>
+          <nav
+            aria-label="Breadcrumb"
+            className="hidden items-center gap-1 text-[12px] text-muted sm:flex"
+          >
+            <Link href="/" className="hover:text-ink">
+              Home
+            </Link>
+            <span aria-hidden>/</span>
+            <Link href="/blog" className="hover:text-ink">
+              Blog
+            </Link>
+            <span aria-hidden>/</span>
+            <span className="truncate text-body">{post.category}</span>
+          </nav>
+        </div>
+      </div>
 
+      <article className="mx-auto max-w-3xl px-6 pt-10 pb-12 sm:pt-14">
         <header>
-          <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-wider text-muted">
-            <span className="rounded-full bg-orange/10 px-2.5 py-1 text-orange-ink">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted">
+            <span className="rounded-full bg-orange-tint px-2.5 py-1 text-orange-ink">
               {post.category}
             </span>
             <time dateTime={post.date}>{formatDate(post.date)}</time>
             <span aria-hidden>·</span>
             <span>{post.readTime}</span>
           </div>
-          <h1 className="mt-4 font-serif text-4xl font-normal leading-[1.1] tracking-tight text-ink sm:text-5xl">
+          <h1 className="mt-5 font-serif text-[40px] font-normal leading-[1.05] tracking-tight text-ink sm:text-[56px]">
             {post.title}
           </h1>
-          <p className="mt-5 text-[18px] leading-relaxed text-body">
+          <p className="mt-6 text-[19px] leading-relaxed text-body sm:text-[20px]">
             {post.description}
           </p>
-          <div className="mt-6 flex items-center gap-3 border-b border-hair pb-6">
-            <LogoMark size={24} className="text-ink flex-shrink-0" />
-            <div className="text-[13px]">
+          <div className="mt-8 flex items-center gap-3 border-y border-hair py-5">
+            <span className="grid h-11 w-11 flex-shrink-0 place-items-center rounded-full border border-hair bg-offwhite/60">
+              <LogoMark size={22} className="text-ink" />
+            </span>
+            <div className="flex-1 text-[13px]">
               <div className="font-medium text-ink">{post.author}</div>
+              <div className="text-muted">Written by the tutoring team</div>
             </div>
+            <a
+              href="#comments"
+              className="hidden rounded-full border border-hair px-3 py-1.5 text-[12px] text-body transition hover:border-orange/50 hover:text-orange-ink sm:inline-flex"
+            >
+              Jump to discussion ↓
+            </a>
           </div>
         </header>
 
-        {/* Body. The renderer below dispatches on section type. Section
-            styles live here rather than in a shared prose class because
-            we want per-type control (callouts, code, math). */}
-        <div className="mt-8 space-y-5 text-[17px] leading-[1.75]">
+        {/* Body. The renderer below dispatches on section type. */}
+        <div className="mt-10 space-y-5 text-[17.5px] leading-[1.8]">
           {post.content.map((section, i) => (
-            <Section key={i} section={section} />
+            <Section key={i} section={section} isFirst={i === 0} />
           ))}
         </div>
 
-        {/* Tag chips. Not link-throughs since we don't have a tag index
-            yet, but they still carry the keywords into the rendered page
-            for SEO and give the reader a sense of topic at a glance. */}
+        {/* Clickable tag chips. Each links to /blog/tag/<slug>. */}
         {post.keywords.length > 0 && (
-          <div className="mt-10 flex flex-wrap gap-2 border-t border-hair pt-6">
-            {post.keywords.map((k) => (
-              <span
-                key={k}
-                className="rounded-full border border-hair bg-offwhite/60 px-3 py-1 text-[11px] text-muted"
-              >
-                {k}
-              </span>
-            ))}
+          <div className="mt-12 border-t border-hair pt-6">
+            <div className="mb-3 text-[11px] uppercase tracking-[0.18em] text-muted">
+              Filed under
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {post.keywords.map((k) => (
+                <Link
+                  key={k}
+                  href={`/blog/tag/${tagToSlug(k)}`}
+                  className="rounded-full border border-hair bg-offwhite/60 px-3 py-1 text-[12px] text-body transition hover:border-orange/60 hover:bg-orange-tint hover:text-orange-ink"
+                >
+                  {k}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Back-to-blog link in the footer of the article, for readers
+            who scrolled past it. */}
+        <div className="mt-10 flex items-center justify-between border-t border-hair pt-6 text-[13px]">
+          <Link
+            href="/blog"
+            className="group inline-flex items-center gap-2 text-body hover:text-ink"
+          >
+            <span
+              aria-hidden
+              className="transition-transform group-hover:-translate-x-0.5"
+            >
+              ←
+            </span>
+            Back to the blog
+          </Link>
+          <a
+            href="#comments"
+            className="text-orange-ink hover:underline"
+          >
+            Join the discussion ↓
+          </a>
+        </div>
       </article>
 
-      {/* End-of-post CTA. Lower-pressure than the landing page since
-          readers here are further down the funnel, but still one click
-          from trying the tutor. */}
+      {/* Comments section. Client component so it can manage auth + fetch. */}
+      <BlogComments blogSlug={post.slug} />
+
+      {/* End-of-post CTA. */}
       <section className="border-y border-hair bg-offwhite/50">
         <div className="mx-auto max-w-3xl px-6 py-14 text-center">
           <div className="label mb-3">Try it while it's fresh</div>
@@ -199,23 +240,29 @@ export default function BlogPostPage({ params }: Props) {
 
       {related.length > 0 && (
         <section className="mx-auto max-w-5xl px-6 py-14">
-          <div className="label mb-5">Keep reading</div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-muted">
+            <span className="h-px w-8 bg-hair" aria-hidden />
+            <span>Keep reading</span>
+            <span className="h-px flex-1 bg-hair" aria-hidden />
+          </div>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
               <a
                 key={r.slug}
                 href={`/blog/${r.slug}`}
-                className="group flex flex-col rounded-lg border border-hair bg-paper p-6 transition hover:border-orange/40 hover:shadow-md"
+                className="group flex flex-col gap-3 rounded-lg border border-hair bg-paper p-6 transition hover:border-orange/40 hover:shadow-md"
               >
-                <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wider text-muted">
-                  <span className="text-orange-ink/80">{r.category}</span>
+                <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-orange-ink/80">
+                  <span>{r.category}</span>
                   <span aria-hidden>·</span>
-                  <time dateTime={r.date}>{formatDate(r.date)}</time>
+                  <time dateTime={r.date} className="text-muted">
+                    {formatDate(r.date)}
+                  </time>
                 </div>
-                <h3 className="mt-3 font-serif text-lg font-normal leading-snug text-ink transition group-hover:text-orange-ink">
+                <h3 className="font-serif text-[18px] font-normal leading-snug text-ink transition group-hover:text-orange-ink">
                   {r.title}
                 </h3>
-                <div className="mt-4 text-[12px] text-orange-ink">
+                <div className="mt-1 text-[12px] text-orange-ink">
                   Read →
                 </div>
               </a>
@@ -250,15 +297,29 @@ export default function BlogPostPage({ params }: Props) {
   );
 }
 
-// Dispatch table from section type -> rendered JSX. Keeping this as a
-// switch rather than a registry so the exhaustive check still works.
-function Section({ section }: { section: BlogSection }) {
+// Dispatch table from section type -> JSX. The `isFirst` flag lets the
+// very first paragraph get a drop cap, a bit of editorial polish that
+// sets the tone of a blog post.
+function Section({
+  section,
+  isFirst,
+}: {
+  section: BlogSection;
+  isFirst?: boolean;
+}) {
   switch (section.type) {
     case "p":
+      if (isFirst) {
+        return (
+          <p className="text-body first-letter:float-left first-letter:mr-2 first-letter:mt-1 first-letter:font-serif first-letter:text-[58px] first-letter:font-normal first-letter:leading-none first-letter:text-orange-ink">
+            {section.text}
+          </p>
+        );
+      }
       return <p className="text-body">{section.text}</p>;
     case "h2":
       return (
-        <h2 className="mt-10 border-t border-hair pt-8 font-serif text-2xl font-normal leading-tight text-ink sm:text-3xl">
+        <h2 className="mt-12 border-t border-hair pt-8 font-serif text-2xl font-normal leading-tight text-ink sm:text-3xl">
           {section.text}
         </h2>
       );
@@ -285,10 +346,6 @@ function Section({ section }: { section: BlogSection }) {
         </ol>
       );
     case "callout": {
-      // Three callout variants. Tip is green, note is neutral/orange,
-      // warn is amber. The left border does the coloring work; the
-      // background is a softer tint so the callout stands out but
-      // doesn't scream.
       const styles = {
         tip: "border-emerald-300/70 bg-emerald-50/60 text-emerald-900",
         note: "border-orange/40 bg-orange-tint text-orange-ink",
@@ -328,8 +385,6 @@ function Section({ section }: { section: BlogSection }) {
         </pre>
       );
     case "math":
-      // Rendered in a centered serif face so formulas feel distinct
-      // from prose without dragging in a full math renderer.
       return (
         <div className="my-4 text-center font-serif text-[20px] italic text-ink">
           {section.text}

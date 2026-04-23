@@ -1,40 +1,29 @@
-// The blog index. Server-rendered (no "use client" at the top) so search
-// engines see the full list of posts in the initial HTML and the per-post
-// metadata gets picked up during the static prerender.
-//
-// The feed has two sections:
-//  1. General articles (study strategy, exam day, AI tutoring). Top of
-//     the page, larger hero + roomier grid because they apply to every
-//     student regardless of subject.
-//  2. Subject-specific review guides (one per AP course). Grid of small
-//     cards below.
-//
-// SEO notes:
-//  - This page owns the <title> and a 150ish char meta description that
-//    includes the core keywords (AP, review guide, study plan).
-//  - Each post card links to /blog/[slug] so Google can crawl the tree.
+// The blog index. Server-rendered so search engines see the full list
+// of posts in the initial HTML. Layout is editorial: masthead up top,
+// a featured-story hero, a mixed recent grid, a full review-guide
+// library, and a popular-tags rail for navigation.
 
 import type { Metadata } from "next";
-import SiteNav from "@/app/components/SiteNav";
+import Link from "next/link";
+import BlogMasthead from "@/app/components/BlogMasthead";
 import {
   getGeneralPostsSorted,
   getSubjectPostsSorted,
+  tagToSlug,
   type BlogPost,
 } from "@/lib/blogPosts";
 
 export const metadata: Metadata = {
   title:
-    "AP Exam Review Guides and Study Plans for Every AP Class | FinalsPrep",
+    "FinalsPrep Blog | AP Exam Review Guides and Study Plans",
   description:
     "Practical AP exam study plans and unit-by-unit review guides for every major AP class. Covers AP Calculus, Physics, Chemistry, Biology, Statistics, APUSH, World History, CSA, and APES.",
   openGraph: {
-    title: "AP Exam Review Guides for Every Class | FinalsPrep Blog",
+    title: "FinalsPrep Blog: AP Exam Guides for Every Class",
     description:
       "AP exam study plans and unit-by-unit review guides. AP Calc AB/BC, Physics 1, Chem, Bio, Stats, APUSH, World History, CSA, APES, Psych, HuG, Micro, Macro, Lang, Precalc.",
     type: "website",
   },
-  // Keywords are deprecated by Google but Bing/DDG still read them, and
-  // it costs us nothing to include them.
   keywords: [
     "AP exam review guide",
     "AP study guide",
@@ -68,132 +57,144 @@ export const metadata: Metadata = {
 };
 
 export default function BlogIndexPage() {
-  // Fetch the sorted lists at render time. Since this is a server
-  // component and the data is static, Next inlines this into the HTML.
   const generalPosts = getGeneralPostsSorted();
   const subjectPosts = getSubjectPostsSorted();
-  // The hero card at the top uses the most recent general post, since
-  // general posts are the "front door" to the blog.
   const [heroPost, ...restGeneral] = generalPosts;
+
+  // Popular tags rail. Pulls keywords from every post, counts them, and
+  // picks the top 14. Gives readers an alternate way into the archive.
+  const tagCounts = new Map<string, { display: string; count: number }>();
+  for (const p of [...generalPosts, ...subjectPosts]) {
+    for (const k of p.keywords) {
+      const slug = tagToSlug(k);
+      const existing = tagCounts.get(slug);
+      if (existing) existing.count += 1;
+      else tagCounts.set(slug, { display: k, count: 1 });
+    }
+  }
+  const popularTags = [...tagCounts.entries()]
+    .sort((a, b) => b[1].count - a[1].count)
+    .slice(0, 14);
 
   return (
     <main className="bg-paper text-body">
-      <SiteNav />
+      <BlogMasthead />
 
-      {/* Page header. Intentionally simple so the post cards get the
-          visual weight. */}
-      <header className="border-b border-hair bg-offwhite/40">
-        <div className="mx-auto max-w-6xl px-6 pt-16 pb-14">
-          <div className="label mb-3">Blog</div>
-          <h1 className="font-serif text-5xl font-normal leading-[1.05] tracking-tight text-ink sm:text-6xl">
+      {/* Editorial intro. Big serif headline + a one-liner, framed with
+          datelines to reinforce the "journal" vibe. */}
+      <header className="border-b border-hair bg-offwhite/30">
+        <div className="mx-auto max-w-6xl px-6 py-14 sm:py-16">
+          <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-muted">
+            <span>AP Exam Preparation</span>
+          </div>
+          <h1 className="mt-4 max-w-4xl font-serif text-[44px] font-normal leading-[1.02] tracking-tight text-ink sm:text-[64px]">
             AP exam guides that
             <br />
-            <span className="italic">actually</span> help.
+            <span className="italic text-orange-ink">actually</span> help.
           </h1>
           <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-body">
-            Study plans, exam-day guides, and unit-by-unit review
-            guides for every major AP class. Built by tutors, written
-            for students. No filler.
+            Study plans, exam-day guides, and unit-by-unit review guides
+            for every major AP class. Written by tutors, read in a sitting,
+            and short on filler.
           </p>
         </div>
       </header>
 
-      <div className="mx-auto max-w-6xl px-6 py-14">
-        {/* ---------- GENERAL ARTICLES (PROMINENT) ---------- */}
-        {/* This block is above the fold and styled larger so general
-            study strategy posts get the most attention. */}
-        {generalPosts.length > 0 && (
-          <section aria-labelledby="general-heading" className="mb-20">
-            <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
-              <div>
-                <div className="label mb-2">For every AP student</div>
-                <h2
-                  id="general-heading"
-                  className="font-serif text-3xl font-normal leading-tight text-ink sm:text-4xl"
-                >
-                  Study plans and exam strategy
-                </h2>
-                <p className="mt-2 max-w-xl text-[15px] text-body">
-                  Practical guides that apply to any AP class. Start
-                  here if you are new to exam prep.
-                </p>
-              </div>
-              <div className="text-[12px] text-muted">
-                {generalPosts.length} article
-                {generalPosts.length === 1 ? "" : "s"}
-              </div>
+      {/* FEATURED STORY. Big two-column spread (art on right, copy on
+          left) so the top of the feed feels like a front page. */}
+      {heroPost && (
+        <section aria-labelledby="featured-heading" className="border-b border-hair">
+          <div className="mx-auto max-w-6xl px-6 py-12">
+            <div className="mb-6 flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-muted">
+              <span className="h-px w-8 bg-hair" aria-hidden />
+              <span id="featured-heading">Lead story</span>
+              <span className="h-px flex-1 bg-hair" aria-hidden />
             </div>
+            <FeaturedStory post={heroPost} />
+          </div>
+        </section>
+      )}
 
-            {/* Hero card: the most recent general article. Full width
-                and roomier so it anchors the feed. */}
-            {heroPost && <HeroCard post={heroPost} />}
-
-            {/* Remaining general articles in a 2-column grid. Uses
-                LargeCard (bigger than the subject cards below) because
-                these are the "featured" content. */}
-            {restGeneral.length > 0 && (
-              <div className="mt-8 grid gap-6 md:grid-cols-2">
-                {restGeneral.map((post) => (
-                  <LargeCard key={post.slug} post={post} />
-                ))}
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* Visual divider between the two sections. */}
-        <div
-          aria-hidden
-          className="mx-auto my-4 h-px max-w-3xl bg-gradient-to-r from-transparent via-hair to-transparent"
-        />
-
-        {/* ---------- SUBJECT-SPECIFIC REVIEW GUIDES ---------- */}
-        {subjectPosts.length > 0 && (
-          <section
-            aria-labelledby="subject-heading"
-            className="mt-20 scroll-mt-20"
-            id="review-guides"
-          >
-            <div className="mb-8 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
-              <div>
-                <div className="label mb-2">Review guides</div>
-                <h2
-                  id="subject-heading"
-                  className="font-serif text-3xl font-normal leading-tight text-ink sm:text-4xl"
-                >
-                  Unit-by-unit guides by AP class
-                </h2>
-                <p className="mt-2 max-w-xl text-[15px] text-body">
-                  Complete review guides for every major AP course,
-                  with the skills, formulas, and FRQ strategies that
-                  earn the points.
-                </p>
-              </div>
-              <div className="text-[12px] text-muted">
-                {subjectPosts.length} review guide
-                {subjectPosts.length === 1 ? "" : "s"}
-              </div>
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {subjectPosts.map((post) => (
-                <SmallCard key={post.slug} post={post} />
+      <div className="mx-auto max-w-6xl px-6">
+        {/* LATEST (general articles). A 2-up editorial grid for the rest
+            of the general posts. Styled like newspaper columns. */}
+        {restGeneral.length > 0 && (
+          <section aria-labelledby="latest-heading" className="py-14">
+            <SectionHeading
+              kicker="From the editors"
+              title="Latest in study strategy"
+              count={`${restGeneral.length} article${restGeneral.length === 1 ? "" : "s"}`}
+              id="latest-heading"
+            />
+            <div className="mt-8 grid gap-x-10 gap-y-10 md:grid-cols-2">
+              {restGeneral.map((post, i) => (
+                <EditorialCard key={post.slug} post={post} position={i} />
               ))}
             </div>
           </section>
         )}
 
-        {/* Soft CTA at the bottom of the list, because every blog visitor
-            is a warm lead and shouldn't hit a dead end. */}
-        <section className="mt-20 rounded-2xl border border-hair bg-offwhite/60 px-8 py-12 text-center">
+        {/* REVIEW GUIDES. Three-column grid. Feels like a "library" or
+            archive section of the journal. */}
+        {subjectPosts.length > 0 && (
+          <section
+            aria-labelledby="review-guides-heading"
+            className="scroll-mt-20 border-t border-hair py-14"
+            id="review-guides"
+          >
+            <SectionHeading
+              kicker="The library"
+              title="Review guides by AP class"
+              count={`${subjectPosts.length} guide${subjectPosts.length === 1 ? "" : "s"}`}
+              id="review-guides-heading"
+            />
+            <p className="mt-3 max-w-2xl text-[15px] text-body">
+              Unit-by-unit reviews for every major AP course, with the
+              skills, formulas, and FRQ patterns that earn the points.
+            </p>
+            <div className="mt-8 grid gap-[1px] overflow-hidden rounded-xl border border-hair bg-hair sm:grid-cols-2 lg:grid-cols-3">
+              {subjectPosts.map((post) => (
+                <ReviewGuideCard key={post.slug} post={post} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* POPULAR TAGS. A rail of clickable tags so readers have a
+            second, topic-first way into the archive. */}
+        {popularTags.length > 0 && (
+          <section className="border-t border-hair py-12">
+            <SectionHeading
+              kicker="Browse by topic"
+              title="Popular tags"
+            />
+            <div className="mt-6 flex flex-wrap gap-2">
+              {popularTags.map(([slug, { display, count }]) => (
+                <Link
+                  key={slug}
+                  href={`/blog/tag/${slug}`}
+                  className="group inline-flex items-center gap-1.5 rounded-full border border-hair bg-paper px-3.5 py-1.5 text-[13px] text-body transition hover:border-orange/60 hover:bg-orange-tint hover:text-orange-ink"
+                >
+                  <span>{display}</span>
+                  <span className="text-[11px] text-muted group-hover:text-orange-ink">
+                    {count}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* End-of-feed CTA. */}
+        <section className="mb-20 mt-4 rounded-2xl border border-hair bg-gradient-to-br from-orange-tint via-offwhite/40 to-offwhite/60 px-8 py-14 text-center">
           <div className="label mb-3">Ready to try the tutor?</div>
           <h2 className="font-serif text-3xl font-normal text-ink sm:text-4xl">
             Paste a problem. Get a walkthrough.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-body">
             The same frameworks you read about here are how the
-            FinalsPrep tutor walks through any AP problem you give
-            it. Free tier is real and covers the whole CED.
+            FinalsPrep tutor walks through any AP problem you give it.
+            Free tier is real and covers the whole CED.
           </p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">
             <a href="/study" className="btn-primary">
@@ -232,25 +233,54 @@ export default function BlogIndexPage() {
   );
 }
 
-// Full-width hero card used for the newest general article. Styled to
-// feel like the most important thing on the page: gradient accent, big
-// type, generous padding. Don't use this for subject guides; it would
-// drown out the real "top" of the feed.
-function HeroCard({ post }: { post: BlogPost }) {
+// Section heading used across the index page. Keeps the typography
+// consistent (kicker / title / optional count badge) without repeating
+// the class salad inline.
+function SectionHeading({
+  kicker,
+  title,
+  count,
+  id,
+}: {
+  kicker: string;
+  title: string;
+  count?: string;
+  id?: string;
+}) {
+  return (
+    <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-end">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.22em] text-orange-ink/80">
+          {kicker}
+        </div>
+        <h2
+          id={id}
+          className="mt-2 font-serif text-[32px] font-normal leading-tight text-ink sm:text-[40px]"
+        >
+          {title}
+        </h2>
+      </div>
+      {count && (
+        <div className="rounded-full border border-hair px-3 py-1 text-[11px] uppercase tracking-wider text-muted">
+          {count}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Front-page lead story. The only card that gets the full two-column
+// magazine treatment — bold dateline, giant serif headline, pull-quote
+// deck, and a decorative number. Reserved for the newest general post.
+function FeaturedStory({ post }: { post: BlogPost }) {
   return (
     <a
       href={`/blog/${post.slug}`}
-      className="group relative block overflow-hidden rounded-2xl border border-hair bg-paper p-8 transition hover:border-orange/50 hover:shadow-lg sm:p-12"
+      className="group grid gap-8 md:grid-cols-[1.25fr_1fr]"
     >
-      {/* Decorative corner gradient so the hero reads as the featured
-          card even before the reader hovers. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gradient-to-br from-orange/15 via-amber-200/20 to-transparent blur-2xl"
-      />
-      <div className="relative">
-        <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-wider text-muted">
-          <span className="rounded-full bg-orange/10 px-2.5 py-1 text-orange-ink">
+      <div>
+        <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted">
+          <span className="rounded-full bg-orange-tint px-2.5 py-1 text-orange-ink">
             Featured
           </span>
           <span>{post.category}</span>
@@ -259,41 +289,70 @@ function HeroCard({ post }: { post: BlogPost }) {
           <span aria-hidden>·</span>
           <span>{post.readTime}</span>
         </div>
-        <h3 className="mt-5 font-serif text-3xl font-normal leading-tight text-ink transition group-hover:text-orange-ink sm:text-4xl">
+        <h3 className="mt-5 font-serif text-[36px] font-normal leading-[1.05] tracking-tight text-ink transition group-hover:text-orange-ink sm:text-[52px]">
           {post.title}
         </h3>
-        <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-body sm:text-[17px]">
+        <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-body">
           {post.excerpt}
         </p>
-        <div className="mt-6 inline-flex items-center gap-1 text-sm font-medium text-orange-ink">
+        <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-orange-ink">
           Read the article
-          <span className="transition group-hover:translate-x-0.5" aria-hidden>
+          <span className="transition group-hover:translate-x-1" aria-hidden>
             →
           </span>
+        </div>
+      </div>
+      {/* Decorative right column — a stylized "01" drop-numeral backed
+          by a soft gradient to replace the missing hero image slot. */}
+      <div className="relative hidden overflow-hidden rounded-xl border border-hair bg-gradient-to-br from-orange-tint via-offwhite/60 to-paper md:block">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(194,65,12,0.10),_transparent_60%)]"
+        />
+        <div className="relative flex h-full flex-col justify-between p-6">
+          <div className="text-[11px] uppercase tracking-[0.22em] text-muted">
+            Today's read
+          </div>
+          <div className="pointer-events-none select-none font-serif text-[200px] leading-none text-ink/10">
+            01
+          </div>
+          <div className="flex items-center gap-2 text-[13px] text-body">
+            <span className="h-px flex-1 bg-hair" aria-hidden />
+            <span>By {post.author}</span>
+          </div>
         </div>
       </div>
     </a>
   );
 }
 
-// Medium card used for the rest of the general articles. Larger type
-// and padding than SmallCard so general posts still feel prominent even
-// outside the hero slot.
-function LargeCard({ post }: { post: BlogPost }) {
+// Editorial card used for the rest of the general posts. Large serif
+// headline, kicker above, a thin rule separates it from neighboring
+// cards so the grid reads like a newspaper column layout.
+function EditorialCard({
+  post,
+  position,
+}: {
+  post: BlogPost;
+  position: number;
+}) {
+  const number = String(position + 2).padStart(2, "0");
   return (
     <a
       href={`/blog/${post.slug}`}
-      className="group flex h-full flex-col rounded-xl border border-hair bg-paper p-7 transition hover:border-orange/50 hover:shadow-md"
+      className="group flex h-full flex-col border-b border-hair pb-10 last:border-b-0 sm:border-b-0"
     >
-      <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-wider text-muted">
-        <span className="text-orange-ink/80">{post.category}</span>
+      <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted">
+        <span className="font-mono text-orange-ink/70">{number}</span>
+        <span aria-hidden>·</span>
+        <span>{post.category}</span>
         <span aria-hidden>·</span>
         <time dateTime={post.date}>{formatDate(post.date)}</time>
       </div>
-      <h3 className="mt-3 font-serif text-xl font-normal leading-snug text-ink transition group-hover:text-orange-ink sm:text-2xl">
+      <h3 className="mt-4 font-serif text-[26px] font-normal leading-[1.15] tracking-tight text-ink transition group-hover:text-orange-ink sm:text-[30px]">
         {post.title}
       </h3>
-      <p className="mt-3 flex-1 text-[15px] leading-relaxed text-body">
+      <p className="mt-3 flex-1 text-[15.5px] leading-relaxed text-body">
         {post.excerpt}
       </p>
       <div className="mt-5 flex items-center justify-between text-[12px] text-muted">
@@ -306,26 +365,26 @@ function LargeCard({ post }: { post: BlogPost }) {
   );
 }
 
-// Compact card used for the subject-specific review guides. More of
-// these fit per row, which is the point: the subject feed is
-// browse-heavy and visitors usually arrive knowing which AP they want.
-function SmallCard({ post }: { post: BlogPost }) {
+// Compact card used inside the review-guide library grid. Uses a flat
+// white tile with hairline gridlines (rendered by the parent `gap-[1px]`
+// trick) so the whole library reads like a contact sheet.
+function ReviewGuideCard({ post }: { post: BlogPost }) {
   return (
     <a
       href={`/blog/${post.slug}`}
-      className="group flex h-full flex-col rounded-lg border border-hair bg-paper p-5 transition hover:border-orange/40 hover:shadow-md"
+      className="group flex h-full flex-col gap-3 bg-paper p-6 transition hover:bg-offwhite/60"
     >
-      <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wider text-muted">
-        <span className="text-orange-ink/80">{post.category}</span>
+      <div className="text-[10px] uppercase tracking-[0.2em] text-orange-ink/80">
+        {post.category}
       </div>
-      <h3 className="mt-2 font-serif text-[17px] font-normal leading-snug text-ink transition group-hover:text-orange-ink">
+      <h3 className="font-serif text-[18px] font-normal leading-snug text-ink transition group-hover:text-orange-ink">
         {post.title}
       </h3>
-      <p className="mt-2 flex-1 text-[13px] leading-relaxed text-body">
+      <p className="flex-1 text-[13.5px] leading-relaxed text-body">
         {post.excerpt}
       </p>
-      <div className="mt-4 flex items-center justify-between text-[11px] text-muted">
-        <time dateTime={post.date}>{formatDate(post.date)}</time>
+      <div className="flex items-center justify-between text-[11px] text-muted">
+        <span>{post.readTime}</span>
         <span className="font-medium text-orange-ink transition group-hover:translate-x-0.5">
           Read →
         </span>
@@ -334,8 +393,8 @@ function SmallCard({ post }: { post: BlogPost }) {
   );
 }
 
-// Renders dates as "April 10, 2026". Keeping this local to the page so
-// we don't pull in a date library for a single format.
+// Dates render as "April 10, 2026" per AP Style. Local helper so we
+// don't drag in a date library for a single format.
 function formatDate(iso: string): string {
   const d = new Date(iso + "T00:00:00");
   return d.toLocaleDateString("en-US", {

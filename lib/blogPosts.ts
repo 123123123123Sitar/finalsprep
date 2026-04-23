@@ -69,12 +69,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "12 min read",
     category: "AP Calculus AB",
     keywords: [
-      "AP Calculus AB",
-      "AP Calc AB review",
-      "AP Calculus AB study guide",
-      "AP Calc AB units",
-      "AP exam prep",
-      "calculus review",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "math",
+      "STEM",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -236,12 +235,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "12 min read",
     category: "AP Physics 1",
     keywords: [
-      "AP Physics 1",
-      "AP Physics 1 review",
-      "AP Physics 1 study guide",
-      "AP Physics 1 units",
-      "physics review",
-      "AP exam prep",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "science",
+      "STEM",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -404,12 +402,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "10 min read",
     category: "AP Calculus BC",
     keywords: [
-      "AP Calculus BC",
-      "AP Calc BC review",
-      "AP Calculus BC study guide",
-      "series convergence",
-      "parametric equations",
-      "Taylor series",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "math",
+      "STEM",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -545,12 +542,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "10 min read",
     category: "AP Statistics",
     keywords: [
-      "AP Statistics",
-      "AP Stats review",
-      "AP Statistics study guide",
-      "confidence intervals",
-      "hypothesis testing",
-      "AP Stats FRQ",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "math",
+      "STEM",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -694,12 +690,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "12 min read",
     category: "AP Chemistry",
     keywords: [
-      "AP Chemistry",
-      "AP Chem review",
-      "AP Chemistry study guide",
-      "equilibrium",
-      "thermodynamics",
-      "AP Chem formulas",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "science",
+      "STEM",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -844,12 +839,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "10 min read",
     category: "AP Biology",
     keywords: [
-      "AP Biology",
-      "AP Bio review",
-      "AP Biology study guide",
-      "cellular respiration",
-      "heredity",
-      "AP Bio FRQ",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "science",
+      "STEM",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -987,12 +981,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "10 min read",
     category: "AP US History",
     keywords: [
-      "APUSH",
-      "AP US History",
-      "APUSH review",
-      "AP US History study guide",
-      "DBQ rubric",
-      "LEQ strategies",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "history",
+      "humanities",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -1121,12 +1114,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "8 min read",
     category: "AP World History",
     keywords: [
-      "AP World History",
-      "AP World History Modern",
-      "AP World review",
-      "AP World History study guide",
-      "DBQ",
-      "world history units",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "history",
+      "humanities",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -1240,12 +1232,10 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "12 min read",
     category: "AP Computer Science A",
     keywords: [
-      "AP Computer Science A",
-      "AP CSA",
-      "AP Computer Science A review",
-      "Java",
-      "ArrayList",
-      "recursion",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "STEM",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -1408,12 +1398,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "10 min read",
     category: "AP Environmental Science",
     keywords: [
-      "AP Environmental Science",
-      "APES review",
-      "AP Environmental Science study guide",
-      "APES units",
-      "ecosystems",
-      "climate change",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "science",
+      "STEM",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -1553,12 +1542,10 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "10 min read",
     category: "AP Psychology",
     keywords: [
-      "AP Psychology",
-      "AP Psych review",
-      "AP Psychology study guide",
-      "AP Psych units",
-      "AP Psych FRQ",
-      "AP exam prep",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "humanities",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -1681,12 +1668,10 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "10 min read",
     category: "AP Human Geography",
     keywords: [
-      "AP Human Geography",
-      "AP HuG review",
-      "AP Human Geography study guide",
-      "demographic transition",
-      "urban geography",
-      "APHG",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "humanities",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -1815,12 +1800,10 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "10 min read",
     category: "AP Microeconomics",
     keywords: [
-      "AP Microeconomics",
-      "AP Micro review",
-      "AP Microeconomics study guide",
-      "supply and demand",
-      "market structures",
-      "perfect competition",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "humanities",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -1938,12 +1921,10 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "10 min read",
     category: "AP Macroeconomics",
     keywords: [
-      "AP Macroeconomics",
-      "AP Macro review",
-      "AP Macroeconomics study guide",
-      "AD-AS model",
-      "fiscal policy",
-      "monetary policy",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "humanities",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -2073,12 +2054,10 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "12 min read",
     category: "AP English Language",
     keywords: [
-      "AP English Language",
-      "AP Lang review",
-      "AP Lang study guide",
-      "rhetorical analysis",
-      "synthesis essay",
-      "argument essay",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "humanities",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -2208,12 +2187,11 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "8 min read",
     category: "AP Precalculus",
     keywords: [
-      "AP Precalculus",
-      "AP Precalc review",
-      "AP Precalculus study guide",
-      "polynomial functions",
-      "trigonometric functions",
-      "AP Precalc units",
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "math",
+      "STEM",
     ],
     author: "FinalsPrep Team",
     type: "subject",
@@ -2320,12 +2298,10 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "8 min read",
     category: "Study Strategy",
     keywords: [
-      "AP exam study plan",
-      "how to study for AP exams",
-      "30 day AP study plan",
-      "AP exam prep",
-      "last month AP exam",
-      "AP study schedule",
+      "study strategy",
+      "exam prep",
+      "time management",
+      "test taking",
     ],
     author: "FinalsPrep Team",
     type: "general",
@@ -2443,12 +2419,9 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "8 min read",
     category: "Exam Day",
     keywords: [
-      "AP exam day",
-      "AP exam checklist",
-      "what to bring to AP exam",
-      "AP test day",
-      "AP exam tips",
-      "AP testing site",
+      "study strategy",
+      "exam prep",
+      "test taking",
     ],
     author: "FinalsPrep Team",
     type: "general",
@@ -2572,12 +2545,9 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "7 min read",
     category: "Study Strategy",
     keywords: [
-      "AP study schedule",
-      "AP exam study plan",
-      "how to study for AP",
-      "AP prep schedule",
-      "balancing AP classes",
-      "AP study habits",
+      "study strategy",
+      "exam prep",
+      "time management",
     ],
     author: "FinalsPrep Team",
     type: "general",
@@ -2704,12 +2674,10 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "7 min read",
     category: "Self-Study",
     keywords: [
-      "self-study AP exam",
-      "how to self-study AP",
-      "AP exam without class",
-      "self-study AP Psychology",
-      "self-study AP Human Geography",
-      "AP self-study guide",
+      "study strategy",
+      "exam prep",
+      "self study",
+      "ai tutor",
     ],
     author: "FinalsPrep Team",
     type: "general",
@@ -2850,12 +2818,10 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "7 min read",
     category: "Study Strategy",
     keywords: [
-      "AI tutor for AP prep",
-      "using AI for AP exams",
-      "AI tutoring AP exam",
-      "AI homework help",
-      "effective AI studying",
-      "AP prep AI",
+      "study strategy",
+      "exam prep",
+      "ai tutor",
+      "self study",
     ],
     author: "FinalsPrep Team",
     type: "general",
@@ -3010,4 +2976,48 @@ export function getRelatedPosts(currentSlug: string, limit = 3): BlogPost[] {
   const sameType = all.filter((p) => p.type === current.type);
   const otherType = all.filter((p) => p.type !== current.type);
   return [...sameType, ...otherType].slice(0, limit);
+}
+
+// Turn a human-readable tag ("AP Calc AB review") into a URL-safe slug
+// ("ap-calc-ab-review"). Kept stable so tag URLs don't change when copy
+// is tweaked: only letters/digits are kept, everything else becomes a
+// single dash.
+export function tagToSlug(tag: string): string {
+  return tag
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// Reverse lookup: given a tag slug, find the canonical display form by
+// matching against any keyword on any post. Returns the original tag
+// string so the tag page can show "AP Calc AB review" instead of the
+// dashed slug. Falls back to a title-cased version of the slug when no
+// post uses the tag (shouldn't happen, but keeps the page rendering).
+export function getTagDisplay(slug: string): string {
+  for (const p of BLOG_POSTS) {
+    for (const k of p.keywords) {
+      if (tagToSlug(k) === slug) return k;
+    }
+  }
+  return slug.replace(/-/g, " ");
+}
+
+// All distinct tag slugs across the blog. Used to prerender the tag
+// pages at build time. The set dedupes when multiple keyword variants
+// slugify to the same thing (e.g. "AP Calc AB" vs "ap calc ab").
+export function getAllTagSlugs(): string[] {
+  const set = new Set<string>();
+  for (const p of BLOG_POSTS) {
+    for (const k of p.keywords) set.add(tagToSlug(k));
+  }
+  return [...set];
+}
+
+// Posts that use a given tag (by slug, so case/punctuation doesn't
+// matter). Sorted newest-first like everywhere else in the blog.
+export function getPostsByTagSlug(slug: string): BlogPost[] {
+  return getAllPostsSorted().filter((p) =>
+    p.keywords.some((k) => tagToSlug(k) === slug)
+  );
 }
