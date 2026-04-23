@@ -32,13 +32,19 @@ export default function SiteNav({
   children,
   sticky = true,
   maxWidth = "max-w-6xl",
+  primaryLinks,
 }: {
   children?: React.ReactNode;
   sticky?: boolean;
   maxWidth?: string;
+  /** Override the default app nav links. Use for section anchors on the
+   *  marketing homepage where the regular /study /chat /practice links
+   *  don't make sense yet. */
+  primaryLinks?: NavLinkDef[];
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const links = primaryLinks ?? PRIMARY_LINKS;
 
   // Close the mobile menu whenever the route changes so it doesn't linger.
   useEffect(() => {
@@ -58,7 +64,7 @@ export default function SiteNav({
         <div className="flex min-w-0 items-center gap-6">
           <Logo />
           <div className="hidden items-center gap-1 md:flex">
-            {PRIMARY_LINKS.map((l) => (
+            {links.map((l) => (
               <NavLink
                 key={l.href}
                 href={l.href}
@@ -108,7 +114,7 @@ export default function SiteNav({
         <div className="border-t border-hair bg-paper md:hidden">
           <div className={`mx-auto ${maxWidth} px-6 py-3`}>
             <div className="grid gap-1">
-              {[...PRIMARY_LINKS, ...SECONDARY_LINKS].map((l) => (
+              {[...links, ...(primaryLinks ? [] : SECONDARY_LINKS)].map((l) => (
                 <a
                   key={l.href}
                   href={l.href}

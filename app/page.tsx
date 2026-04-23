@@ -220,10 +220,15 @@ function MarketingHome() {
           }
         }
       `}</style>
-      <SiteNav sticky>
-        <a href="#coverage" className="nav-link hidden sm:inline">Coverage</a>
-        <a href="#price" className="nav-link hidden sm:inline">Pricing</a>
-      </SiteNav>
+      <SiteNav
+        sticky
+        primaryLinks={[
+          { href: "#features", label: "Features" },
+          { href: "#coverage", label: "Coverage" },
+          { href: "#price", label: "Pricing" },
+          { href: "#faq", label: "FAQ" },
+        ]}
+      />
 
       {/* TOP BANNER - AP sale urgency */}
       <div className="animate-slideDown relative border-b border-hair bg-orange-tint">
@@ -242,38 +247,48 @@ function MarketingHome() {
       <div className="relative isolate overflow-hidden">
         {/* Animated aurora background - full viewport width */}
         <AuroraBackground />
-      <section className="relative z-10 mx-auto max-w-5xl overflow-visible px-6 pt-20 pb-24 sm:pt-28">
-        <div className="relative max-w-3xl">
-          <div className="label animate-fadeUp mb-6">For AP students</div>
-          <h1 className="animate-heroReveal font-serif text-[52px] font-normal leading-[1.1] tracking-tightest text-ink pb-2 sm:text-[76px]">
-            A tutor for <span className="italic gradient-text">every</span>{" "}
-            AP class.<br />
-            Open 24 hours.
-          </h1>
-          <p className="animate-fadeUp delay-300 mt-8 max-w-2xl text-[19px] leading-relaxed text-body">
-            A real AI tutor that walks you through math, physics, chemistry,
-            bio, CS, and history: the concept and reasoning, not just the
-            answer. Curriculum overviews for all 16 AP courses, interactive
-            tools, a Book-Mode reading view, and a chat that remembers what
-            you asked yesterday. <strong className="text-ink">$16/month</strong>,{" "}
-            or free forever with a daily token budget.
-          </p>
-          <div className="animate-fadeUp delay-500 mt-10 flex flex-wrap items-center gap-3">
-            <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary animate-glowPulse text-base">
-              {loading ? "Opening checkout…" : "Start Pro - $11 first month"}
-            </button>
-            <a href="#features" className="btn-ghost text-base">
-              See what's inside ↓
-            </a>
-          </div>
-          <p className="animate-fadeUp delay-700 mt-4 max-w-xl text-sm text-muted">
-            Free tier is real:{" "}
-            <strong className="text-ink">10,000 AI tokens per day</strong>,
-            every day. Enough to run the tutor on your real homework without
-            ever paying a cent.
-          </p>
+      <section className="relative z-10 mx-auto max-w-6xl overflow-visible px-6 pt-20 pb-24 sm:pt-28">
+        <div className="grid items-start gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
+          <div className="relative">
+            <div className="label animate-fadeUp mb-6">For AP students</div>
+            <h1 className="animate-heroReveal font-serif text-[48px] font-normal leading-[1.05] tracking-tightest text-ink pb-2 sm:text-[64px]">
+              A tutor for <span className="italic gradient-text">every</span>{" "}
+              AP class.<br />
+              Open 24 hours.
+            </h1>
+            <p className="animate-fadeUp delay-300 mt-7 max-w-xl text-[18px] leading-relaxed text-body">
+              A real AI tutor that walks you through math, physics, chemistry,
+              bio, CS, and history: the concept and reasoning, not just the
+              answer. Curriculum overviews for all 16 AP courses, interactive
+              tools, a Book-Mode reading view, and a chat that remembers what
+              you asked yesterday.{" "}
+              <strong className="text-ink">$16/month</strong>, or free forever
+              with a daily token budget.
+            </p>
+            <div className="animate-fadeUp delay-500 mt-8 flex flex-wrap items-center gap-3">
+              <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary animate-glowPulse text-base">
+                {loading ? "Opening checkout…" : "Start Pro - $11 first month"}
+              </button>
+              <a href="#features" className="btn-ghost text-base">
+                See what's inside ↓
+              </a>
+            </div>
+            <p className="animate-fadeUp delay-700 mt-4 max-w-xl text-sm text-muted">
+              Free tier is real:{" "}
+              <strong className="text-ink">10,000 AI tokens per day</strong>,
+              every day. Enough to run the tutor on your real homework without
+              ever paying a cent.
+            </p>
 
-          <ApCountdown />
+            <ApCountdown />
+          </div>
+
+          {/* HERO PREVIEW — app screenshot-style mock of a chat reply with
+              concept / step / mistake callouts. Lives on the right on ≥lg
+              and stacks below the text on mobile. */}
+          <div className="animate-fadeUp delay-500 relative">
+            <HeroPreview />
+          </div>
         </div>
 
         {/* social proof strip */}
@@ -308,6 +323,10 @@ function MarketingHome() {
 
       {/* Cinematic scroll-synced demo: CED + interactive tools */}
       <CedCinema />
+
+      {/* Voice tutor demo — sits right after the "interactive toolkit,
+          built in" title so the narrative flows toolkit → voice. */}
+      <VoiceCinema />
 
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
@@ -400,42 +419,59 @@ function MarketingHome() {
               Mistakes we watch for.
             </h2>
             <p className="mt-4 text-sm text-muted">
-              Every explanation includes a "common mistakes" callout when one
-              of these shows up. These are the four most frequent ones across
-              the curriculum.
+              Every walkthrough surfaces a "common mistake" callout when the
+              problem type has a well-known trap. Six of the ones we catch
+              most often across the 16 courses:
             </p>
           </div>
           <ol className="space-y-6 border-l border-hair pl-6 text-[16px] leading-relaxed text-body">
             <li>
-              <div className="meta">#01 · Radicals</div>
+              <div className="meta">#01 · Related rates — sign of dy/dt</div>
               <p className="mt-1">
-                Squaring both sides of √(2x + 3) = x and forgetting to check
-                for extraneous solutions at the end. Squaring creates fake
-                answers roughly half the time on these.
+                Plugging numeric values in <em>before</em> differentiating
+                collapses dx/dt to zero. Differentiate implicitly first, then
+                substitute — and keep the sign (a ladder sliding <em>down</em>{" "}
+                means dy/dt is negative).
               </p>
             </li>
             <li>
-              <div className="meta">#02 · Logarithms</div>
+              <div className="meta">#02 · Chain rule — forgot the inner derivative</div>
               <p className="mt-1">
-                Writing log(x) + log(x − 3) = 1, solving for x = 5 and x = −2,
-                then reporting both. x = −2 makes log(x) undefined - the
-                answer is x = 5 only.
+                d/dx[sin(3x)] isn't cos(3x). It's{" "}
+                <span className="italic">3·cos(3x)</span>. We flag every
+                composite derivative and ask for the outer × inner
+                breakdown before writing the answer.
               </p>
             </li>
             <li>
-              <div className="meta">#03 · Related rates</div>
+              <div className="meta">#03 · Logs — extraneous roots</div>
               <p className="mt-1">
-                Plugging in numeric values <em>before</em> differentiating. If
-                x = 6 goes in first, then dx/dt disappears because you just
-                differentiated a constant. Always differentiate first.
+                log(x) + log(x − 3) = 1 gives x = 5 and x = −2, but x = −2
+                makes log(x) undefined. Domain check at the end, every time.
               </p>
             </li>
             <li>
-              <div className="meta">#04 · Free-body diagrams on inclines</div>
+              <div className="meta">#04 · Kinematics — units</div>
               <p className="mt-1">
-                Not tilting the axes. Keep x horizontal on an incline problem
-                and you'll spend the next 15 minutes doing trig the hard way.
-                Tilt the axes parallel to the ramp and the algebra collapses.
+                Mixing cm and m, or forgetting g = 9.8 m/s² is positive
+                downward. When the final number looks wrong by a factor of
+                10 or 100, it's almost always units.
+              </p>
+            </li>
+            <li>
+              <div className="meta">#05 · Statistics — hypothesis test direction</div>
+              <p className="mt-1">
+                Failing to reject H₀ is <em>not</em> the same as proving H₀.
+                We also flag one-sided vs two-sided setup and remind you to
+                state α before looking at the p-value.
+              </p>
+            </li>
+            <li>
+              <div className="meta">#06 · Free-body on an incline — tilt the axes</div>
+              <p className="mt-1">
+                Keep x horizontal and you'll spend 15 minutes on trig. Tilt
+                x parallel to the ramp and mg splits cleanly into mg·sinθ
+                (along) and mg·cosθ (into the surface).
               </p>
             </li>
           </ol>
@@ -450,28 +486,38 @@ function MarketingHome() {
         <Reveal from="left">
         <div className="label mb-4">How it works</div>
         <h2 className="font-serif text-4xl font-normal leading-tight text-ink">
-          Three steps. Nothing clever.
+          Four steps. Nothing clever.
         </h2>
         <div className="mt-10 max-w-3xl prose-body">
           <p>
-            <strong className="text-ink">1.</strong>&nbsp;&nbsp;Go to{" "}
+            <strong className="text-ink">1.</strong>&nbsp;&nbsp;Pick your course
+            in{" "}
             <a href="/study" className="text-orange underline decoration-orange/40">
               /study
             </a>
-            . Pick a topic from the sidebar, or jump straight to the solver.
-            Paste a problem. It can be typed, or copy-pasted from a PDF, or
-            retyped from a photo - whatever's fastest.
+            . You'll see the real College Board CED — every unit, every topic,
+            exam weighting. Or skip straight to{" "}
+            <a href="/chat" className="text-orange underline decoration-orange/40">
+              /chat
+            </a>{" "}
+            and paste a problem. Typed, PDF copy, or a photo — whatever's
+            fastest.
           </p>
           <p className="mt-5">
-            <strong className="text-ink">2.</strong>&nbsp;&nbsp;The tutor writes
-            back a walkthrough in plain English. It names the concept in the
-            first sentence ("This is conservation of momentum"), explains each
-            step before doing it, and ends with a one-line takeaway.
+            <strong className="text-ink">2.</strong>&nbsp;&nbsp;The tutor replies
+            concept-first ("This is conservation of momentum"), walks each step
+            with a one-line "why" before the algebra, flags a common mistake
+            where one applies, and ends with a takeaway. 
           </p>
           <p className="mt-5">
-            <strong className="text-ink">3.</strong>&nbsp;&nbsp;Ask follow-up
-            questions. The tutor remembers the conversation, so you can drill
-            into the step you didn't understand without starting over.
+            <strong className="text-ink">3.</strong>&nbsp;&nbsp;Follow up by
+            typing, or tap the mic and just <em>say it</em>. An on-screen transcript types along with the voice like a live caption.
+          </p>
+          <p className="mt-5">
+            <strong className="text-ink">4.</strong>&nbsp;&nbsp;Every problem
+            you missed drops into your review bank. A spaced-repetition
+            scheduler brings each one back the day before you'd forget. This way,
+            tough topics actually stick, not just blur past.
           </p>
         </div>
         </Reveal>
@@ -492,13 +538,6 @@ function MarketingHome() {
             the College Board organizes it. The AI tutor and all interactive
             tools work across every course from day one.
           </p>
-          <p className="mt-3 max-w-2xl text-[14px] text-muted">
-            <strong className="text-ink">Content depth is rolling out.</strong>{" "}
-            AP Precalculus has the deepest CED sublesson walkthroughs today.
-            The rest of the catalog has the full unit structure, exam guide,
-            and tutor access. We're publishing more written lessons every
-            week.
-          </p>
         </Reveal>
 
         <div className="mt-10 grid gap-6 md:grid-cols-2">
@@ -506,7 +545,7 @@ function MarketingHome() {
             {
               label: "Math",
               courses: [
-                { name: "AP Precalculus", depth: "Deep CED lessons" },
+                { name: "AP Precalculus", depth: "Structured overview" },
                 { name: "AP Calculus AB", depth: "Structured overview" },
                 { name: "AP Calculus BC", depth: "Structured overview" },
                 { name: "AP Statistics", depth: "Structured overview" },
@@ -602,11 +641,7 @@ function MarketingHome() {
             Three plans. Cancel anytime.
           </h2>
           <p className="mt-4 max-w-2xl text-[17px] text-body">
-            Learner is free forever: 10,000 AI tokens a day, every day. Pro
-            doubles that with image uploads, the full curriculum for every
-            AP course, the Insights dashboard, and a smarter thinking mode.
-            Hacker quadruples tokens again with priority traffic and the
-            strongest reasoning model on demand.
+            We offer three flexible plans tailored to specific needs. Or, buy extra tokens so you only pay for what you need.
           </p>
         </Reveal>
 
@@ -724,7 +759,7 @@ function MarketingHome() {
             <ul className="mt-6 space-y-2 text-[15px] text-body">
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Everything in Pro</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span><strong className="text-ink">80,000 AI tokens / day</strong></span></li>
-              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Priority AI traffic (skip the queue at peak hours)</span></li>
+              <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Advanced + Thinking model with priority AI traffic</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Strongest reasoning model on demand, always</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>All 16 courses added, no course limit</span></li>
               <li className="flex gap-2"><span className="mt-[8px] h-1 w-1 rounded-full bg-amber-500" /><span>Free image uploads (no 2× token cost)</span></li>
@@ -793,7 +828,7 @@ function MarketingHome() {
                 />
                 <FeatureRow
                   label="Every AP curriculum overview"
-                  values={{ free: "Units 1-2", pro: "All units", premium: "All units" }}
+                  values={{ free: "All units", pro: "All units", premium: "All units" }}
                 />
                 <FeatureRow
                   label="Full lessons"
@@ -873,7 +908,7 @@ function MarketingHome() {
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* FAQ */}
-      <section className="mx-auto max-w-5xl px-6 py-16">
+      <section id="faq" className="mx-auto max-w-5xl px-6 py-16">
         <Reveal from="scale">
         <div className="grid gap-10 md:grid-cols-[220px_1fr]">
           <div>
@@ -906,13 +941,6 @@ function MarketingHome() {
         </div>
         </Reveal>
       </section>
-
-      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
-
-      {/* Cinematic scroll-synced demo: voice chat → quiz generation
-          Placed after the FAQ (far from the other two cinemas at the top
-          of the page) so the visual tempo varies. */}
-      <VoiceCinema />
 
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
@@ -1092,6 +1120,108 @@ function diffParts(ms: number) {
   const minutes = Math.floor((total % 3_600_000) / 60_000);
   const seconds = Math.floor((total % 60_000) / 1000);
   return { total, days, hours, minutes, seconds };
+}
+
+/**
+ * Hero-right preview. A polished app-screenshot-style mock of a tutor
+ * reply: browser chrome, user question, AI response broken into
+ * Concept → Step → Common mistake cards, and a voice-mode hint at the
+ * bottom. Designed to sit next to the hero copy on large viewports.
+ */
+function HeroPreview() {
+  return (
+    <div className="relative">
+      {/* Soft glow behind the frame */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-10 -z-10 rounded-[48px] bg-gradient-to-br from-orange/20 via-amber-200/25 to-transparent blur-2xl"
+      />
+      {/* Browser frame */}
+      <div className="relative overflow-hidden rounded-2xl border border-hair bg-paper shadow-[0_40px_60px_-20px_rgba(0,0,0,0.18),0_18px_30px_-12px_rgba(194,65,12,0.1)] ring-1 ring-black/5">
+        {/* Chrome */}
+        <div className="flex items-center gap-2 border-b border-hair bg-offwhite px-4 py-2.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-red-400/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/70" />
+          <div className="mx-auto rounded-md bg-paper px-3 py-0.5 text-[11px] font-medium text-muted">
+            finalsprep.com/chat
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="space-y-4 bg-paper px-6 py-6">
+          <div className="flex justify-end">
+            <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-ink px-4 py-2.5 text-[13px] leading-snug text-paper">
+              A ladder 10 ft leans on a wall. The bottom slides out at
+              2 ft/s. How fast does the top slide down when the bottom is
+              6 ft from the wall?
+            </div>
+          </div>
+
+          <div className="flex items-start gap-2.5">
+            <div className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-orange text-paper text-[10px] font-semibold">
+              FP
+            </div>
+            <div className="min-w-0 space-y-2">
+              <div className="rounded-xl border border-emerald-200/70 bg-emerald-50/60 px-3 py-2">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-emerald-700">
+                  Concept
+                </div>
+                <div className="mt-1 text-[13px] leading-snug text-body">
+                  Related rates — relate <em>x</em> and <em>y</em> with the
+                  Pythagorean theorem, then differentiate both sides.
+                </div>
+              </div>
+              <div className="rounded-xl border border-sky-200/70 bg-sky-50/60 px-3 py-2">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sky-700">
+                  Step
+                </div>
+                <div className="mt-1 text-[13px] leading-snug text-body">
+                  x² + y² = 100 → 2x(dx/dt) + 2y(dy/dt) = 0. Plug x = 6, y =
+                  8, dx/dt = 2 → <strong className="text-ink">dy/dt = −3/2 ft/s</strong>.
+                </div>
+              </div>
+              <div className="rounded-xl border border-rose-200/70 bg-rose-50/60 px-3 py-2">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-rose-700">
+                  Common mistake
+                </div>
+                <div className="mt-1 text-[13px] leading-snug text-body">
+                  The top slides <em>down</em>, so dy/dt must be negative —
+                  don't drop the sign.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Composer pill w/ voice affordance */}
+        <div className="flex items-center gap-2 border-t border-hair bg-offwhite/60 px-4 py-3">
+          <div className="flex-1 truncate rounded-full border border-hair bg-paper px-3 py-1.5 text-[11px] text-muted">
+            Ask a follow-up — or tap the mic to speak
+          </div>
+          <div className="relative grid h-8 w-8 place-items-center rounded-full bg-orange text-paper shadow-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <rect x="9" y="3" width="6" height="12" rx="3" stroke="currentColor" strokeWidth="2" />
+              <path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <span className="absolute inset-0 animate-pulseSoft rounded-full ring-2 ring-orange/40" />
+          </div>
+        </div>
+      </div>
+
+      {/* Small floating stat badge */}
+      <div className="absolute -left-4 -top-4 hidden rounded-full border border-hair bg-paper px-3 py-1.5 text-[11px] font-medium text-body shadow-md sm:flex sm:items-center sm:gap-2">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        Typical reply under 3s
+      </div>
+      <div className="absolute -bottom-5 -right-3 hidden rounded-xl border border-hair bg-paper px-3 py-2 text-[11px] leading-tight text-body shadow-md sm:block">
+        <div className="text-[9px] font-semibold uppercase tracking-wider text-muted">
+          Voice mode
+        </div>
+        <div className="text-ink">Just ask it out loud</div>
+      </div>
+    </div>
+  );
 }
 
 function MockFrame({ children }: { children: React.ReactNode }) {
