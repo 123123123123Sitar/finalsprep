@@ -126,7 +126,8 @@ type GenFrq = {
 type ExamPhase = "setup" | "loading" | "active" | "results";
 
 function ExamsTab() {
-  const { user, getIdToken } = useAuth();
+  const { user, getIdToken, plan, planLoading } = useAuth();
+  const isPaid = plan === "pro" || plan === "hacker";
   const [enrolled, setEnrolled] = useState<string[]>([]);
   const [courseSlug, setCourseSlug] = useState<CourseSlug | "">("");
   const [mcqCount, setMcqCount] = useState(10);
@@ -273,14 +274,40 @@ function ExamsTab() {
     setError(null);
   }
 
+  if (!planLoading && !isPaid) {
+    return (
+      <div className="mt-8 rounded-xl border-2 border-orange/40 bg-orange-tint p-6">
+        <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-orange-ink">
+          Pro feature
+        </div>
+        <h4 className="mt-2 font-serif text-2xl font-normal text-ink">
+          Full-length practice exams are a Pro perk.
+        </h4>
+        <p className="mt-3 max-w-xl text-[15px] text-body">
+          Exams are drawn from the full 11,000-question bank and weighted to
+          match the official AP unit percentages. Free accounts can still
+          work the past-FRQ tab and use lesson quizzes.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <a href="/#price" className="btn-primary text-sm">
+            Upgrade to Pro - $16/mo
+          </a>
+          <a href="/#price" className="btn-ghost text-sm">
+            See all plans →
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   if (phase === "loading") {
     return (
       <div className="mt-10 rounded-xl border border-hair bg-paper p-10 text-center">
         <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-hair border-t-orange" />
         <p className="mt-4 text-sm text-muted">
-          Generating {mcqCount} MCQ{mcqCount === 1 ? "" : "s"}
-          {frqCount > 0 ? ` and ${frqCount} FRQ${frqCount === 1 ? "" : "s"}` : ""}…
-          usually 10–30 seconds.
+          {frqCount > 0
+            ? `Assembling ${mcqCount} MCQ${mcqCount === 1 ? "" : "s"} and generating ${frqCount} FRQ${frqCount === 1 ? "" : "s"}…`
+            : `Assembling ${mcqCount} MCQ${mcqCount === 1 ? "" : "s"} from the question bank…`}
         </p>
       </div>
     );
