@@ -16,22 +16,33 @@ export async function GET(req: Request) {
   const { user } = authed;
 
   const db = adminDbOrThrow();
-  const snap = await db
+  // Sort in-memory rather than via `.orderBy("lastMessageAt", "desc")` so
+  // we don't require a Firestore composite index on (participants array,
+  // lastMessageAt). Without that index the query throws FAILED_PRECONDITION
+  // and the messages page sits on "Loading…" forever. 200 conversations is
+  // plenty of headroom for a per-user list.
+  const raw = await db
     .collection("conversations")
     .where("participants", "array-contains", user.uid)
-    .orderBy("lastMessageAt", "desc")
-    .limit(50)
+    .limit(200)
     .get();
+  const docs = [...raw.docs]
+    .sort((a, b) => {
+      const ta = (a.data() as any).lastMessageAt || 0;
+      const tb = (b.data() as any).lastMessageAt || 0;
+      return tb - ta;
+    })
+    .slice(0, 50);
 
   const otherUids: string[] = [];
-  snap.forEach((d) => {
+  for (const d of docs) {
     const data = d.data() as any;
     const other = (data.participants || []).find((u: string) => u !== user.uid);
     if (other) otherUids.push(other);
-  });
+  }
   const profiles = await getProfilesByUids(db, otherUids);
 
-  const conversations = snap.docs.map((d) => {
+  const conversations = docs.map((d) => {
     const data = d.data() as any;
     const other = (data.participants || []).find(
       (u: string) => u !== user.uid
