@@ -14,7 +14,7 @@ import { AP_EURO_HISTORY_MCQS } from "./ap-euro-history";
 export type { Mcq, LessonMcqs } from "./types";
 
 export const PASS_THRESHOLD = 0.8;
-export const PRIMARY_COUNT = 12;
+export const PRIMARY_COUNT = 4;
 
 const ALL: LessonMcqs[] = [
   ...AP_BIOLOGY_MCQS,
@@ -41,4 +41,25 @@ export function getMcqsFor(lessonSlug: string): Mcq[] {
 export function hasMcqs(lessonSlug: string): boolean {
   const list = BY_SLUG.get(lessonSlug);
   return !!list && list.length >= PRIMARY_COUNT;
+}
+
+/**
+ * Select PRIMARY_COUNT questions from the pool for a given attempt index.
+ * Uses round-robin rotation so retakes always pull fresh questions before
+ * recycling. With a 15-question pool and 4 per attempt, attempts 0..2 have
+ * zero overlap; attempt 3 wraps, and the full pool re-cycles every 15
+ * attempts.
+ */
+export function pickQuestionsForAttempt(
+  pool: Mcq[],
+  attemptIndex: number
+): Mcq[] {
+  const n = pool.length;
+  if (n === 0) return [];
+  const k = Math.min(PRIMARY_COUNT, n);
+  const safeIdx = Math.max(0, Math.floor(attemptIndex));
+  const start = (safeIdx * k) % n;
+  const out: Mcq[] = [];
+  for (let i = 0; i < k; i++) out.push(pool[(start + i) % n]);
+  return out;
 }
