@@ -155,7 +155,10 @@ function OnboardingDialog({
     AVATAR_COLOR_OPTIONS[seedHash % AVATAR_COLOR_OPTIONS.length]
   );
   const [interests, setInterests] = useState<string[]>([]);
-  const [planChoice, setPlanChoice] = useState<PaidChoice>("skip");
+  // null until the user makes an explicit choice; lets us tell "skipped on
+  // purpose" apart from "hasn't decided yet" so the Continue button can nudge.
+  const [planChoice, setPlanChoice] = useState<PaidChoice | null>(null);
+  const [referralSource, setReferralSource] = useState<string>("");
   // Course selection limit tracks the plan the user is *intending* to have
   // after onboarding. Keeps the picker honest: if they picked Hacker we let
   // them grab all 16 right away, even though Firestore still says learner.
@@ -286,8 +289,12 @@ function OnboardingDialog({
     }
   }
 
-  async function persistPlanChoice(choice: PaidChoice) {
+  async function choosePlanAndAdvance(choice: PaidChoice) {
     setPlanChoice(choice);
+    setStepError(null);
+    // Advance right away so the user sees clear feedback. The Firestore
+    // write runs in the background.
+    setStep((s) => (s === 2 ? 3 : s));
     const db = getDb();
     if (!db) return;
     try {
@@ -390,6 +397,7 @@ function OnboardingDialog({
             completed: true,
             completedAt: serverTimestamp(),
             version: ONBOARDING_VERSION,
+            referralSource: referralSource || null,
             updatedAt: serverTimestamp(),
           },
           { merge: true }
@@ -424,7 +432,12 @@ function OnboardingDialog({
       return;
     }
     if (step === 2) {
-      // Plan pitch step persists per click; just advance.
+      // Plan-pick buttons normally advance on click. If the user got here
+      // by hitting the footer Continue without picking, nudge them.
+      if (!planChoice) {
+        setStepError("Pick a plan to keep going (Stay on Learner is fine).");
+        return;
+      }
       setStep(3);
       return;
     }
@@ -494,7 +507,7 @@ function OnboardingDialog({
             <PlanStep
               choice={planChoice}
               onChoose={(c) => {
-                void persistPlanChoice(c);
+                void choosePlanAndAdvance(c);
               }}
             />
           )}
@@ -527,6 +540,8 @@ function OnboardingDialog({
               name={name.trim() || "there"}
               planChoice={planChoice}
               courseCount={selectedCourses.length}
+              referralSource={referralSource}
+              setReferralSource={setReferralSource}
             />
           )}
 
@@ -555,9 +570,9 @@ function OnboardingDialog({
             {savingStep
               ? "Saving…"
               : step === 6
-              ? planChoice === "skip"
-                ? "Jump in"
-                : `Continue to ${planLabel(planChoiceToTier(planChoice))} checkout`
+              ? planChoice === "pro" || planChoice === "hacker"
+                ? `Continue to ${planLabel(planChoiceToTier(planChoice))} checkout`
+                : "Jump in"
               : "Continue"}
           </button>
         </div>
@@ -566,7 +581,7 @@ function OnboardingDialog({
   );
 }
 
-function planChoiceToTier(c: PaidChoice): PlanTier {
+function planChoiceToTier(c: PaidChoice | null): PlanTier {
   if (c === "pro") return "pro";
   if (c === "hacker") return "hacker";
   return "learner";
@@ -801,7 +816,7 @@ function PlanStep({
   choice,
   onChoose,
 }: {
-  choice: PaidChoice;
+  choice: PaidChoice | null;
   onChoose: (c: PaidChoice) => void;
 }) {
   return (
@@ -881,7 +896,7 @@ function CoursesStep({
   selected: string[];
   onToggle: (slug: string) => void;
   limit: number;
-  planChoice: PaidChoice;
+  planChoice: PaidChoice | null;
 }) {
   return (
     <div>
@@ -899,7 +914,7 @@ function CoursesStep({
           {selected.length} / {limit} selected ·{" "}
           {planLabel(planChoiceToTier(planChoice))} plan
         </span>
-        {planChoice === "skip" && (
+        {(planChoice === "skip" || planChoice === null) && (
           <span className="text-dim">Upgrade later for more slots.</span>
         )}
       </div>
@@ -1115,37 +1130,83 @@ function TermsStep({
   );
 }
 
+const REFERRAL_OPTIONS = [
+  "Friend or classmate",
+  "A teacher or tutor",
+  "Reddit",
+  "TikTok or Instagram",
+  "YouTube",
+  "Google search",
+  "Discord or online community",
+  "School counselor",
+  "Other",
+] as const;
+
 function WelcomeStep({
   name,
   planChoice,
   courseCount,
+  referralSource,
+  setReferralSource,
 }: {
   name: string;
-  planChoice: PaidChoice;
+  planChoice: PaidChoice | null;
   courseCount: number;
+  referralSource: string;
+  setReferralSource: (v: string) => void;
 }) {
   const planLine =
-    planChoice === "skip"
-      ? "You're set up on the free Learner plan — upgrade anytime from /shop."
-      : `Next stop: ${planLabel(
+    planChoice === "pro" || planChoice === "hacker"
+      ? `Your ${planLabel(
           planChoiceToTier(planChoice)
-        )} checkout. Once you're done, your full toolkit unlocks.`;
+        )} checkout is one tap away — once that clears, every unit lesson, practice bank, and tutor tool unlocks across all of your AP courses.`
+      : "You're on the free Learner plan, which is plenty to get started — three AP courses on your dashboard, the chat tutor, and the full schedule + insights view. Whenever you're ready for more courses or higher tutor caps, /shop has the upgrade.";
   return (
-    <div className="text-center">
-      <div className="text-5xl">🎉</div>
-      <h2 className="mt-4 font-serif text-3xl font-normal text-ink">
-        Welcome to FinalsPrep, {name}.
-      </h2>
-      <p className="mt-3 text-sm text-muted">
-        You're all set with{" "}
-        <span className="text-ink">
-          {courseCount} {courseCount === 1 ? "course" : "courses"}
-        </span>{" "}
-        on your dashboard and a tutor tuned to how you like to learn.
-      </p>
-      <p className="mt-2 text-sm text-muted">{planLine}</p>
+    <div>
+      <div className="text-center">
+        <div className="text-5xl">🎉</div>
+        <h2 className="mt-4 font-serif text-4xl font-normal leading-tight text-ink">
+          Welcome to FinalsPrep, {name}.
+        </h2>
+        <p className="mt-4 text-[15px] leading-relaxed text-body">
+          From everyone on the FinalsPrep team — thank you for trusting us with
+          your finals season. We built this because cramming the night before
+          shouldn't be the only option, and we're genuinely glad you're here.
+        </p>
+      </div>
 
-      <div className="mt-6 grid gap-3 text-left sm:grid-cols-3">
+      <div className="mt-6 rounded-xl border border-orange/40 bg-orange-tint p-5">
+        <div className="text-[12px] font-semibold uppercase tracking-wider text-orange-ink">
+          Here's what you've got set up
+        </div>
+        <ul className="mt-3 space-y-2 text-[13.5px] leading-snug text-body">
+          <li className="flex gap-2">
+            <span className="text-orange-ink">✓</span>
+            <span>
+              <span className="text-ink">{courseCount}</span>{" "}
+              {courseCount === 1 ? "AP course" : "AP courses"} pinned to your
+              dashboard, with full unit breakdowns ready to go.
+            </span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-orange-ink">✓</span>
+            <span>
+              A tutor tuned to your reply length, teaching mode, and
+              personality — it'll keep that voice across every chat.
+            </span>
+          </li>
+          <li className="flex gap-2">
+            <span className="text-orange-ink">✓</span>
+            <span>
+              Your profile is live, so you'll show up on leaderboards and class
+              activity right away.
+            </span>
+          </li>
+        </ul>
+        <p className="mt-3 text-[13px] leading-relaxed text-body">{planLine}</p>
+      </div>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-3">
         <WelcomeTip
           title="Open the chat"
           body="Paste a problem and get a step-by-step walkthrough."
@@ -1159,6 +1220,43 @@ function WelcomeStep({
           body="Run /exam to test yourself across the full unit list."
         />
       </div>
+
+      <div className="mt-7 rounded-xl border border-hair bg-paper p-5">
+        <div className="label mb-2">One last quick question</div>
+        <h3 className="font-serif text-xl text-ink">
+          How did you hear about FinalsPrep?
+        </h3>
+        <p className="mt-1 text-[12.5px] text-muted">
+          Totally optional, but it genuinely helps us figure out where to spend
+          time so more students can find us.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {REFERRAL_OPTIONS.map((opt) => {
+            const selected = referralSource === opt;
+            return (
+              <button
+                key={opt}
+                type="button"
+                onClick={() =>
+                  setReferralSource(selected ? "" : opt)
+                }
+                aria-pressed={selected}
+                className={`rounded-full border px-3 py-1.5 text-[12.5px] transition ${
+                  selected
+                    ? "border-orange bg-orange-tint text-ink"
+                    : "border-hair bg-paper text-body hover:border-orange"
+                }`}
+              >
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <p className="mt-6 text-center text-[12px] text-dim">
+        — The FinalsPrep team. Hit us up at /contact anytime.
+      </p>
     </div>
   );
 }
