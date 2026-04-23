@@ -151,14 +151,14 @@ export function Quiz({
         </h3>
         {passed ? (
           <p className="mt-3 text-[15px] text-body">
-            You passed! This lesson is marked complete. You can move on to
-            the next lesson.
+            You passed with {correctCount}/{active.length}. Lesson marked
+            complete — you can move on to the next lesson.
           </p>
         ) : (
           <p className="mt-3 text-[15px] text-body">
-            You need {needed}/{active.length} ({Math.round(PASS_THRESHOLD * 100)}%) to
-            advance. Review the lesson, then retake — you'll get a
-            different set of questions.
+            You need {needed} of {active.length} correct to advance. Review
+            the lesson, then retake — you'll get a different set of
+            questions from the 15-question bank.
           </p>
         )}
         {bestPct !== null && bestPct > Math.round(scoreFraction * 100) && (
@@ -179,14 +179,13 @@ export function Quiz({
     <div className="space-y-5">
       <div className="flex items-baseline justify-between">
         <div>
-          <div className="label">Unit quiz</div>
+          <div className="label">Lesson quiz</div>
           <h3 className="mt-1 font-serif text-xl text-ink">
-            Answer {needed}/{active.length} ({Math.round(PASS_THRESHOLD * 100)}%) correctly to
-            complete this lesson.
+            Get {needed} of {active.length} correct to complete this lesson.
           </h3>
           <div className="mt-1 text-[12px] text-muted">
-            Attempt {attemptIndex + 1} — retakes draw different questions
-            from a 15-question bank.
+            Attempt {attemptIndex + 1} · retakes pull a fresh set from a
+            15-question bank.
           </div>
         </div>
         <div className="text-[13px] text-muted">
@@ -290,7 +289,7 @@ export function Quiz({
       <div className="flex items-center justify-between border-t border-hair pt-5">
         <div className="text-[13px] text-muted">
           {allAnswered
-            ? `Score: ${correctCount}/${active.length} (${Math.round(scoreFraction * 100)}%)`
+            ? `Score: ${correctCount} of ${active.length}`
             : "Answer every question to submit."}
         </div>
         <button

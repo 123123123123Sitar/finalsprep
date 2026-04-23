@@ -13,7 +13,12 @@ import { AP_EURO_HISTORY_MCQS } from "./ap-euro-history";
 
 export type { Mcq, LessonMcqs } from "./types";
 
-export const PASS_THRESHOLD = 0.8;
+// 3/4 correct (75%) counts as passing. True 80% on 4 questions rounds up
+// to 4/4, which is effectively a perfection bar. Going one notch below
+// lets a student pass with a single mistake while still demonstrating
+// mastery, and unlimited retakes (with rotating questions) handle the
+// rest.
+export const PASS_THRESHOLD = 0.75;
 export const PRIMARY_COUNT = 4;
 
 const ALL: LessonMcqs[] = [
