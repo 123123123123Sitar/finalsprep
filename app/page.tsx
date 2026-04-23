@@ -881,12 +881,14 @@ function MarketingHome() {
           </div>
           <div className="space-y-4 text-[16px]">
             {[
-              ["Does it work on my phone?", "Yes. The solver works fine on mobile. The diagrams can be a little cramped on small screens - we're working on it."],
-              ["Can I use my school Google account?", "Yes. Checkout takes any major credit or debit card. School email sometimes routes receipts to spam, so check there if it doesn't arrive."],
-              ["Is this cheating?", "If you paste a problem in, read the explanation, and then do the problem again on your own, no. If you paste it in and copy the answer without reading, that's on you."],
-              ["What if the tutor gets something wrong?", "Tell it in the next message and it will correct itself. If you hit a problem in scope where the explanation was genuinely bad, send a note via /contact (Report an issue) and we'll refund the purchase."],
-              ["What if I want a refund?", "Reply to your receipt within 7 days. No questions asked."],
-              ["How does this compare to a human tutor?", "$16/month is less than one hour with a human tutor, and a real tutor isn't available at 11pm the night before your exam. Use a real tutor for big conceptual gaps; use this for getting unstuck on homework."],
+              ["Which AP courses does it cover?", "All 16 — math (Precalc, Calc AB/BC, Stats), sciences (Bio, Chem, Physics 1/2 and both Physics C), histories (US, World, Euro), CS A, CS Principles, and Environmental Science. AP Precalculus has the deepest written lessons today; the rest have full unit overviews plus unlimited tutor access."],
+              ["How is this different from just using ChatGPT?", "The tutor is grounded in the College Board CED, so units, skills, and essential knowledge line up with what your class is actually teaching. It remembers your course context across sessions, renders math and diagrams cleanly, and won't invent CED codes that don't exist."],
+              ["Will it just give me the answer, or actually teach me?", "It walks you through the problem step by step and usually asks what you've tried before showing work. You can tell it to cut to the answer, but the default is a worked explanation you could re-derive on your own the next day."],
+              ["Can I practice FRQs and multiple choice?", "Yes. Paste an FRQ and get a rubric-style walkthrough, or ask the tutor to drill you on MCQs for a specific unit. It can grade your attempts and point out where an AP reader would have docked points."],
+              ["Can I upload a photo of my handwritten homework?", "Yes. Snap a picture of the problem (or your scratch work) and the tutor reads it directly — no retyping. Pro users get unlimited image uploads; Free users can upload too, images just cost a bit more of the daily token budget."],
+              ["Is there a free tier, or do I have to pay to try it?", "Free tier is real and no card is required. You get Units 1-2 of every AP course, two free lessons, and enough daily tokens to test the tutor on actual homework before deciding whether to upgrade."],
+              ["What's voice mode for?", "Hands-free back-and-forth with the tutor — useful for walking through a concept on the bus, quizzing yourself while cooking, or rubber-ducking an FRQ out loud the night before the exam. Same tutor, same course context, just spoken."],
+              ["What if the tutor gets something wrong?", "Tell it in the next message and it will correct itself. If an in-scope explanation is genuinely wrong, send a note via /contact (Report an issue) and we'll refund the purchase."],
             ].map(([q, a], i) => (
               <Reveal key={q} from="up" delay={i * 60}>
                 <details className="faq-item group rounded-lg border border-hair bg-paper/80 px-4 backdrop-blur-sm transition-colors duration-300 hover:border-orange/30 open:border-orange/50 open:bg-paper/95">
