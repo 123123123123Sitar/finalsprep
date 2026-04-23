@@ -12,6 +12,7 @@ import {
   getFrqById,
   type PastFrq,
 } from "@/lib/pastFrqs";
+import { AP_EXAM_SPECS, scaledTimerMinutes } from "@/lib/apExamSpec";
 
 type Tab = "exams" | "frqs";
 
@@ -43,8 +44,9 @@ export default function PracticePage() {
           Drill before exam day.
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] text-muted">
-          Generate a fresh AP-style mock exam, or work a past free-response
-          question and have it graded against the official rubric.
+          Generate a fresh AP-style mock exam at the real exam's pace, or work a
+          past free-response question and have it graded against the official
+          rubric.
         </p>
 
         {/* Tabs */}
@@ -93,24 +95,72 @@ function TabButton({
 // ─── EXAMS TAB ───────────────────────────────────────────────────────────────
 
 type Difficulty = "easy" | "medium" | "hard";
-type GenQuestion = { prompt: string; answer: string; difficulty: Difficulty; unit?: string };
+
+type McqChoice = { letter: "A" | "B" | "C" | "D"; text: string };
+type GenMcq = {
+  prompt: string;
+  choices: McqChoice[];
+  correct: "A" | "B" | "C" | "D";
+  explanation: string;
+  difficulty: Difficulty;
+  unit?: string;
+};
+
+type GenFrqPart = {
+  label: string;
+  prompt: string;
+  rubric: string;
+  points: number;
+};
+
+type GenFrq = {
+  prompt: string;
+  parts: GenFrqPart[];
+  totalPoints: number;
+  suggestedMinutes: number;
+  difficulty: Difficulty;
+  unit?: string;
+};
+
 type ExamPhase = "setup" | "loading" | "active" | "results";
 
 function ExamsTab() {
   const { user, getIdToken } = useAuth();
   const [enrolled, setEnrolled] = useState<string[]>([]);
   const [courseSlug, setCourseSlug] = useState<CourseSlug | "">("");
-  const [count, setCount] = useState<5 | 10 | 20>(10);
+  const [mcqCount, setMcqCount] = useState(10);
+  const [frqCount, setFrqCount] = useState(1);
+  const [timerMin, setTimerMin] = useState(20);
+  const [useCustomTimer, setUseCustomTimer] = useState(false);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
-  const [timerMin, setTimerMin] = useState(45);
   const [phase, setPhase] = useState<ExamPhase>("setup");
   const [error, setError] = useState<string | null>(null);
 
-  const [questions, setQuestions] = useState<GenQuestion[]>([]);
-  const [idx, setIdx] = useState(0);
-  const [responses, setResponses] = useState<string[]>([]);
+  const [mcqs, setMcqs] = useState<GenMcq[]>([]);
+  const [frqs, setFrqs] = useState<GenFrq[]>([]);
+  const [mcqAnswers, setMcqAnswers] = useState<Array<"A" | "B" | "C" | "D" | "">>([]);
+  const [frqResponses, setFrqResponses] = useState<string[]>([]);
+  const [idx, setIdx] = useState(0); // index across combined [mcqs, frqs]
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
+
+  const spec = courseSlug ? AP_EXAM_SPECS[courseSlug] : null;
+
+  // When the user switches course, pre-fill with official AP defaults.
+  useEffect(() => {
+    if (!spec) return;
+    setMcqCount(spec.mcq.count);
+    setFrqCount(spec.frq.count);
+    setTimerMin(spec.mcq.minutes + spec.frq.minutes);
+    setUseCustomTimer(false);
+  }, [courseSlug]);
+
+  // Track timer: if the user hasn't overridden, rescale to match the chosen
+  // question mix using the real AP per-question pacing.
+  useEffect(() => {
+    if (!spec || useCustomTimer) return;
+    setTimerMin(scaledTimerMinutes(spec.slug, mcqCount, frqCount));
+  }, [mcqCount, frqCount, spec, useCustomTimer]);
 
   useEffect(() => {
     if (!user) return;
@@ -145,8 +195,12 @@ function ExamsTab() {
   }, [phase, timerMin]);
 
   async function generateExam() {
-    if (!courseSlug) {
+    if (!courseSlug || !spec) {
       setError("Pick a course first.");
+      return;
+    }
+    if (mcqCount + frqCount === 0) {
+      setError("Include at least one MCQ or FRQ.");
       return;
     }
     setError(null);
@@ -159,7 +213,7 @@ function ExamsTab() {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ courseSlug, count, difficulty }),
+        body: JSON.stringify({ courseSlug, mcqCount, frqCount, difficulty }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -167,9 +221,18 @@ function ExamsTab() {
         setPhase("setup");
         return;
       }
-      setQuestions(data.questions);
+      const gotMcqs: GenMcq[] = Array.isArray(data.mcqs) ? data.mcqs : [];
+      const gotFrqs: GenFrq[] = Array.isArray(data.frqs) ? data.frqs : [];
+      if (gotMcqs.length + gotFrqs.length === 0) {
+        setError("No questions returned. Try again.");
+        setPhase("setup");
+        return;
+      }
+      setMcqs(gotMcqs);
+      setFrqs(gotFrqs);
+      setMcqAnswers(gotMcqs.map(() => "" as const));
+      setFrqResponses(gotFrqs.map(() => ""));
       setIdx(0);
-      setResponses(data.questions.map(() => ""));
       setConfirmSubmit(false);
       setPhase("active");
     } catch (e: any) {
@@ -178,16 +241,17 @@ function ExamsTab() {
     }
   }
 
-  function updateAnswer(text: string) {
-    setResponses((prev) => {
-      const next = [...prev];
-      next[idx] = text;
-      return next;
-    });
+  const totalQuestions = mcqs.length + frqs.length;
+  const isMcqIdx = (i: number) => i < mcqs.length;
+  const frqIdx = (i: number) => i - mcqs.length;
+
+  function isAnswered(i: number) {
+    if (isMcqIdx(i)) return mcqAnswers[i] !== "";
+    return frqResponses[frqIdx(i)]?.trim().length > 0;
   }
 
   function goTo(i: number) {
-    if (i < 0 || i >= questions.length) return;
+    if (i < 0 || i >= totalQuestions) return;
     setIdx(i);
     setConfirmSubmit(false);
   }
@@ -199,8 +263,10 @@ function ExamsTab() {
 
   function restart() {
     setPhase("setup");
-    setQuestions([]);
-    setResponses([]);
+    setMcqs([]);
+    setFrqs([]);
+    setMcqAnswers([]);
+    setFrqResponses([]);
     setIdx(0);
     setConfirmSubmit(false);
     setError(null);
@@ -211,7 +277,9 @@ function ExamsTab() {
       <div className="mt-10 rounded-xl border border-hair bg-paper p-10 text-center">
         <div className="mx-auto h-6 w-6 animate-spin rounded-full border-2 border-hair border-t-orange" />
         <p className="mt-4 text-sm text-muted">
-          Generating {count} questions… usually 5–15 seconds.
+          Generating {mcqCount} MCQ{mcqCount === 1 ? "" : "s"}
+          {frqCount > 0 ? ` and ${frqCount} FRQ${frqCount === 1 ? "" : "s"}` : ""}…
+          usually 10–30 seconds.
         </p>
       </div>
     );
@@ -244,24 +312,118 @@ function ExamsTab() {
           )}
         </div>
 
+        {spec && (
+          <div className="rounded-md border border-hair bg-offwhite p-3 text-[12px] text-muted">
+            <span className="font-semibold text-ink">Official format:</span>{" "}
+            {spec.mcq.count} MCQs in {spec.mcq.minutes} min
+            {spec.frq.count > 0 && (
+              <> · {spec.frq.count} FRQs in {spec.frq.minutes} min</>
+            )}
+            {spec.readingPeriodMinutes > 0 && (
+              <> (incl. {spec.readingPeriodMinutes}-min reading period)</>
+            )}
+            . Defaults below match this.
+          </div>
+        )}
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="mb-2 block text-sm font-medium text-ink">
+              MCQ count
+            </label>
+            <input
+              type="number"
+              min={0}
+              max={spec ? Math.min(80, spec.mcq.count * 2) : 80}
+              value={mcqCount}
+              onChange={(e) => setMcqCount(Math.max(0, Number(e.target.value) || 0))}
+              className="w-full rounded-md border border-hair bg-paper px-3 py-2 text-ink focus:border-orange focus:outline-none"
+            />
+            {spec && (
+              <p className="mt-1 text-[11px] text-muted">
+                Official: {spec.mcq.count}. Each MCQ allowed ~
+                {spec.mcq.secondsPerQuestion}s on the real exam.
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="mb-2 block text-sm font-medium text-ink">
+              FRQ count
+            </label>
+            <input
+              type="number"
+              min={0}
+              max={10}
+              value={frqCount}
+              onChange={(e) => setFrqCount(Math.max(0, Number(e.target.value) || 0))}
+              className="w-full rounded-md border border-hair bg-paper px-3 py-2 text-ink focus:border-orange focus:outline-none"
+              disabled={!!spec && spec.frq.count === 0}
+            />
+            {spec && (
+              <p className="mt-1 text-[11px] text-muted">
+                {spec.frq.count === 0
+                  ? "This exam is MCQ-only officially. You can still add supplemental FRQs."
+                  : `Official: ${spec.frq.count}.`}
+              </p>
+            )}
+          </div>
+        </div>
+
         <div>
           <label className="mb-2 block text-sm font-medium text-ink">
-            Number of questions
+            Timer: <strong>{timerMin === 0 ? "Untimed" : `${timerMin} min`}</strong>
           </label>
-          <div className="flex gap-2">
-            {[5, 10, 20].map((n) => (
-              <button
-                key={n}
-                onClick={() => setCount(n as 5 | 10 | 20)}
-                className={`rounded-md px-4 py-2 transition-colors ${
-                  count === n
-                    ? "bg-orange text-white"
-                    : "border border-hair bg-offwhite text-ink hover:border-orange"
-                }`}
-              >
-                {n}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => {
+                setUseCustomTimer(false);
+                if (spec)
+                  setTimerMin(scaledTimerMinutes(spec.slug, mcqCount, frqCount));
+              }}
+              className={`rounded-md px-3 py-2 text-sm transition-colors ${
+                !useCustomTimer
+                  ? "bg-orange text-white"
+                  : "border border-hair bg-offwhite text-ink hover:border-orange"
+              }`}
+            >
+              AP-pace (auto)
+            </button>
+            <button
+              onClick={() => {
+                setUseCustomTimer(true);
+                setTimerMin(0);
+              }}
+              className={`rounded-md px-3 py-2 text-sm transition-colors ${
+                useCustomTimer && timerMin === 0
+                  ? "bg-orange text-white"
+                  : "border border-hair bg-offwhite text-ink hover:border-orange"
+              }`}
+            >
+              Untimed
+            </button>
+            {useCustomTimer && timerMin !== 0 && (
+              <input
+                type="number"
+                min={0}
+                max={360}
+                value={timerMin}
+                onChange={(e) => setTimerMin(Math.max(0, Number(e.target.value) || 0))}
+                className="w-24 rounded-md border border-hair bg-paper px-3 py-2 text-ink focus:border-orange focus:outline-none"
+              />
+            )}
+            <button
+              onClick={() => {
+                setUseCustomTimer(true);
+                setTimerMin(timerMin || 30);
+              }}
+              className={`rounded-md px-3 py-2 text-sm transition-colors ${
+                useCustomTimer && timerMin !== 0
+                  ? "bg-orange text-white"
+                  : "border border-hair bg-offwhite text-ink hover:border-orange"
+              }`}
+            >
+              Custom (min)
+            </button>
           </div>
         </div>
 
@@ -284,27 +446,6 @@ function ExamsTab() {
           </div>
         </div>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-ink">
-            Timer: <strong>{timerMin === 0 ? "None" : `${timerMin} min`}</strong>
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {[0, 20, 45, 90].map((m) => (
-              <button
-                key={m}
-                onClick={() => setTimerMin(m)}
-                className={`rounded-md px-4 py-2 text-sm transition-colors ${
-                  timerMin === m
-                    ? "bg-orange text-white"
-                    : "border border-hair bg-offwhite text-ink hover:border-orange"
-                }`}
-              >
-                {m === 0 ? "Untimed" : `${m}m`}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {error && (
           <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">
             {error}
@@ -319,25 +460,26 @@ function ExamsTab() {
           Generate exam
         </button>
         <p className="text-xs text-muted">
-          Costs daily tokens (then bonus tokens). A 10-question exam typically
-          runs ~600–900 tokens.
+          Costs daily tokens (then bonus tokens). A full-length exam can run
+          several thousand tokens — a 10 MCQ / 1 FRQ warm-up usually costs
+          ~1,000–1,500.
         </p>
       </div>
     );
   }
 
-  if (phase === "active" && questions.length > 0) {
-    const q = questions[idx];
-    const answeredCount = responses.filter((r) => r.trim().length > 0).length;
-    const unansweredCount = questions.length - answeredCount;
-    const isAnswered = (i: number) => responses[i]?.trim().length > 0;
+  if (phase === "active" && totalQuestions > 0) {
+    const answeredCount = Array.from({ length: totalQuestions }, (_, i) =>
+      isAnswered(i) ? 1 : 0
+    ).reduce<number>((a, b) => a + b, 0);
+    const unansweredCount = totalQuestions - answeredCount;
     return (
       <div className="mt-8 space-y-5">
         {/* TOP BAR: timer + question navigator + submit */}
         <div className="rounded-xl border border-hair bg-paper p-4">
           <div className="mb-3 flex items-center justify-between gap-4">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-              {answeredCount}/{questions.length} answered
+              {answeredCount}/{totalQuestions} answered
             </div>
             {timerMin > 0 && (
               <div
@@ -351,18 +493,19 @@ function ExamsTab() {
             )}
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            {questions.map((_, i) => {
+            {Array.from({ length: totalQuestions }, (_, i) => {
               const current = i === idx;
               const answered = isAnswered(i);
+              const mcq = isMcqIdx(i);
               return (
                 <button
                   key={i}
                   onClick={() => goTo(i)}
-                  aria-label={`Go to question ${i + 1}${
-                    answered ? " (answered)" : ""
-                  }`}
+                  aria-label={`Go to ${mcq ? "MCQ" : "FRQ"} ${
+                    mcq ? i + 1 : frqIdx(i) + 1
+                  }${answered ? " (answered)" : ""}`}
                   aria-current={current ? "step" : undefined}
-                  className={`grid h-8 w-8 place-items-center rounded-md border text-xs font-medium transition-colors ${
+                  className={`grid h-8 min-w-[2rem] place-items-center rounded-md border px-1.5 text-[11px] font-medium transition-colors ${
                     current
                       ? "border-orange bg-orange text-white"
                       : answered
@@ -370,7 +513,7 @@ function ExamsTab() {
                       : "border-hair bg-offwhite text-muted hover:border-orange hover:text-ink"
                   }`}
                 >
-                  {i + 1}
+                  {mcq ? i + 1 : `F${frqIdx(i) + 1}`}
                 </button>
               );
             })}
@@ -412,43 +555,37 @@ function ExamsTab() {
         )}
 
         {/* QUESTION VIEW */}
-        <div className="rounded-xl border border-hair bg-paper p-6">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="font-serif text-xl text-ink">
-              Question {idx + 1}
-              <span className="ml-2 text-sm text-muted">
-                of {questions.length}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-muted">
-              <span>{q.difficulty}</span>
-              {q.unit && (
-                <>
-                  <span className="text-dim">·</span>
-                  <span>{q.unit}</span>
-                </>
-              )}
-            </div>
-          </div>
-          <div className="whitespace-pre-wrap text-[16px] leading-relaxed text-ink">
-            {q.prompt}
-          </div>
-        </div>
-
-        <div className="rounded-md border border-hair bg-offwhite p-3">
-          <label className="mb-2 block text-xs font-medium text-muted">
-            Your work
-          </label>
-          <textarea
-            value={responses[idx] || ""}
-            onChange={(e) => updateAnswer(e.target.value)}
-            placeholder="Show your work and final answer…"
-            rows={6}
-            className="w-full rounded-md border border-hair bg-paper px-3 py-2 text-ink focus:border-orange focus:outline-none"
+        {isMcqIdx(idx) ? (
+          <McqQuestionCard
+            n={idx + 1}
+            total={totalQuestions}
+            q={mcqs[idx]}
+            value={mcqAnswers[idx]}
+            onChange={(letter) => {
+              setMcqAnswers((prev) => {
+                const next = [...prev];
+                next[idx] = letter;
+                return next;
+              });
+            }}
           />
-        </div>
+        ) : (
+          <FrqQuestionCard
+            n={frqIdx(idx) + 1}
+            totalFrq={frqs.length}
+            q={frqs[frqIdx(idx)]}
+            value={frqResponses[frqIdx(idx)] || ""}
+            onChange={(text) => {
+              setFrqResponses((prev) => {
+                const next = [...prev];
+                next[frqIdx(idx)] = text;
+                return next;
+              });
+            }}
+          />
+        )}
 
-        {/* BOTTOM NAV: previous / next */}
+        {/* BOTTOM NAV */}
         <div className="flex items-center justify-between gap-3">
           <button
             onClick={() => goTo(idx - 1)}
@@ -465,7 +602,7 @@ function ExamsTab() {
           </button>
           <button
             onClick={() => goTo(idx + 1)}
-            disabled={idx === questions.length - 1}
+            disabled={idx === totalQuestions - 1}
             className="rounded-md border border-hair bg-paper px-4 py-2 text-sm text-ink hover:border-orange disabled:cursor-not-allowed disabled:opacity-40"
           >
             Next →
@@ -475,34 +612,132 @@ function ExamsTab() {
     );
   }
 
-  // results
+  // RESULTS
+  const mcqCorrect = mcqs.filter((q, i) => mcqAnswers[i] === q.correct).length;
+  const mcqPct =
+    mcqs.length > 0 ? Math.round((mcqCorrect / mcqs.length) * 100) : 0;
   return (
     <div className="mt-8 space-y-8">
       <div>
         <div className="label mb-2">Results</div>
         <h2 className="font-serif text-3xl text-ink">Exam complete.</h2>
-        <p className="mt-2 text-sm text-muted">
-          Self-grade your responses against the model answers below.
-        </p>
+        {mcqs.length > 0 && (
+          <p className="mt-2 text-sm text-muted">
+            MCQ score: <strong className="text-ink">{mcqCorrect}/{mcqs.length}</strong>{" "}
+            ({mcqPct}%). Self-grade your FRQs against the rubric below.
+          </p>
+        )}
       </div>
-      <div className="space-y-4">
-        {questions.map((q, i) => (
-          <div key={i} className="rounded-lg border border-hair bg-paper p-4">
-            <div className="mb-2 text-sm font-medium text-ink">
-              Question {i + 1}
+
+      {mcqs.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-muted">
+            Multiple choice
+          </h3>
+          {mcqs.map((q, i) => {
+            const picked = mcqAnswers[i];
+            const right = picked === q.correct;
+            return (
+              <div
+                key={`mcq-${i}`}
+                className={`rounded-lg border p-4 ${
+                  right
+                    ? "border-green-300 bg-green-50"
+                    : picked === ""
+                    ? "border-hair bg-paper"
+                    : "border-red-200 bg-red-50"
+                }`}
+              >
+                <div className="mb-2 flex items-baseline justify-between gap-2">
+                  <div className="text-sm font-medium text-ink">Q{i + 1}</div>
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                    {q.difficulty}
+                    {q.unit ? ` · ${q.unit}` : ""}
+                  </div>
+                </div>
+                <div className="whitespace-pre-wrap text-[14px] text-ink">{q.prompt}</div>
+                <ul className="mt-2 space-y-1 text-[13px]">
+                  {q.choices.map((c) => (
+                    <li
+                      key={c.letter}
+                      className={
+                        c.letter === q.correct
+                          ? "font-semibold text-green-800"
+                          : c.letter === picked
+                          ? "text-red-800 line-through"
+                          : "text-muted"
+                      }
+                    >
+                      <span className="mr-2 inline-block w-5">{c.letter}.</span>
+                      {c.text}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-2 text-[12px] text-muted">
+                  Your answer: <strong>{picked || "skipped"}</strong> · Correct:{" "}
+                  <strong>{q.correct}</strong>
+                </div>
+                {q.explanation && (
+                  <div className="mt-2 rounded-md bg-paper/80 p-2 text-[12px] text-body">
+                    {q.explanation}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {frqs.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-muted">
+            Free response
+          </h3>
+          {frqs.map((f, i) => (
+            <div key={`frq-${i}`} className="rounded-lg border border-hair bg-paper p-4">
+              <div className="mb-2 flex items-baseline justify-between gap-2">
+                <div className="text-sm font-medium text-ink">
+                  FRQ {i + 1} · {f.totalPoints} pts
+                </div>
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-muted">
+                  {f.difficulty}
+                  {f.unit ? ` · ${f.unit}` : ""}
+                </div>
+              </div>
+              {f.prompt && (
+                <div className="whitespace-pre-wrap text-[14px] text-ink">
+                  {f.prompt}
+                </div>
+              )}
+              <div className="mt-3 border-t border-hair pt-3">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+                  Your response
+                </div>
+                <div className="mt-1 whitespace-pre-wrap text-[13px] text-body">
+                  {frqResponses[i]?.trim() || "(skipped)"}
+                </div>
+              </div>
+              <div className="mt-3 space-y-2 border-t border-hair pt-3">
+                {f.parts.map((p) => (
+                  <div key={p.label}>
+                    <div className="text-[11px] font-semibold uppercase tracking-wider text-orange-ink">
+                      {p.label} · {p.points} pt{p.points === 1 ? "" : "s"}
+                    </div>
+                    <div className="whitespace-pre-wrap text-[13px] text-ink">
+                      {p.prompt}
+                    </div>
+                    <div className="mt-1 whitespace-pre-wrap rounded-md bg-offwhite p-2 text-[12px] text-muted">
+                      Rubric:{"\n"}
+                      {p.rubric}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="whitespace-pre-wrap text-[13px] text-ink">
-              {q.prompt}
-            </div>
-            <div className="mt-3 whitespace-pre-wrap text-xs text-muted">
-              Your answer: {responses[i]?.trim() || "(skipped)"}
-            </div>
-            <div className="mt-1 whitespace-pre-wrap text-xs text-orange-ink">
-              Model answer: {q.answer}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
+
       <div className="flex gap-3">
         <button
           onClick={restart}
@@ -512,6 +747,141 @@ function ExamsTab() {
         </button>
       </div>
     </div>
+  );
+}
+
+function McqQuestionCard({
+  n,
+  total,
+  q,
+  value,
+  onChange,
+}: {
+  n: number;
+  total: number;
+  q: GenMcq;
+  value: "A" | "B" | "C" | "D" | "";
+  onChange: (letter: "A" | "B" | "C" | "D") => void;
+}) {
+  return (
+    <>
+      <div className="rounded-xl border border-hair bg-paper p-6">
+        <div className="mb-3 flex items-center justify-between">
+          <div className="font-serif text-xl text-ink">
+            Question {n}
+            <span className="ml-2 text-sm text-muted">of {total}</span>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-muted">
+            <span>MCQ · {q.difficulty}</span>
+            {q.unit && (
+              <>
+                <span className="text-dim">·</span>
+                <span>{q.unit}</span>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="whitespace-pre-wrap text-[16px] leading-relaxed text-ink">
+          {q.prompt}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        {q.choices.map((c) => {
+          const selected = value === c.letter;
+          return (
+            <button
+              key={c.letter}
+              onClick={() => onChange(c.letter)}
+              className={`flex w-full items-start gap-3 rounded-md border px-4 py-3 text-left transition-colors ${
+                selected
+                  ? "border-orange bg-orange-tint"
+                  : "border-hair bg-paper hover:border-orange"
+              }`}
+            >
+              <span
+                className={`grid h-7 w-7 shrink-0 place-items-center rounded-full border text-xs font-semibold ${
+                  selected
+                    ? "border-orange bg-orange text-white"
+                    : "border-hair bg-offwhite text-muted"
+                }`}
+              >
+                {c.letter}
+              </span>
+              <span className="text-[14px] text-ink">{c.text}</span>
+            </button>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+function FrqQuestionCard({
+  n,
+  totalFrq,
+  q,
+  value,
+  onChange,
+}: {
+  n: number;
+  totalFrq: number;
+  q: GenFrq;
+  value: string;
+  onChange: (text: string) => void;
+}) {
+  return (
+    <>
+      <div className="rounded-xl border border-hair bg-paper p-6">
+        <div className="mb-3 flex items-center justify-between">
+          <div className="font-serif text-xl text-ink">
+            FRQ {n}
+            <span className="ml-2 text-sm text-muted">
+              of {totalFrq} · {q.totalPoints} pts · ~{q.suggestedMinutes} min
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-muted">
+            <span>{q.difficulty}</span>
+            {q.unit && (
+              <>
+                <span className="text-dim">·</span>
+                <span>{q.unit}</span>
+              </>
+            )}
+          </div>
+        </div>
+        {q.prompt && (
+          <div className="whitespace-pre-wrap text-[15px] leading-relaxed text-ink">
+            {q.prompt}
+          </div>
+        )}
+        <div className="mt-4 space-y-3 border-t border-hair pt-4">
+          {q.parts.map((p) => (
+            <div key={p.label}>
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-orange-ink">
+                {p.label} · {p.points} pt{p.points === 1 ? "" : "s"}
+              </div>
+              <div className="mt-1 whitespace-pre-wrap text-[14px] text-ink">
+                {p.prompt}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-md border border-hair bg-offwhite p-3">
+        <label className="mb-2 block text-xs font-medium text-muted">
+          Your response (label each part, e.g. "(a) ...")
+        </label>
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={`(a) ...\n(b) ...\n(c) ...`}
+          rows={10}
+          className="w-full rounded-md border border-hair bg-paper px-3 py-2 font-mono text-[13px] text-ink focus:border-orange focus:outline-none"
+        />
+      </div>
+    </>
   );
 }
 
