@@ -751,7 +751,7 @@ function MarketingHome() {
             }}
             className="tilt-card spotlight-card relative h-full rounded-xl border border-hair bg-gradient-to-b from-amber-50/95 to-white/95 p-7 backdrop-blur-sm"
           >
-            <span className="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+            <span className="absolute left-1/2 -top-3 -translate-x-1/2 inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-amber-500 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white shadow-[0_4px_12px_-2px_rgba(0,0,0,0.25)]">
               <CrownIcon className="h-3 w-3" /> Premium
             </span>
             <div className="label">Hacker</div>
