@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { useAuth } from "./AuthProvider";
 import CourseIcon from "./CourseIcon";
+import UserAvatar from "./UserAvatar";
 import { getDb, getFirebaseAuth } from "@/lib/firebase";
 import { COURSES } from "@/lib/topics";
 import { getCourseLimit, planLabel, type PlanTier } from "@/lib/plans";
@@ -22,7 +23,13 @@ import {
   type AiPersonality,
   type AiVerbosity,
 } from "@/lib/aiPrefs";
-import { GRADE_OPTIONS } from "@/lib/social";
+import {
+  AVATAR_COLOR_OPTIONS,
+  AVATAR_EMOJI_OPTIONS,
+  GRADE_OPTIONS,
+  INTEREST_OPTIONS,
+  MAX_INTERESTS,
+} from "@/lib/social";
 
 const ONBOARDING_VERSION = 1;
 const TERMS_VERSION = "2026-04";
@@ -137,6 +144,17 @@ function OnboardingDialog({
 
   const [name, setName] = useState(initialName);
   const [gradeLevel, setGradeLevel] = useState<string>("");
+  // Seed avatar defaults deterministically from the uid so the picker
+  // shows a sensible starting choice (matching what ensurePublicProfile
+  // would auto-pick on the server).
+  const seedHash = useMemo(() => hashString(uid), [uid]);
+  const [avatarEmoji, setAvatarEmoji] = useState<string>(
+    AVATAR_EMOJI_OPTIONS[seedHash % AVATAR_EMOJI_OPTIONS.length]
+  );
+  const [avatarColor, setAvatarColor] = useState<string>(
+    AVATAR_COLOR_OPTIONS[seedHash % AVATAR_COLOR_OPTIONS.length]
+  );
+  const [interests, setInterests] = useState<string[]>([]);
   const [planChoice, setPlanChoice] = useState<PaidChoice>("skip");
   // Course selection limit tracks the plan the user is *intending* to have
   // after onboarding. Keeps the picker honest: if they picked Hacker we let
@@ -152,7 +170,17 @@ function OnboardingDialog({
   );
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-  const totalSteps = 6;
+  const totalSteps = 7;
+
+  function toggleInterest(interest: string) {
+    setInterests((prev) => {
+      if (prev.includes(interest)) {
+        return prev.filter((i) => i !== interest);
+      }
+      if (prev.length >= MAX_INTERESTS) return prev;
+      return [...prev, interest];
+    });
+  }
 
   async function persistName() {
     const trimmed = name.trim();
@@ -205,6 +233,53 @@ function OnboardingDialog({
       return true;
     } catch (e: any) {
       setStepError(e?.message || "Couldn't save your name.");
+      return false;
+    } finally {
+      setSavingStep(false);
+    }
+  }
+
+  async function persistProfile() {
+    setSavingStep(true);
+    setStepError(null);
+    try {
+      const auth = getFirebaseAuth();
+      const token = await auth?.currentUser?.getIdToken();
+      if (token) {
+        const res = await fetch("/api/me/profile", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            avatarEmoji,
+            avatarColor,
+            interests,
+          }),
+        });
+        if (!res.ok) {
+          const detail = await res.json().catch(() => ({}));
+          setStepError(detail?.error || "Couldn't save your profile.");
+          return false;
+        }
+      }
+      const db = getDb();
+      if (db) {
+        await setDoc(
+          doc(db, "users", uid, "profile", "onboarding"),
+          {
+            avatarEmoji,
+            avatarColor,
+            interests,
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+      }
+      return true;
+    } catch (e: any) {
+      setStepError(e?.message || "Couldn't save your profile.");
       return false;
     } finally {
       setSavingStep(false);
@@ -343,31 +418,37 @@ function OnboardingDialog({
       return;
     }
     if (step === 1) {
-      // Plan pitch step persists per click; just advance.
+      const ok = await persistProfile();
+      if (!ok) return;
       setStep(2);
       return;
     }
     if (step === 2) {
-      if (selectedCourses.length === 0) {
-        setStepError("Pick at least one AP course to get started.");
-        return;
-      }
+      // Plan pitch step persists per click; just advance.
       setStep(3);
       return;
     }
     if (step === 3) {
-      const ok = await persistPersonalization();
-      if (!ok) return;
+      if (selectedCourses.length === 0) {
+        setStepError("Pick at least one AP course to get started.");
+        return;
+      }
       setStep(4);
       return;
     }
     if (step === 4) {
-      const ok = await persistTermsAndComplete();
+      const ok = await persistPersonalization();
       if (!ok) return;
       setStep(5);
       return;
     }
     if (step === 5) {
+      const ok = await persistTermsAndComplete();
+      if (!ok) return;
+      setStep(6);
+      return;
+    }
+    if (step === 6) {
       await finishOnboarding();
       return;
     }
@@ -398,6 +479,18 @@ function OnboardingDialog({
             />
           )}
           {step === 1 && (
+            <ProfileStep
+              name={name}
+              avatarEmoji={avatarEmoji}
+              setAvatarEmoji={setAvatarEmoji}
+              avatarColor={avatarColor}
+              setAvatarColor={setAvatarColor}
+              interests={interests}
+              toggleInterest={toggleInterest}
+              uid={uid}
+            />
+          )}
+          {step === 2 && (
             <PlanStep
               choice={planChoice}
               onChoose={(c) => {
@@ -405,7 +498,7 @@ function OnboardingDialog({
               }}
             />
           )}
-          {step === 2 && (
+          {step === 3 && (
             <CoursesStep
               selected={selectedCourses}
               onToggle={toggleCourse}
@@ -413,7 +506,7 @@ function OnboardingDialog({
               planChoice={planChoice}
             />
           )}
-          {step === 3 && (
+          {step === 4 && (
             <PersonalizationStep
               verbosity={verbosity}
               setVerbosity={setVerbosity}
@@ -423,13 +516,13 @@ function OnboardingDialog({
               setPersonality={setPersonality}
             />
           )}
-          {step === 4 && (
+          {step === 5 && (
             <TermsStep
               accepted={acceptedTerms}
               setAccepted={setAcceptedTerms}
             />
           )}
-          {step === 5 && (
+          {step === 6 && (
             <WelcomeStep
               name={name.trim() || "there"}
               planChoice={planChoice}
@@ -461,7 +554,7 @@ function OnboardingDialog({
           >
             {savingStep
               ? "Saving…"
-              : step === 5
+              : step === 6
               ? planChoice === "skip"
                 ? "Jump in"
                 : `Continue to ${planLabel(planChoiceToTier(planChoice))} checkout`
@@ -559,6 +652,145 @@ function NameStep({
               </option>
             ))}
           </select>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProfileStep({
+  name,
+  avatarEmoji,
+  setAvatarEmoji,
+  avatarColor,
+  setAvatarColor,
+  interests,
+  toggleInterest,
+  uid,
+}: {
+  name: string;
+  avatarEmoji: string;
+  setAvatarEmoji: (v: string) => void;
+  avatarColor: string;
+  setAvatarColor: (v: string) => void;
+  interests: string[];
+  toggleInterest: (v: string) => void;
+  uid: string;
+}) {
+  const previewLabel = name.trim() || "you";
+  return (
+    <div>
+      <div className="label mb-2">Your profile</div>
+      <h2 className="font-serif text-3xl font-normal text-ink">
+        Make it look like you.
+      </h2>
+      <p className="mt-3 text-sm text-muted">
+        Pick an avatar and a few interests so the tutor can pull examples that
+        actually click. Both are optional and editable later.
+      </p>
+
+      <div className="mt-6 flex items-center gap-4 rounded-lg border border-hair bg-offwhite p-4">
+        <UserAvatar
+          seed={uid}
+          label={previewLabel}
+          size="xl"
+          emoji={avatarEmoji}
+          color={avatarColor}
+        />
+        <div className="min-w-0">
+          <div className="text-[13px] text-muted">Preview</div>
+          <div className="truncate font-serif text-xl text-ink">
+            {previewLabel}
+          </div>
+          <div className="text-[12px] text-muted">
+            {interests.length === 0
+              ? "Add a few interests below"
+              : interests.join(" · ")}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <div className="label mb-2">Avatar emoji</div>
+        <div className="grid grid-cols-10 gap-1.5">
+          {AVATAR_EMOJI_OPTIONS.map((e) => {
+            const selected = e === avatarEmoji;
+            return (
+              <button
+                key={e}
+                type="button"
+                onClick={() => setAvatarEmoji(e)}
+                aria-pressed={selected}
+                aria-label={`Choose avatar ${e}`}
+                className={`flex h-9 items-center justify-center rounded-md border text-base transition ${
+                  selected
+                    ? "border-orange bg-orange-tint"
+                    : "border-hair bg-paper hover:border-orange"
+                }`}
+              >
+                {e}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <div className="label mb-2">Background color</div>
+        <div className="flex flex-wrap gap-2">
+          {AVATAR_COLOR_OPTIONS.map((c) => {
+            const selected = c === avatarColor;
+            return (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setAvatarColor(c)}
+                aria-pressed={selected}
+                aria-label={`Choose color ${c}`}
+                className={`h-8 w-8 rounded-full border-2 transition ${
+                  selected ? "border-ink" : "border-transparent"
+                }`}
+                style={{ backgroundColor: c }}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <div className="flex items-baseline justify-between">
+          <div className="label">Interests</div>
+          <span className="text-[11px] text-muted">
+            {interests.length} / {MAX_INTERESTS}
+          </span>
+        </div>
+        <p className="mt-1 text-[12px] text-muted">
+          Pick up to {MAX_INTERESTS}. The tutor leans on these when it picks
+          examples and analogies.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {INTEREST_OPTIONS.map((interest) => {
+            const selected = interests.includes(interest);
+            const atLimit = !selected && interests.length >= MAX_INTERESTS;
+            return (
+              <button
+                key={interest}
+                type="button"
+                onClick={() => toggleInterest(interest)}
+                disabled={atLimit}
+                aria-pressed={selected}
+                className={`rounded-full border px-3 py-1.5 text-[12.5px] transition ${
+                  selected
+                    ? "border-orange bg-orange-tint text-ink"
+                    : atLimit
+                    ? "cursor-not-allowed border-hair bg-offwhite text-dim"
+                    : "border-hair bg-paper text-body hover:border-orange"
+                }`}
+              >
+                {interest}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -938,4 +1170,12 @@ function WelcomeTip({ title, body }: { title: string; body: string }) {
       <p className="mt-1 text-[12px] leading-snug text-muted">{body}</p>
     </div>
   );
+}
+
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  }
+  return h;
 }
