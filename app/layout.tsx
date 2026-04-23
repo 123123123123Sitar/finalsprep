@@ -28,11 +28,11 @@ try {
 `;
 
 export const metadata: Metadata = {
-  title: "FinalsPrep - a math & physics tutor that actually explains",
+  title: "FinalsPrep - an AI-powered AP study tutor that actually explains",
   description:
     "Paste a homework problem. Get a patient, step-by-step explanation - written the way a human tutor would. Algebra through calc 2, plus intro physics.",
   openGraph: {
-    title: "FinalsPrep - a math & physics tutor that actually explains",
+    title: "FinalsPrep - an AI-powered AP study tutor that actually explains",
     description:
       "Paste a problem, get a walkthrough. Built by a tutor, not a chatbot company.",
     type: "website",
