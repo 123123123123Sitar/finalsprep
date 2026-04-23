@@ -2939,6 +2939,439 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "ap-physics-2-review-guide",
+    title: "AP Physics 2 Review Guide: All 8 Units Covered",
+    metaTitle: "AP Physics 2 Review Guide: Electricity, Waves, Modern Physics (2026)",
+    description:
+      "A complete AP Physics 2 review covering all 8 units: fluid mechanics, thermodynamics, electricity, magnetism, waves, optics, and modern physics. Key formulas and strategies for a 5.",
+    excerpt:
+      "AP Physics 2 covers electricity, magnetism, thermodynamics, and optics. The exam format is identical to Physics 1: multiple choice, free response, mix of no-calc and calc sections.",
+    date: "2026-04-21",
+    readTime: "14 min read",
+    category: "AP Physics 2",
+    keywords: [
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "science",
+      "STEM",
+    ],
+    author: "FinalsPrep Team",
+    type: "subject",
+    content: [
+      {
+        type: "p",
+        text: "AP Physics 2 covers electricity, magnetism, thermodynamics, and optics. The exam format is identical to Physics 1: multiple choice, free response, mix of no-calc and calc sections. The difference is that Physics 1 tested mechanics while Physics 2 tests everything else.",
+      },
+      { type: "h2", text: "Exam structure" },
+      {
+        type: "ul",
+        items: [
+          "3 hours total: 90 minute Section I (50 multiple choice, split into no-calc 30 questions and calc 20 questions) plus 90 minute Section II (2 long FRQs and 2 short FRQs).",
+          "Both sections equally weighted (50-50). Calculator required for part B.",
+          "Concepts tested: fluids, thermodynamics, electricity, circuits, magnetism, induction, waves, optics, modern physics.",
+        ],
+      },
+      { type: "h2", text: "Unit 1: Fluids" },
+      {
+        type: "p",
+        text: "About 3 to 5 percent of exam. Pressure, buoyancy, continuity, Bernoulli.",
+      },
+      { type: "h2", text: "Unit 2: Thermodynamics" },
+      {
+        type: "p",
+        text: "About 12 to 18 percent of exam. Temperature, heat capacity, phase changes, first and second law, entropy.",
+      },
+      { type: "h2", text: "Unit 3: Electric Charge and Electric Force" },
+      {
+        type: "p",
+        text: "About 12 to 15 percent. Coulomb's law, electric field, electric potential, capacitors.",
+      },
+      { type: "h2", text: "Unit 4: Electric Circuits" },
+      {
+        type: "p",
+        text: "About 10 to 18 percent. Current, resistance, Ohm's law, series and parallel circuits.",
+      },
+      { type: "h2", text: "Unit 5: Magnetism" },
+      {
+        type: "p",
+        text: "About 10 to 12 percent. Magnetic field, forces on moving charges and currents, right-hand rule, torque.",
+      },
+      { type: "h2", text: "Unit 6: Electromagnetic Induction" },
+      {
+        type: "p",
+        text: "About 8 to 10 percent. Magnetic flux, Faraday's law, Lenz's law, transformers.",
+      },
+      { type: "h2", text: "Unit 7: Waves" },
+      {
+        type: "p",
+        text: "About 12 to 16 percent. Wave properties, Doppler effect, interference, resonance.",
+      },
+      { type: "h2", text: "Unit 8: Optics and Modern Physics" },
+      {
+        type: "p",
+        text: "About 10 to 14 percent. Mirrors and lenses, refraction, photoelectric effect, photons.",
+      },
+      { type: "h2", text: "How to score a 5" },
+      {
+        type: "ol",
+        items: [
+          "Master thermodynamics. It is the heaviest unit (12-18 percent) and hardest conceptually.",
+          "Understand electric fields and circuits. Coulomb's law and Ohm's law are foundational.",
+          "Learn Faraday's law and Lenz's law. Induction is on every exam.",
+          "Know the right-hand rule. Magnetic problems become mechanical once you can visualize them.",
+          "Take timed practice exams. Physics 2 is calculation-heavy. Get comfortable with your calculator.",
+        ],
+      },
+      { type: "h2", text: "Common mistakes" },
+      {
+        type: "ul",
+        items: [
+          "Forgetting signs. Charges can be positive or negative. Current and electron flow are opposite directions.",
+          "Confusing Faraday's law signs. Lenz's law is encoded in the minus sign.",
+          "Pressure depends on depth but NOT on container shape (only vertical height).",
+          "Capacitors block DC current. In circuits, a capacitor acts like an open circuit.",
+          "Mixing up series and parallel. Series: voltage divides, current same. Parallel: current divides, voltage same.",
+        ],
+      },
+      {
+        type: "p",
+        text: "Physics 2 is harder than Physics 1 conceptually (electricity and magnetism feel more abstract), but the exam format is identical. Master the concepts and the exam format becomes familiar.",
+      },
+    ],
+  },
+  {
+    slug: "ap-physics-c-mechanics-review-guide",
+    title: "AP Physics C: Mechanics Review Guide",
+    metaTitle: "AP Physics C: Mechanics Review Guide (2026 Exam)",
+    description:
+      "AP Physics C: Mechanics is AP Physics 1 with calculus. Same topics but using derivatives and integrals instead of algebra. Complete review covering kinematics, dynamics, momentum, energy, rotation, and gravitation.",
+    excerpt:
+      "Physics C: Mechanics teaches the same motion and forces as Physics 1, but you describe and solve them with calculus. Velocity is dx/dt. Acceleration is dv/dt.",
+    date: "2026-04-22",
+    readTime: "15 min read",
+    category: "AP Physics C",
+    keywords: [
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "science",
+      "STEM",
+      "calculus",
+    ],
+    author: "FinalsPrep Team",
+    type: "subject",
+    content: [
+      {
+        type: "p",
+        text: "AP Physics C: Mechanics is AP Physics 1 rewritten in calculus. The same topics appear (kinematics, forces, energy, momentum, rotation, gravitation, oscillations), but you use derivatives and integrals to solve them instead of algebra.",
+      },
+      { type: "h2", text: "Exam structure" },
+      {
+        type: "ul",
+        items: [
+          "3 hours 15 minutes total.",
+          "Section I: 35 multiple choice (1 hour 15 minutes, split into no-calc 20 questions and calc 15 questions).",
+          "Section II: 3 free response (1 hour 45 minutes, split no-calc and calc).",
+          "Sections equally weighted (50-50).",
+        ],
+      },
+      { type: "h2", text: "Key differences from Physics 1" },
+      {
+        type: "h3", text: "Calculus notation" },
+      {
+        type: "ul",
+        items: [
+          "Velocity is the derivative: v equals dx slash dt.",
+          "Acceleration is the derivative: a equals dv slash dt.",
+          "Position from acceleration uses integration: x equals the integral of v dt.",
+          "Work equals integral of force: W equals the integral of F dot dx.",
+          "Impulse equals integral of force: J equals the integral of F dt.",
+        ],
+      },
+      { type: "h2", text: "Unit 1: Kinematics" },
+      {
+        type: "p",
+        text: "If acceleration is constant: v equals v0 plus at, x equals x0 plus v0 t plus (one-half) a t squared. If a(t) is given, integrate directly.",
+      },
+      { type: "h2", text: "Unit 2: Newton's Laws" },
+      {
+        type: "p",
+        text: "F equals ma (where a is d squared x slash dt squared). Set up force equation and integrate to find motion.",
+      },
+      { type: "h2", text: "Unit 3: Work and Energy" },
+      {
+        type: "p",
+        text: "W equals integral of F dx. Power equals dW slash dt equals F times v.",
+      },
+      { type: "h2", text: "Unit 4: Momentum and Impulse" },
+      {
+        type: "p",
+        text: "J equals integral of F dt equals change in p. In isolated systems, total momentum is conserved.",
+      },
+      { type: "h2", text: "Unit 5: Rotation" },
+      {
+        type: "p",
+        text: "Omega equals d theta slash dt. Alpha equals d omega slash dt. Tau equals I times alpha (rotational version of F equals m a).",
+      },
+      { type: "h2", text: "Unit 6: Gravitation" },
+      {
+        type: "p",
+        text: "F equals G M m slash r squared. For circular orbit: v equals square root (G M slash r). Escape velocity: v equals square root (2 G M slash r).",
+      },
+      { type: "h2", text: "Unit 7: Oscillations" },
+      {
+        type: "p",
+        text: "SHM: d squared x slash dt squared equals minus (k slash m) x. Solution: x(t) equals A cos(omega t plus phi). Energy oscillates between kinetic and potential.",
+      },
+      { type: "h2", text: "How to score a 5" },
+      {
+        type: "ol",
+        items: [
+          "Understand the relationship between x, v, a. Know when to differentiate and integrate.",
+          "Master setting up F equals ma from free-body diagrams.",
+          "Use energy methods when forces are complicated. Energy conservation is often easier than Newton's second law.",
+          "Know the three big moments of inertia: solid cylinder I equals (one-half) m r squared, hollow cylinder I equals m r squared, solid sphere I equals (two-fifths) m r squared.",
+          "For oscillations, recognize SHM (pendulum, spring) and that period depends on system properties, not amplitude.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "ap-physics-c-electricity-magnetism-review-guide",
+    title: "AP Physics C: Electricity and Magnetism Review Guide",
+    metaTitle: "AP Physics C: E&M Review Guide: Calculus-Based Electromagnetism (2026)",
+    description:
+      "AP Physics C: E&M is AP Physics 2 with calculus. Covers Gauss's law, electric potential, circuits, Ampere's law, Faraday's induction, and Maxwell's equations using differential and integral forms.",
+    excerpt:
+      "Physics C: E&M covers the same electricity and magnetism as Physics 2, but expresses the laws as differential equations. Gauss's law, Ampere's law, Faraday's induction reveal deeper structure.",
+    date: "2026-04-23",
+    readTime: "16 min read",
+    category: "AP Physics C",
+    keywords: [
+      "study guide",
+      "exam prep",
+      "frq strategy",
+      "science",
+      "STEM",
+      "calculus",
+    ],
+    author: "FinalsPrep Team",
+    type: "subject",
+    content: [
+      {
+        type: "p",
+        text: "AP Physics C: E&M covers the same electricity and magnetism as AP Physics 2, but expresses it using calculus (derivatives and integrals). The laws are more abstract but also more elegant and powerful.",
+      },
+      { type: "h2", text: "Exam structure" },
+      {
+        type: "ul",
+        items: [
+          "3 hours total (same format as Physics C: Mechanics).",
+          "Section I: 35 multiple choice (split no-calc and calc).",
+          "Section II: 3 free response (split no-calc and calc).",
+        ],
+      },
+      { type: "h2", text: "Unit 1: Electrostatics" },
+      {
+        type: "h3", text: "Gauss's law and electric fields" },
+      {
+        type: "ul",
+        items: [
+          "Gauss's law: closed integral of E times dA equals Q enclosed slash epsilon 0. Find electric fields from symmetric charge distributions.",
+          "Electric potential: V equals minus integral of E dot dl. Relates field to potential.",
+          "Capacitors: C equals Q slash V. Parallel plate: C equals epsilon 0 A slash d.",
+        ],
+      },
+      { type: "h2", text: "Unit 2: Conductors and Dielectrics" },
+      {
+        type: "p",
+        text: "Inside a conductor in equilibrium: E equals 0. All charge resides on surface. Dielectrics increase capacitance.",
+      },
+      { type: "h2", text: "Unit 3: Electric Circuits" },
+      {
+        type: "ul",
+        items: [
+          "Ohm's law: V equals I R. Power: P equals I V.",
+          "Kirchhoff's rules: currents sum to zero at junctions. Voltages sum to zero in loops.",
+          "RC circuits: Q(t) equals Q max (1 minus e to the minus t slash (RC)). Time constant tau equals RC.",
+        ],
+      },
+      { type: "h2", text: "Unit 4: Magnetism and Ampere's Law" },
+      {
+        type: "h3", text: "Magnetic fields from currents" },
+      {
+        type: "ul",
+        items: [
+          "Ampere's law: closed integral of B times dl equals mu 0 I enclosed. Find magnetic fields from symmetric current distributions.",
+          "Long straight wire: B equals mu 0 I slash (2 pi r).",
+          "Solenoid: B equals mu 0 n I (where n is turns per unit length).",
+        ],
+      },
+      { type: "h2", text: "Unit 5: Electromagnetic Induction" },
+      {
+        type: "h3", text: "Faraday's law and Maxwell equations" },
+      {
+        type: "ul",
+        items: [
+          "Faraday's law: closed integral of E times dl equals minus d(Phi B) slash dt. Changing magnetic flux induces electric field.",
+          "Lenz's law: induced effects oppose the change.",
+          "Self-inductance: EMF equals minus L d I slash dt.",
+          "Maxwell's equations unify electricity and magnetism into four laws.",
+        ],
+      },
+      { type: "h2", text: "How to score a 5" },
+      {
+        type: "ol",
+        items: [
+          "Gauss's law simplifies many problems. Use it whenever there is symmetry.",
+          "Faraday's law appears on every exam. Recognize scenarios where flux changes and predict induced fields.",
+          "Understand Ampere's law. It is the magnetic analog of Gauss's law.",
+          "Know RC and LC circuits: time constants and oscillation frequencies.",
+          "The minus sign in Faraday's law is Lenz's law. Do not forget it.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "ap-computer-science-principles-review-guide",
+    title: "AP Computer Science Principles Review Guide",
+    metaTitle: "AP CSP Review: Seven Big Ideas, Performance Task, and Exam (2026)",
+    description:
+      "AP Computer Science Principles review covering the 7 big ideas (creativity, abstraction, data, algorithms, programming, internet, impact), the performance task (30 percent), and written exam strategies.",
+    excerpt:
+      "AP CSP tests computational thinking, not syntax. Create a program, document it (30 percent of grade), then take a written exam (70 percent). Master the seven big ideas and you score well.",
+    date: "2026-04-24",
+    readTime: "12 min read",
+    category: "AP Computer Science Principles",
+    keywords: [
+      "study guide",
+      "exam prep",
+      "computer science",
+      "STEM",
+    ],
+    author: "FinalsPrep Team",
+    type: "subject",
+    content: [
+      {
+        type: "p",
+        text: "AP Computer Science Principles tests whether you understand computational thinking and the impact of computing on society, not whether you can write error-free code in one language. The course and exam are split 30-70: 30 percent is the performance task (design and create a program), 70 percent is the written exam (60-70 multiple choice).",
+      },
+      { type: "h2", text: "Exam structure" },
+      {
+        type: "h3", text: "Performance task (30 percent)" },
+      {
+        type: "ul",
+        items: [
+          "Create a useful program: game, tool, visualization, data analyzer, etc.",
+          "10 hours of class time to design, code, and test.",
+          "Document your process: planning, design choices, code, testing evidence.",
+          "Rubric assesses program functionality, code clarity, design thinking, and documentation.",
+        ],
+      },
+      { type: "h3", text: "Written exam (70 percent)" },
+      {
+        type: "ul",
+        items: [
+          "60-70 multiple choice questions.",
+          "2 hours.",
+          "Covers all seven big ideas and their applications.",
+        ],
+      },
+      { type: "h2", text: "The seven big ideas" },
+      {
+        type: "h3", text: "1. Creativity: computing as creative tool" },
+      {
+        type: "p",
+        text: "Programs solve problems and create experiences. Computational thinking: break problems into parts, find patterns, design algorithms, test and iterate.",
+      },
+      { type: "h3", text: "2. Abstraction: layers hide complexity" },
+      {
+        type: "ul",
+        items: [
+          "Variables encapsulate values.",
+          "Functions encapsulate logic.",
+          "APIs and libraries encapsulate complex systems.",
+          "You use abstraction without knowing implementation details.",
+        ],
+      },
+      { type: "h3", text: "3. Data: represent and analyze information" },
+      {
+        type: "ul",
+        items: [
+          "Bits and bytes: fundamental units. 8 bits equals 1 byte.",
+          "Data types: integers, floating-point, strings, booleans, images, audio.",
+          "Data structures: arrays, lists, dictionaries, records.",
+          "Searching and sorting: linear search O(n), binary search O(log n), merge sort O(n log n).",
+        ],
+      },
+      { type: "h3", text: "4. Algorithms: step-by-step procedures" },
+      {
+        type: "ul",
+        items: [
+          "Sequence: do A then B.",
+          "Selection: if condition then A else B.",
+          "Iteration: repeat while or for loop.",
+          "Big O: classify runtime. O(1) constant, O(n) linear, O(n squared) quadratic, O(2 to the n) exponential.",
+        ],
+      },
+      { type: "h3", text: "5. Programming: code as expression" },
+      {
+        type: "p",
+        text: "Syntax differs by language. Logic does not. Exam uses pseudocode or Python, not exact syntax. Debugging: read errors, trace code, test assumptions.",
+      },
+      { type: "h3", text: "6. Internet: distributed systems" },
+      {
+        type: "ul",
+        items: [
+          "Packets: data chopped up with headers and routed to destination.",
+          "Protocols: standards for communication (HTTP, TCP slash IP, DNS).",
+          "Bandwidth: data per second. Latency: delay in milliseconds.",
+          "Encryption: scramble data so only intended recipients can read it.",
+          "Cybersecurity: passwords, two-factor, firewalls, updates.",
+        ],
+      },
+      { type: "h3", text: "7. Impact: computing and society" },
+      {
+        type: "ul",
+        items: [
+          "Accessibility: is the software usable by everyone?",
+          "Privacy: what data is collected and shared?",
+          "Bias in algorithms: garbage data produces biased algorithms.",
+          "Digital divide: not everyone has internet access.",
+          "Environmental: data centers consume power. Efficiency saves energy.",
+          "IP and open source: who owns software? What are you allowed to do with it?",
+        ],
+      },
+      { type: "h2", text: "How to score a 5" },
+      {
+        type: "ol",
+        items: [
+          "Performance task: build something you believe in. Document it thoroughly. Passion counts.",
+          "Study the seven big ideas. They connect every exam question.",
+          "Learn Big O notation. Understand O(n) vs O(n squared) vs O(log n). The exam tests this constantly.",
+          "Know binary, internet basics (packets, DNS, encryption), and algorithms (sorting, searching).",
+          "Impact big idea is 15-20 percent of exam. Real-world consequences matter: privacy, bias, accessibility.",
+        ],
+      },
+      { type: "h2", text: "Common mistakes" },
+      {
+        type: "ul",
+        items: [
+          "Obsessing over perfect syntax. The exam grades logic, not error-free code.",
+          "Performance task too simple (hello world) or too ambitious (unfinished). Build something moderate and complete it.",
+          "Confusing bandwidth and latency. Bandwidth is capacity (how much), latency is delay (how fast).",
+          "Forgetting the impact big idea. It is 15-20 percent of the exam, not optional.",
+          "Thinking CSP is just binary or just programming. It is about computational thinking across all domains.",
+        ],
+      },
+      {
+        type: "p",
+        text: "AP Computer Science Principles rewards computational thinking and an understanding of computing's power and limits. Master the seven big ideas and the exam becomes straightforward.",
+      },
+    ],
+  },
 ];
 
 // Sorts newest first by date for the blog index page.

@@ -152,9 +152,25 @@ export default function BlogIndexPage() {
               Unit-by-unit reviews for every major AP course, with the
               skills, formulas, and FRQ patterns that earn the points.
             </p>
-            <div className="mt-8 grid gap-[1px] overflow-hidden rounded-xl border border-hair bg-hair sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 divide-y divide-hair border border-hair rounded-xl overflow-hidden">
               {subjectPosts.map((post) => (
-                <ReviewGuideCard key={post.slug} post={post} />
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group flex items-center justify-between bg-paper px-6 py-4 transition hover:bg-offwhite/60"
+                >
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-[11px] uppercase tracking-[0.18em] text-orange-ink/70 flex-shrink-0">
+                      {post.category}
+                    </span>
+                    <h3 className="font-serif text-[16px] font-normal text-ink transition group-hover:text-orange-ink">
+                      {post.title}
+                    </h3>
+                  </div>
+                  <span className="text-[12px] text-muted flex-shrink-0 ml-4">
+                    {post.readTime}
+                  </span>
+                </Link>
               ))}
             </div>
           </section>

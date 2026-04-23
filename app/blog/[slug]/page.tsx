@@ -128,8 +128,52 @@ export default function BlogPostPage({ params }: Props) {
         </div>
       </div>
 
-      <article className="mx-auto max-w-3xl px-6 pt-10 pb-12 sm:pt-14">
-        <header>
+      <div className="flex gap-8 mx-auto max-w-7xl px-6 pt-10 pb-12 sm:pt-14">
+        {/* Table of Contents Sidebar */}
+        <aside className="hidden lg:block flex-shrink-0 w-56">
+          <div className="sticky top-20">
+            <nav className="text-[13px]">
+              <div className="mb-4 text-[11px] uppercase tracking-[0.18em] text-muted font-medium">
+                On this page
+              </div>
+              <ul className="space-y-2">
+                {post.content.map((section, i) => {
+                  if (section.type === "h2") {
+                    const slug = headingToSlug(section.text);
+                    return (
+                      <li key={i}>
+                        <a
+                          href={`#${slug}`}
+                          className="text-body hover:text-orange-ink transition"
+                        >
+                          {section.text}
+                        </a>
+                      </li>
+                    );
+                  }
+                  if (section.type === "h3") {
+                    const slug = headingToSlug(section.text);
+                    return (
+                      <li key={i} className="ml-3">
+                        <a
+                          href={`#${slug}`}
+                          className="text-muted hover:text-orange-ink transition"
+                        >
+                          {section.text}
+                        </a>
+                      </li>
+                    );
+                  }
+                  return null;
+                })}
+              </ul>
+            </nav>
+          </div>
+        </aside>
+
+        {/* Main Article */}
+        <article className="flex-1 min-w-0">
+          <header>
           <div className="flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-muted">
             <span className="rounded-full bg-orange-tint px-2.5 py-1 text-orange-ink">
               {post.category}
@@ -210,14 +254,15 @@ export default function BlogPostPage({ params }: Props) {
             Join the discussion ↓
           </a>
         </div>
-      </article>
+        </article>
+      </div>
 
       {/* Comments section. Client component so it can manage auth + fetch. */}
       <BlogComments blogSlug={post.slug} />
 
       {/* End-of-post CTA. */}
       <section className="border-y border-hair bg-offwhite/50">
-        <div className="mx-auto max-w-3xl px-6 py-14 text-center">
+        <div className="mx-auto max-w-7xl px-6 py-14 text-center">
           <div className="label mb-3">Try it while it's fresh</div>
           <h2 className="font-serif text-3xl font-normal text-ink">
             Walk through your next AP problem with the tutor.
@@ -239,7 +284,7 @@ export default function BlogPostPage({ params }: Props) {
       </section>
 
       {related.length > 0 && (
-        <section className="mx-auto max-w-5xl px-6 py-14">
+        <section className="mx-auto max-w-7xl px-6 py-14">
           <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-muted">
             <span className="h-px w-8 bg-hair" aria-hidden />
             <span>Keep reading</span>
@@ -319,13 +364,19 @@ function Section({
       return <p className="text-body">{section.text}</p>;
     case "h2":
       return (
-        <h2 className="mt-12 border-t border-hair pt-8 font-serif text-2xl font-normal leading-tight text-ink sm:text-3xl">
+        <h2
+          id={headingToSlug(section.text)}
+          className="mt-12 border-t border-hair pt-8 font-serif text-2xl font-normal leading-tight text-ink sm:text-3xl scroll-mt-20"
+        >
           {section.text}
         </h2>
       );
     case "h3":
       return (
-        <h3 className="mt-6 font-serif text-xl font-normal leading-tight text-ink">
+        <h3
+          id={headingToSlug(section.text)}
+          className="mt-6 font-serif text-xl font-normal leading-tight text-ink scroll-mt-20"
+        >
           {section.text}
         </h3>
       );
@@ -391,6 +442,14 @@ function Section({
         </div>
       );
   }
+}
+
+function headingToSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 }
 
 function formatDate(iso: string): string {
