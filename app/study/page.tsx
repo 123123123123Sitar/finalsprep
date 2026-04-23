@@ -57,6 +57,8 @@ import {
   setLessonCompleted,
   subscribeCompletedSlugs,
 } from "@/lib/progress";
+import { getMcqsFor, hasMcqs, PRIMARY_COUNT } from "@/lib/mcqs";
+import { Quiz } from "@/app/components/Quiz";
 import { recordActivityClient } from "@/lib/activityClient";
 import { useAuth } from "@/app/components/AuthProvider";
 import type { PlanTier } from "@/lib/plans";
@@ -1436,7 +1438,38 @@ function LessonPanel({
         </button>
       </div>
 
-      {uid && (
+      {uid && hasMcqs(lesson.slug) && (
+        <div className="mt-8">
+          <Quiz
+            lessonSlug={lesson.slug}
+            pool={getMcqsFor(lesson.slug)}
+            isCompleted={isCompleted}
+            onPass={async () => {
+              if (!isCompleted) {
+                const db = getDb();
+                if (db) {
+                  setIsCompleted(true);
+                  try {
+                    await setLessonCompleted(db, uid, lesson.slug, true);
+                    void postScoreEvent(getIdToken, courseSlug, "lesson_complete", {
+                      lessonTitle: lesson.title,
+                    });
+                    void recordActivityClient(getIdToken);
+                  } catch (e: any) {
+                    setIsCompleted(false);
+                    setWriteError(e?.message || "couldn't save");
+                  }
+                }
+              }
+            }}
+          />
+          {writeError && (
+            <div className="mt-2 text-[12px] text-red-600">{writeError}</div>
+          )}
+        </div>
+      )}
+
+      {uid && !hasMcqs(lesson.slug) && (
         <div className="mt-8 flex items-center justify-between gap-3 rounded-lg border border-hair bg-paper p-4">
           <div>
             <div className="label">Lesson progress</div>
