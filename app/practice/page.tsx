@@ -460,11 +460,6 @@ function ExamsTab() {
         >
           Generate exam
         </button>
-        <p className="text-xs text-muted">
-          Costs daily tokens (then bonus tokens). A full-length exam can run
-          several thousand tokens — a 10 MCQ / 1 FRQ warm-up usually costs
-          ~1,000–1,500.
-        </p>
       </div>
     );
   }
