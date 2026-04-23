@@ -11,6 +11,13 @@ import VoiceCinema from "@/app/components/VoiceCinema";
 import AuroraBackground from "@/app/components/AuroraBackground";
 import MarketingBackground from "@/app/components/MarketingBackground";
 import { firstApExamDate } from "@/lib/examDates";
+// Blog posts are imported here so the marketing page can show recent
+// articles inline. The data is static so the bundle cost is trivial
+// and the posts get pre-rendered into the HTML.
+import {
+  getGeneralPostsSorted,
+  getSubjectPostsSorted,
+} from "@/lib/blogPosts";
 
 /**
  * Home route. Auth-aware: while Firebase is still resolving we render a
@@ -227,6 +234,7 @@ function MarketingHome() {
           { href: "#features", label: "Features" },
           { href: "#coverage", label: "Coverage" },
           { href: "#price", label: "Pricing" },
+          { href: "/blog", label: "Blog" },
           { href: "#faq", label: "FAQ" },
         ]}
       />
@@ -955,6 +963,14 @@ function MarketingHome() {
 
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
+      {/* BLOG - surfaces the three most recent study guides from the
+          /blog index. Lives at the end of the marketing funnel so warm
+          visitors who are not ready to sign up still have a reason to
+          come back. */}
+      <BlogPreviewSection />
+
+      <div aria-hidden className="section-divider mx-auto max-w-5xl" />
+
       {/* CLOSING */}
       <section className="marquee-bg relative mx-auto max-w-5xl px-6 py-24 sm:py-32">
         <Reveal from="scale">
@@ -993,6 +1009,7 @@ function MarketingHome() {
           <div className="flex gap-4">
             <a href="/contact" className="hover:text-ink">Contact</a>
             <a href="/study" className="hover:text-ink">Study tool</a>
+            <a href="/blog" className="hover:text-ink">Blog</a>
             <a href="#price" className="hover:text-ink">Pricing</a>
             <a href="/privacy" className="hover:text-ink">Privacy</a>
             <a href="/terms" className="hover:text-ink">Terms</a>
@@ -1001,6 +1018,139 @@ function MarketingHome() {
       </footer>
     </main>
   );
+}
+
+/**
+ * Blog preview section rendered near the end of the marketing page. Has
+ * two tiers matching the blog index: featured general posts (study
+ * strategy, exam day), and a smaller grid of subject-specific review
+ * guides underneath. General posts get the prominent slot because they
+ * apply to every visitor regardless of which AP they are studying for.
+ */
+function BlogPreviewSection() {
+  // Feature the three most recent general articles prominently, then
+  // surface three subject review guides as secondary cards so both
+  // tiers are represented.
+  const featured = getGeneralPostsSorted().slice(0, 3);
+  const guides = getSubjectPostsSorted().slice(0, 3);
+  if (featured.length === 0 && guides.length === 0) return null;
+  return (
+    <section className="mx-auto max-w-6xl px-6 py-20">
+      <Reveal from="up">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <div className="label mb-3">From the blog</div>
+            <h2 className="font-serif text-4xl font-normal leading-[1.05] tracking-tight text-ink sm:text-5xl">
+              Study plans and
+              <br />
+              <span className="italic">AP review guides</span>.
+            </h2>
+            <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-body">
+              Practical study plans for every AP student, plus
+              unit-by-unit review guides for every major AP course.
+              No filler, no padding.
+            </p>
+          </div>
+          <a
+            href="/blog"
+            className="inline-flex items-center gap-1 text-sm font-medium text-orange-ink hover:underline"
+          >
+            See all articles
+            <span aria-hidden>→</span>
+          </a>
+        </div>
+      </Reveal>
+
+      {/* Featured general articles: larger cards, top tier. */}
+      {featured.length > 0 && (
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {featured.map((post, i) => (
+            <Reveal key={post.slug} from="up" delay={i * 80}>
+              <a
+                href={`/blog/${post.slug}`}
+                className="tilt-card group flex h-full flex-col rounded-xl border border-hair bg-paper/90 p-6 backdrop-blur-sm hover:border-orange/50"
+              >
+                <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-wider text-muted">
+                  <span className="rounded-full bg-orange/10 px-2 py-0.5 text-orange-ink">
+                    Strategy
+                  </span>
+                  <span aria-hidden>·</span>
+                  <time dateTime={post.date}>
+                    {formatBlogDate(post.date)}
+                  </time>
+                </div>
+                <h3 className="mt-3 font-serif text-lg font-normal leading-snug text-ink transition group-hover:text-orange-ink">
+                  {post.title}
+                </h3>
+                <p className="mt-3 flex-1 text-[14px] leading-relaxed text-body">
+                  {post.excerpt}
+                </p>
+                <div className="mt-5 flex items-center justify-between text-[12px] text-muted">
+                  <span>{post.readTime}</span>
+                  <span className="font-medium text-orange-ink transition group-hover:translate-x-0.5">
+                    Read →
+                  </span>
+                </div>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      )}
+
+      {/* Subject-specific review guides: smaller secondary strip so
+          visitors can see we cover their course without crowding out
+          the featured general content. */}
+      {guides.length > 0 && (
+        <div className="mt-10">
+          <div className="mb-3 flex items-baseline justify-between">
+            <div className="label">Review guides by subject</div>
+            <a
+              href="/blog#review-guides"
+              className="text-[12px] text-orange-ink hover:underline"
+            >
+              See all 16 review guides →
+            </a>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {guides.map((post) => (
+              <a
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="group flex items-start gap-3 rounded-lg border border-hair bg-paper/80 p-4 backdrop-blur-sm transition hover:border-orange/40"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="text-[10px] uppercase tracking-wider text-orange-ink/80">
+                    {post.category}
+                  </div>
+                  <div className="mt-1 font-serif text-[15px] leading-snug text-ink transition group-hover:text-orange-ink">
+                    {post.title}
+                  </div>
+                </div>
+                <span
+                  aria-hidden
+                  className="mt-1 text-orange-ink transition group-hover:translate-x-0.5"
+                >
+                  →
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// Dates render as "April 10, 2026". Kept colocated with the section
+// that uses it rather than imported, since this is the only caller on
+// the marketing page.
+function formatBlogDate(iso: string): string {
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function FeaturePreview({

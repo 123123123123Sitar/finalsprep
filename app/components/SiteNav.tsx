@@ -21,10 +21,13 @@ const PRIMARY_LINKS: NavLinkDef[] = [
 ];
 
 // Secondary destinations shown only in the mobile menu and the account dropdown.
+// Blog lives here rather than in PRIMARY_LINKS so the main bar stays lean,
+// but it still surfaces in the mobile hamburger.
 const SECONDARY_LINKS: NavLinkDef[] = [
   { href: "/interactives", label: "Interactives" },
   { href: "/messages", label: "Messages" },
   { href: "/schedule", label: "Schedule" },
+  { href: "/blog", label: "Blog" },
   { href: "/shop", label: "Shop" },
 ];
 
@@ -443,6 +446,18 @@ function AccountMenu({
               className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
             >
               <span>Interactives</span>
+              <span aria-hidden="true" className="text-dim">
+                ›
+              </span>
+            </a>
+            {/* Blog link: exposed in the account dropdown so signed-in
+                users on desktop can still reach study guides without a
+                trip back to the marketing page. */}
+            <a
+              href="/blog"
+              className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
+            >
+              <span>Blog</span>
               <span aria-hidden="true" className="text-dim">
                 ›
               </span>
