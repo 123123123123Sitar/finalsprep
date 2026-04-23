@@ -701,7 +701,7 @@ function MarketingHome() {
             }}
             className="tilt-card spotlight-card relative h-full rounded-xl border-2 border-ink bg-paper/95 p-7 shadow-[0_20px_60px_-28px_rgba(0,0,0,0.35)] backdrop-blur-sm"
           >
-            <span className="absolute right-4 top-4 animate-bounceIn rounded-full bg-orange px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+            <span className="absolute left-1/2 -top-3 -translate-x-1/2 animate-bounceIn whitespace-nowrap rounded-full bg-orange px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white shadow-[0_4px_12px_-2px_rgba(0,0,0,0.25)]">
               Most popular
             </span>
             <div className="label">Pro</div>
