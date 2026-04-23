@@ -86,6 +86,8 @@ function buildSystemPrompt(
   examTitle: string,
   isHistory: boolean,
   isCsp: boolean,
+  isCs: boolean,
+  isMathOrScience: boolean,
   frqParts: { label: string; count: number; minutes: number }[],
   mcqSeconds: number
 ) {
@@ -112,7 +114,8 @@ ${frqParts.map((p) => `    • ${p.count}× ${p.label} (${p.minutes} min total)`
 - Typical College Board FRQ part phrasing: "Calculate…", "Justify your answer…", "Explain, in terms of …", "Describe a procedure that would…", "Draw and label…".
 ${isScienceOrMath ? "- For math/science FRQs, require the student to show work and state units. When calculators are normally allowed for a part, say so." : ""}
 - Rubric text must be scoring criteria a grader can mechanically check, one bullet per earned point, in the form "1 pt: [exact criterion]".
-- Total points per FRQ should be realistic (typically 10 pts for AP math/sci FRQs; 4–10 for short, 20+ for AP Chem Q1/Q2). Match the course's actual conventions.`;
+- Total points per FRQ should be realistic (typically 10 pts for AP math/sci FRQs; 4–10 for short, 20+ for AP Chem Q1/Q2). Match the course's actual conventions.
+- FRQ prompts may use the same LaTeX + code rendering rules as MCQs.`;
   })();
 
   const cspNote = isCsp
@@ -144,8 +147,30 @@ MCQ RULES (${mcqCount} items)
 - Avoid "all of the above" / "none of the above" and negatively-phrased stems unless the official AP style uses them for this course.
 - Expected pacing: about ${mcqSeconds}s per MCQ on the real exam, so calibrate the reasoning load accordingly.
 - For math/science MCQs, include numeric distractors that reflect specific computational mistakes (off by a factor of 2, wrong sign, forgot to square, etc.), not random numbers.
-- Use plain-text math. Write powers as "x^2", fractions inline as "(3/4)", Greek letters spelled out ("theta", "Delta H"). Do NOT use LaTeX delimiters.
 - The "explanation" field is a 1–3 sentence rationale that cites WHY the correct answer is right AND names the misconception behind the most tempting distractor.
+
+RENDERING — MATH (KaTeX) ${
+    isMathOrScience ? "REQUIRED" : "allowed when natural"
+  }
+- Inline math: wrap in single dollar signs, e.g. $f(x) = 2x^2 - 5x$, $\\theta = \\pi/4$, $\\Delta H = -285 \\text{ kJ}$.
+- Display math: wrap in double dollar signs on their own lines: $$\\int_0^\\pi \\sin x\\, dx = 2$$.
+- Use real LaTeX commands: \\frac{a}{b}, \\sqrt{x}, x^{2}, x_{n+1}, \\vec{v}, \\hat{i}, \\int, \\sum, \\lim_{x \\to 0}, \\pi, \\theta, \\Delta, \\epsilon_0, \\mu, \\approx, \\leq, \\geq, \\cdot, \\times.
+- Units outside math or inside \\text{}. Example: "the block has mass $m = 2.0 \\text{ kg}$".
+- Never write LaTeX without delimiters (no bare \\frac in prose).
+
+RENDERING — CODE ${
+    isCs ? "REQUIRED for any code" : "only if directly relevant"
+  }
+- Inline code (identifiers, method names, single expressions): wrap in backticks, e.g. \`ArrayList<Integer>\`, \`numbers[0]\`, \`while (i < n)\`, \`public static int sum(int[] a)\`.
+- Multi-line code: use fenced blocks with a language tag on its own line. ${
+    isCsp
+      ? "AP CSP uses College Board pseudocode — tag fences with pseudocode, e.g. ```pseudocode … ```. Use the CED operators (DISPLAY, INPUT, PROCEDURE, REPEAT n TIMES, IF/ELSE, ← for assignment)."
+      : isCs
+      ? "AP CS A is Java — tag fences with java, e.g. ```java\\nfor (int i = 0; i < n; i++) { … }\\n```."
+      : "Use the language tag java, python, or pseudocode as appropriate."
+  }
+- Always escape JSON correctly: newlines inside the code block are written as \\n, backticks are literal (no extra escaping needed inside strings since backticks aren't JSON-special).
+- Prefer inline \`code\` for single identifiers. Reserve fenced blocks for ≥2 lines of code or when asking students to trace execution.
 
 ${frqSectionGuidance}${cspNote}
 
@@ -190,7 +215,7 @@ HARD REQUIREMENTS (violating these means a broken exam):
 - Each FRQ's totalPoints equals the sum of its parts' points.
 - No duplicate stems across the exam.
 - All numeric facts must be correct to 3 significant figures.
-- Use ASCII only; escape newlines in JSON strings as \\n.`;
+- Escape newlines in JSON strings as \\n and backslashes as \\\\ (LaTeX commands therefore look like "\\\\frac{a}{b}" inside JSON).`;
 }
 
 function extractJson(text: string): any | null {
@@ -371,6 +396,9 @@ export async function POST(req: Request) {
 
   const isHistory = /history/i.test(course.title);
   const isCsp = courseSlug === "ap-cs-principles";
+  const isCs = courseSlug === "ap-cs-a" || isCsp;
+  const isMathOrScience =
+    /precalc|calc|stat|physics|chem|bio|environ/i.test(courseSlug);
   const systemPrompt = buildSystemPrompt(
     course,
     mcqCount,
@@ -379,6 +407,8 @@ export async function POST(req: Request) {
     spec.title,
     isHistory,
     isCsp,
+    isCs,
+    isMathOrScience,
     spec.frq.parts,
     spec.mcq.secondsPerQuestion
   );

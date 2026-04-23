@@ -11,10 +11,17 @@ import { autoLatex } from "@/lib/autoLatex";
  * implementation; we don't accept user-authored markdown here so we can
  * skip the long-tail edge cases.
  */
-export default function Markdown({ children }: { children: string }) {
+export default function Markdown({
+  children,
+  className = "space-y-3 text-[15.5px] leading-relaxed",
+}: {
+  children: string;
+  /** Override the outer wrapper classes (defaults to chat sizing). */
+  className?: string;
+}) {
   const blocks = useMemo(() => parseBlocks(children ?? ""), [children]);
   return (
-    <div className="space-y-3 text-[15.5px] leading-relaxed">
+    <div className={className}>
       {blocks.map((b, i) => renderBlock(b, i))}
     </div>
   );

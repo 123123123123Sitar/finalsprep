@@ -13,6 +13,7 @@ import {
   type PastFrq,
 } from "@/lib/pastFrqs";
 import { AP_EXAM_SPECS, scaledTimerMinutes } from "@/lib/apExamSpec";
+import Markdown from "@/app/components/Markdown";
 
 type Tab = "exams" | "frqs";
 
@@ -655,21 +656,27 @@ function ExamsTab() {
                     {q.unit ? ` · ${q.unit}` : ""}
                   </div>
                 </div>
-                <div className="whitespace-pre-wrap text-[14px] text-ink">{q.prompt}</div>
+                <Markdown className="space-y-2 text-[14px] leading-relaxed text-ink">
+                  {q.prompt}
+                </Markdown>
                 <ul className="mt-2 space-y-1 text-[13px]">
                   {q.choices.map((c) => (
                     <li
                       key={c.letter}
-                      className={
+                      className={`flex gap-2 ${
                         c.letter === q.correct
                           ? "font-semibold text-green-800"
                           : c.letter === picked
                           ? "text-red-800 line-through"
                           : "text-muted"
-                      }
+                      }`}
                     >
-                      <span className="mr-2 inline-block w-5">{c.letter}.</span>
-                      {c.text}
+                      <span className="w-5 shrink-0">{c.letter}.</span>
+                      <div className="min-w-0 flex-1">
+                        <Markdown className="space-y-1 text-[13px] leading-relaxed">
+                          {c.text}
+                        </Markdown>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -678,8 +685,10 @@ function ExamsTab() {
                   <strong>{q.correct}</strong>
                 </div>
                 {q.explanation && (
-                  <div className="mt-2 rounded-md bg-paper/80 p-2 text-[12px] text-body">
-                    {q.explanation}
+                  <div className="mt-2 rounded-md bg-paper/80 p-2">
+                    <Markdown className="space-y-1 text-[12px] leading-relaxed text-body">
+                      {q.explanation}
+                    </Markdown>
                   </div>
                 )}
               </div>
@@ -705,9 +714,9 @@ function ExamsTab() {
                 </div>
               </div>
               {f.prompt && (
-                <div className="whitespace-pre-wrap text-[14px] text-ink">
+                <Markdown className="space-y-2 text-[14px] leading-relaxed text-ink">
                   {f.prompt}
-                </div>
+                </Markdown>
               )}
               <div className="mt-3 border-t border-hair pt-3">
                 <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">
@@ -723,12 +732,16 @@ function ExamsTab() {
                     <div className="text-[11px] font-semibold uppercase tracking-wider text-orange-ink">
                       {p.label} · {p.points} pt{p.points === 1 ? "" : "s"}
                     </div>
-                    <div className="whitespace-pre-wrap text-[13px] text-ink">
+                    <Markdown className="space-y-1 text-[13px] leading-relaxed text-ink">
                       {p.prompt}
-                    </div>
-                    <div className="mt-1 whitespace-pre-wrap rounded-md bg-offwhite p-2 text-[12px] text-muted">
-                      Rubric:{"\n"}
-                      {p.rubric}
+                    </Markdown>
+                    <div className="mt-1 rounded-md bg-offwhite p-2">
+                      <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+                        Rubric
+                      </div>
+                      <Markdown className="mt-1 space-y-1 text-[12px] leading-relaxed text-muted">
+                        {p.rubric}
+                      </Markdown>
                     </div>
                   </div>
                 ))}
@@ -781,9 +794,9 @@ function McqQuestionCard({
             )}
           </div>
         </div>
-        <div className="whitespace-pre-wrap text-[16px] leading-relaxed text-ink">
+        <Markdown className="space-y-3 text-[16px] leading-relaxed text-ink">
           {q.prompt}
-        </div>
+        </Markdown>
       </div>
 
       <div className="space-y-2">
@@ -808,7 +821,11 @@ function McqQuestionCard({
               >
                 {c.letter}
               </span>
-              <span className="text-[14px] text-ink">{c.text}</span>
+              <div className="min-w-0 flex-1">
+                <Markdown className="space-y-1 text-[14px] leading-relaxed text-ink">
+                  {c.text}
+                </Markdown>
+              </div>
             </button>
           );
         })}
@@ -851,9 +868,9 @@ function FrqQuestionCard({
           </div>
         </div>
         {q.prompt && (
-          <div className="whitespace-pre-wrap text-[15px] leading-relaxed text-ink">
+          <Markdown className="space-y-3 text-[15px] leading-relaxed text-ink">
             {q.prompt}
-          </div>
+          </Markdown>
         )}
         <div className="mt-4 space-y-3 border-t border-hair pt-4">
           {q.parts.map((p) => (
@@ -861,9 +878,9 @@ function FrqQuestionCard({
               <div className="text-[11px] font-semibold uppercase tracking-wider text-orange-ink">
                 {p.label} · {p.points} pt{p.points === 1 ? "" : "s"}
               </div>
-              <div className="mt-1 whitespace-pre-wrap text-[14px] text-ink">
+              <Markdown className="mt-1 space-y-2 text-[14px] leading-relaxed text-ink">
                 {p.prompt}
-              </div>
+              </Markdown>
             </div>
           ))}
         </div>
@@ -972,9 +989,9 @@ function FrqsTab() {
           </div>
           <h3 className="mt-1 font-serif text-2xl text-ink">{active.topic}</h3>
           {active.prompt && (
-            <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-body">
+            <Markdown className="mt-3 space-y-2 text-[14px] leading-relaxed text-body">
               {active.prompt}
-            </p>
+            </Markdown>
           )}
           <div className="mt-5 space-y-4 border-t border-hair pt-4">
             {active.parts.map((p) => (
@@ -982,9 +999,9 @@ function FrqsTab() {
                 <div className="text-[11px] font-semibold uppercase tracking-wider text-orange-ink">
                   {p.label} · {p.points} pt{p.points === 1 ? "" : "s"}
                 </div>
-                <div className="mt-1 whitespace-pre-wrap text-[14px] text-ink">
+                <Markdown className="mt-1 space-y-1 text-[14px] leading-relaxed text-ink">
                   {p.prompt}
-                </div>
+                </Markdown>
               </div>
             ))}
           </div>
