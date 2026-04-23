@@ -62,7 +62,8 @@ type UsageData = {
 };
 
 export default function Dashboard() {
-  const { user, loading: authLoading, plan, planLoading, streak, getIdToken } = useAuth();
+  const { user, loading: authLoading, plan, planLoading, streak, getIdToken, profile } =
+    useAuth();
   const [bonusBalance, setBonusBalance] = useState<number | null>(null);
   const [usage, setUsage] = useState<UsageData | null>(null);
   const [recent, setRecent] = useState<StoredConversation[] | null>(null);
@@ -79,12 +80,14 @@ export default function Dashboard() {
   const [completedSlugs, setCompletedSlugs] = useState<Set<string>>(new Set());
 
   const displayName = useMemo(() => {
+    const profileName = profile?.displayName?.trim();
+    if (profileName) return profileName.split(" ")[0];
     const dn = user?.displayName?.trim();
     if (dn) return dn.split(" ")[0];
     const email = user?.email ?? "";
     const local = email.split("@")[0];
     return local || "there";
-  }, [user]);
+  }, [user, profile]);
 
   useEffect(() => {
     if (!user) return;
@@ -289,7 +292,7 @@ export default function Dashboard() {
           Welcome back, {displayName}.
         </h1>
         <p className="mt-3 max-w-xl text-[15px] text-muted">
-          {user?.email}
+          {profile?.displayName?.trim() || user?.displayName || user?.email}
           {!planLoading && (
             <>
               {" · "}

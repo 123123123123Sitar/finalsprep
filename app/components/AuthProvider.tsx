@@ -28,6 +28,19 @@ import type { StreakDoc } from "@/lib/streaks";
 
 export type ClientPlan = PlanTier;
 
+/**
+ * Lightweight slice of `publicProfiles/{uid}` exposed via auth context so
+ * any component can render the user's chosen avatar + display name without
+ * setting up its own Firestore subscription. Kept narrow on purpose — for
+ * the full profile, hit `/api/me/profile`.
+ */
+export type AuthProfile = {
+  displayName: string;
+  username: string;
+  avatarEmoji: string | null;
+  avatarColor: string | null;
+};
+
 const PLAN_CACHE_KEY = "fp-plan";
 
 function readCachedPlan(): PlanTier {
@@ -66,6 +79,11 @@ type AuthContextValue = {
    */
   planLoading: boolean;
   streak: StreakDoc | null;
+  /**
+   * Public profile slice (display name + avatar). null until the first
+   * publicProfiles snapshot resolves; falls back gracefully in consumers.
+   */
+  profile: AuthProfile | null;
   /** Returns an ID token for the current user, or null if not signed in. */
   getIdToken: () => Promise<string | null>;
   signUp: (email: string, password: string) => Promise<AuthResult>;
@@ -88,6 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // we don't yet know whether there's a user whose plan we need to load.
   const [planLoading, setPlanLoading] = useState(true);
   const [streak, setStreak] = useState<StreakDoc | null>(null);
+  const [profile, setProfile] = useState<AuthProfile | null>(null);
   const configured = isFirebaseConfigured();
 
   useEffect(() => {
@@ -132,6 +151,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         );
       },
       () => setStreak(null)
+    );
+    return () => unsub();
+  }, [user]);
+
+  // Subscribe to publicProfiles/{uid} so display name + avatar render
+  // consistently across nav, dashboard, chat, etc. The doc is created
+  // server-side on first /api/me/profile read; while that resolves, we
+  // expose `null` and let consumers fall back to the email-derived initial.
+  useEffect(() => {
+    if (!user) {
+      setProfile(null);
+      return;
+    }
+    const db = getDb();
+    if (!db) return;
+    // Best-effort: poke /api/me/profile so the doc exists for brand-new
+    // users who haven't otherwise hit any social endpoint yet. Failure is
+    // fine — consumers fall back until something else creates the doc.
+    (async () => {
+      try {
+        const token = await user.getIdToken();
+        await fetch("/api/me/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch {
+        /* ignore */
+      }
+    })();
+    const ref = doc(db, "publicProfiles", user.uid);
+    const unsub = onSnapshot(
+      ref,
+      (snap) => {
+        const d = snap.data() as
+          | {
+              displayName?: string;
+              username?: string;
+              avatarEmoji?: string | null;
+              avatarColor?: string | null;
+            }
+          | undefined;
+        if (!d) {
+          setProfile(null);
+          return;
+        }
+        setProfile({
+          displayName: typeof d.displayName === "string" ? d.displayName : "",
+          username: typeof d.username === "string" ? d.username : "",
+          avatarEmoji:
+            typeof d.avatarEmoji === "string" ? d.avatarEmoji : null,
+          avatarColor:
+            typeof d.avatarColor === "string" ? d.avatarColor : null,
+        });
+      },
+      () => setProfile(null)
     );
     return () => unsub();
   }, [user]);
@@ -347,6 +420,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       plan,
       planLoading,
       streak,
+      profile,
       getIdToken,
       signUp,
       signIn,
@@ -356,7 +430,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       sendPasswordReset,
       refresh,
     }),
-    [user, loading, configured, plan, planLoading, streak, getIdToken]
+    [user, loading, configured, plan, planLoading, streak, profile, getIdToken]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

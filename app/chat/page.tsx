@@ -7,6 +7,8 @@ import { LogoMark } from "@/app/components/Logo";
 import AuthGate from "@/app/components/AuthGate";
 import { useAuth } from "@/app/components/AuthProvider";
 import SiteNav from "@/app/components/SiteNav";
+import UserAvatar from "@/app/components/UserAvatar";
+import { pickGreeting, pickThinkingPhrase } from "@/lib/chatPhrases";
 import {
   AI_MODE_OPTIONS,
   AI_PERSONALITY_OPTIONS,
@@ -89,7 +91,10 @@ export default function ChatPage() {
 }
 
 function ChatInner() {
-  const { user, getIdToken, plan, planLoading } = useAuth();
+  const { user, getIdToken, plan, planLoading, profile } = useAuth();
+  const userDisplayName =
+    profile?.displayName?.trim() || user?.displayName?.trim() || null;
+  const firstName = userDisplayName ? userDisplayName.split(" ")[0] : null;
   const [messages, setMessages] = useState<Msg[]>([]);
   const [aiPrefs, setAiPrefs] = useState<AiPrefs>(DEFAULT_AI_PREFS);
   const [input, setInput] = useState(() => {
@@ -114,6 +119,24 @@ function ChatInner() {
   const [historyOpen, setHistoryOpen] = useState(true);
   const [conversations, setConversations] = useState<StoredConversation[]>([]);
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
+  // Per-empty-state seed: changes whenever the user opens a new chat or
+  // switches conversations, so the cycling greeting picks a fresh line.
+  const [greetingSeed, setGreetingSeed] = useState<number>(() => Date.now());
+  // Tick used by the streaming "thinking" indicator to rotate phrases.
+  // Bumped every 4 seconds while a stream is in flight; cheap state swap.
+  const [thinkingTick, setThinkingTick] = useState<number>(0);
+  useEffect(() => {
+    if (!streaming && !loading) return;
+    const id = window.setInterval(() => {
+      setThinkingTick((n) => n + 1);
+    }, 4000);
+    return () => window.clearInterval(id);
+  }, [streaming, loading]);
+  // Reseed the greeting whenever the active conversation changes (covers
+  // both "New chat" and switching between saved convos).
+  useEffect(() => {
+    setGreetingSeed(Date.now());
+  }, [currentConvId]);
   const [currentProjectId, setCurrentProjectId] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
     const url = new URL(window.location.href);
@@ -1123,6 +1146,10 @@ function ChatInner() {
         {historyOpen ? (
           <ExpandedSidebar
             userEmail={user?.email}
+            userDisplayName={userDisplayName}
+            avatarEmoji={profile?.avatarEmoji ?? null}
+            avatarColor={profile?.avatarColor ?? null}
+            uid={user?.uid || null}
             conversations={filteredConversations}
             currentConvId={currentConvId}
             convSearch={convSearch}
@@ -1139,6 +1166,10 @@ function ChatInner() {
         ) : (
           <CollapsedSidebar
             userEmail={user?.email}
+            userDisplayName={userDisplayName}
+            avatarEmoji={profile?.avatarEmoji ?? null}
+            avatarColor={profile?.avatarColor ?? null}
+            uid={user?.uid || null}
             startNewChat={startNewChat}
             expand={() => setHistoryOpen(true)}
             onOpenProjects={() => setProjectsOverlayOpen(true)}
@@ -1195,7 +1226,7 @@ function ChatInner() {
             <div className="mx-auto flex min-h-full max-w-3xl flex-col items-center justify-center px-6 py-16 text-center">
               <div className="animate-slideInUp w-full">
                 <h1 className="font-serif text-4xl font-normal leading-[1.15] text-ink sm:text-5xl">
-                  What are you stuck on?
+                  {pickGreeting(greetingSeed, firstName)}
                 </h1>
                 <div className="mt-10 text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
                   Try one of these
@@ -1228,6 +1259,7 @@ function ChatInner() {
                     isLastAssistantEmpty={
                       m.role === "assistant" && i === messages.length - 1 && m.content === ""
                     }
+                    thinkingTick={thinkingTick}
                     onCopy={() => handleCopy(m.content)}
                     onToggleStar={() => toggleStar(i)}
                     onRegenerate={
@@ -1997,6 +2029,7 @@ function Message({
   streaming,
   starred,
   isLastAssistantEmpty,
+  thinkingTick,
   onCopy,
   onToggleStar,
   onRegenerate,
@@ -2006,6 +2039,7 @@ function Message({
   streaming?: boolean;
   starred?: boolean;
   isLastAssistantEmpty?: boolean;
+  thinkingTick?: number;
   onCopy?: () => void;
   onToggleStar?: () => void;
   onRegenerate?: () => void;
@@ -2054,7 +2088,9 @@ function Message({
               <span className="typing-dots">
                 <span /> <span /> <span />
               </span>
-              <span className="text-xs">thinking through it…</span>
+              <span className="text-xs">
+                {pickThinkingPhrase(thinkingTick ?? 0)}…
+              </span>
             </div>
           ) : (
             <>
@@ -2220,6 +2256,10 @@ function SidebarItem({
 
 function ExpandedSidebar({
   userEmail,
+  userDisplayName,
+  avatarEmoji,
+  avatarColor,
+  uid,
   conversations,
   currentConvId,
   convSearch,
@@ -2234,6 +2274,10 @@ function ExpandedSidebar({
   currentProjectName,
 }: {
   userEmail: string | null | undefined;
+  userDisplayName: string | null;
+  avatarEmoji: string | null;
+  avatarColor: string | null;
+  uid: string | null;
   conversations: StoredConversation[];
   currentConvId: string | null;
   convSearch: string;
@@ -2401,12 +2445,18 @@ function ExpandedSidebar({
           <a
             href="/account"
             className="flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-1.5 text-[12px] text-muted hover:bg-paper/60 hover:text-ink"
-            title={userEmail || ""}
+            title={userDisplayName || userEmail || "Account"}
           >
-            <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-orange-tint text-[10px] font-medium text-orange-ink">
-              {(userEmail || "?").charAt(0).toUpperCase()}
-            </div>
-            <span className="truncate">{userEmail || "Account"}</span>
+            <UserAvatar
+              seed={uid || userEmail || "user"}
+              label={userDisplayName || userEmail || "?"}
+              size="sm"
+              emoji={avatarEmoji}
+              color={avatarColor}
+            />
+            <span className="truncate">
+              {userDisplayName || userEmail || "Account"}
+            </span>
           </a>
           <button
             onClick={onOpenSettings}
@@ -2438,6 +2488,10 @@ function ExpandedSidebar({
 
 function CollapsedSidebar({
   userEmail,
+  userDisplayName,
+  avatarEmoji,
+  avatarColor,
+  uid,
   startNewChat,
   expand,
   onOpenProjects,
@@ -2445,6 +2499,10 @@ function CollapsedSidebar({
   onOpenSettings,
 }: {
   userEmail?: string | null;
+  userDisplayName: string | null;
+  avatarEmoji: string | null;
+  avatarColor: string | null;
+  uid: string | null;
   startNewChat: () => void;
   expand: () => void;
   onOpenProjects: () => void;
@@ -2542,11 +2600,17 @@ function CollapsedSidebar({
         </button>
         <a
           href="/account"
-          title={userEmail || "Account"}
-          aria-label={userEmail || "Account"}
-          className="grid h-7 w-7 place-items-center rounded-full bg-orange-tint text-[11px] font-medium text-orange-ink hover:opacity-90"
+          title={userDisplayName || userEmail || "Account"}
+          aria-label={userDisplayName || userEmail || "Account"}
+          className="rounded-full hover:opacity-90"
         >
-          {(userEmail || "?").charAt(0).toUpperCase()}
+          <UserAvatar
+            seed={uid || userEmail || "user"}
+            label={userDisplayName || userEmail || "?"}
+            size="sm"
+            emoji={avatarEmoji}
+            color={avatarColor}
+          />
         </a>
       </div>
     </div>

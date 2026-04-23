@@ -25,6 +25,15 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // Public profile: the owner can read their own to render display name +
+    // avatar in the nav, dashboard, chat, etc. without going through an
+    // API. Writes are still admin-only (via /api/me/profile) so we keep
+    // username uniqueness + sanitization on the server.
+    match /publicProfiles/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
     // Contact-form submissions: admin-only. The /api/contact route uses
     // the Admin SDK (which bypasses these rules), so the form still
     // works — but nothing from the browser can read or write these.

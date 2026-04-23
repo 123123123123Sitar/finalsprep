@@ -1,0 +1,168 @@
+/**
+ * Cycling text used in the chat surface. The thinking phrases swap in for
+ * the static "thinking..." indicator while the AI is generating; the
+ * greeting phrases swap in for the static empty-state hero so opening a
+ * fresh chat feels less robotic. Both arrays are intentionally large so
+ * a single session rarely repeats.
+ *
+ * Greetings include `{name}` as a token; render with `formatGreeting()`.
+ */
+
+export const THINKING_PHRASES: readonly string[] = [
+  "tinkering with the numbers",
+  "finding the solution",
+  "locating the crux of the issue",
+  "identifying conspiracies",
+  "untangling the algebra",
+  "warming up the chalkboard",
+  "consulting the textbook",
+  "drawing a free body diagram",
+  "lining up the units",
+  "sniffing out a sign error",
+  "cross-checking with the rubric",
+  "running it through one more time",
+  "auditing the assumptions",
+  "double-checking the constants",
+  "tracing the derivation",
+  "spotting the hidden step",
+  "applying the chain rule, carefully",
+  "listening for the click",
+  "pacing the boundary conditions",
+  "balancing the equation",
+  "turning it over in my head",
+  "trying the obvious thing first",
+  "testing the edge case",
+  "drafting a clean explanation",
+  "stress-testing the answer",
+  "looking it up in my notes",
+  "asking what would the textbook do",
+  "spotting the trap",
+  "weighing two approaches",
+  "mapping the variables",
+  "spinning up a quick estimate",
+  "translating the words to math",
+  "imagining the graph",
+  "rotating the perspective",
+  "checking my arithmetic",
+  "sketching it out",
+  "running a sanity check",
+  "naming the underlying pattern",
+  "rerouting around a dead end",
+  "narrowing down possibilities",
+  "rephrasing the question",
+  "finding a cleaner path",
+  "spotting the symmetry",
+  "matching it to a known type",
+  "thinking like a tutor",
+  "thinking like a grader",
+  "factoring out the noise",
+  "hunting for the lever",
+  "warming up the heuristics",
+  "checking the limit cases",
+  "letting the dust settle",
+  "consulting the College Board",
+  "checking the formula sheet",
+  "cross-referencing units",
+  "considering an alternate route",
+  "cleaning up the algebra",
+  "looking for the through-line",
+  "matching the pattern",
+  "calibrating the explanation",
+  "framing the answer carefully",
+  "looking past the obvious",
+  "verifying the boundary",
+  "letting it simmer",
+  "tightening the reasoning",
+  "drafting then trimming",
+  "pulling the right identity",
+  "running the conservation laws",
+  "tracking the negatives",
+  "gathering the loose ends",
+  "spotting the misdirection",
+  "deciding what to skip",
+  "auditing each step",
+  "translating the diagram",
+  "checking the integration constant",
+  "double-counting cases, just to be sure",
+  "running the units one more time",
+  "warming up the geometry",
+  "testing my hypothesis",
+  "writing it out longhand",
+  "finding the cleanest form",
+  "looking for the elegant move",
+  "putting the pieces in place",
+  "turning the algebra crank",
+  "checking the boundary conditions twice",
+  "letting the structure speak",
+  "marking the key step",
+  "weighing the tradeoffs",
+  "pinning down the variable",
+  "drawing the missing arrow",
+  "matching the textbook style",
+  "asking what the grader wants",
+  "spotting the pattern",
+  "double-checking the sign",
+  "sneaking up on the answer",
+  "running through the cases",
+  "collecting the like terms",
+  "checking the dimensions",
+  "scanning for shortcuts",
+  "warming up the intuition",
+  "lining up the steps",
+  "quietly working it out",
+  "finalizing the wording",
+];
+
+const GREETING_TEMPLATES: readonly string[] = [
+  "What are you working on right now, {name}?",
+  "Welcome back, {name} — what's on the docket?",
+  "Hey {name}. What problem should we crack open?",
+  "Good to see you, {name}. What are we tackling?",
+  "What can I help you figure out, {name}?",
+  "Ready when you are, {name}. What's first?",
+  "Hi {name} — drop a problem and we'll dig in.",
+  "What's tripping you up tonight, {name}?",
+  "What's the assignment, {name}?",
+  "Pick up where you left off, {name}?",
+  "Long time no see, {name}. What's the topic?",
+  "{name}, what's the question?",
+  "Howdy, {name} — what are we untangling today?",
+  "Welcome in, {name}. What problem shall we slay?",
+  "Hey {name}, what subject are we wrestling with?",
+  "Studying for something specific, {name}?",
+  "What chapter, what problem, {name}?",
+  "{name} — what's giving you trouble?",
+  "Throw me a problem, {name}. I'm warmed up.",
+  "Where should we start, {name}?",
+  "Got a question rattling around, {name}?",
+  "{name}, what are we learning today?",
+  "Ready to grind, {name}? What's the topic?",
+  "Hey {name}, hand me the hardest one you've got.",
+  "What's the homework looking like, {name}?",
+  "{name}, what concept needs unsticking?",
+  "What can I walk you through, {name}?",
+  "Glad you're here, {name}. What's the subject?",
+  "Let's solve something, {name} — what's first?",
+  "What's the unit, {name}?",
+  "{name}, what does the prompt say?",
+  "Open a textbook with me, {name}. What page?",
+  "What are we prepping for, {name}?",
+  "Drop a problem, {name}, and we'll handle it.",
+];
+
+const FALLBACK_NAME = "friend";
+
+export function formatGreeting(template: string, name: string | null): string {
+  const safe = name?.trim() || FALLBACK_NAME;
+  return template.replace(/\{name\}/g, safe);
+}
+
+export function pickGreeting(seed: number, name: string | null): string {
+  const idx = Math.abs(Math.floor(seed)) % GREETING_TEMPLATES.length;
+  return formatGreeting(GREETING_TEMPLATES[idx], name);
+}
+
+export function pickThinkingPhrase(seed: number): string {
+  const idx = Math.abs(Math.floor(seed)) % THINKING_PHRASES.length;
+  return THINKING_PHRASES[idx];
+}

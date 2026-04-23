@@ -5,6 +5,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import Logo from "@/app/components/Logo";
 import { useAuth } from "@/app/components/AuthProvider";
 import NotificationsBell from "@/app/components/NotificationsBell";
+import UserAvatar from "@/app/components/UserAvatar";
 import { getDb } from "@/lib/firebase";
 import { subscribeBookmarks, type Bookmark } from "@/lib/bookmarks";
 
@@ -254,7 +255,7 @@ export function NavUserArea() {
 }
 
 function AuthMenu() {
-  const { user, loading, configured, signOut, streak, plan, planLoading } =
+  const { user, loading, configured, signOut, streak, plan, planLoading, profile } =
     useAuth();
 
   // Don't flash sign-in/sign-out before we know the auth state.
@@ -271,6 +272,13 @@ function AuthMenu() {
         )}
         <AccountMenu
           email={user.email}
+          displayName={
+            profile?.displayName?.trim() ||
+            user.displayName?.trim() ||
+            null
+          }
+          avatarEmoji={profile?.avatarEmoji ?? null}
+          avatarColor={profile?.avatarColor ?? null}
           plan={plan}
           signOut={signOut}
           uid={user.uid}
@@ -290,11 +298,17 @@ const WEEKDAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 
 function AccountMenu({
   email,
+  displayName,
+  avatarEmoji,
+  avatarColor,
   plan,
   signOut,
   uid,
 }: {
   email: string | null;
+  displayName: string | null;
+  avatarEmoji: string | null;
+  avatarColor: string | null;
   plan: string | null | undefined;
   signOut: () => Promise<void>;
   uid: string;
@@ -339,30 +353,37 @@ function AccountMenu({
   }, [open, subscribed, uid]);
 
   const claimedToday = lastClaimDate === todayYmd;
-  const initial = (email || "?").charAt(0).toUpperCase();
+  const primaryLabel = displayName || email || "Signed in";
+  const avatarLabel = displayName || email || "?";
 
   return (
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
         className="flex items-center rounded-full transition hover:opacity-80"
-        title={email || "Account"}
+        title={primaryLabel}
         aria-label="Account menu"
         aria-expanded={open}
       >
-        <span
-          aria-hidden="true"
-          className="grid h-9 w-9 place-items-center rounded-full bg-orange-tint text-sm font-semibold text-orange-ink"
-        >
-          {initial}
-        </span>
+        <UserAvatar
+          seed={uid}
+          label={avatarLabel}
+          size="md"
+          emoji={avatarEmoji}
+          color={avatarColor}
+        />
       </button>
       {open && (
         <div className="absolute right-0 top-full z-40 mt-2 w-72 rounded-xl border border-hair bg-paper p-4 shadow-[0_28px_80px_-28px_rgba(0,0,0,0.4)]">
           <div className="mb-3">
             <div className="truncate text-sm font-medium text-ink">
-              {email || "Signed in"}
+              {primaryLabel}
             </div>
+            {displayName && email && (
+              <div className="mt-0.5 truncate text-[11px] text-muted">
+                {email}
+              </div>
+            )}
             <div className="mt-0.5 text-[11px] uppercase tracking-wider text-muted">
               {plan || "learner"} plan
             </div>
