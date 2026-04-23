@@ -42,6 +42,7 @@ function MarketingHome() {
   const [captured, setCaptured] = useState<"idle" | "ok" | "err">("idle");
   const [captureMsg, setCaptureMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   async function buy(
     checkoutPlan:
@@ -916,17 +917,27 @@ function MarketingHome() {
           </div>
           <div className="space-y-4 text-[16px]">
             {[
-              ["Which AP courses does it cover?", "All 16 — math (Precalc, Calc AB/BC, Stats), sciences (Bio, Chem, Physics 1/2 and both Physics C), histories (US, World, Euro), CS A, CS Principles, and Environmental Science. AP Precalculus has the deepest written lessons today; the rest have full unit overviews plus unlimited tutor access."],
+            
               ["How is this different from just using ChatGPT?", "The tutor is grounded in the College Board CED, so units, skills, and essential knowledge line up with what your class is actually teaching. It remembers your course context across sessions, renders math and diagrams cleanly, and won't invent CED codes that don't exist."],
               ["Will it just give me the answer, or actually teach me?", "It walks you through the problem step by step and usually asks what you've tried before showing work. You can tell it to cut to the answer, but the default is a worked explanation you could re-derive on your own the next day."],
               ["Can I practice FRQs and multiple choice?", "Yes. Paste an FRQ and get a rubric-style walkthrough, or ask the tutor to drill you on MCQs for a specific unit. It can grade your attempts and point out where an AP reader would have docked points."],
-              ["Can I upload a photo of my handwritten homework?", "Yes. Snap a picture of the problem (or your scratch work) and the tutor reads it directly — no retyping. Pro users get unlimited image uploads; Free users can upload too, images just cost a bit more of the daily token budget."],
-              ["Is there a free tier, or do I have to pay to try it?", "Free tier is real and no card is required. You get Units 1-2 of every AP course, two free lessons, and enough daily tokens to test the tutor on actual homework before deciding whether to upgrade."],
-              ["What's voice mode for?", "Hands-free back-and-forth with the tutor — useful for walking through a concept on the bus, quizzing yourself while cooking, or rubber-ducking an FRQ out loud the night before the exam. Same tutor, same course context, just spoken."],
+              ["Can I upload a photo of my handwritten homework?", "Yes. Snap a picture of the problem or your scratch work and the tutor reads it directly. No retyping needed. Pro users get unlimited image uploads. Free users can upload too, though images cost a bit more of your daily token budget."],
+              ["Is there a free tier, or do I have to pay to try it?", "Our free tier is real with, no credit card ever required. You get 10,000 AI tokens per day, access to all units, and all other features. It's a full tutor experience. People upgrade to study more."],
+              ["What's voice mode for?", "Hands-free back-and-forth with the tutor. It's useful for walking through a concept on the bus, quizzing yourself while cooking, or talking through an FRQ out loud the night before the exam. Same tutor, same course context, just spoken."],
               ["What if the tutor gets something wrong?", "Tell it in the next message and it will correct itself. If an in-scope explanation is genuinely wrong, send a note via /contact (Report an issue) and we'll refund the purchase."],
             ].map(([q, a], i) => (
               <Reveal key={q} from="up" delay={i * 60}>
-                <details className="faq-item group rounded-lg border border-hair bg-paper/80 px-4 backdrop-blur-sm transition-colors duration-300 hover:border-orange/30 open:border-orange/50 open:bg-paper/95">
+                <details
+                  open={openFaqIndex === i}
+                  onToggle={(e) => {
+                    if ((e.target as HTMLDetailsElement).open) {
+                      setOpenFaqIndex(i);
+                    } else {
+                      setOpenFaqIndex(null);
+                    }
+                  }}
+                  className="faq-item group rounded-lg border border-hair bg-paper/80 px-4 backdrop-blur-sm transition-colors duration-300 hover:border-orange/30 open:border-orange/50 open:bg-paper/95"
+                >
                   <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-ink">
                     <span className="font-medium">{q}</span>
                     <span className="ml-4 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-hair text-muted transition-all duration-300 group-open:rotate-45 group-open:border-orange group-open:bg-orange group-open:text-white">
@@ -948,13 +959,7 @@ function MarketingHome() {
       <section className="marquee-bg relative mx-auto max-w-5xl px-6 py-24 sm:py-32">
         <Reveal from="scale">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="label mb-4 inline-flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inset-0 animate-pulseSoft rounded-full bg-orange/60" />
-              <span className="relative m-auto h-1 w-1 rounded-full bg-orange" />
-            </span>
-            One last thing
-          </div>
+          
           <h2 className="font-serif text-5xl font-normal leading-[1.05] tracking-tight text-ink sm:text-6xl md:text-7xl">
             Your next exam is{" "}
             <span className="gradient-sweep italic">closer</span>
@@ -968,14 +973,14 @@ function MarketingHome() {
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <a href="/study" className="btn-primary animate-glowPulse text-base">
-              Open the solver
+              Get started
             </a>
             <button
               onClick={() => buy("pro-monthly")}
               disabled={loading}
               className="btn-ghost text-base"
             >
-              Skip ahead - $16/mo
+              Power Boost with Pro
             </button>
           </div>
         </div>
