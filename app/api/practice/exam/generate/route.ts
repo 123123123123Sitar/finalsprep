@@ -11,7 +11,7 @@ import { getTokenBank } from "@/lib/tokenBank";
 import { COURSES, LESSONS, type CourseSlug } from "@/lib/topics";
 import { AP_EXAM_SPECS } from "@/lib/apExamSpec";
 import { getCurriculum } from "@/lib/curriculum";
-import { getMcqsFor } from "@/lib/mcqs";
+import { loadMcqsFor } from "@/lib/mcqs";
 
 export const runtime = "nodejs";
 
@@ -242,11 +242,11 @@ function shuffle<T>(arr: T[]): T[] {
   return out;
 }
 
-function sampleMcqsFromBank(
+async function sampleMcqsFromBank(
   courseSlug: CourseSlug,
   mcqCount: number,
   difficulty: Difficulty
-): GeneratedMcq[] {
+): Promise<GeneratedMcq[]> {
   if (mcqCount <= 0) return [];
   const curriculum = getCurriculum(courseSlug);
   if (!curriculum || curriculum.units.length === 0) return [];
@@ -264,7 +264,8 @@ function sampleMcqsFromBank(
     );
     const mcqs: GeneratedMcq[] = [];
     for (const lesson of unitLessons) {
-      for (const m of getMcqsFor(lesson.slug)) {
+      const lessonMcqs = await loadMcqsFor(lesson.slug);
+      for (const m of lessonMcqs) {
         if (m.options.length < 2) continue;
         const choices: McqChoice[] = [];
         for (let i = 0; i < Math.min(4, m.options.length); i++) {
@@ -423,7 +424,7 @@ export async function POST(req: Request) {
   }
 
   // MCQs: pull from the bank, weighted by CED unit percentages. Free. Fast.
-  const mcqs = sampleMcqsFromBank(courseSlug, mcqCount, difficulty);
+  const mcqs = await sampleMcqsFromBank(courseSlug, mcqCount, difficulty);
   if (mcqCount > 0 && mcqs.length === 0) {
     return NextResponse.json(
       {
