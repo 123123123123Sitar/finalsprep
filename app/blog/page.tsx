@@ -53,6 +53,11 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: "/blog",
+    types: {
+      "application/rss+xml": [
+        { url: "/feed.xml", title: "FinalsPrep Blog" },
+      ],
+    },
   },
 };
 

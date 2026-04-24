@@ -48,6 +48,14 @@ export default function BlogMasthead({
                 / AP prep, written plainly
               </span>
             </Link>
+            <Link
+              href="/blog/search"
+              className="inline-flex items-center gap-1.5 rounded-full border border-hair px-3 py-1.5 text-[12px] text-body transition hover:border-orange/50 hover:text-orange-ink"
+              aria-label="Search the blog"
+            >
+              <span aria-hidden>⌕</span>
+              <span className="hidden sm:inline">Search</span>
+            </Link>
           </div>
 
           {/* Category strip. Horizontally scrollable on mobile so it

@@ -1,15 +1,22 @@
+// Lightweight entry point for MCQ data.
+//
+// Previous versions of this file eagerly imported every per-course
+// MCQ bundle (ap-biology.ts, ap-chemistry.ts, ...) totalling ~7 MB of
+// JS. That blew up the /study client bundle even for users who never
+// opened a quiz. This file now exports:
+//
+//  - Constants and types that are always safe to import.
+//  - `hasMcqs(lessonSlug)`: synchronous lookup against a small manifest
+//    (see manifest.ts). Callers can still make a sync rendering
+//    decision ("is there a quiz for this lesson?") without pulling in
+//    the heavy data.
+//  - `loadMcqsFor(lessonSlug)`: async loader that dynamic-imports the
+//    exact per-course file the lesson lives in. The course-level
+//    chunks stay out of the /study first-load bundle and are only
+//    fetched when a user actually opens a quiz.
+
 import type { LessonMcqs, Mcq } from "./types";
-import { AP_BIOLOGY_MCQS } from "./ap-biology";
-import { AP_CHEMISTRY_MCQS } from "./ap-chemistry";
-import { AP_ENVIRONMENTAL_MCQS } from "./ap-environmental";
-import { AP_STATISTICS_MCQS } from "./ap-statistics";
-import { AP_PHYSICS_C_MECH_MCQS } from "./ap-physics-c-mech";
-import { AP_PHYSICS_C_EM_MCQS } from "./ap-physics-c-em";
-import { AP_CS_A_MCQS } from "./ap-cs-a";
-import { AP_CS_PRINCIPLES_MCQS } from "./ap-cs-principles";
-import { AP_US_HISTORY_MCQS } from "./ap-us-history";
-import { AP_WORLD_HISTORY_MCQS } from "./ap-world-history";
-import { AP_EURO_HISTORY_MCQS } from "./ap-euro-history";
+import { MCQ_MANIFEST } from "./manifest";
 
 export type { Mcq, LessonMcqs } from "./types";
 
@@ -21,31 +28,66 @@ export type { Mcq, LessonMcqs } from "./types";
 export const PASS_THRESHOLD = 0.75;
 export const PRIMARY_COUNT = 4;
 
-const ALL: LessonMcqs[] = [
-  ...AP_BIOLOGY_MCQS,
-  ...AP_CHEMISTRY_MCQS,
-  ...AP_ENVIRONMENTAL_MCQS,
-  ...AP_STATISTICS_MCQS,
-  ...AP_PHYSICS_C_MECH_MCQS,
-  ...AP_PHYSICS_C_EM_MCQS,
-  ...AP_CS_A_MCQS,
-  ...AP_CS_PRINCIPLES_MCQS,
-  ...AP_US_HISTORY_MCQS,
-  ...AP_WORLD_HISTORY_MCQS,
-  ...AP_EURO_HISTORY_MCQS,
-];
-
-const BY_SLUG: Map<string, Mcq[]> = new Map(
-  ALL.map((entry) => [entry.lessonSlug, entry.mcqs])
-);
-
-export function getMcqsFor(lessonSlug: string): Mcq[] {
-  return BY_SLUG.get(lessonSlug) ?? [];
+// Synchronous: does this lesson have enough MCQs to show a quiz?
+export function hasMcqs(lessonSlug: string): boolean {
+  const entry = MCQ_MANIFEST[lessonSlug];
+  return !!entry && entry.count >= PRIMARY_COUNT;
 }
 
-export function hasMcqs(lessonSlug: string): boolean {
-  const list = BY_SLUG.get(lessonSlug);
-  return !!list && list.length >= PRIMARY_COUNT;
+// Per-course dynamic importers. Keeping this as a switch (rather than
+// a Record of functions) keeps webpack's static analysis happy: each
+// `import("./ap-biology")` is a recognisable split point and becomes a
+// separate chunk. An indirection layer like `IMPORTERS[key]()` works
+// but the resulting chunk graph is murkier and harder to debug.
+async function importCourse(key: string): Promise<LessonMcqs[]> {
+  switch (key) {
+    case "ap-biology":
+      return (await import("./ap-biology")).AP_BIOLOGY_MCQS;
+    case "ap-chemistry":
+      return (await import("./ap-chemistry")).AP_CHEMISTRY_MCQS;
+    case "ap-environmental":
+      return (await import("./ap-environmental")).AP_ENVIRONMENTAL_MCQS;
+    case "ap-statistics":
+      return (await import("./ap-statistics")).AP_STATISTICS_MCQS;
+    case "ap-physics-c-mech":
+      return (await import("./ap-physics-c-mech")).AP_PHYSICS_C_MECH_MCQS;
+    case "ap-physics-c-em":
+      return (await import("./ap-physics-c-em")).AP_PHYSICS_C_EM_MCQS;
+    case "ap-cs-a":
+      return (await import("./ap-cs-a")).AP_CS_A_MCQS;
+    case "ap-cs-principles":
+      return (await import("./ap-cs-principles")).AP_CS_PRINCIPLES_MCQS;
+    case "ap-us-history":
+      return (await import("./ap-us-history")).AP_US_HISTORY_MCQS;
+    case "ap-world-history":
+      return (await import("./ap-world-history")).AP_WORLD_HISTORY_MCQS;
+    case "ap-euro-history":
+      return (await import("./ap-euro-history")).AP_EURO_HISTORY_MCQS;
+    default:
+      return [];
+  }
+}
+
+// In-flight / completed request cache. If a user clicks a lesson,
+// navigates away, and comes back, we don't want to re-download the
+// course's MCQs. The cache survives route changes because the module
+// lives in memory as long as the tab is open.
+const coursePromises = new Map<string, Promise<LessonMcqs[]>>();
+
+function getCourse(key: string): Promise<LessonMcqs[]> {
+  const cached = coursePromises.get(key);
+  if (cached) return cached;
+  const p = importCourse(key);
+  coursePromises.set(key, p);
+  return p;
+}
+
+export async function loadMcqsFor(lessonSlug: string): Promise<Mcq[]> {
+  const entry = MCQ_MANIFEST[lessonSlug];
+  if (!entry) return [];
+  const course = await getCourse(entry.key);
+  const lesson = course.find((l) => l.lessonSlug === lessonSlug);
+  return lesson?.mcqs ?? [];
 }
 
 /**

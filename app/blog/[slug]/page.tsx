@@ -8,6 +8,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import BlogMasthead from "@/app/components/BlogMasthead";
 import BlogComments from "@/app/components/BlogComments";
+import BlogReadingProgress from "@/app/components/BlogReadingProgress";
 import { LogoMark } from "@/app/components/Logo";
 import {
   getAllPostsSorted,
@@ -86,14 +87,45 @@ export default function BlogPostPage({ params }: Props) {
     },
   };
 
+  // FAQ schema. Review guides include an h2 labelled "Common mistakes"
+  // followed by a list, plus "How to score a 5" with an ordered list —
+  // those convert naturally into FAQ entries for Google's rich-result
+  // panel. We also pull out any h2 directly followed by a paragraph, so
+  // all courses (even ones without the standard sections) get some FAQ
+  // coverage. Only review-guide articles get FAQ markup; general posts
+  // skip it.
+  const faqItems = post.type === "subject" ? buildFaqItems(post.content) : [];
+  const faqJsonLd =
+    faqItems.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqItems.map((it) => ({
+            "@type": "Question",
+            name: it.q,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: it.a,
+            },
+          })),
+        }
+      : null;
+
   return (
     <main className="bg-paper text-body">
+      <BlogReadingProgress />
       <BlogMasthead compact />
 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       {/* Back bar. A persistent, obvious "return to the blog" that sits
           just under the masthead so readers never feel stranded. */}
@@ -129,10 +161,13 @@ export default function BlogPostPage({ params }: Props) {
       </div>
 
       <div className="flex gap-8 mx-auto max-w-7xl px-6 pt-10 pb-12 sm:pt-14">
-        {/* Table of Contents Sidebar */}
+        {/* Table of Contents Sidebar. `data-blog-toc` marks the root so
+            the client-side scroll-spy (see BlogReadingProgress) can find
+            anchors to highlight. The CSS attribute selector
+            `[data-blog-toc-active]` styles the active entry. */}
         <aside className="hidden lg:block flex-shrink-0 w-56">
           <div className="sticky top-20">
-            <nav className="text-[13px]">
+            <nav className="text-[13px]" data-blog-toc>
               <div className="mb-4 text-[11px] uppercase tracking-[0.18em] text-muted font-medium">
                 On this page
               </div>
@@ -144,7 +179,7 @@ export default function BlogPostPage({ params }: Props) {
                       <li key={i}>
                         <a
                           href={`#${slug}`}
-                          className="text-body hover:text-orange-ink transition"
+                          className="block border-l-2 border-transparent pl-3 -ml-[2px] text-body transition hover:text-orange-ink data-[blog-toc-active]:border-orange-ink data-[blog-toc-active]:font-medium data-[blog-toc-active]:text-orange-ink"
                         >
                           {section.text}
                         </a>
@@ -154,10 +189,10 @@ export default function BlogPostPage({ params }: Props) {
                   if (section.type === "h3") {
                     const slug = headingToSlug(section.text);
                     return (
-                      <li key={i} className="ml-3">
+                      <li key={i}>
                         <a
                           href={`#${slug}`}
-                          className="text-muted hover:text-orange-ink transition"
+                          className="block border-l-2 border-transparent pl-5 -ml-[2px] text-muted transition hover:text-orange-ink data-[blog-toc-active]:border-orange-ink data-[blog-toc-active]:text-orange-ink"
                         >
                           {section.text}
                         </a>
@@ -232,6 +267,30 @@ export default function BlogPostPage({ params }: Props) {
           </div>
         )}
 
+        {/* Inline tutor CTA for review guides. Drops in between the
+            article body and the comments so a reader who just finished
+            absorbing a unit can jump straight into asking a question.
+            Only shown on subject-specific review guides. */}
+        {post.type === "subject" && (
+          <div className="mt-10 rounded-lg border border-orange/30 bg-orange-tint px-6 py-5 text-[14px] leading-relaxed text-orange-ink">
+            <div className="text-[11px] uppercase tracking-[0.2em] text-orange-ink/80">
+              Practice this with the tutor
+            </div>
+            <div className="mt-2 text-ink">
+              Want to work through a {post.category} problem using the
+              concepts in this guide? The tutor already knows the CED.
+            </div>
+            <a
+              href={`/study?q=${encodeURIComponent(
+                `Quiz me on ${post.category}. I just finished the FinalsPrep review guide.`
+              )}`}
+              className="mt-3 inline-flex items-center gap-2 rounded-full bg-orange-ink px-4 py-1.5 text-[12px] font-medium text-paper transition hover:opacity-90"
+            >
+              Open tutor with {post.category} context →
+            </a>
+          </div>
+        )}
+
         {/* Back-to-blog link in the footer of the article, for readers
             who scrolled past it. */}
         <div className="mt-10 flex items-center justify-between border-t border-hair pt-6 text-[13px]">
@@ -260,26 +319,58 @@ export default function BlogPostPage({ params }: Props) {
       {/* Comments section. Client component so it can manage auth + fetch. */}
       <BlogComments blogSlug={post.slug} />
 
-      {/* End-of-post CTA. */}
+      {/* End-of-post CTA. On review guides (type === "subject") the CTA
+          passes the course category in a `?q=` param so the tutor page
+          can pre-fill the chat input. The general CTA is kept for
+          non-subject posts where a course-specific prompt would be odd. */}
       <section className="border-y border-hair bg-offwhite/50">
         <div className="mx-auto max-w-7xl px-6 py-14 text-center">
           <div className="label mb-3">Try it while it's fresh</div>
-          <h2 className="font-serif text-3xl font-normal text-ink">
-            Walk through your next AP problem with the tutor.
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-body">
-            Paste a problem or snap a picture of your homework. The
-            FinalsPrep tutor walks through it the way this article just
-            did. Free tier. No card required.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <a href="/study" className="btn-primary">
-              Open the tutor
-            </a>
-            <a href="/blog" className="btn-ghost">
-              Back to the blog
-            </a>
-          </div>
+          {post.type === "subject" ? (
+            <>
+              <h2 className="font-serif text-3xl font-normal text-ink">
+                Stuck on a {post.category} problem? Walk through it with the tutor.
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-body">
+                Paste a problem, snap a picture of your homework, or ask
+                about any concept from this guide. The FinalsPrep tutor
+                already knows the {post.category} CED. Free tier. No card
+                required.
+              </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <a
+                  href={`/study?q=${encodeURIComponent(
+                    `Help me review ${post.category}. I just read "${post.title}".`
+                  )}`}
+                  className="btn-primary"
+                >
+                  Discuss {post.category} with the tutor
+                </a>
+                <a href="/blog" className="btn-ghost">
+                  Back to the blog
+                </a>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="font-serif text-3xl font-normal text-ink">
+                Walk through your next AP problem with the tutor.
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-body">
+                Paste a problem or snap a picture of your homework. The
+                FinalsPrep tutor walks through it the way this article just
+                did. Free tier. No card required.
+              </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <a href="/study" className="btn-primary">
+                  Open the tutor
+                </a>
+                <a href="/blog" className="btn-ghost">
+                  Back to the blog
+                </a>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -450,6 +541,37 @@ function headingToSlug(text: string): string {
     .replace(/[^\w\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+}
+
+// Turn an article's sections into FAQ entries for schema.org FAQPage
+// markup. Walk the content list, and whenever an h2 is followed by a
+// paragraph, a ul, or an ol, treat the heading as a question and the
+// following content as the answer. Lists are joined into one paragraph
+// so the answer is readable when rendered by search engines.
+function buildFaqItems(
+  content: BlogSection[]
+): { q: string; a: string }[] {
+  const out: { q: string; a: string }[] = [];
+  for (let i = 0; i < content.length; i++) {
+    const s = content[i];
+    if (s.type !== "h2") continue;
+    const next = content[i + 1];
+    if (!next) continue;
+    let answer: string | null = null;
+    if (next.type === "p") answer = next.text;
+    else if (next.type === "h3") {
+      // Heading-next-heading: peek one more section ahead.
+      const after = content[i + 2];
+      if (after?.type === "p") answer = after.text;
+      else if (after?.type === "ul" || after?.type === "ol")
+        answer = after.items.join(" ");
+    } else if (next.type === "ul" || next.type === "ol") {
+      answer = next.items.join(" ");
+    }
+    if (answer) out.push({ q: s.text, a: answer });
+  }
+  // Cap at 10 to keep the schema lean; Google only highlights a handful.
+  return out.slice(0, 10);
 }
 
 function formatDate(iso: string): string {

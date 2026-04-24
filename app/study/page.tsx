@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import {
   doc,
   onSnapshot,
@@ -24,7 +25,6 @@ import {
 } from "@/lib/curriculum";
 import { getUnitPractice } from "@/lib/practice";
 import { getUnitTools } from "@/lib/courseTools";
-import Flashcards from "@/app/components/Flashcards";
 import SiteNav from "@/app/components/SiteNav";
 import CourseIcon from "@/app/components/CourseIcon";
 import MathRender from "@/app/components/Math";
@@ -37,11 +37,37 @@ import {
 } from "@/lib/cedLessonGroups";
 import HighlightTooltip from "@/app/components/HighlightTooltip";
 import PracticeProblems from "@/app/components/PracticeProblems";
-import DesmosCalculator from "@/app/components/DesmosCalculator";
-import Graph3D from "@/app/components/Graph3D";
-import PhysicsSim from "@/app/components/PhysicsSim";
-import CodeSandbox from "@/app/components/CodeSandbox";
 import BookmarkButton from "@/app/components/BookmarkButton";
+
+// Heavy interactive widgets are lazy-loaded. Each bundles a chunky
+// third-party library (Desmos for the graphing calc, Plotly/three for
+// Graph3D, Monaco/pyodide for CodeSandbox, canvas animations for
+// PhysicsSim). next/dynamic with a loading fallback defers fetching
+// the chunk until the widget actually renders, so a user studying a
+// humanities course never pays for the math widgets. Flashcards stays
+// statically imported (it is small and shown on the default tab).
+const DesmosCalculator = dynamic(
+  () => import("@/app/components/DesmosCalculator"),
+  { loading: () => <WidgetLoading label="Loading calculator" /> }
+);
+const Graph3D = dynamic(() => import("@/app/components/Graph3D"), {
+  loading: () => <WidgetLoading label="Loading 3D graph" />,
+});
+const PhysicsSim = dynamic(() => import("@/app/components/PhysicsSim"), {
+  loading: () => <WidgetLoading label="Loading physics simulation" />,
+});
+const CodeSandbox = dynamic(() => import("@/app/components/CodeSandbox"), {
+  loading: () => <WidgetLoading label="Loading code sandbox" />,
+});
+import Flashcards from "@/app/components/Flashcards";
+
+function WidgetLoading({ label }: { label: string }) {
+  return (
+    <div className="flex h-48 items-center justify-center rounded-md border border-hair bg-offwhite/60 text-[13px] text-muted">
+      {label}…
+    </div>
+  );
+}
 import {
   BookModeToggle,
   BookPage,
@@ -57,7 +83,7 @@ import {
   setLessonCompleted,
   subscribeCompletedSlugs,
 } from "@/lib/progress";
-import { getMcqsFor, hasMcqs, PRIMARY_COUNT } from "@/lib/mcqs";
+import { hasMcqs, loadMcqsFor, PRIMARY_COUNT, type Mcq } from "@/lib/mcqs";
 import { Quiz } from "@/app/components/Quiz";
 import { recordActivityClient } from "@/lib/activityClient";
 import { useAuth } from "@/app/components/AuthProvider";
@@ -220,6 +246,29 @@ export default function Study() {
   const [limitReached, setLimitReached] = useState(false);
   const [buyLoading, setBuyLoading] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
+
+  // Pre-fill the problem textarea from a `?q=...` query param. Lets
+  // blog review guides (and any other referrer) deep-link into the
+  // tutor with starter text already loaded — e.g. "Help me review AP
+  // Biology. I just read the review guide." The param is consumed
+  // once on mount; reloading the page without the param does not
+  // re-prompt.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    if (q && !problem) {
+      setProblem(q);
+      // Strip the param from the URL so a reload does not re-apply it
+      // and so the URL matches the user's current selection state.
+      params.delete("q");
+      const qs = params.toString();
+      const next = window.location.pathname + (qs ? `?${qs}` : "");
+      window.history.replaceState(null, "", next);
+    }
+    // Intentional: only run on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // "home" = course grid with progress; "course" = the actual study workspace.
   // Starts on home so users always land on the overview, not a half-remembered
   // course from last session.
@@ -1276,6 +1325,34 @@ function LessonPanel({
   const [isCompleted, setIsCompleted] = useState(false);
   const [completing, setCompleting] = useState(false);
 
+  // Lazy-loaded MCQs. Previously this was a sync `getMcqsFor(slug)` call
+  // that forced the /study bundle to include every course's MCQ data
+  // (~7 MB). We now load the course's MCQs on demand when the user
+  // opens a lesson. `hasMcqs` answers synchronously from a tiny
+  // manifest, so we can still decide up-front whether to render the
+  // quiz UI at all.
+  const [mcqPool, setMcqPool] = useState<Mcq[] | null>(null);
+  const [mcqLoading, setMcqLoading] = useState(false);
+  useEffect(() => {
+    if (!uid || !hasMcqs(lesson.slug)) {
+      setMcqPool(null);
+      return;
+    }
+    let cancelled = false;
+    setMcqLoading(true);
+    loadMcqsFor(lesson.slug)
+      .then((mcqs) => {
+        if (cancelled) return;
+        setMcqPool(mcqs);
+      })
+      .finally(() => {
+        if (!cancelled) setMcqLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [uid, lesson.slug]);
+
   // Paid plans skip all of this and get immediate access.
   const isPaid = plan !== "learner";
 
@@ -1438,11 +1515,16 @@ function LessonPanel({
         </button>
       </div>
 
-      {uid && hasMcqs(lesson.slug) && (
+      {uid && hasMcqs(lesson.slug) && mcqLoading && !mcqPool && (
+        <div className="mt-8 flex h-24 items-center justify-center rounded-md border border-hair bg-offwhite/60 text-[13px] text-muted">
+          Loading quiz…
+        </div>
+      )}
+      {uid && hasMcqs(lesson.slug) && mcqPool && (
         <div className="mt-8">
           <Quiz
             lessonSlug={lesson.slug}
-            pool={getMcqsFor(lesson.slug)}
+            pool={mcqPool}
             isCompleted={isCompleted}
             onPass={async () => {
               if (!isCompleted) {
