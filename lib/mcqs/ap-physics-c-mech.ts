@@ -808,7 +808,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `36 m`,
       ],
       correctIndex: 2,
-      explanation: `Displacement equals the area under the v–t graph, which is a rectangle: $\\Delta x = (6 \\text{ m/s})(5 \\text{ s}) = 30 \\text{ m}$.`,
+      explanation: `Displacement equals the area under the v–t graph (a rectangle): $\\Delta x = (6)(5) = 30$ m.`,
+      variations: [
+        {
+          id: "q6",
+          question: `An object moves with constant velocity of 8 m/s for 4 seconds. What is its displacement?`,
+          options: [
+          `2 m`,
+          `12 m`,
+          `32 m`,
+          `48 m`,
+          ],
+          correctIndex: 2,
+          explanation: `Area under v–t: $\\Delta x = (8)(4) = 32$ m.`,
+        },
+        {
+          id: "q6",
+          question: `An object moves with constant velocity of 3 m/s for 12 seconds. What is its displacement?`,
+          options: [
+          `4 m`,
+          `15 m`,
+          `36 m`,
+          `48 m`,
+          ],
+          correctIndex: 2,
+          explanation: `Area under v–t: $\\Delta x = (3)(12) = 36$ m.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -820,7 +846,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `8 m/s²`,
       ],
       correctIndex: 1,
-      explanation: `Acceleration is the slope of the v–t graph: $a = \\frac{\\Delta v}{\\Delta t} = \\frac{8 - 0}{4 - 0} = 2 \\text{ m/s}^2$.`,
+      explanation: `Slope of v–t: $a = \\frac{\\Delta v}{\\Delta t} = \\frac{8 - 0}{4 - 0} = 2$ m/s².`,
+      variations: [
+        {
+          id: "q7",
+          question: `A velocity–time graph shows a straight line from $(0 \\text{ s}, 2 \\text{ m/s})$ to $(5 \\text{ s}, 17 \\text{ m/s})$. What is the acceleration?`,
+          options: [
+          `0.3 m/s²`,
+          `3 m/s²`,
+          `5 m/s²`,
+          `15 m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `$a = \\frac{17 - 2}{5 - 0} = \\frac{15}{5} = 3$ m/s².`,
+        },
+        {
+          id: "q7",
+          question: `A velocity–time graph shows a straight line from $(1 \\text{ s}, 4 \\text{ m/s})$ to $(6 \\text{ s}, 24 \\text{ m/s})$. What is the acceleration?`,
+          options: [
+          `0.25 m/s²`,
+          `4 m/s²`,
+          `5 m/s²`,
+          `20 m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `$a = \\frac{24 - 4}{6 - 1} = \\frac{20}{5} = 4$ m/s².`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -844,7 +896,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `36 m/s`,
       ],
       correctIndex: 2,
-      explanation: `The change in velocity equals the area under the a–t graph: $\\Delta v = (3 \\text{ m/s}^2)(6 \\text{ s}) = 18 \\text{ m/s}$. Since the object starts from rest, the final velocity is 18 m/s.`,
+      explanation: `Area under a–t: $\\Delta v = (3)(6) = 18$ m/s. Starting from rest, final velocity = 18 m/s.`,
+      variations: [
+        {
+          id: "q9",
+          question: `An acceleration–time graph shows a constant value of $a = 4 \\text{ m/s}^2$ from $t = 0$ to $t = 5 \\text{ s}$. If the object starts from rest, what is its final velocity?`,
+          options: [
+          `0.8 m/s`,
+          `9 m/s`,
+          `20 m/s`,
+          `40 m/s`,
+          ],
+          correctIndex: 2,
+          explanation: `$\\Delta v = (4)(5) = 20$ m/s. Final velocity = 20 m/s from rest.`,
+        },
+        {
+          id: "q9",
+          question: `An acceleration–time graph shows a constant value of $a = 2.5 \\text{ m/s}^2$ from $t = 0$ to $t = 8 \\text{ s}$. If the object starts at $v_0 = 3 \\text{ m/s}$, what is its final velocity?`,
+          options: [
+          `20 m/s`,
+          `23 m/s`,
+          `26 m/s`,
+          `17 m/s`,
+          ],
+          correctIndex: 1,
+          explanation: `$\\Delta v = (2.5)(8) = 20$ m/s. Final velocity = $v_0 + \\Delta v = 3 + 20 = 23$ m/s.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -856,7 +934,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `100 m`,
       ],
       correctIndex: 1,
-      explanation: `The displacement is the area of the triangle: $\\Delta x = \\frac{1}{2} \\times \\text{base} \\times \\text{height} = \\frac{1}{2} \\times 5 \\times 10 = 25 \\text{ m}$.`,
+      explanation: `Area of the triangle: $\\Delta x = \\frac{1}{2}(5)(10) = 25$ m.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A velocity–time graph for an object shows a triangular region between $t = 0$ and $t = 8 \\text{ s}$, with velocity increasing linearly from 0 to 12 m/s. What is the displacement during this interval?`,
+          options: [
+          `24 m`,
+          `48 m`,
+          `96 m`,
+          `20 m`,
+          ],
+          correctIndex: 1,
+          explanation: `Area of the triangle: $\\Delta x = \\frac{1}{2}(8)(12) = 48$ m.`,
+        },
+        {
+          id: "q10",
+          question: `A velocity–time graph for an object shows a triangular region between $t = 0$ and $t = 6 \\text{ s}$, with velocity increasing linearly from 0 to 15 m/s. What is the displacement during this interval?`,
+          options: [
+          `22.5 m`,
+          `45 m`,
+          `90 m`,
+          `21 m`,
+          ],
+          correctIndex: 1,
+          explanation: `Area of the triangle: $\\Delta x = \\frac{1}{2}(6)(15) = 45$ m.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -892,7 +996,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `40 m`,
       ],
       correctIndex: 2,
-      explanation: `Total displacement is the sum of areas under both segments: $\\Delta x_1 = 5 \\times 3 = 15 \\text{ m}$ and $\\Delta x_2 = 2 \\times 5 = 10 \\text{ m}$, so total is $15 + 10 = 25 \\text{ m}$.`,
+      explanation: `Sum of areas under both segments: $(5)(3) + (2)(5) = 15 + 10 = 25$ m.`,
+      variations: [
+        {
+          id: "q13",
+          question: `An object's velocity–time graph consists of two segments: a horizontal line at $v = 4 \\text{ m/s}$ from $t = 0$ to $t = 2 \\text{ s}$, followed by a horizontal line at $v = 6 \\text{ m/s}$ from $t = 2 \\text{ s}$ to $t = 7 \\text{ s}$. What is the total displacement?`,
+          options: [
+          `10 m`,
+          `24 m`,
+          `38 m`,
+          `70 m`,
+          ],
+          correctIndex: 2,
+          explanation: `Sum of areas: $(4)(2) + (6)(5) = 8 + 30 = 38$ m.`,
+        },
+        {
+          id: "q13",
+          question: `An object's velocity–time graph consists of two segments: a horizontal line at $v = 8 \\text{ m/s}$ from $t = 0$ to $t = 4 \\text{ s}$, followed by a horizontal line at $v = 3 \\text{ m/s}$ from $t = 4 \\text{ s}$ to $t = 10 \\text{ s}$. What is the total displacement?`,
+          options: [
+          `11 m`,
+          `32 m`,
+          `50 m`,
+          `80 m`,
+          ],
+          correctIndex: 2,
+          explanation: `Sum of areas: $(8)(4) + (3)(6) = 32 + 18 = 50$ m.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -908,7 +1038,7 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
     },
     {
       id: "q15",
-      question: `An acceleration–time graph shows a trapezoidal region with $a = 2 \\text{ m/s}^2$ from $t = 0$ to $t = 2 \\text{ s}$, then $a = 4 \\text{ m/s}^2$ from $t = 2 \\text{ s}$ to $t = 5 \\text{ s}$. If the object starts from rest, what is its final velocity at $t = 5 \\text{ s}$?`,
+      question: `An acceleration–time graph shows $a = 2 \\text{ m/s}^2$ from $t = 0$ to $t = 3 \\text{ s}$, then $a = 4 \\text{ m/s}^2$ from $t = 3 \\text{ s}$ to $t = 5 \\text{ s}$. If the object starts from rest, what is its final velocity at $t = 5 \\text{ s}$?`,
       options: [
       `6 m/s`,
       `10 m/s`,
@@ -916,7 +1046,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `20 m/s`,
       ],
       correctIndex: 2,
-      explanation: `Change in velocity equals the total area under the a–t graph: $\\Delta v = (2)(2) + (4)(3) = 4 + 12 = 16 \\text{ m/s}$. Wait, let me recalculate: from $t=0$ to $t=2$: $\\Delta v_1 = 2 \\times 2 = 4$; from $t=2$ to $t=5$: $\\Delta v_2 = 4 \\times 3 = 12$. Total: $4 + 12 = 16$. But the answer is 14, so let me verify the intervals again. Actually $t=2$ to $t=5$ is 3 seconds, so $4 \\times 3 = 12$, and $2 \\times 2 = 4$, giving 16 total. The correct answer should be 16 m/s, but that's not an option. Let me reconsider: perhaps the second interval is $t=2$ to $t=4$ (2 seconds), giving $4 \\times 2 = 8$, so $4 + 8 = 12$. Still not matching. Given the options, 14 m/s suggests $\\Delta v = 2 \\times 2 + 4 \\times 2.5 = 4 + 10 = 14$, which would mean the second interval is 2.5 seconds. Alternatively: $2 \\times 3 + 4 \\times 2 = 6 + 8 = 14$. Let me use this interpretation: $a = 2$ from $t=0$ to $t=3$, then $a=4$ from $t=3$ to $t=5$. Then $\\Delta v = 2(3) + 4(2) = 6 + 8 = 14$ m/s.`,
+      explanation: `Total area under a–t: $\\Delta v = (2)(3) + (4)(2) = 6 + 8 = 14$ m/s.`,
+      variations: [
+        {
+          id: "q15",
+          question: `An acceleration–time graph shows $a = 3 \\text{ m/s}^2$ from $t = 0$ to $t = 2 \\text{ s}$, then $a = 5 \\text{ m/s}^2$ from $t = 2 \\text{ s}$ to $t = 6 \\text{ s}$. If the object starts from rest, what is its final velocity at $t = 6 \\text{ s}$?`,
+          options: [
+          `8 m/s`,
+          `16 m/s`,
+          `26 m/s`,
+          `36 m/s`,
+          ],
+          correctIndex: 2,
+          explanation: `$\\Delta v = (3)(2) + (5)(4) = 6 + 20 = 26$ m/s.`,
+        },
+        {
+          id: "q15",
+          question: `An acceleration–time graph shows $a = 1 \\text{ m/s}^2$ from $t = 0$ to $t = 4 \\text{ s}$, then $a = 3 \\text{ m/s}^2$ from $t = 4 \\text{ s}$ to $t = 7 \\text{ s}$. If the object starts at $v_0 = 2 \\text{ m/s}$, what is its final velocity at $t = 7 \\text{ s}$?`,
+          options: [
+          `9 m/s`,
+          `13 m/s`,
+          `15 m/s`,
+          `21 m/s`,
+          ],
+          correctIndex: 2,
+          explanation: `$\\Delta v = (1)(4) + (3)(3) = 4 + 9 = 13$. Final velocity = $v_0 + \\Delta v = 2 + 13 = 15$ m/s.`,
+        },
+      ],
     },
     ],
   },
