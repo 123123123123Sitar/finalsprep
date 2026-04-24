@@ -3056,7 +3056,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$6.7 \\times 10^{-6}$ N`,
       ],
       correctIndex: 0,
-      explanation: `Using $F = \\frac{Gm_1m_2}{r^2} = \\frac{(6.67 \\times 10^{-11})(500)(500)}{1^2} = \\frac{(6.67 \\times 10^{-11})(2.5 \\times 10^5)}{1} \\approx 1.7 \\times 10^{-5}$ N.`,
+      explanation: `$F = Gm_1m_2/r^2 = (6.67 \\times 10^{-11})(500)(500)/1^2 \\approx 1.7 \\times 10^{-5}$ N.`,
+      variations: [
+        {
+          id: "q6",
+          question: `Two identical 1000 kg spheres are separated by 2 m. What is the gravitational force between them? (Use $G = 6.67 \\times 10^{-11}$ N·m²/kg²)`,
+          options: [
+          `$1.7 \\times 10^{-5}$ N`,
+          `$6.7 \\times 10^{-5}$ N`,
+          `$1.7 \\times 10^{-4}$ N`,
+          `$3.3 \\times 10^{-6}$ N`,
+          ],
+          correctIndex: 0,
+          explanation: `$F = (6.67 \\times 10^{-11})(1000)(1000)/4 \\approx 1.67 \\times 10^{-5}$ N.`,
+        },
+        {
+          id: "q6",
+          question: `A 2000 kg mass and a 3000 kg mass are separated by 5 m. What is the gravitational force between them? (Use $G = 6.67 \\times 10^{-11}$ N·m²/kg²)`,
+          options: [
+          `$1.6 \\times 10^{-5}$ N`,
+          `$8.0 \\times 10^{-5}$ N`,
+          `$4.0 \\times 10^{-4}$ N`,
+          `$3.3 \\times 10^{-6}$ N`,
+          ],
+          correctIndex: 0,
+          explanation: `$F = (6.67 \\times 10^{-11})(2000)(3000)/25 \\approx 1.60 \\times 10^{-5}$ N.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -3080,7 +3106,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$39.2$ m/s²`,
       ],
       correctIndex: 1,
-      explanation: `Using $F = mg$, we have $g = \\frac{F}{m} = \\frac{19.6}{2} = 9.8$ m/s², which is the standard gravitational acceleration near Earth's surface.`,
+      explanation: `$g = F/m = 19.6/2 = 9.8$ m/s².`,
+      variations: [
+        {
+          id: "q8",
+          question: `A 5 kg object experiences a gravitational force of 18.5 N on a distant planet. What is the local gravitational acceleration there?`,
+          options: [
+          `$1.85$ m/s²`,
+          `$3.7$ m/s²`,
+          `$7.4$ m/s²`,
+          `$9.8$ m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `$g = F/m = 18.5/5 = 3.7$ m/s².`,
+        },
+        {
+          id: "q8",
+          question: `A 4 kg object experiences a gravitational force of 6.4 N on the Moon. What is the local gravitational acceleration?`,
+          options: [
+          `$1.0$ m/s²`,
+          `$1.6$ m/s²`,
+          `$3.2$ m/s²`,
+          `$9.8$ m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `$g = F/m = 6.4/4 = 1.6$ m/s².`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -3128,7 +3180,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$98$ N`,
       ],
       correctIndex: 2,
-      explanation: `Using $F = mg = (10)(3.5) = 35$ N, the gravitational force on the object is 35 N.`,
+      explanation: `$F = mg = (10)(3.5) = 35$ N.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A 25 kg object is placed on a planet where the gravitational acceleration is 4.0 m/s². What is the gravitational force on the object?`,
+          options: [
+          `$4.0$ N`,
+          `$50$ N`,
+          `$100$ N`,
+          `$245$ N`,
+          ],
+          correctIndex: 2,
+          explanation: `$F = mg = (25)(4.0) = 100$ N.`,
+        },
+        {
+          id: "q12",
+          question: `A 6 kg object is placed on the Moon where the gravitational acceleration is 1.6 m/s². What is the gravitational force on the object?`,
+          options: [
+          `$1.6$ N`,
+          `$6.0$ N`,
+          `$9.6$ N`,
+          `$58.8$ N`,
+          ],
+          correctIndex: 2,
+          explanation: `$F = mg = (6)(1.6) = 9.6$ N.`,
+        },
+      ],
     },
     {
       id: "q13",
