@@ -172,6 +172,17 @@ export async function POST(req: Request) {
   const userPlan = user ? await getPlan(user.uid) : null;
   const plan = userPlan?.plan ?? "learner";
 
+  if (plan !== "hacker") {
+    return NextResponse.json(
+      {
+        error: "Hacker plan required",
+        message:
+          "Past-FRQ practice and rubric grading are a Hacker plan perk. Upgrade to unlock.",
+      },
+      { status: 403 }
+    );
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: "ANTHROPIC_API_KEY missing" }, { status: 500 });
