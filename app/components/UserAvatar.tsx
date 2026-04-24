@@ -17,16 +17,29 @@ export default function UserAvatar({
   size = "sm",
   emoji,
   color,
+  url,
 }: {
   seed: string;
   label: string;
   size?: Size;
   emoji?: string | null;
   color?: string | null;
+  url?: string | null;
 }) {
   const bg = color || avatarColorFor(seed || label);
   const { px, text, emoji: emojiText } = sizeMap[size];
   const initial = (label || "?").trim().charAt(0).toUpperCase();
+  if (url) {
+    return (
+      <img
+        src={url}
+        alt=""
+        aria-hidden="true"
+        className="shrink-0 rounded-full object-cover"
+        style={{ width: px, height: px, backgroundColor: bg }}
+      />
+    );
+  }
   return (
     <span
       aria-hidden="true"

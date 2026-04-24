@@ -1,0 +1,16 @@
+rules_version = '2';
+
+// Firebase Storage rules. Writes are server-authoritative via the admin
+// SDK in /api/me/avatar, so this file blocks direct client writes outright
+// and only opens public reads for the avatar prefix.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /avatars/{uid}/{file=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

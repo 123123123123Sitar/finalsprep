@@ -31,7 +31,23 @@ export type PackSku = {
   tokens: number;
 };
 
-export type Sku = PlanSku | PackSku;
+export type GiftPlanSku = {
+  kind: "gift";
+  sku: GiftSkuId;
+  tier: "pro" | "hacker";
+  interval: "monthly" | "sixmonth";
+  durationMs: number;
+  /** Tokens credited to the buyer as a referral-style thank-you. */
+  buyerRewardTokens: number;
+};
+
+export type GiftSkuId =
+  | "gift-pro-monthly"
+  | "gift-pro-sixmonth"
+  | "gift-hacker-monthly"
+  | "gift-hacker-sixmonth";
+
+export type Sku = PlanSku | PackSku | GiftPlanSku;
 
 const DAY = 86_400_000;
 const PLAN_DURATION_MS = { monthly: 31 * DAY, sixmonth: 183 * DAY };
@@ -43,11 +59,30 @@ const PLAN_SKUS: PlanSku[] = [
   { kind: "plan", sku: "hacker-sixmonth", tier: "hacker", interval: "sixmonth", durationMs: PLAN_DURATION_MS.sixmonth },
 ];
 
+// Buyer rewards for gifting — deliberately generous to encourage organic
+// sharing, and split by tier so hacker gifts are worth the extra effort.
+const GIFT_PRO_REWARD = 1000;
+const GIFT_HACKER_REWARD = 2500;
+
+const GIFT_SKUS: GiftPlanSku[] = [
+  { kind: "gift", sku: "gift-pro-monthly", tier: "pro", interval: "monthly", durationMs: PLAN_DURATION_MS.monthly, buyerRewardTokens: GIFT_PRO_REWARD },
+  { kind: "gift", sku: "gift-pro-sixmonth", tier: "pro", interval: "sixmonth", durationMs: PLAN_DURATION_MS.sixmonth, buyerRewardTokens: GIFT_PRO_REWARD },
+  { kind: "gift", sku: "gift-hacker-monthly", tier: "hacker", interval: "monthly", durationMs: PLAN_DURATION_MS.monthly, buyerRewardTokens: GIFT_HACKER_REWARD },
+  { kind: "gift", sku: "gift-hacker-sixmonth", tier: "hacker", interval: "sixmonth", durationMs: PLAN_DURATION_MS.sixmonth, buyerRewardTokens: GIFT_HACKER_REWARD },
+];
+
 const PLAN_ENV_KEYS: Record<PaidCheckoutPlan, string> = {
   "pro-monthly": "KOFI_CODE_PRO_MONTHLY",
   "pro-sixmonth": "KOFI_CODE_PRO_SIXMONTH",
   "hacker-monthly": "KOFI_CODE_HACKER_MONTHLY",
   "hacker-sixmonth": "KOFI_CODE_HACKER_SIXMONTH",
+};
+
+const GIFT_ENV_KEYS: Record<GiftSkuId, string> = {
+  "gift-pro-monthly": "KOFI_CODE_GIFT_PRO_MONTHLY",
+  "gift-pro-sixmonth": "KOFI_CODE_GIFT_PRO_SIXMONTH",
+  "gift-hacker-monthly": "KOFI_CODE_GIFT_HACKER_MONTHLY",
+  "gift-hacker-sixmonth": "KOFI_CODE_GIFT_HACKER_SIXMONTH",
 };
 
 const PACK_ENV_KEYS: Record<string, string> = {
@@ -72,6 +107,10 @@ export function resolveKofiCode(code: string | null | undefined): Sku | null {
     if (codeFor(PLAN_ENV_KEYS[plan.sku]) === normalized) return plan;
   }
 
+  for (const gift of GIFT_SKUS) {
+    if (codeFor(GIFT_ENV_KEYS[gift.sku]) === normalized) return gift;
+  }
+
   for (const pack of TOKEN_PACKS) {
     if (codeFor(PACK_ENV_KEYS[pack.id]) === normalized) {
       return { kind: "pack", sku: pack.id, tokens: pack.tokens };
@@ -86,16 +125,22 @@ export function resolveKofiCode(code: string | null | undefined): Sku | null {
 export function kofiUrlFor(params:
   | { kind: "plan"; sku: PaidCheckoutPlan }
   | { kind: "pack"; sku: string }
+  | { kind: "gift"; sku: GiftSkuId }
 ): string | null {
-  const envKey = params.kind === "plan"
-    ? PLAN_ENV_KEYS[params.sku]
-    : PACK_ENV_KEYS[params.sku];
+  let envKey: string | undefined;
+  if (params.kind === "plan") envKey = PLAN_ENV_KEYS[params.sku];
+  else if (params.kind === "gift") envKey = GIFT_ENV_KEYS[params.sku];
+  else envKey = PACK_ENV_KEYS[params.sku];
   const code = envKey ? codeFor(envKey) : null;
   return code ? `https://ko-fi.com/s/${code}` : null;
 }
 
 export function planSkuFromId(sku: string): PlanSku | null {
   return PLAN_SKUS.find((p) => p.sku === sku) ?? null;
+}
+
+export function giftSkuFromId(sku: string): GiftPlanSku | null {
+  return GIFT_SKUS.find((g) => g.sku === sku) ?? null;
 }
 
 export function packSkuFromId(id: string): PackSku | null {

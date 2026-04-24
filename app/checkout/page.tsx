@@ -1,9 +1,15 @@
 import SiteNav from "@/app/components/SiteNav";
-import { kofiUrlFor, planSkuFromId, packSkuFromId } from "@/lib/kofiSkus";
+import {
+  kofiUrlFor,
+  planSkuFromId,
+  packSkuFromId,
+  giftSkuFromId,
+} from "@/lib/kofiSkus";
 import {
   parseCheckoutPlan,
   planPrice,
   checkoutDescription,
+  planLabel,
   type PaidCheckoutPlan,
 } from "@/lib/plans";
 import { TOKEN_PACKS } from "@/lib/tokenPacks";
@@ -11,7 +17,7 @@ import CheckoutPopup from "./CheckoutPopup";
 
 export const dynamic = "force-dynamic";
 
-type SearchParams = { plan?: string; pack?: string };
+type SearchParams = { plan?: string; pack?: string; gift?: string };
 
 export default async function CheckoutPage({
   searchParams,
@@ -21,6 +27,35 @@ export default async function CheckoutPage({
   const params = await searchParams;
   const packId = typeof params.pack === "string" ? params.pack : null;
   const planId = typeof params.plan === "string" ? params.plan : null;
+  const giftId = typeof params.gift === "string" ? params.gift : null;
+
+  if (giftId) {
+    const gift = giftSkuFromId(giftId);
+    if (!gift) return <InvalidItem />;
+    const kofiUrl = kofiUrlFor({ kind: "gift", sku: gift.sku });
+    const price = planPrice(`${gift.tier}-${gift.interval}` as PaidCheckoutPlan);
+    return (
+      <Shell>
+        <CheckoutPopup
+          kind="gift"
+          sku={gift.sku}
+          title={`Gift ${planLabel(gift.tier)} - ${
+            gift.interval === "sixmonth" ? "6 months" : "1 month"
+          }`}
+          subtitle={`You'll get a one-time code to send to a friend, plus ${gift.buyerRewardTokens.toLocaleString()} bonus tokens as a thank-you.`}
+          priceUsd={price.amount}
+          kofiUrl={kofiUrl}
+          successPath="/account?tab=billing&gift=ok"
+          benefits={[
+            `${gift.interval === "sixmonth" ? "6 months" : "1 month"} of ${planLabel(gift.tier)} access for your friend`,
+            "One-time redemption code appears in your billing tab",
+            `${gift.buyerRewardTokens.toLocaleString()} bonus tokens credited to you`,
+            "Stacks on top of the recipient's existing plan period",
+          ]}
+        />
+      </Shell>
+    );
+  }
 
   if (packId) {
     const pack = packSkuFromId(packId);

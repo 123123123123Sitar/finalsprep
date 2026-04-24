@@ -44,6 +44,7 @@ export type AuthProfile = {
   username: string;
   avatarEmoji: string | null;
   avatarColor: string | null;
+  avatarUrl: string | null;
 };
 
 const PLAN_CACHE_KEY = "fp-plan";
@@ -231,6 +232,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               username?: string;
               avatarEmoji?: string | null;
               avatarColor?: string | null;
+              avatarUrl?: string | null;
             }
           | undefined;
         if (!d) {
@@ -244,6 +246,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             typeof d.avatarEmoji === "string" ? d.avatarEmoji : null,
           avatarColor:
             typeof d.avatarColor === "string" ? d.avatarColor : null,
+          avatarUrl:
+            typeof d.avatarUrl === "string" && d.avatarUrl.length > 0
+              ? d.avatarUrl
+              : null,
         });
       },
       () => setProfile(null)

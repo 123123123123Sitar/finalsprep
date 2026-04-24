@@ -123,6 +123,7 @@ function hydrateProfile(d: any): PublicProfile {
     avatarSeed: d.avatarSeed || d.uid,
     avatarEmoji: d.avatarEmoji ?? null,
     avatarColor: d.avatarColor ?? null,
+    avatarUrl: typeof d.avatarUrl === "string" && d.avatarUrl.length > 0 ? d.avatarUrl : null,
     visibility: d.visibility || "public",
     plan,
     gradeLevel: sanitizeGradeLevel(d.gradeLevel),

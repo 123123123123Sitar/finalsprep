@@ -15,6 +15,7 @@ export type PublicProfile = {
   avatarSeed: string;
   avatarEmoji?: string | null;
   avatarColor?: string | null;
+  avatarUrl?: string | null;
   visibility: "public" | "private";
   plan?: "learner" | "pro" | "hacker" | null;
   gradeLevel?: string | null;

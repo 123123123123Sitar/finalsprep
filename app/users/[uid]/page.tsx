@@ -5,11 +5,7 @@ import UserAvatar from "@/app/components/UserAvatar";
 import FollowButton from "@/app/components/FollowButton";
 import PageLoader from "@/app/components/PageLoader";
 import { useAuth } from "@/app/components/AuthProvider";
-import {
-  AVATAR_COLOR_OPTIONS,
-  AVATAR_EMOJI_OPTIONS,
-  type PublicProfile,
-} from "@/lib/social";
+import { type PublicProfile } from "@/lib/social";
 import { COURSES } from "@/lib/topics";
 import CourseIcon from "@/app/components/CourseIcon";
 import { getHeatmapDays } from "@/lib/insights";
@@ -44,13 +40,7 @@ export default function UserProfilePage({
   const [data, setData] = useState<ProfileResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const [editing, setEditing] = useState(false);
-  const [editDisplayName, setEditDisplayName] = useState("");
-  const [editUsername, setEditUsername] = useState("");
-  const [editBio, setEditBio] = useState("");
-  const [editEmoji, setEditEmoji] = useState<string | null>(null);
-  const [editColor, setEditColor] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
+  // Self-view edits happen on /account?tab=profile, not inline on this page.
 
   const load = useCallback(async () => {
     try {
@@ -71,50 +61,12 @@ export default function UserProfilePage({
     load();
   }, [authLoading, load]);
 
-  useEffect(() => {
-    if (data?.isSelf && typeof window !== "undefined") {
-      window.location.replace("/account");
-    }
-  }, [data?.isSelf]);
+  // Self-view stays on this page now (used to redirect to /account).
+  // /profile is a shortcut that lands here, and the Edit button below
+  // routes to /account?tab=profile so edits live in one place.
 
   function openEdit() {
-    if (!data) return;
-    setEditDisplayName(data.profile.displayName);
-    setEditUsername(data.profile.username);
-    setEditBio(data.profile.bio);
-    setEditEmoji(data.profile.avatarEmoji ?? null);
-    setEditColor(data.profile.avatarColor ?? null);
-    setEditing(true);
-  }
-
-  async function save() {
-    setSaving(true);
-    try {
-      const token = await getIdToken();
-      const res = await fetch("/api/me/profile", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          displayName: editDisplayName,
-          username: editUsername,
-          bio: editBio,
-          avatarEmoji: editEmoji,
-          avatarColor: editColor,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json?.error || "Save failed");
-      } else {
-        setEditing(false);
-        load();
-      }
-    } finally {
-      setSaving(false);
-    }
+    window.location.href = "/account?tab=profile";
   }
 
   async function startDm() {
@@ -176,6 +128,7 @@ export default function UserProfilePage({
             label={p.displayName || p.username}
             emoji={p.avatarEmoji}
             color={p.avatarColor}
+            url={p.avatarUrl}
             size="lg"
           />
           <div className="min-w-0 flex-1">
@@ -252,113 +205,6 @@ export default function UserProfilePage({
           displayName={p.displayName || p.username}
         />
 
-        {editing && data.isSelf && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-xl border border-hair bg-paper p-5 shadow-xl">
-              <h3 className="font-serif text-xl text-ink">Edit profile</h3>
-              <div className="mt-4 space-y-4">
-                <Field label="Profile picture">
-                  <div className="flex items-center gap-4">
-                    <UserAvatar
-                      seed={p.uid}
-                      label={editDisplayName || p.displayName || p.username}
-                      emoji={editEmoji}
-                      color={editColor}
-                      size="lg"
-                    />
-                    <div className="flex flex-wrap gap-2">
-                      {AVATAR_COLOR_OPTIONS.map((c) => (
-                        <button
-                          key={c}
-                          type="button"
-                          onClick={() => setEditColor(c)}
-                          aria-label={`Color ${c}`}
-                          className={`h-6 w-6 rounded-full border-2 transition ${
-                            editColor === c
-                              ? "border-ink scale-110"
-                              : "border-transparent hover:scale-105"
-                          }`}
-                          style={{ backgroundColor: c }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="mt-3 grid grid-cols-10 gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setEditEmoji(null)}
-                      className={`grid h-8 w-8 place-items-center rounded-md border text-[11px] ${
-                        editEmoji === null
-                          ? "border-orange bg-orange-tint text-orange-ink"
-                          : "border-hair text-muted hover:bg-offwhite"
-                      }`}
-                      title="Use initial"
-                    >
-                      A
-                    </button>
-                    {AVATAR_EMOJI_OPTIONS.map((e) => (
-                      <button
-                        key={e}
-                        type="button"
-                        onClick={() => setEditEmoji(e)}
-                        className={`grid h-8 w-8 place-items-center rounded-md border text-[16px] ${
-                          editEmoji === e
-                            ? "border-orange bg-orange-tint"
-                            : "border-hair hover:bg-offwhite"
-                        }`}
-                      >
-                        {e}
-                      </button>
-                    ))}
-                  </div>
-                </Field>
-                <Field label="Display name">
-                  <input
-                    value={editDisplayName}
-                    onChange={(e) => setEditDisplayName(e.target.value)}
-                    maxLength={40}
-                    className="w-full rounded-md border border-hair bg-offwhite/40 px-3 py-2 text-sm text-ink focus:border-orange focus:bg-paper focus:outline-none"
-                  />
-                </Field>
-                <Field label="Username (letters, digits, . _)">
-                  <input
-                    value={editUsername}
-                    onChange={(e) => setEditUsername(e.target.value)}
-                    maxLength={24}
-                    className="w-full rounded-md border border-hair bg-offwhite/40 px-3 py-2 text-sm text-ink focus:border-orange focus:bg-paper focus:outline-none"
-                  />
-                </Field>
-                <Field label="Bio">
-                  <textarea
-                    value={editBio}
-                    onChange={(e) => setEditBio(e.target.value)}
-                    rows={3}
-                    maxLength={280}
-                    className="w-full resize-none rounded-md border border-hair bg-offwhite/40 px-3 py-2 text-sm text-ink focus:border-orange focus:bg-paper focus:outline-none"
-                  />
-                </Field>
-              </div>
-              {error && (
-                <div className="mt-3 text-[13px] text-red-600">{error}</div>
-              )}
-              <div className="mt-5 flex justify-end gap-2">
-                <button
-                  onClick={() => setEditing(false)}
-                  className="rounded-md px-3 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={save}
-                  disabled={saving}
-                  className="btn-primary disabled:opacity-50"
-                >
-                  {saving ? "Saving…" : "Save"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </main>
   );
@@ -641,17 +487,3 @@ function Stat({ label, value }: { label: string; value: number }) {
   );
 }
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="block">
-      <div className="label mb-1">{label}</div>
-      {children}
-    </label>
-  );
-}

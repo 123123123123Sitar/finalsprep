@@ -279,6 +279,7 @@ function AuthMenu() {
           }
           avatarEmoji={profile?.avatarEmoji ?? null}
           avatarColor={profile?.avatarColor ?? null}
+          avatarUrl={profile?.avatarUrl ?? null}
           plan={plan}
           signOut={signOut}
           uid={user.uid}
@@ -301,6 +302,7 @@ function AccountMenu({
   displayName,
   avatarEmoji,
   avatarColor,
+  avatarUrl,
   plan,
   signOut,
   uid,
@@ -309,6 +311,7 @@ function AccountMenu({
   displayName: string | null;
   avatarEmoji: string | null;
   avatarColor: string | null;
+  avatarUrl: string | null;
   plan: string | null | undefined;
   signOut: () => Promise<void>;
   uid: string;
@@ -371,6 +374,7 @@ function AccountMenu({
           size="md"
           emoji={avatarEmoji}
           color={avatarColor}
+          url={avatarUrl}
         />
       </button>
       {open && (

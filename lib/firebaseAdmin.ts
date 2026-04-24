@@ -17,10 +17,12 @@ import {
 } from "firebase-admin/app";
 import { getAuth, type Auth } from "firebase-admin/auth";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import { getStorage, type Storage } from "firebase-admin/storage";
 
 let adminApp: App | null = null;
 let adminAuth: Auth | null = null;
 let adminDb: Firestore | null = null;
+let adminStorage: Storage | null = null;
 let triedInit = false;
 
 export function isAdminConfigured(): boolean {
@@ -76,4 +78,22 @@ export function getAdminDb(): Firestore | null {
   if (!app) return null;
   adminDb = getFirestore(app);
   return adminDb;
+}
+
+/**
+ * Default Storage bucket for avatar uploads. Prefers the public env var
+ * so the same bucket name is consistent between client and server.
+ * Returns null if Storage isn't configured.
+ */
+export function getAdminStorageBucket() {
+  if (!adminStorage) {
+    const app = ensureAdmin();
+    if (!app) return null;
+    adminStorage = getStorage(app);
+  }
+  const bucketName =
+    process.env.FIREBASE_STORAGE_BUCKET ||
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+  if (!bucketName) return null;
+  return adminStorage.bucket(bucketName);
 }

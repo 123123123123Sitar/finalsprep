@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/app/components/AuthProvider";
 
 type Props = {
-  kind: "plan" | "pack";
+  kind: "plan" | "pack" | "gift";
   sku: string;
   title: string;
   subtitle: string;
