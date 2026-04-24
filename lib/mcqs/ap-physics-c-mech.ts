@@ -3295,7 +3295,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `4 N`,
       ],
       correctIndex: 0,
-      explanation: `The normal force is $N = mg = 4 \\times 10 = 40$ N. Kinetic friction is $f_k = \\mu_k N = 0.25 \\times 40 = 10$ N.`,
+      explanation: `$N = mg = (4)(10) = 40$ N. $f_k = \\mu_k N = (0.25)(40) = 10$ N.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A 6 kg block slides on a horizontal surface with $\\mu_k = 0.20$. What is the kinetic friction force? (Use $g = 10 \\text{ m/s}^2$)`,
+          options: [
+          `12 N`,
+          `60 N`,
+          `20 N`,
+          `6 N`,
+          ],
+          correctIndex: 0,
+          explanation: `$N = mg = 60$ N. $f_k = (0.20)(60) = 12$ N.`,
+        },
+        {
+          id: "q6",
+          question: `A 10 kg block slides on a horizontal surface with $\\mu_k = 0.35$. What is the kinetic friction force? (Use $g = 10 \\text{ m/s}^2$)`,
+          options: [
+          `35 N`,
+          `100 N`,
+          `3.5 N`,
+          `10 N`,
+          ],
+          correctIndex: 0,
+          explanation: `$N = mg = 100$ N. $f_k = (0.35)(100) = 35$ N.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -3307,7 +3333,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `6 N`,
       ],
       correctIndex: 0,
-      explanation: `Normal force is $N = mg = 6 \\times 10 = 60$ N. Kinetic friction is $f_k = \\mu_k N = 0.30 \\times 60 = 18$ N.`,
+      explanation: `$N = mg = 60$ N. $f_k = (0.30)(60) = 18$ N.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A 12 kg box is pushed across a level floor with $\\mu_k = 0.25$. What is the kinetic friction force? (Use $g = 10 \\text{ m/s}^2$)`,
+          options: [
+          `30 N`,
+          `120 N`,
+          `60 N`,
+          `12 N`,
+          ],
+          correctIndex: 0,
+          explanation: `$N = mg = 120$ N. $f_k = (0.25)(120) = 30$ N.`,
+        },
+        {
+          id: "q7",
+          question: `An 8 kg box is pushed across a level floor with $\\mu_k = 0.40$. What is the kinetic friction force? (Use $g = 10 \\text{ m/s}^2$)`,
+          options: [
+          `32 N`,
+          `80 N`,
+          `40 N`,
+          `3.2 N`,
+          ],
+          correctIndex: 0,
+          explanation: `$N = mg = 80$ N. $f_k = (0.40)(80) = 32$ N.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -3331,7 +3383,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `5 N`,
       ],
       correctIndex: 1,
-      explanation: `To maintain constant velocity, the applied force must equal the kinetic friction force. $f_k = \\mu_k N = 0.40 \\times 100 = 40$ N.`,
+      explanation: `Constant velocity means $F_{applied} = f_k = \\mu_k N = (0.40)(100) = 40$ N.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A 15 kg crate is being dragged across a floor with $\\mu_k = 0.30$ and $\\mu_s = 0.45$. Once moving, what force maintains constant velocity? (Use $g = 10 \\text{ m/s}^2$)`,
+          options: [
+          `67.5 N`,
+          `45 N`,
+          `150 N`,
+          `15 N`,
+          ],
+          correctIndex: 1,
+          explanation: `$F = f_k = (0.30)(150) = 45$ N.`,
+        },
+        {
+          id: "q9",
+          question: `A 20 kg crate is being dragged across a floor with $\\mu_k = 0.25$ and $\\mu_s = 0.40$. Once moving, what force maintains constant velocity? (Use $g = 10 \\text{ m/s}^2$)`,
+          options: [
+          `80 N`,
+          `50 N`,
+          `200 N`,
+          `20 N`,
+          ],
+          correctIndex: 1,
+          explanation: `$F = f_k = (0.25)(200) = 50$ N.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -3379,7 +3457,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `The box comes to rest immediately`,
       ],
       correctIndex: 2,
-      explanation: `The net force is 30 N − 20 N = 10 N in the direction of motion. A net force causes acceleration, so the box accelerates.`,
+      explanation: `$F_{net} = 30 - 20 = 10$ N in the direction of motion, so the box accelerates.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A box is sliding across a floor. The applied force is 25 N and the kinetic friction force is 25 N. What happens to the box's motion?`,
+          options: [
+          `The box moves at constant velocity`,
+          `The box decelerates`,
+          `The box accelerates`,
+          `The box comes to rest immediately`,
+          ],
+          correctIndex: 0,
+          explanation: `$F_{net} = 25 - 25 = 0$ N, so the box's velocity stays constant.`,
+        },
+        {
+          id: "q13",
+          question: `A box is sliding across a floor. The applied force is 15 N and the kinetic friction force is 25 N. What happens to the box's motion?`,
+          options: [
+          `The box moves at constant velocity`,
+          `The box decelerates`,
+          `The box accelerates`,
+          `The box comes to rest immediately`,
+          ],
+          correctIndex: 1,
+          explanation: `$F_{net} = 15 - 25 = -10$ N (opposing motion), so the box decelerates.`,
+        },
+      ],
     },
     {
       id: "q14",
