@@ -49,6 +49,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 export default function VoiceCinema() {
   const wrapRef = useRef<HTMLDivElement>(null);
+  const transcriptRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
   const [reduceMotion, setReduceMotion] = useState(false);
 
@@ -74,7 +75,12 @@ export default function VoiceCinema() {
       const vh = window.innerHeight;
       const total = rect.height - vh;
       const scrolled = clamp(-rect.top, 0, total);
-      setProgress(total > 0 ? scrolled / total : 0);
+      const next = total > 0 ? scrolled / total : 0;
+      // Quantize to ~0.2% steps so React only rerenders when progress has
+      // actually moved meaningfully — kills jank during fast scrolls.
+      setProgress((prev) =>
+        Math.abs(next - prev) < 0.002 ? prev : next
+      );
     };
     const onScroll = () => {
       if (raf) return;
@@ -120,6 +126,15 @@ export default function VoiceCinema() {
 
   const reply = QUIZ_REPLY.slice(0, Math.round(speakP * QUIZ_REPLY.length));
   const showReplyCursor = speakP > 0.02 && speakP < 1;
+
+  // Auto-scroll the transcript so the latest-revealed text is always visible
+  // as the tutor reply streams in. Without this, long replies get clipped by
+  // the fixed-height phone card and users only see the first few lines.
+  useEffect(() => {
+    const el = transcriptRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [reply, transcript]);
 
   const stateLabel: Record<State, string> = {
     idle: "Tap the mic to speak, or type below",
@@ -241,8 +256,8 @@ export default function VoiceCinema() {
             </div>
 
             {/* Orb + state */}
-            <div className="flex flex-col items-center px-6 pt-2">
-              <div className="relative h-28 w-28 sm:h-32 sm:w-32">
+            <div className="flex flex-col items-center px-6 pt-1">
+              <div className="relative h-20 w-20 sm:h-24 sm:w-24">
                 <div
                   className={`absolute inset-0 rounded-full bg-gradient-to-br from-sky-400 via-indigo-500 to-fuchsia-500 opacity-90 blur-[2px] ${orbAnim}`}
                 />
@@ -252,17 +267,20 @@ export default function VoiceCinema() {
                   <div className="absolute inset-0 rounded-full ring-4 ring-sky-400/40 vc-ping" />
                 )}
               </div>
-              <div className="mt-4 text-[14px] font-medium text-white/90">
+              <div className="mt-2 text-[13px] font-medium text-white/90">
                 {stateLabel[state]}
               </div>
-              <div className="mt-1 min-h-[14px] text-[11px] text-white/50">
+              <div className="mt-0.5 min-h-[14px] text-[11px] text-white/50">
                 {stateHelper[state]}
               </div>
             </div>
 
             {/* Transcript */}
-            <div className="flex-1 overflow-hidden px-5 pt-4">
-              <div className="space-y-2.5">
+            <div
+              ref={transcriptRef}
+              className="vc-transcript min-h-0 flex-1 overflow-y-auto px-5 pt-4"
+            >
+              <div className="space-y-2.5 pb-2">
                 {transcript.length > 0 && (
                   <div
                     className="rounded-2xl border border-white/10 bg-white/5 px-3.5 py-2.5"
@@ -306,7 +324,7 @@ export default function VoiceCinema() {
             </div>
 
             {/* Mic + text input */}
-            <div className="flex flex-col items-center gap-2.5 px-6 pb-6 pt-3">
+            <div className="flex flex-col items-center gap-2 px-6 pb-4 pt-2">
               <div className="relative">
                 {state === "listening" && (
                   <span className="absolute inset-0 rounded-full bg-red-500/60 vc-ping" />
@@ -315,7 +333,7 @@ export default function VoiceCinema() {
                   <span className="absolute inset-0 rounded-full bg-sky-400/50 vc-ping" />
                 )}
                 <div
-                  className={`relative grid h-16 w-16 place-items-center rounded-full transition-colors ${
+                  className={`relative grid h-14 w-14 place-items-center rounded-full transition-colors ${
                     state === "listening"
                       ? "bg-red-500 text-white shadow-[0_0_50px_rgba(239,68,68,0.5)]"
                       : state === "speaking"
@@ -418,6 +436,8 @@ export default function VoiceCinema() {
         .vc-blink {
           animation: vcBlink 0.9s steps(1) infinite;
         }
+        .vc-transcript { scrollbar-width: none; -ms-overflow-style: none; }
+        .vc-transcript::-webkit-scrollbar { display: none; }
         @media (prefers-reduced-motion: reduce) {
           .vc-orb-pulse, .vc-orb-pulse-fast, .vc-orb-spin, .vc-ping, .vc-blink {
             animation: none !important;
