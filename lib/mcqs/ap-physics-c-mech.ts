@@ -2717,7 +2717,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `16 m/s²`,
       ],
       correctIndex: 1,
-      explanation: `Using $a = \\frac{F}{m} = \\frac{8.0}{2.0} = 4.0$ m/s², the acceleration is directly proportional to the net force and inversely proportional to the mass.`,
+      explanation: `$a = F/m = 8.0/2.0 = 4.0$ m/s².`,
+      variations: [
+        {
+          id: "q3",
+          question: `A 3.0 kg object experiences a net force of 12 N. What is its acceleration?`,
+          options: [
+          `2.0 m/s²`,
+          `4.0 m/s²`,
+          `6.0 m/s²`,
+          `36 m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `$a = F/m = 12/3.0 = 4.0$ m/s².`,
+        },
+        {
+          id: "q3",
+          question: `A 5.0 kg object experiences a net force of 25 N. What is its acceleration?`,
+          options: [
+          `2.0 m/s²`,
+          `5.0 m/s²`,
+          `10 m/s²`,
+          `125 m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `$a = F/m = 25/5.0 = 5.0$ m/s².`,
+        },
+      ],
     },
     {
       id: "q4",
@@ -2753,7 +2779,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `5.0 m/s²`,
       ],
       correctIndex: 1,
-      explanation: `The net force is $20 - 5.0 = 15$ N to the right, so $a = \\frac{F_{net}}{m} = \\frac{15}{5.0} = 3.0$ m/s².`,
+      explanation: `$F_{net} = 20 - 5.0 = 15$ N. $a = 15/5.0 = 3.0$ m/s².`,
+      variations: [
+        {
+          id: "q6",
+          question: `A 4.0 kg box is pushed with a horizontal force of 24 N to the right, while friction exerts 8.0 N to the left. What is the box's acceleration?`,
+          options: [
+          `2.0 m/s²`,
+          `4.0 m/s²`,
+          `6.0 m/s²`,
+          `8.0 m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `$F_{net} = 24 - 8.0 = 16$ N. $a = 16/4.0 = 4.0$ m/s².`,
+        },
+        {
+          id: "q6",
+          question: `A 8.0 kg box is pushed with a horizontal force of 32 N to the right, while friction exerts 12 N to the left. What is the box's acceleration?`,
+          options: [
+          `1.5 m/s²`,
+          `2.5 m/s²`,
+          `4.0 m/s²`,
+          `5.5 m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `$F_{net} = 32 - 12 = 20$ N. $a = 20/8.0 = 2.5$ m/s².`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -2765,7 +2817,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `20 s`,
       ],
       correctIndex: 1,
-      explanation: `First, find acceleration: $a = \\frac{F}{m} = \\frac{3000}{1500} = 2.0$ m/s². Then use $v = at$ to get $t = \\frac{20}{2.0} = 10$ s.`,
+      explanation: `$a = F/m = 3000/1500 = 2.0$ m/s². $t = v/a = 20/2.0 = 10$ s.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A 2000 kg car accelerates from rest. If the net force on the car is 8000 N, how long does it take to reach a velocity of 16 m/s?`,
+          options: [
+          `2.0 s`,
+          `4.0 s`,
+          `8.0 s`,
+          `16 s`,
+          ],
+          correctIndex: 1,
+          explanation: `$a = 8000/2000 = 4.0$ m/s². $t = v/a = 16/4.0 = 4.0$ s.`,
+        },
+        {
+          id: "q7",
+          question: `A 1200 kg car accelerates from rest. If the net force on the car is 1800 N, how long does it take to reach a velocity of 15 m/s?`,
+          options: [
+          `5.0 s`,
+          `10 s`,
+          `15 s`,
+          `30 s`,
+          ],
+          correctIndex: 1,
+          explanation: `$a = 1800/1200 = 1.5$ m/s². $t = v/a = 15/1.5 = 10$ s.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -2789,7 +2867,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `16 m/s² to the left`,
       ],
       correctIndex: 0,
-      explanation: `The net force is $10 - 4.0 - 2.0 = 4.0$ N to the right. The acceleration is $a = \\frac{4.0}{3.0} \\approx 1.3$ m/s² to the right.`,
+      explanation: `$F_{net} = 10 - 4.0 - 2.0 = 4.0$ N right. $a = 4.0/3.0 \\approx 1.3$ m/s² right.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A 2.0 kg object is subject to three horizontal forces: 14 N to the right, 3.0 N to the left, and 5.0 N to the left. What is the acceleration of the object?`,
+          options: [
+          `3.0 m/s² to the right`,
+          `7.0 m/s² to the right`,
+          `11 m/s² to the right`,
+          `22 m/s² to the right`,
+          ],
+          correctIndex: 0,
+          explanation: `$F_{net} = 14 - 3.0 - 5.0 = 6.0$ N right. $a = 6.0/2.0 = 3.0$ m/s² right.`,
+        },
+        {
+          id: "q9",
+          question: `A 4.0 kg object is subject to three horizontal forces: 6.0 N to the right, 2.0 N to the left, and 12 N to the right. What is the acceleration of the object?`,
+          options: [
+          `4.0 m/s² to the right`,
+          `2.0 m/s² to the right`,
+          `1.0 m/s² to the left`,
+          `5.0 m/s² to the left`,
+          ],
+          correctIndex: 0,
+          explanation: `$F_{net} = 6.0 + 12 - 2.0 = 16$ N right. $a = 16/4.0 = 4.0$ m/s² right.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -2817,7 +2921,7 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
     },
     {
       id: "q12",
-      question: `A 6.0 kg block is pulled by a rope with a tension of 30 N at an angle of 0° (horizontal). Friction exerts a force of 6.0 N opposing the motion. What is the net horizontal force and the resulting acceleration?`,
+      question: `A 6.0 kg block is pulled by a horizontal rope with a tension of 30 N. Friction exerts 6.0 N opposing the motion. What is the net horizontal force and the resulting acceleration?`,
       options: [
       `Net force = 24 N, acceleration = 4.0 m/s²`,
       `Net force = 36 N, acceleration = 6.0 m/s²`,
@@ -2825,7 +2929,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `Net force = 6.0 N, acceleration = 1.0 m/s²`,
       ],
       correctIndex: 0,
-      explanation: `The net horizontal force is $30 - 6.0 = 24$ N, and the acceleration is $a = \\frac{24}{6.0} = 4.0$ m/s².`,
+      explanation: `$F_{net} = 30 - 6.0 = 24$ N. $a = 24/6.0 = 4.0$ m/s².`,
+      variations: [
+        {
+          id: "q12",
+          question: `A 4.0 kg block is pulled by a horizontal rope with a tension of 22 N. Friction exerts 6.0 N opposing the motion. What is the net horizontal force and acceleration?`,
+          options: [
+          `Net force = 16 N, acceleration = 4.0 m/s²`,
+          `Net force = 28 N, acceleration = 7.0 m/s²`,
+          `Net force = 22 N, acceleration = 5.5 m/s²`,
+          `Net force = 6.0 N, acceleration = 1.5 m/s²`,
+          ],
+          correctIndex: 0,
+          explanation: `$F_{net} = 22 - 6.0 = 16$ N. $a = 16/4.0 = 4.0$ m/s².`,
+        },
+        {
+          id: "q12",
+          question: `A 10 kg block is pulled by a horizontal rope with a tension of 55 N. Friction exerts 15 N opposing the motion. What is the net horizontal force and acceleration?`,
+          options: [
+          `Net force = 40 N, acceleration = 4.0 m/s²`,
+          `Net force = 70 N, acceleration = 7.0 m/s²`,
+          `Net force = 55 N, acceleration = 5.5 m/s²`,
+          `Net force = 15 N, acceleration = 1.5 m/s²`,
+          ],
+          correctIndex: 0,
+          explanation: `$F_{net} = 55 - 15 = 40$ N. $a = 40/10 = 4.0$ m/s².`,
+        },
+      ],
     },
     {
       id: "q13",
