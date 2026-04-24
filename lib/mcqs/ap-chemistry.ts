@@ -637,7 +637,7 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       options: [
       `0.22`,
       `0.78`,
-      `0.78`,
+      `3.55`,
       `0.56`,
       ],
       correctIndex: 1,
@@ -3411,12 +3411,12 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       question: `A gas sample at 25°C and 1 atm has a volume of 2.0 L. What is the number of moles of gas present? (Use $R = 0.0821$ L·atm/(mol·K))`,
       options: [
       `$0.082$ mol`,
-      `$0.082$ mol`,
-      `$0.082$ mol`,
-      `$0.082$ mol`,
+      `$0.975$ mol`,
+      `$1.22$ mol`,
+      `$0.041$ mol`,
       ],
       correctIndex: 0,
-      explanation: `Converting 25°C to 298 K and using $n = PV/RT = (1)(2.0)/(0.0821)(298) = 0.082$ mol.`,
+      explanation: `Converting 25°C to 298 K and using $n = PV/RT = (1)(2.0)/(0.0821)(298) = 0.082$ mol. Forgetting the Celsius → Kelvin conversion gives ~0.975 mol, and forgetting to double for 2.0 L gives 0.041 mol.`,
     },
     {
       id: "q8",
@@ -15448,12 +15448,12 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       question: `If a reaction has ΔH = −200 kJ/mol and ΔS = +0.5 kJ/(mol·K), what is ΔG at 400 K?`,
       options: [
       `−400 kJ/mol`,
-      `−0 kJ/mol`,
-      `−400 kJ/mol`,
+      `0 kJ/mol`,
+      `+200 kJ/mol`,
       `−200 kJ/mol`,
       ],
       correctIndex: 0,
-      explanation: `ΔG = −200 − 400(0.5) = −200 − 200 = −400 kJ/mol, indicating a spontaneous reaction.`,
+      explanation: `ΔG = ΔH − TΔS = −200 − 400(0.5) = −200 − 200 = −400 kJ/mol, indicating a spontaneous reaction. A sign error on TΔS gives +200 kJ/mol.`,
     },
     {
       id: "q13",

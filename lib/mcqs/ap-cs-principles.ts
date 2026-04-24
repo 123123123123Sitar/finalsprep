@@ -2129,11 +2129,11 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       options: [
       `A`,
       `p`,
-      `p`,
+      `e`,
       `l`,
       ],
       correctIndex: 1,
-      explanation: `In 1-based indexing, index 1 is 'A', index 2 is 'p', and index 3 is 'p', the second 'p' in "Apple".`,
+      explanation: `In 1-based indexing, index 1 is 'A', index 2 is 'p', and index 3 is 'p' — the second 'p' in "Apple". 'l' is at index 4 and 'e' at index 5.`,
     },
     {
       id: "q9",

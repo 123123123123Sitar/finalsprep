@@ -1,0 +1,36 @@
+Working directory: /Users/sitareswar/finalsprep
+
+BACKGROUND
+The repo has an MCQ question bank under lib/mcqs/ap-*.ts. Each MCQ has:
+  { id, question, options: [4 strings], correctIndex: 0..3, explanation }
+
+An audit script at scripts/audit-mcqs.ts flagged 18 MCQs where two of the
+four options are the same string, leaving a student with only 3 real
+choices. Your job is to fix them.
+
+TASK
+1. Run: npx tsx scripts/audit-mcqs.ts
+   It prints the 18 "duplicate-option" findings (course file, lessonSlug,
+   question id, duplicated value).
+
+2. For each of the 18 questions, open the per-course file
+   (lib/mcqs/ap-<course>.ts), locate the entry by lessonSlug + id, and
+   rewrite ONE of the two duplicated options into a plausible wrong
+   distractor that:
+     (a) is factually incorrect — the existing correctIndex stays valid,
+     (b) is consistent in magnitude / type / phrasing with the other
+         options (e.g. if options are "200 N", "400 N", "800 N", "800 N",
+         replace one with "1600 N"),
+     (c) is different from all other options in the same question.
+
+   Do NOT change the question text.
+   Do NOT change correctIndex.
+   Do NOT change the explanation unless it literally cites the replaced
+   distractor by its exact value (it usually does not).
+
+3. After all edits, re-run: npx tsx scripts/audit-mcqs.ts
+   The output must show 0 findings. Keep iterating until clean.
+
+4. Do NOT commit or push. Leave the changes unstaged for human review.
+   At the end, print a short summary: "Fixed N of 18 broken MCQs. Audit
+   now reports X findings."

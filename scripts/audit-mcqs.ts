@@ -46,7 +46,10 @@ let totalQ = 0;
 const kindCounts = new Map<string, number>();
 
 function norm(s: string) {
-  return s.trim().toLowerCase().replace(/\s+/g, " ");
+  // Collapse whitespace only. Do NOT lowercase — genetics questions
+  // distinguish "BB" from "bb", and computer-science answers distinguish
+  // variable names by case. Lowercasing produces false positives there.
+  return s.trim().replace(/\s+/g, " ");
 }
 
 for (const [course, bank] of ALL) {

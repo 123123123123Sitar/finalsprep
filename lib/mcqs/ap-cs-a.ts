@@ -9093,15 +9093,15 @@ System.out.println(product);`,
     },
     {
       id: "q14",
-      question: `A programmer writes nested loops to compute the sum of all elements in a 2D array. The outer loop variable is \`r\` and the inner is \`c\`. If the array has 3 rows with 4, 5, and 3 columns respectively, how many times does the inner loop body execute in total?`,
+      question: `A programmer writes nested loops to compute the sum of all elements in a 2D array. The outer loop variable is \`r\` and the inner is \`c\`. If the array has 3 rows with 4, 5, and 6 columns respectively, how many times does the inner loop body execute in total?`,
       options: [
       `9 times`,
       `12 times`,
       `15 times`,
-      `12 times`,
+      `18 times`,
       ],
       correctIndex: 2,
-      explanation: `The inner loop executes 4 times for row 0, 5 times for row 1, and 3 times for row 2, totaling 4 + 5 + 3 = 12 executions.`,
+      explanation: `The inner loop executes 4 times for row 0, 5 times for row 1, and 6 times for row 2, totaling 4 + 5 + 6 = 15 executions. 18 comes from assuming all rows have 6 columns (3 × 6).`,
     },
     {
       id: "q15",
