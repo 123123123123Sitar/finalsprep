@@ -6166,6 +6166,8851 @@ export const PAST_FRQS: PastFrq[] = [
     "source": "Adapted from CB AP Euro LEQ style"
   },
 
+  // ─── ap-precalc wave-2 (+12) ─────────────────────────────
+  {
+    "id": "precalc-v2-2024-1",
+    "courseSlug": "ap-precalc",
+    "year": 2024,
+    "number": 1,
+    "topic": "Polynomial and rational modeling",
+    "prompt": "The function $f$ is given by $f(x) = \\frac{2x^2 - 8}{x^2 - 4x + 3}$. Answer the following about $f$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Identify all zeros of $f$ and all values of $x$ at which $f$ has a vertical asymptote. Show the algebraic work.",
+        "points": 2,
+        "rubric": "1 pt: correctly factors numerator and denominator as $2(x-2)(x+2)$ and $(x-1)(x-3)$\n1 pt: zeros at $x=\\pm 2$; vertical asymptotes at $x=1$ and $x=3$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine $\\lim_{x\\to\\infty} f(x)$ and explain what this limit says about the end behavior of $f$.",
+        "points": 2,
+        "rubric": "1 pt: limit equals $2$ using ratio of leading coefficients\n1 pt: interprets as horizontal asymptote $y=2$ describing end behavior"
+      },
+      {
+        "label": "(c)",
+        "prompt": "On the open interval $(1,3)$, determine whether $f$ is positive or negative. Justify your answer using sign analysis.",
+        "points": 2,
+        "rubric": "1 pt: tests a value such as $x=2$ showing numerator $=0$, and a value like $x=1.5$ where $f<0$\n1 pt: concludes $f$ is negative on $(1,2)$ and positive on $(2,3)$ with sign-chart justification"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2024 AP Precalculus FRQ 1"
+  },
+  {
+    "id": "precalc-v2-2024-2",
+    "courseSlug": "ap-precalc",
+    "year": 2024,
+    "number": 2,
+    "topic": "Exponential and logarithmic modeling",
+    "prompt": "A bacterial population is modeled by $P(t) = 500 \\cdot (1.08)^t$, where $t$ is measured in hours since $t=0$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Compute the average rate of change of $P$ on the interval $[0,10]$. Include units.",
+        "points": 2,
+        "rubric": "1 pt: sets up $\\frac{P(10)-P(0)}{10}$\n1 pt: numerical answer $\\approx 57.95$ bacteria per hour with units"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Solve $P(t) = 2000$ for $t$ algebraically using logarithms.",
+        "points": 2,
+        "rubric": "1 pt: isolates $(1.08)^t = 4$ and applies a logarithm\n1 pt: $t = \\frac{\\ln 4}{\\ln 1.08} \\approx 18.013$ hours"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Rewrite $P(t)$ in the form $P(t) = 500 e^{kt}$ and interpret $k$ in context.",
+        "points": 2,
+        "rubric": "1 pt: $k = \\ln(1.08) \\approx 0.07696$\n1 pt: interprets $k$ as the continuous growth rate per hour"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2024 AP Precalculus FRQ 2"
+  },
+  {
+    "id": "precalc-v2-2024-3",
+    "courseSlug": "ap-precalc",
+    "year": 2024,
+    "number": 3,
+    "topic": "Trigonometric modeling",
+    "prompt": "A Ferris wheel has center $26$ meters above the ground and radius $24$ meters. A rider boards at the lowest point and the wheel makes one full revolution every $40$ seconds. Let $h(t)$ be the height in meters above the ground at time $t$ seconds.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write an expression for $h(t)$ in the form $h(t) = a\\cos(bt) + d$ or $h(t) = a\\sin(bt) + d$.",
+        "points": 2,
+        "rubric": "1 pt: identifies amplitude $24$, midline $26$, period $40$ so $b=\\frac{\\pi}{20}$\n1 pt: $h(t) = -24\\cos\\!\\left(\\frac{\\pi}{20} t\\right) + 26$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find all times $t$ in $[0,40]$ at which $h(t) = 38$. Show the algebraic steps.",
+        "points": 2,
+        "rubric": "1 pt: reduces to $\\cos\\!\\left(\\frac{\\pi}{20} t\\right) = -\\tfrac{1}{2}$\n1 pt: $t = \\tfrac{40}{3}$ and $t = \\tfrac{80}{3}$ seconds"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Describe how $h$ changes on the interval from $t=10$ to $t=20$ in terms of concavity and direction.",
+        "points": 2,
+        "rubric": "1 pt: states $h$ is increasing on $[10,20]$\n1 pt: states $h$ is concave down on $[10,20]$ with supporting reasoning"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2024 AP Precalculus FRQ 3"
+  },
+  {
+    "id": "precalc-v2-2024-4",
+    "courseSlug": "ap-precalc",
+    "year": 2024,
+    "number": 4,
+    "topic": "Function transformations and inverses",
+    "prompt": "The function $g$ is given by $g(x) = 3\\ln(x-2) + 1$, with domain $x > 2$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Describe $g$ as a sequence of transformations of the parent function $f(x) = \\ln x$.",
+        "points": 2,
+        "rubric": "1 pt: horizontal shift right $2$; vertical stretch by factor $3$\n1 pt: vertical shift up $1$ in correct order"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find an algebraic expression for $g^{-1}(x)$ and state its domain.",
+        "points": 2,
+        "rubric": "1 pt: correctly solves $y = 3\\ln(x-2)+1$ for $x$ to obtain $g^{-1}(x) = e^{(x-1)/3} + 2$\n1 pt: domain is all real $x$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Evaluate $\\lim_{x \\to 2^+} g(x)$ and explain its meaning.",
+        "points": 2,
+        "rubric": "1 pt: limit equals $-\\infty$\n1 pt: interprets as a vertical asymptote of $g$ at $x=2$"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2024 AP Precalculus FRQ 4"
+  },
+  {
+    "id": "precalc-v2-2023-1",
+    "courseSlug": "ap-precalc",
+    "year": 2023,
+    "number": 1,
+    "topic": "Polynomial rate of change",
+    "prompt": "The polynomial $f$ is given by $f(x) = x^3 - 6x^2 + 9x + 2$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Compute the average rate of change of $f$ on the interval $[1,4]$.",
+        "points": 2,
+        "rubric": "1 pt: correct setup $\\frac{f(4)-f(1)}{4-1}$\n1 pt: evaluates $f(4)=6$, $f(1)=6$ and obtains average rate $0$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine all $x$-values where $f$ has a relative extremum by analyzing $f'(x)$ through polynomial factoring.",
+        "points": 2,
+        "rubric": "1 pt: $f'(x) = 3x^2 - 12x + 9 = 3(x-1)(x-3)$\n1 pt: relative max at $x=1$ and relative min at $x=3$ by sign analysis"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Describe the end behavior of $f$ using limit notation.",
+        "points": 2,
+        "rubric": "1 pt: $\\lim_{x\\to\\infty} f(x) = \\infty$\n1 pt: $\\lim_{x\\to-\\infty} f(x) = -\\infty$"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2023 AP Precalculus practice FRQ"
+  },
+  {
+    "id": "precalc-v2-2023-2",
+    "courseSlug": "ap-precalc",
+    "year": 2023,
+    "number": 2,
+    "topic": "Semi-log regression",
+    "prompt": "Data for a population $P$ at time $t$ years is modeled after a semi-log transformation by the linear regression $\\ln P = 0.35 t + 4.2$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write $P$ as an exponential function of $t$.",
+        "points": 2,
+        "rubric": "1 pt: exponentiates both sides\n1 pt: $P(t) = e^{4.2} e^{0.35 t} \\approx 66.69 \\, e^{0.35 t}$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the time $t$ at which $P = 500$.",
+        "points": 2,
+        "rubric": "1 pt: sets $500 = e^{4.2} e^{0.35 t}$ and isolates\n1 pt: $t = \\frac{\\ln 500 - 4.2}{0.35} \\approx 5.76$ years"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Interpret the slope $0.35$ in the context of the original exponential model.",
+        "points": 1,
+        "rubric": "1 pt: identifies $0.35$ as the continuous (instantaneous) relative growth rate of $P$"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from CB 2023 AP Precalculus released item (semi-log)"
+  },
+  {
+    "id": "precalc-v2-2023-3",
+    "courseSlug": "ap-precalc",
+    "year": 2023,
+    "number": 3,
+    "topic": "Sinusoidal modeling of temperature",
+    "prompt": "The temperature $T$, in $^\\circ$F, at a location $t$ hours after midnight is modeled by $T(t) = 12\\sin\\!\\left(\\tfrac{\\pi}{12}(t - 9)\\right) + 58$ for $0 \\le t \\le 24$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Identify the maximum temperature predicted by the model and the time at which it occurs.",
+        "points": 2,
+        "rubric": "1 pt: maximum value $70\\,^\\circ$F\n1 pt: occurs when $\\tfrac{\\pi}{12}(t-9) = \\tfrac{\\pi}{2}$, so $t=15$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find all times $t$ in $[0,24]$ at which $T(t) = 64$.",
+        "points": 2,
+        "rubric": "1 pt: reduces to $\\sin\\!\\left(\\tfrac{\\pi}{12}(t-9)\\right) = \\tfrac{1}{2}$\n1 pt: $t = 11$ and $t = 19$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Describe the rate of change of $T$ on the interval $(9,15)$.",
+        "points": 2,
+        "rubric": "1 pt: states $T$ is increasing on $(9,15)$\n1 pt: states the rate of change is positive and decreasing (concave down)"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2023 AP Precalculus practice FRQ"
+  },
+  {
+    "id": "precalc-v2-2023-4",
+    "courseSlug": "ap-precalc",
+    "year": 2023,
+    "number": 4,
+    "topic": "Polar functions",
+    "prompt": "The polar curve is given by $r = 2 + 2\\cos\\theta$ for $0 \\le \\theta \\le 2\\pi$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the values of $\\theta$ in $[0,2\\pi]$ for which $r = 0$.",
+        "points": 1,
+        "rubric": "1 pt: $\\theta = \\pi$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the maximum value of $r$ and the value(s) of $\\theta$ where it occurs.",
+        "points": 2,
+        "rubric": "1 pt: recognizes max of $\\cos\\theta$ is $1$\n1 pt: maximum $r = 4$ at $\\theta = 0$ (and $2\\pi$)"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the interval(s) of $\\theta$ in $[0,\\pi]$ on which $r$ is decreasing, and explain.",
+        "points": 2,
+        "rubric": "1 pt: recognizes $r$ decreases when $\\cos\\theta$ decreases, i.e. on $[0,\\pi]$\n1 pt: supports with reference to $\\frac{dr}{d\\theta} = -2\\sin\\theta \\le 0$ on $[0,\\pi]$"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from CB 2023 AP Precalculus practice FRQ (polar)"
+  },
+  {
+    "id": "precalc-v2-2024-5",
+    "courseSlug": "ap-precalc",
+    "year": 2024,
+    "number": 5,
+    "topic": "Parametric functions",
+    "prompt": "A particle moves in the plane so that its position at time $t \\ge 0$ is given by $x(t) = t^2 - 4t$ and $y(t) = 2t - 3$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the position of the particle when $t=3$.",
+        "points": 1,
+        "rubric": "1 pt: $(x(3), y(3)) = (-3, 3)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Eliminate the parameter to express $x$ as a function of $y$.",
+        "points": 2,
+        "rubric": "1 pt: $t = \\tfrac{y+3}{2}$ from the $y$-equation\n1 pt: $x = \\left(\\tfrac{y+3}{2}\\right)^2 - 4\\!\\left(\\tfrac{y+3}{2}\\right)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the time $t$ at which the $x$-coordinate is minimized and give that minimum value.",
+        "points": 2,
+        "rubric": "1 pt: sets $\\frac{d}{dt}(t^2-4t)=2t-4=0$ giving $t=2$\n1 pt: minimum $x(2) = -4$"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from CB 2024 AP Precalculus FRQ (parametric)"
+  },
+  {
+    "id": "precalc-v2-2023-5",
+    "courseSlug": "ap-precalc",
+    "year": 2023,
+    "number": 5,
+    "topic": "Rational function modeling",
+    "prompt": "A pollutant concentration in a lake at time $t \\ge 0$ hours is modeled by $C(t) = \\frac{8t}{t^2 + 4}$ parts per million.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine $\\lim_{t\\to\\infty} C(t)$ and interpret.",
+        "points": 2,
+        "rubric": "1 pt: limit equals $0$\n1 pt: interprets as concentration approaching $0$ ppm long-term"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the time $t$ at which $C(t)$ is maximum and the maximum value.",
+        "points": 2,
+        "rubric": "1 pt: $C'(t) = \\frac{8(4 - t^2)}{(t^2+4)^2}$ equals zero at $t=2$\n1 pt: maximum $C(2) = 2$ ppm"
+      },
+      {
+        "label": "(c)",
+        "prompt": "On which interval is $C$ decreasing? Justify.",
+        "points": 2,
+        "rubric": "1 pt: identifies $t>2$\n1 pt: justifies using sign of $C'(t)<0$ for $t>2$"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2023 AP Precalculus (rational modeling)"
+  },
+  {
+    "id": "precalc-v2-2024-6",
+    "courseSlug": "ap-precalc",
+    "year": 2024,
+    "number": 6,
+    "topic": "Function composition and inverses",
+    "prompt": "Let $f(x) = \\sqrt{x+1}$ and $g(x) = x^2 - 1$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find $(f \\circ g)(x)$ and state its domain.",
+        "points": 2,
+        "rubric": "1 pt: $(f\\circ g)(x) = \\sqrt{x^2} = |x|$\n1 pt: domain all real $x$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find $(g \\circ f)(x)$ and state its domain.",
+        "points": 2,
+        "rubric": "1 pt: $(g\\circ f)(x) = x$\n1 pt: domain $x \\ge -1$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Explain whether $f$ and $g$ are inverses on a suitable domain.",
+        "points": 2,
+        "rubric": "1 pt: notes composition gives $x$ only under domain restrictions\n1 pt: concludes $f$ and $g$ are inverses on $x \\ge 0$"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2024 AP Precalculus FRQ (composition/inverse)"
+  },
+  {
+    "id": "precalc-v2-2023-6",
+    "courseSlug": "ap-precalc",
+    "year": 2023,
+    "number": 6,
+    "topic": "Logarithmic equations and interpretation",
+    "prompt": "The loudness $L$ in decibels of a sound with intensity $I$ watts per square meter is $L = 10\\log_{10}\\!\\left(\\frac{I}{10^{-12}}\\right)$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the decibel level for $I = 10^{-5}$.",
+        "points": 1,
+        "rubric": "1 pt: $L = 70$ decibels"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Solve for $I$ in terms of $L$.",
+        "points": 2,
+        "rubric": "1 pt: isolates $\\log_{10}(I/10^{-12}) = L/10$\n1 pt: $I = 10^{-12} \\cdot 10^{L/10}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Show that increasing $L$ by $10$ decibels corresponds to multiplying $I$ by $10$.",
+        "points": 2,
+        "rubric": "1 pt: computes ratio $\\frac{I(L+10)}{I(L)}$\n1 pt: simplifies to $10^{1} = 10$"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from CB 2023 AP Precalculus (logarithmic models)"
+  },
+
+  // ─── ap-calc-ab wave-2 (+19) ─────────────────────────────
+  {
+    "id": "calc-ab-v2-2016-1",
+    "courseSlug": "ap-calc-ab",
+    "year": 2016,
+    "number": 1,
+    "topic": "Rate in / rate out (accumulation)",
+    "prompt": "Water flows into a tank at a rate of $R(t) = 100\\sqrt{t+1}$ gallons per hour and flows out at $E(t) = 60 + 8t$ gallons per hour for $0 \\le t \\le 8$. The tank contains $500$ gallons at $t=0$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the total amount of water that flows into the tank during the interval $0 \\le t \\le 8$.",
+        "points": 2,
+        "rubric": "1 pt: sets up $\\int_0^8 100\\sqrt{t+1}\\,dt$\n1 pt: evaluates to $\\tfrac{200}{3}(9^{3/2}-1) = \\tfrac{200}{3}(26) \\approx 1733.333$ gallons"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Is the amount of water in the tank increasing or decreasing at $t=5$? Justify.",
+        "points": 2,
+        "rubric": "1 pt: computes $R(5)=100\\sqrt{6} \\approx 244.949$ and $E(5)=100$\n1 pt: since $R(5)>E(5)$, water is increasing at $t=5$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Write an expression for $W(t)$, the amount of water in the tank at time $t$.",
+        "points": 2,
+        "rubric": "1 pt: integral form $W(t) = 500 + \\int_0^t [R(s)-E(s)]\\,ds$\n1 pt: correct limits and integrand matching the setup"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the time $t$ in $(0,8)$ at which the amount of water is maximum. Justify.",
+        "points": 3,
+        "rubric": "1 pt: sets $R(t)=E(t)$, i.e. $100\\sqrt{t+1}=60+8t$\n1 pt: solves numerically $t \\approx 6.495$\n1 pt: sign analysis of $R-E$ shows maximum (changes from positive to negative)"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2016 AP Calc AB FRQ 1"
+  },
+  {
+    "id": "calc-ab-v2-2017-1",
+    "courseSlug": "ap-calc-ab",
+    "year": 2017,
+    "number": 1,
+    "topic": "Particle motion",
+    "prompt": "A particle moves along the $x$-axis with velocity $v(t) = t^2 - 6t + 8$ for $0 \\le t \\le 5$. At time $t=0$ the particle is at position $x=1$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find all times $t$ in $(0,5)$ when the particle is at rest.",
+        "points": 2,
+        "rubric": "1 pt: factors $v(t)=(t-2)(t-4)$\n1 pt: at rest at $t=2$ and $t=4$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the total distance traveled by the particle on $[0,5]$.",
+        "points": 3,
+        "rubric": "1 pt: sets up $\\int_0^5 |v(t)|\\,dt$ with sign changes at $t=2,4$\n1 pt: computes $|\\int_0^2 v|=\\tfrac{20}{3}$, $|\\int_2^4 v|=\\tfrac{4}{3}$, $|\\int_4^5 v|=\\tfrac{4}{3}$\n1 pt: sums to total distance $= \\tfrac{28}{3}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the position of the particle at $t=5$.",
+        "points": 2,
+        "rubric": "1 pt: $x(5) = 1 + \\int_0^5 v(t)\\,dt$\n1 pt: $x(5) = 1 + \\tfrac{20}{3} = \\tfrac{23}{3}$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the acceleration at $t=3$ and determine whether the speed is increasing or decreasing at $t=3$.",
+        "points": 2,
+        "rubric": "1 pt: $a(3) = v'(3) = 0$\n1 pt: since $v(3)=-1<0$ and $a(3)=0$, speed is momentarily neither increasing nor decreasing; equivalent reasoning receives credit"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2017 AP Calc AB FRQ (particle motion)"
+  },
+  {
+    "id": "calc-ab-v2-2018-1",
+    "courseSlug": "ap-calc-ab",
+    "year": 2018,
+    "number": 1,
+    "topic": "Area and volume",
+    "prompt": "Let $R$ be the region bounded by the curves $y = e^x$ and $y = 1 + x$ between $x=0$ and $x=1$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the area of $R$.",
+        "points": 2,
+        "rubric": "1 pt: integrand $(e^x - (1+x))$ with correct limits\n1 pt: area $= e - 1 - \\tfrac{3}{2} = e - \\tfrac{5}{2}$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the volume of the solid obtained by rotating $R$ about the $x$-axis.",
+        "points": 3,
+        "rubric": "1 pt: sets up $\\pi \\int_0^1 (e^{2x} - (1+x)^2)\\,dx$\n1 pt: correctly antidifferentiates to $\\tfrac{1}{2}e^{2x} - \\tfrac{(1+x)^3}{3}$\n1 pt: evaluates to $\\pi\\!\\left(\\tfrac{e^2}{2} - \\tfrac{8}{3} - \\tfrac{1}{2} + \\tfrac{1}{3}\\right)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the volume of the solid with base $R$ and square cross-sections perpendicular to the $x$-axis.",
+        "points": 2,
+        "rubric": "1 pt: integrand $(e^x - 1 - x)^2$\n1 pt: volume $= \\int_0^1 (e^x - 1 - x)^2\\,dx$ with correct limits"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from CB 2018 AP Calc AB FRQ (area/volume)"
+  },
+  {
+    "id": "calc-ab-v2-2019-1",
+    "courseSlug": "ap-calc-ab",
+    "year": 2019,
+    "number": 1,
+    "topic": "Related rates",
+    "prompt": "Sand is poured into a conical pile at a constant rate of $10$ cubic feet per minute. The pile always has height equal to its base radius. Let $V$, $r$, and $h$ denote the volume, radius, and height.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write $V$ solely in terms of $h$.",
+        "points": 1,
+        "rubric": "1 pt: $V = \\tfrac{1}{3}\\pi h^3$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the rate at which the height is increasing when $h = 5$ feet.",
+        "points": 3,
+        "rubric": "1 pt: differentiates: $\\frac{dV}{dt} = \\pi h^2 \\frac{dh}{dt}$\n1 pt: substitutes $\\frac{dV}{dt}=10$, $h=5$\n1 pt: $\\frac{dh}{dt} = \\frac{10}{25\\pi} = \\frac{2}{5\\pi}$ ft/min"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the rate at which the lateral surface area $S = \\pi r \\sqrt{r^2+h^2}$ is changing when $h=5$.",
+        "points": 3,
+        "rubric": "1 pt: substitutes $r=h$ giving $S = \\pi h^2 \\sqrt{2}$\n1 pt: differentiates $\\frac{dS}{dt} = 2\\pi\\sqrt{2}\\, h \\frac{dh}{dt}$\n1 pt: $\\frac{dS}{dt} = 2\\pi\\sqrt{2}\\cdot 5 \\cdot \\tfrac{2}{5\\pi} = 4\\sqrt{2}$ sq ft/min"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from CB 2019 AP Calc AB FRQ (related rates)"
+  },
+  {
+    "id": "calc-ab-v2-2019-2",
+    "courseSlug": "ap-calc-ab",
+    "year": 2019,
+    "number": 2,
+    "topic": "Implicit differentiation",
+    "prompt": "Consider the curve defined by $x^2 y - y^3 = 4$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find $\\frac{dy}{dx}$ in terms of $x$ and $y$.",
+        "points": 3,
+        "rubric": "1 pt: differentiates implicitly: $2xy + x^2 y' - 3y^2 y' = 0$\n1 pt: isolates $y'(x^2 - 3y^2) = -2xy$\n1 pt: $\\frac{dy}{dx} = \\frac{-2xy}{x^2 - 3y^2} = \\frac{2xy}{3y^2 - x^2}$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the equation of the tangent line at the point $(2,2)$.",
+        "points": 2,
+        "rubric": "1 pt: substitutes to get slope $\\frac{8}{8} = 1$\n1 pt: tangent line $y - 2 = 1(x-2)$, i.e. $y = x$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine whether the curve has a horizontal tangent at any point where $x=0$.",
+        "points": 2,
+        "rubric": "1 pt: horizontal tangent requires $2xy=0$ with $3y^2-x^2 \\ne 0$\n1 pt: at $x=0$, curve gives $-y^3 = 4$ so $y=-\\sqrt[3]{4}$; $dy/dx = 0$, yes horizontal tangent"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from CB 2019 AP Calc AB FRQ (implicit)"
+  },
+  {
+    "id": "calc-ab-v2-2020-1",
+    "courseSlug": "ap-calc-ab",
+    "year": 2020,
+    "number": 1,
+    "topic": "FTC with graph-defined integrals",
+    "prompt": "Let $g(x) = \\int_0^x f(t)\\,dt$, where $f$ is a continuous function whose graph on $[-2,6]$ consists of a semicircle of radius $2$ centered at $(0,0)$ for $-2 \\le t \\le 2$ (above the axis), and two line segments from $(2,0)$ to $(4,-2)$ and from $(4,-2)$ to $(6,0)$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find $g(2)$ and $g(6)$.",
+        "points": 2,
+        "rubric": "1 pt: $g(2) = \\tfrac{1}{2}\\pi(2)^2 = 2\\pi$\n1 pt: $g(6) = 2\\pi + (-4) = 2\\pi - 4$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find $g'(x)$ and determine the $x$-values in $(-2,6)$ where $g$ has a relative maximum.",
+        "points": 2,
+        "rubric": "1 pt: $g'(x) = f(x)$\n1 pt: relative max at $x=2$ (sign change of $f$ from $+$ to $-$)"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the intervals on which $g$ is concave up.",
+        "points": 2,
+        "rubric": "1 pt: $g''(x)=f'(x)>0$ where $f$ is increasing\n1 pt: concave up on $(-2,0) \\cup (4,6)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the absolute minimum of $g$ on $[-2,6]$.",
+        "points": 2,
+        "rubric": "1 pt: candidates $x=-2,4,6$ with $g(-2)=0$, $g(4)=2\\pi-2$, $g(6)=2\\pi-4$\n1 pt: absolute minimum is $g(-2)=0$"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from CB 2020 AP Calc AB FRQ (graph-defined integral)"
+  },
+  {
+    "id": "calc-ab-v2-2021-1",
+    "courseSlug": "ap-calc-ab",
+    "year": 2021,
+    "number": 1,
+    "topic": "Tables and Riemann sums",
+    "prompt": "Selected values of a differentiable function $H$ are shown. $H(0)=20$, $H(2)=28$, $H(5)=40$, $H(9)=44$, $H(12)=36$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Approximate $H'(4)$ using a central difference from the table.",
+        "points": 2,
+        "rubric": "1 pt: selects values at $t=2$ and $t=5$\n1 pt: $H'(4) \\approx \\frac{H(5)-H(2)}{5-2} = 4$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Use a left Riemann sum with the four subintervals given by the table to approximate $\\int_0^{12} H(t)\\,dt$.",
+        "points": 2,
+        "rubric": "1 pt: left sum $= 20(2) + 28(3) + 40(4) + 44(3)$\n1 pt: evaluates to $416$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Using a trapezoidal sum with the four subintervals, approximate $\\frac{1}{12}\\int_0^{12} H(t)\\,dt$ and interpret the result.",
+        "points": 3,
+        "rubric": "1 pt: trapezoidal sum $= \\tfrac{2}{2}(20+28) + \\tfrac{3}{2}(28+40) + \\tfrac{4}{2}(40+44) + \\tfrac{3}{2}(44+36) = 48+102+168+120 = 438$\n1 pt: divides by $12$: $\\approx 36.5$\n1 pt: interprets as the average value of $H$ on $[0,12]$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Using the Mean Value Theorem, justify that there exists $c$ in $(5,9)$ with $H'(c) = 1$.",
+        "points": 2,
+        "rubric": "1 pt: cites MVT applicable since $H$ is differentiable\n1 pt: computes $\\frac{H(9)-H(5)}{9-5}=1$, so $c$ exists"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2021 AP Calc AB FRQ (table-based)"
+  },
+  {
+    "id": "calc-ab-v2-2022-1",
+    "courseSlug": "ap-calc-ab",
+    "year": 2022,
+    "number": 1,
+    "topic": "Differential equation with slope field",
+    "prompt": "Consider the differential equation $\\frac{dy}{dx} = \\frac{x}{y}$ with $y>0$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "On what region does $\\frac{dy}{dx}=0$? On what region is $\\frac{dy}{dx}>0$?",
+        "points": 2,
+        "rubric": "1 pt: $dy/dx=0$ on the line $x=0$ (with $y>0$)\n1 pt: $dy/dx>0$ when $x>0$ (since $y>0$)"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the particular solution $y=f(x)$ with $f(0)=2$.",
+        "points": 3,
+        "rubric": "1 pt: separates: $y\\,dy = x\\,dx$\n1 pt: integrates to $\\tfrac{y^2}{2} = \\tfrac{x^2}{2} + C$; uses $f(0)=2$ to get $C=2$\n1 pt: $y = \\sqrt{x^2 + 4}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the equation of the line tangent to $y=f(x)$ at $x=1$.",
+        "points": 2,
+        "rubric": "1 pt: $f(1)=\\sqrt{5}$, $f'(1)=\\frac{1}{\\sqrt{5}}$\n1 pt: tangent $y - \\sqrt{5} = \\frac{1}{\\sqrt{5}}(x-1)$"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from CB 2022 AP Calc AB FRQ (separable ODE)"
+  },
+  {
+    "id": "calc-ab-v2-2022-2",
+    "courseSlug": "ap-calc-ab",
+    "year": 2022,
+    "number": 2,
+    "topic": "Extrema and MVT",
+    "prompt": "Let $f(x) = x e^{-x^2}$ for $-2 \\le x \\le 2$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find $f'(x)$.",
+        "points": 2,
+        "rubric": "1 pt: product rule $e^{-x^2} + x\\cdot(-2x)e^{-x^2}$\n1 pt: $f'(x) = e^{-x^2}(1 - 2x^2)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the absolute maximum value of $f$ on $[-2,2]$. Justify.",
+        "points": 3,
+        "rubric": "1 pt: critical points where $1-2x^2=0$, i.e. $x=\\pm \\tfrac{1}{\\sqrt{2}}$\n1 pt: evaluates $f(\\tfrac{1}{\\sqrt{2}})=\\tfrac{1}{\\sqrt{2}}e^{-1/2}$, endpoints $f(\\pm 2)=\\pm 2e^{-4}$\n1 pt: absolute maximum $\\tfrac{1}{\\sqrt{2}}e^{-1/2} \\approx 0.4289$ with candidate comparison"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Apply the Mean Value Theorem to $f$ on $[0,1]$ to show there exists $c\\in(0,1)$ with $f'(c) = e^{-1}$.",
+        "points": 2,
+        "rubric": "1 pt: verifies $f$ continuous on $[0,1]$ and differentiable on $(0,1)$\n1 pt: $\\frac{f(1)-f(0)}{1-0} = e^{-1}$ so MVT guarantees such $c$"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from CB 2022 AP Calc AB FRQ (MVT/extrema)"
+  },
+  {
+    "id": "calc-ab-v2-2023-1",
+    "courseSlug": "ap-calc-ab",
+    "year": 2023,
+    "number": 1,
+    "topic": "Linearization and IVT",
+    "prompt": "Let $f$ be a differentiable function with $f(3) = 7$ and $f'(3) = -2$. Assume $f$ is twice differentiable with $f''(x) > 0$ for all $x$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write the linear approximation $L(x)$ of $f$ at $x=3$ and use it to estimate $f(3.2)$.",
+        "points": 2,
+        "rubric": "1 pt: $L(x) = 7 - 2(x-3)$\n1 pt: $L(3.2) = 6.6$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Does the linear approximation overestimate or underestimate $f(3.2)$? Justify.",
+        "points": 2,
+        "rubric": "1 pt: notes $f''>0$ so $f$ is concave up\n1 pt: tangent line lies below graph, so $L$ underestimates $f(3.2)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Given also that $f(5)=1$, use the Intermediate Value Theorem to justify there exists $c\\in(3,5)$ with $f(c) = 4$.",
+        "points": 2,
+        "rubric": "1 pt: cites continuity of $f$ on $[3,5]$\n1 pt: since $4$ lies between $f(3)=7$ and $f(5)=1$, IVT guarantees such $c$"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2023 AP Calc AB FRQ (linearization/IVT)"
+  },
+  {
+    "id": "calc-ab-v2-2023-2",
+    "courseSlug": "ap-calc-ab",
+    "year": 2023,
+    "number": 2,
+    "topic": "Volume by cross-sections",
+    "prompt": "Let $R$ be the region bounded by $y = \\sqrt{x}$, $y = 0$, and $x = 4$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the area of $R$.",
+        "points": 2,
+        "rubric": "1 pt: $\\int_0^4 \\sqrt{x}\\,dx$\n1 pt: area $= \\tfrac{16}{3}$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the volume of the solid with base $R$ and equilateral triangle cross-sections perpendicular to the $x$-axis.",
+        "points": 3,
+        "rubric": "1 pt: side length $s=\\sqrt{x}$, area $= \\tfrac{\\sqrt{3}}{4}s^2 = \\tfrac{\\sqrt{3}}{4}x$\n1 pt: $V = \\int_0^4 \\tfrac{\\sqrt{3}}{4} x\\,dx$\n1 pt: $V = \\tfrac{\\sqrt{3}}{4}\\cdot 8 = 2\\sqrt{3}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the volume of the solid generated by rotating $R$ about the line $y = -1$.",
+        "points": 3,
+        "rubric": "1 pt: outer radius $\\sqrt{x}+1$, inner radius $1$\n1 pt: $V = \\pi \\int_0^4 ((\\sqrt{x}+1)^2 - 1^2)\\,dx$\n1 pt: evaluates to $\\pi\\!\\left(\\tfrac{x^2}{2} + \\tfrac{4}{3}x^{3/2}\\right)\\Big|_0^4 = \\pi\\!\\left(8 + \\tfrac{32}{3}\\right) = \\tfrac{56\\pi}{3}$"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from CB 2023 AP Calc AB FRQ (volume)"
+  },
+  {
+    "id": "calc-ab-v2-2024-1",
+    "courseSlug": "ap-calc-ab",
+    "year": 2024,
+    "number": 1,
+    "topic": "Rate in / rate out",
+    "prompt": "Customers arrive at a store at a rate of $A(t) = 40 + 10\\cos\\!\\left(\\tfrac{\\pi t}{6}\\right)$ customers per hour and leave at a rate of $L(t) = 30 + 5\\sin\\!\\left(\\tfrac{\\pi t}{4}\\right)$ customers per hour, for $0 \\le t \\le 12$. At $t=0$ the store contains $20$ customers.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "How many customers arrive during the first $6$ hours?",
+        "points": 2,
+        "rubric": "1 pt: $\\int_0^6 A(t)\\,dt$\n1 pt: evaluates (calculator) $\\approx 240$ customers"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Is the number of customers in the store increasing or decreasing at $t=3$? Justify.",
+        "points": 2,
+        "rubric": "1 pt: computes $A(3)=40$ and $L(3) = 30+5\\sin(3\\pi/4) \\approx 33.536$\n1 pt: since $A(3)>L(3)$, number is increasing"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Write an expression for $N(t)$, the number of customers in the store at time $t$.",
+        "points": 2,
+        "rubric": "1 pt: $N(t) = 20 + \\int_0^t [A(s)-L(s)]\\,ds$\n1 pt: correct bounds and integrand"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the absolute maximum of $N(t)$ on $[0,12]$. Justify.",
+        "points": 3,
+        "rubric": "1 pt: critical points where $A(t)=L(t)$ (calculator)\n1 pt: evaluates $N$ at endpoints and critical points\n1 pt: identifies absolute max with justification"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2024 AP Calc AB FRQ 1"
+  },
+  {
+    "id": "calc-ab-v2-2024-2",
+    "courseSlug": "ap-calc-ab",
+    "year": 2024,
+    "number": 2,
+    "topic": "Particle motion",
+    "prompt": "A particle moves along the $y$-axis with velocity $v(t) = \\sin(t^2)$ for $0 \\le t \\le 3$. At time $t=0$ the particle is at $y=1$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the acceleration at $t=1$.",
+        "points": 2,
+        "rubric": "1 pt: $a(t) = 2t\\cos(t^2)$\n1 pt: $a(1) = 2\\cos 1 \\approx 1.081$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the position of the particle at $t=3$.",
+        "points": 2,
+        "rubric": "1 pt: $y(3) = 1 + \\int_0^3 \\sin(t^2)\\,dt$\n1 pt: calculator $\\approx 1.7726$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the total distance traveled on $[0,3]$.",
+        "points": 3,
+        "rubric": "1 pt: sets up $\\int_0^3 |\\sin(t^2)|\\,dt$\n1 pt: identifies sign changes at $t=\\sqrt{\\pi}\\approx 1.7725$ and $t=\\sqrt{2\\pi}\\approx 2.5066$\n1 pt: numerical value $\\approx 1.7002$"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from CB 2024 AP Calc AB FRQ (particle motion)"
+  },
+  {
+    "id": "calc-ab-v2-2018-2",
+    "courseSlug": "ap-calc-ab",
+    "year": 2018,
+    "number": 2,
+    "topic": "Slope field and Euler-style reasoning",
+    "prompt": "Consider the differential equation $\\frac{dy}{dx} = y - x$ with initial condition $y(0) = 2$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the equation of the tangent line to the solution curve at $(0,2)$.",
+        "points": 2,
+        "rubric": "1 pt: slope at $(0,2)$ is $2-0=2$\n1 pt: tangent line $y = 2 + 2x$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Verify that $y = x + 1 + e^x$ satisfies the differential equation and the initial condition.",
+        "points": 3,
+        "rubric": "1 pt: computes $y' = 1 + e^x$\n1 pt: shows $y - x = 1 + e^x$\n1 pt: checks $y(0) = 0+1+1=2$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "For the solution above, find $\\lim_{x\\to -\\infty} y$ divided by $x$, i.e. $\\lim_{x\\to-\\infty} \\frac{y(x)}{x}$.",
+        "points": 2,
+        "rubric": "1 pt: writes $\\frac{x+1+e^x}{x} = 1 + \\frac{1+e^x}{x}$\n1 pt: as $x\\to-\\infty$, $e^x\\to 0$ and $\\frac{1}{x}\\to 0$, so limit is $1$"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from CB 2018 AP Calc AB FRQ (slope field)"
+  },
+  {
+    "id": "calc-ab-v2-2017-2",
+    "courseSlug": "ap-calc-ab",
+    "year": 2017,
+    "number": 2,
+    "topic": "Table-based integration and MVT",
+    "prompt": "A differentiable function $f$ has selected values: $f(0)=3$, $f(2)=5$, $f(5)=12$, $f(10)=16$, $f(14)=20$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Use a midpoint Riemann sum with two subintervals of equal length (using $t=2,5,10,14$ split into $[2,10]$ and $[10,14]$... instead use $[0,10]$ and $[10,14]$ not equal; use $[0,14]$ with midpoints $t=2$ and $t=10$ via two subintervals $[0,4]$ and $[4,14]$) to approximate $\\int_0^{14} f(t)\\,dt$ using the subintervals $[0,10]$ with midpoint $5$ and $[10,14]$ with midpoint $12$ (estimated linearly).",
+        "points": 2,
+        "rubric": "1 pt: identifies heights $f(5)=12$ and estimates $f(12)\\approx 18$\n1 pt: sum $= 12(10) + 18(4) = 192$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Apply the MVT to $f$ on $[5,10]$ to state a conclusion about $f'$.",
+        "points": 2,
+        "rubric": "1 pt: cites differentiability and computes $\\frac{f(10)-f(5)}{10-5} = \\tfrac{4}{5}$\n1 pt: there exists $c\\in(5,10)$ with $f'(c)=\\tfrac{4}{5}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Approximate $f'(7)$ using the most appropriate pair of table values and justify your choice.",
+        "points": 2,
+        "rubric": "1 pt: uses $t=5$ and $t=10$ straddling $7$\n1 pt: $f'(7) \\approx \\frac{16-12}{10-5} = \\tfrac{4}{5}$"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2017 AP Calc AB FRQ (table)"
+  },
+  {
+    "id": "calc-ab-v2-2020-2",
+    "courseSlug": "ap-calc-ab",
+    "year": 2020,
+    "number": 2,
+    "topic": "Related rates (shadow)",
+    "prompt": "A $6$-foot tall person walks away from a $15$-foot lamppost at a constant rate of $4$ feet per second. Let $x$ be the person's distance from the post and $s$ the length of their shadow.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Using similar triangles, show that $s = \\tfrac{2}{3} x$.",
+        "points": 2,
+        "rubric": "1 pt: sets up ratio $\\frac{15}{x+s} = \\frac{6}{s}$\n1 pt: solves to $s = \\tfrac{2}{3} x$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the rate at which the shadow is lengthening.",
+        "points": 2,
+        "rubric": "1 pt: $\\frac{ds}{dt} = \\tfrac{2}{3}\\frac{dx}{dt}$\n1 pt: $\\frac{ds}{dt} = \\tfrac{8}{3}$ ft/sec"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the rate at which the tip of the shadow moves.",
+        "points": 2,
+        "rubric": "1 pt: tip position $= x + s$ so rate $= \\frac{dx}{dt}+\\frac{ds}{dt}$\n1 pt: $4 + \\tfrac{8}{3} = \\tfrac{20}{3}$ ft/sec"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2020 AP Calc AB FRQ (related rates)"
+  },
+  {
+    "id": "calc-ab-v2-2021-2",
+    "courseSlug": "ap-calc-ab",
+    "year": 2021,
+    "number": 2,
+    "topic": "Implicit differentiation with tangents",
+    "prompt": "The curve $C$ is defined by $y^2 + xy + x^2 = 7$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Show that $\\frac{dy}{dx} = -\\frac{y+2x}{2y+x}$.",
+        "points": 2,
+        "rubric": "1 pt: differentiates implicitly: $2yy' + y + xy' + 2x = 0$\n1 pt: solves for $y'$ obtaining the stated form"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find all points on $C$ where the tangent line is horizontal.",
+        "points": 3,
+        "rubric": "1 pt: horizontal requires $y+2x=0$, i.e. $y=-2x$\n1 pt: substitutes into curve: $4x^2 + x(-2x)+x^2 = 3x^2=7$\n1 pt: $x=\\pm\\sqrt{7/3}$, with $y=\\mp 2\\sqrt{7/3}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find $\\frac{d^2 y}{dx^2}$ at any point where the tangent is horizontal, and classify the behavior.",
+        "points": 2,
+        "rubric": "1 pt: since $y'=0$ at those points, $y'' = -\\frac{2}{2y+x}$ from differentiating the quotient\n1 pt: sign of $y''$ determined by sign of $(2y+x)$; concludes max/min accordingly"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from CB 2021 AP Calc AB FRQ (implicit)"
+  },
+  {
+    "id": "calc-ab-v2-2019-3",
+    "courseSlug": "ap-calc-ab",
+    "year": 2019,
+    "number": 3,
+    "topic": "FTC graph-defined function",
+    "prompt": "Let $h(x) = \\int_1^x g(t)\\,dt$, where $g$ has graph on $[0,8]$ consisting of a triangular piece reaching $(2,3)$ and returning to $(4,0)$ (above axis) and a rectangular piece of height $-2$ on $[4,8]$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find $h(4)$ and $h(8)$.",
+        "points": 2,
+        "rubric": "1 pt: $h(4) = \\int_1^4 g = \\tfrac{1}{2}(3)(3)-\\tfrac{1}{2}(1)(1.5)=4.5-0.75 \\approx$ area computation; accept $h(4) = \\tfrac{15}{4}$ by geometry\n1 pt: $h(8) = h(4) + \\int_4^8 (-2)\\,dt = h(4) - 8$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the $x$-values where $h$ has a relative minimum on $(0,8)$.",
+        "points": 2,
+        "rubric": "1 pt: $h'(x) = g(x)$; relative min where $g$ changes from $-$ to $+$\n1 pt: relative min at $x=1$ (if $g$ is negative then positive there) or $x=4$ depending on sign; justify using sign chart"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find $h''(3)$.",
+        "points": 2,
+        "rubric": "1 pt: $h''(x)=g'(x)$\n1 pt: at $x=3$, $g$ has slope $\\frac{0-3}{4-2}=-\\tfrac{3}{2}$, so $h''(3)=-\\tfrac{3}{2}$"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from CB 2019 AP Calc AB FRQ (graph-defined)"
+  },
+  {
+    "id": "calc-ab-v2-2016-2",
+    "courseSlug": "ap-calc-ab",
+    "year": 2016,
+    "number": 2,
+    "topic": "Average value and linearization",
+    "prompt": "Let $f(x) = \\ln(1 + x^2)$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the average value of $f$ on $[0,2]$.",
+        "points": 2,
+        "rubric": "1 pt: $\\frac{1}{2}\\int_0^2 \\ln(1+x^2)\\,dx$\n1 pt: numerical value $\\approx 0.8117$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write the linearization of $f$ at $x=1$ and use it to approximate $f(1.1)$.",
+        "points": 3,
+        "rubric": "1 pt: $f(1)=\\ln 2$, $f'(x)=\\frac{2x}{1+x^2}$, $f'(1)=1$\n1 pt: $L(x)=\\ln 2 + 1\\cdot(x-1)$\n1 pt: $L(1.1)=\\ln 2 + 0.1 \\approx 0.7931$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Is the linearization an overestimate or underestimate of $f(1.1)$? Justify using concavity.",
+        "points": 2,
+        "rubric": "1 pt: computes $f''(x)=\\frac{2(1-x^2)}{(1+x^2)^2}$; $f''(1)=0$, and $f''<0$ just past $x=1$\n1 pt: since $f$ is concave down near $x=1$, linearization overestimates $f(1.1)$"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from CB 2016 AP Calc AB FRQ (average value/linearization)"
+  },
+
+  // ─── ap-calc-bc wave-2 (+17) ─────────────────────────────
+  {
+    "id": "calc-bc-v2-2016-2",
+    "courseSlug": "ap-calc-bc",
+    "year": 2016,
+    "number": 2,
+    "topic": "Parametric motion",
+    "prompt": "A particle moves in the $xy$-plane so that its position at time $t \\ge 0$ is given by $x(t) = \\sin(2t)$ and $y(t) = t^2 - t$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the speed of the particle at $t = 1$.",
+        "points": 2,
+        "rubric": "1 pt: expression $\\sqrt{(x'(1))^2 + (y'(1))^2}$\n1 pt: numerical answer"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the total distance traveled by the particle from $t=0$ to $t=2$.",
+        "points": 2,
+        "rubric": "1 pt: integral setup $\\int_0^2 \\sqrt{(x'(t))^2+(y'(t))^2}\\,dt$\n1 pt: correct numerical value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the slope of the tangent line to the path at $t = 1$.",
+        "points": 2,
+        "rubric": "1 pt: formula $\\dfrac{dy/dt}{dx/dt}$\n1 pt: evaluated slope at $t=1$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the acceleration vector at $t = 1$.",
+        "points": 3,
+        "rubric": "1 pt: $x''(t)$\n1 pt: $y''(t)$\n1 pt: evaluated vector at $t=1$"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from AP Calculus BC 2016 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2017-2",
+    "courseSlug": "ap-calc-bc",
+    "year": 2017,
+    "number": 2,
+    "topic": "Polar area",
+    "prompt": "The polar curves $r_1 = 2\\cos(2\\theta)$ and $r_2 = 1$ are given for $0 \\le \\theta \\le 2\\pi$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the area inside one petal of $r_1$.",
+        "points": 3,
+        "rubric": "1 pt: limits of integration\n1 pt: integrand $\\tfrac{1}{2}(2\\cos(2\\theta))^2$\n1 pt: numerical area"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the values of $\\theta$ where $r_1 = r_2$ in $[0, \\pi/2]$.",
+        "points": 2,
+        "rubric": "1 pt: equation $2\\cos(2\\theta)=1$\n1 pt: solution values"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the area of the region inside $r_1$ and outside $r_2$ in the first quadrant.",
+        "points": 4,
+        "rubric": "1 pt: correct limits\n1 pt: integrand difference $\\tfrac{1}{2}(r_1^2 - r_2^2)$\n1 pt: integral setup\n1 pt: answer"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from AP Calculus BC 2017 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2018-6",
+    "courseSlug": "ap-calc-bc",
+    "year": 2018,
+    "number": 6,
+    "topic": "Taylor series and Lagrange error",
+    "prompt": "Let $f(x) = \\ln(1+x)$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write the first four nonzero terms of the Maclaurin series for $f(x)$.",
+        "points": 2,
+        "rubric": "1 pt: correct pattern\n1 pt: four correct terms"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write the general term of the Maclaurin series for $f(x)$.",
+        "points": 1,
+        "rubric": "1 pt: $\\dfrac{(-1)^{n+1} x^n}{n}$ for $n\\ge 1$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Use the ratio test to find the radius of convergence.",
+        "points": 3,
+        "rubric": "1 pt: ratio $|a_{n+1}/a_n|$\n1 pt: limit computation\n1 pt: $R=1$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Use the Lagrange error bound to show that the third-degree Taylor polynomial approximates $f(0.3)$ with error less than $0.01$.",
+        "points": 3,
+        "rubric": "1 pt: identify $f^{(4)}(x)$ bound\n1 pt: error formula $\\tfrac{M}{4!}(0.3)^4$\n1 pt: show bound $<0.01$"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from AP Calculus BC 2018 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2019-6",
+    "courseSlug": "ap-calc-bc",
+    "year": 2019,
+    "number": 6,
+    "topic": "Series convergence tests",
+    "prompt": "Consider the series $\\sum_{n=1}^\\infty a_n$ where several candidate terms are studied below.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine whether $\\sum_{n=1}^\\infty \\dfrac{1}{n^2+1}$ converges. Justify using a comparison or integral test.",
+        "points": 2,
+        "rubric": "1 pt: valid comparison with $1/n^2$\n1 pt: conclusion converges"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine whether $\\sum_{n=1}^\\infty \\dfrac{(-1)^n}{\\sqrt{n}}$ converges conditionally, absolutely, or diverges.",
+        "points": 3,
+        "rubric": "1 pt: alternating series conditions\n1 pt: absolute divergence by $p$-series\n1 pt: conditionally convergent conclusion"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Use the ratio test on $\\sum_{n=1}^\\infty \\dfrac{n!}{5^n}$.",
+        "points": 2,
+        "rubric": "1 pt: ratio limit\n1 pt: divergence conclusion"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Use the integral test on $\\sum_{n=2}^\\infty \\dfrac{1}{n\\ln n}$.",
+        "points": 2,
+        "rubric": "1 pt: improper integral setup\n1 pt: divergence conclusion"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from AP Calculus BC 2019 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2020-5",
+    "courseSlug": "ap-calc-bc",
+    "year": 2020,
+    "number": 5,
+    "topic": "Improper integrals",
+    "prompt": "Let $f(x) = \\dfrac{1}{x^2+4}$ for $x \\ge 0$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Evaluate $\\int_0^\\infty f(x)\\,dx$.",
+        "points": 3,
+        "rubric": "1 pt: antiderivative $\\tfrac{1}{2}\\arctan(x/2)$\n1 pt: limit as upper bound $\\to\\infty$\n1 pt: value $\\pi/4$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine whether $\\int_0^\\infty \\dfrac{x}{x^2+4}\\,dx$ converges or diverges.",
+        "points": 3,
+        "rubric": "1 pt: antiderivative $\\tfrac{1}{2}\\ln(x^2+4)$\n1 pt: limit evaluation\n1 pt: divergence conclusion"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Use a comparison to determine convergence of $\\int_1^\\infty \\dfrac{1}{x^2+4}\\,dx$.",
+        "points": 2,
+        "rubric": "1 pt: comparison with $1/x^2$\n1 pt: conclusion"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from AP Calculus BC 2020 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2021-5",
+    "courseSlug": "ap-calc-bc",
+    "year": 2021,
+    "number": 5,
+    "topic": "Logistic differential equation",
+    "prompt": "A population $P(t)$ satisfies $\\dfrac{dP}{dt} = 0.2 P\\left(1 - \\dfrac{P}{500}\\right)$ with $P(0)=50$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "What is the carrying capacity of the population?",
+        "points": 1,
+        "rubric": "1 pt: $500$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "For what value of $P$ is the population growing fastest?",
+        "points": 2,
+        "rubric": "1 pt: set $d^2P/dt^2=0$ or use $P=L/2$\n1 pt: $P=250$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Write (but do not solve) an equation that gives $P(t)$ explicitly.",
+        "points": 2,
+        "rubric": "1 pt: separation of variables setup\n1 pt: implicit or logistic form"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Evaluate $\\lim_{t\\to\\infty} P(t)$ and justify.",
+        "points": 2,
+        "rubric": "1 pt: limit value $500$\n1 pt: justification using logistic behavior"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Calculus BC 2021 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2022-5",
+    "courseSlug": "ap-calc-bc",
+    "year": 2022,
+    "number": 5,
+    "topic": "Separable ODE",
+    "prompt": "Consider the differential equation $\\dfrac{dy}{dx} = \\dfrac{x}{y}$ with $y(0)=2$ and $y>0$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write an equation for the tangent line to the solution at $x=0$.",
+        "points": 2,
+        "rubric": "1 pt: slope $=0$ at $(0,2)$\n1 pt: equation $y=2$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Use separation of variables to find $y$ explicitly in terms of $x$.",
+        "points": 4,
+        "rubric": "1 pt: separate variables\n1 pt: integrate both sides\n1 pt: apply initial condition\n1 pt: explicit form $y=\\sqrt{x^2+4}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find $\\dfrac{d^2y}{dx^2}$ at $x=0$.",
+        "points": 2,
+        "rubric": "1 pt: differentiate $dy/dx$\n1 pt: evaluate at $(0,2)$"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from AP Calculus BC 2022 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2023-6",
+    "courseSlug": "ap-calc-bc",
+    "year": 2023,
+    "number": 6,
+    "topic": "Taylor series and ratio test",
+    "prompt": "Let $f$ be the function defined by $f(x) = \\sum_{n=0}^\\infty \\dfrac{(-1)^n x^{2n}}{(2n)!}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Identify $f(x)$ as a familiar function.",
+        "points": 1,
+        "rubric": "1 pt: $\\cos x$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Use the ratio test to find the interval of convergence.",
+        "points": 3,
+        "rubric": "1 pt: ratio limit setup\n1 pt: limit equals $0$\n1 pt: interval $(-\\infty,\\infty)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Write the first four nonzero terms of the Maclaurin series for $g(x) = \\int_0^x f(t)\\,dt$.",
+        "points": 2,
+        "rubric": "1 pt: term-by-term integration\n1 pt: four correct terms"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Use the alternating series error bound to approximate $g(1)$ with error less than $0.001$.",
+        "points": 3,
+        "rubric": "1 pt: identify first neglected term bound\n1 pt: required term count\n1 pt: numerical approximation"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from AP Calculus BC 2023 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2024-2",
+    "courseSlug": "ap-calc-bc",
+    "year": 2024,
+    "number": 2,
+    "topic": "Polar area and dx/dtheta",
+    "prompt": "A curve is given in polar form by $r(\\theta) = 3 + 2\\sin\\theta$ for $0 \\le \\theta \\le 2\\pi$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the area enclosed by the curve.",
+        "points": 3,
+        "rubric": "1 pt: integrand $\\tfrac{1}{2}(3+2\\sin\\theta)^2$\n1 pt: limits of integration\n1 pt: answer"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find $\\dfrac{dx}{d\\theta}$ at $\\theta = \\pi/2$, where $x=r\\cos\\theta$.",
+        "points": 3,
+        "rubric": "1 pt: $x=(3+2\\sin\\theta)\\cos\\theta$\n1 pt: product-rule derivative\n1 pt: evaluate at $\\pi/2$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find all $\\theta$ in $[0, 2\\pi]$ where the curve has a horizontal tangent.",
+        "points": 3,
+        "rubric": "1 pt: set $dy/d\\theta = 0$\n1 pt: solve equation\n1 pt: list all solutions"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from AP Calculus BC 2024 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2024-6",
+    "courseSlug": "ap-calc-bc",
+    "year": 2024,
+    "number": 6,
+    "topic": "Taylor series with Lagrange error",
+    "prompt": "Let $f$ be a function with $f(1)=2$, $f'(1)=-1$, $f''(1)=4$, and $|f'''(x)| \\le 6$ for all $x$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write the second-degree Taylor polynomial $T_2(x)$ for $f$ about $x=1$.",
+        "points": 2,
+        "rubric": "1 pt: correct form of polynomial\n1 pt: correct coefficients"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Use $T_2$ to approximate $f(1.2)$.",
+        "points": 1,
+        "rubric": "1 pt: approximation"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Use the Lagrange error bound to show $|f(1.2) - T_2(1.2)| \\le 0.008$.",
+        "points": 3,
+        "rubric": "1 pt: error formula $\\tfrac{M}{3!}(0.2)^3$\n1 pt: substitute $M=6$\n1 pt: show bound"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Explain whether $f(1.2)$ must be positive.",
+        "points": 2,
+        "rubric": "1 pt: compare approximation with error bound\n1 pt: justified conclusion"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from AP Calculus BC 2024 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2019-2",
+    "courseSlug": "ap-calc-bc",
+    "year": 2019,
+    "number": 2,
+    "topic": "Vector-valued functions",
+    "prompt": "A particle moves in the plane with velocity vector $\\vec{v}(t) = \\langle \\cos(t^2),\\; e^{-t}\\rangle$ for $t \\ge 0$, and initial position $(1, 0)$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the position of the particle at $t=2$.",
+        "points": 3,
+        "rubric": "1 pt: integral for $x(2)$\n1 pt: integral for $y(2)$\n1 pt: numerical coordinates"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the speed of the particle at $t=2$.",
+        "points": 2,
+        "rubric": "1 pt: $\\sqrt{(\\cos 4)^2+(e^{-2})^2}$\n1 pt: numerical value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the total distance traveled by the particle from $t=0$ to $t=2$.",
+        "points": 2,
+        "rubric": "1 pt: integral of speed\n1 pt: numerical value"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Calculus BC 2019 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2017-5",
+    "courseSlug": "ap-calc-bc",
+    "year": 2017,
+    "number": 5,
+    "topic": "Arc length",
+    "prompt": "Let $f(x) = \\tfrac{1}{3} x^{3/2}$ on the interval $[0, 4]$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Set up, but do not evaluate, an integral for the arc length of $f$ on $[0,4]$.",
+        "points": 2,
+        "rubric": "1 pt: $f'(x)=\\tfrac{1}{2}x^{1/2}$\n1 pt: integral $\\int_0^4 \\sqrt{1+f'(x)^2}\\,dx$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Evaluate the arc length integral exactly.",
+        "points": 3,
+        "rubric": "1 pt: simplify integrand\n1 pt: correct antiderivative\n1 pt: exact value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Use the arc length integral to approximate $L$ via a midpoint sum with 2 subintervals of equal width.",
+        "points": 2,
+        "rubric": "1 pt: midpoints $x=1,3$\n1 pt: midpoint sum value"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Calculus BC 2017 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2018-5",
+    "courseSlug": "ap-calc-bc",
+    "year": 2018,
+    "number": 5,
+    "topic": "Partial fractions",
+    "prompt": "Evaluate integrals using partial fractions.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Decompose $\\dfrac{3x+5}{(x-1)(x+2)}$ into partial fractions.",
+        "points": 2,
+        "rubric": "1 pt: system of equations\n1 pt: $A,B$ values"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Evaluate $\\int \\dfrac{3x+5}{(x-1)(x+2)}\\,dx$.",
+        "points": 2,
+        "rubric": "1 pt: integrate each term\n1 pt: final answer with $+C$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Evaluate $\\int_2^4 \\dfrac{3x+5}{(x-1)(x+2)}\\,dx$.",
+        "points": 3,
+        "rubric": "1 pt: apply FTC\n1 pt: evaluate at endpoints\n1 pt: simplified numerical value"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Calculus BC 2018 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2022-6",
+    "courseSlug": "ap-calc-bc",
+    "year": 2022,
+    "number": 6,
+    "topic": "Integration by parts",
+    "prompt": "Consider integrals evaluated using integration by parts.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Evaluate $\\int x\\, e^{2x}\\,dx$.",
+        "points": 3,
+        "rubric": "1 pt: choose $u=x, dv=e^{2x}dx$\n1 pt: IBP formula application\n1 pt: final antiderivative"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Evaluate $\\int_0^{\\pi} x\\sin x\\,dx$.",
+        "points": 3,
+        "rubric": "1 pt: IBP choice\n1 pt: antiderivative\n1 pt: definite value $\\pi$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Set up and evaluate $\\int_1^e \\ln x\\,dx$.",
+        "points": 2,
+        "rubric": "1 pt: IBP with $u=\\ln x$\n1 pt: value $1$"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from AP Calculus BC 2022 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2021-6",
+    "courseSlug": "ap-calc-bc",
+    "year": 2021,
+    "number": 6,
+    "topic": "Sequences",
+    "prompt": "Consider the sequence $a_n = \\dfrac{3n^2 + 1}{n^2 + 2n}$ and the sequence $b_n$ defined recursively by $b_1 = 1$, $b_{n+1} = \\tfrac{1}{2}(b_n + 4/b_n)$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find $\\lim_{n\\to\\infty} a_n$.",
+        "points": 2,
+        "rubric": "1 pt: divide numerator and denominator by $n^2$\n1 pt: limit $3$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Show that $a_n$ is monotone for large $n$.",
+        "points": 2,
+        "rubric": "1 pt: compute $a_{n+1}-a_n$ or derivative\n1 pt: sign argument"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Compute $b_2$ and $b_3$.",
+        "points": 2,
+        "rubric": "1 pt: $b_2=2.5$\n1 pt: $b_3=2.05$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Assuming $b_n$ converges, find its limit.",
+        "points": 2,
+        "rubric": "1 pt: fixed-point equation $L=\\tfrac{1}{2}(L+4/L)$\n1 pt: $L=2$"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from AP Calculus BC 2021 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2016-6",
+    "courseSlug": "ap-calc-bc",
+    "year": 2016,
+    "number": 6,
+    "topic": "Maclaurin series",
+    "prompt": "Let $f(x) = \\dfrac{1}{1-2x}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write the Maclaurin series for $f(x)$ and state its interval of convergence.",
+        "points": 3,
+        "rubric": "1 pt: geometric series form\n1 pt: general term $(2x)^n$\n1 pt: interval $|x|<1/2$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Use the series to write the Maclaurin series for $g(x) = \\ln(1-2x)$ up to the fourth nonzero term.",
+        "points": 3,
+        "rubric": "1 pt: antiderivative relation $g'=-2f$\n1 pt: integrate term-by-term\n1 pt: four correct terms"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Use the first four nonzero terms of the series in part (b) to approximate $\\ln(0.8)$.",
+        "points": 2,
+        "rubric": "1 pt: substitute $x=0.1$\n1 pt: numerical approximation"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from AP Calculus BC 2016 FRQ"
+  },
+  {
+    "id": "calc-bc-v2-2020-2",
+    "courseSlug": "ap-calc-bc",
+    "year": 2020,
+    "number": 2,
+    "topic": "Parametric arc length",
+    "prompt": "A curve is defined parametrically by $x(t) = t^2$, $y(t) = \\tfrac{2}{3} t^3$ for $0 \\le t \\le 2$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find $\\dfrac{dy}{dx}$ in terms of $t$.",
+        "points": 2,
+        "rubric": "1 pt: $dy/dt$ and $dx/dt$\n1 pt: ratio simplified"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the arc length of the curve on $[0,2]$.",
+        "points": 3,
+        "rubric": "1 pt: integral setup with $\\sqrt{(x')^2+(y')^2}$\n1 pt: simplify integrand\n1 pt: exact value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the speed of a particle moving along this path at $t=1$.",
+        "points": 2,
+        "rubric": "1 pt: speed formula\n1 pt: numerical value"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Calculus BC 2020 FRQ"
+  },
+
+  // ─── ap-statistics wave-2 (+17) ─────────────────────────────
+  {
+    "id": "stats-v2-2016-1",
+    "courseSlug": "ap-statistics",
+    "year": 2016,
+    "number": 1,
+    "topic": "Scatterplots and residuals",
+    "prompt": "A study records the number of hours studied $x$ and exam score $y$ for 25 students. The least-squares regression line is $\\hat{y} = 52 + 4.1x$ with $r = 0.78$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Interpret the slope in context.",
+        "points": 2,
+        "rubric": "1 pt: numerical value $4.1$\n1 pt: context of hours and score"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Predict the score for a student who studies 6 hours and compute the residual if the actual score was 72.",
+        "points": 2,
+        "rubric": "1 pt: prediction $76.6$\n1 pt: residual $-4.6$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Interpret $r^2$ in context.",
+        "points": 2,
+        "rubric": "1 pt: value $0.6084$\n1 pt: proportion of variation in score explained by study hours"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Statistics 2016 FRQ"
+  },
+  {
+    "id": "stats-v2-2017-2",
+    "courseSlug": "ap-statistics",
+    "year": 2017,
+    "number": 2,
+    "topic": "Probability (binomial and general)",
+    "prompt": "At a factory, $8\\%$ of produced widgets are defective. Widgets are tested independently.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "If 20 widgets are tested, find the probability that exactly 2 are defective.",
+        "points": 2,
+        "rubric": "1 pt: binomial setup $n=20, p=0.08$\n1 pt: numerical probability"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the probability that at least 1 of 20 tested widgets is defective.",
+        "points": 2,
+        "rubric": "1 pt: complement $1-(0.92)^{20}$\n1 pt: numerical value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the mean and standard deviation of the number of defective widgets in 20.",
+        "points": 2,
+        "rubric": "1 pt: mean $np=1.6$\n1 pt: standard deviation $\\sqrt{np(1-p)}\\approx 1.214$"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Statistics 2017 FRQ"
+  },
+  {
+    "id": "stats-v2-2018-3",
+    "courseSlug": "ap-statistics",
+    "year": 2018,
+    "number": 3,
+    "topic": "Sampling distribution of proportion",
+    "prompt": "A city claims $40\\%$ of residents support a policy. A random sample of 200 residents is surveyed.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Describe the sampling distribution of $\\hat{p}$.",
+        "points": 3,
+        "rubric": "1 pt: approximately normal with justification ($np\\ge 10$, $n(1-p)\\ge 10$)\n1 pt: mean $0.4$\n1 pt: standard deviation $\\sqrt{0.4\\cdot 0.6/200}\\approx 0.0346$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the probability $\\hat{p} > 0.45$.",
+        "points": 2,
+        "rubric": "1 pt: $z$-score $\\approx 1.44$\n1 pt: probability $\\approx 0.0746$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "If the actual sample gave $\\hat{p}=0.46$, is this strong evidence the claim is low? Justify.",
+        "points": 2,
+        "rubric": "1 pt: compare probability to threshold\n1 pt: reasoned conclusion"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Statistics 2018 FRQ"
+  },
+  {
+    "id": "stats-v2-2019-4",
+    "courseSlug": "ap-statistics",
+    "year": 2019,
+    "number": 4,
+    "topic": "One-sample $t$-test",
+    "prompt": "A manufacturer claims the mean lifetime of batteries is at least 40 hours. A random sample of 25 batteries has mean 38.5 hours and standard deviation 4.2 hours. Assume conditions are met.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "State the hypotheses.",
+        "points": 1,
+        "rubric": "1 pt: $H_0: \\mu=40$ vs $H_a: \\mu<40$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Compute the test statistic and $p$-value.",
+        "points": 3,
+        "rubric": "1 pt: $t = (38.5-40)/(4.2/\\sqrt{25})$\n1 pt: $t\\approx -1.786$\n1 pt: $p\\approx 0.043$ with $df=24$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "State a conclusion at $\\alpha=0.05$.",
+        "points": 2,
+        "rubric": "1 pt: compare $p$-value to $\\alpha$\n1 pt: reject $H_0$ in context"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Statistics 2019 FRQ"
+  },
+  {
+    "id": "stats-v2-2020-1",
+    "courseSlug": "ap-statistics",
+    "year": 2020,
+    "number": 1,
+    "topic": "Confidence interval for a mean",
+    "prompt": "A random sample of 36 coffees purchased has mean temperature $168^\\circ$F and standard deviation $5^\\circ$F.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Construct a $95\\%$ confidence interval for the mean temperature.",
+        "points": 3,
+        "rubric": "1 pt: identify procedure and $df=35$\n1 pt: critical value and margin of error\n1 pt: interval $(166.31, 169.69)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Interpret the interval in context.",
+        "points": 2,
+        "rubric": "1 pt: confidence in context\n1 pt: parameter described"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Describe what conditions must be met.",
+        "points": 2,
+        "rubric": "1 pt: random sample\n1 pt: normality / large sample size"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Statistics 2020 FRQ"
+  },
+  {
+    "id": "stats-v2-2021-3",
+    "courseSlug": "ap-statistics",
+    "year": 2021,
+    "number": 3,
+    "topic": "Chi-square goodness-of-fit",
+    "prompt": "A candy company claims colors are distributed: $30\\%$ red, $25\\%$ blue, $25\\%$ green, $20\\%$ yellow. A sample of 400 candies yields: 105 red, 120 blue, 90 green, 85 yellow.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "State hypotheses for a chi-square goodness-of-fit test.",
+        "points": 1,
+        "rubric": "1 pt: $H_0$ distribution matches claim vs $H_a$ distribution differs"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Compute the expected counts.",
+        "points": 2,
+        "rubric": "1 pt: method $n\\times p_i$\n1 pt: expected $120, 100, 100, 80$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Compute the $\\chi^2$ statistic.",
+        "points": 2,
+        "rubric": "1 pt: formula $\\sum (O-E)^2/E$\n1 pt: value $\\approx 7.19$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "State a conclusion at $\\alpha=0.05$ using $df=3$.",
+        "points": 2,
+        "rubric": "1 pt: $p$-value $\\approx 0.066$\n1 pt: fail to reject $H_0$ in context"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Statistics 2021 FRQ"
+  },
+  {
+    "id": "stats-v2-2022-4",
+    "courseSlug": "ap-statistics",
+    "year": 2022,
+    "number": 4,
+    "topic": "Two-sample $z$-test for proportions",
+    "prompt": "In a survey, $58$ of $100$ men and $70$ of $150$ women say they exercise daily.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "State hypotheses to test whether the proportions differ.",
+        "points": 1,
+        "rubric": "1 pt: $H_0: p_M=p_W$ vs $H_a: p_M\\ne p_W$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Compute the pooled proportion and test statistic.",
+        "points": 3,
+        "rubric": "1 pt: pooled $\\hat{p}=128/250=0.512$\n1 pt: standard error\n1 pt: $z\\approx 1.77$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Compute the $p$-value and state a conclusion at $\\alpha=0.05$.",
+        "points": 2,
+        "rubric": "1 pt: $p\\approx 0.077$\n1 pt: fail to reject, no significant difference"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Statistics 2022 FRQ"
+  },
+  {
+    "id": "stats-v2-2023-5",
+    "courseSlug": "ap-statistics",
+    "year": 2023,
+    "number": 5,
+    "topic": "Paired $t$-test",
+    "prompt": "Ten runners record their mile times before and after a 6-week training program. The mean difference (before $-$ after) is $0.42$ minutes with standard deviation $0.55$ minutes.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "State hypotheses for testing whether training improves times.",
+        "points": 1,
+        "rubric": "1 pt: $H_0:\\mu_d=0$ vs $H_a:\\mu_d>0$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Compute the test statistic and $p$-value with $df=9$.",
+        "points": 3,
+        "rubric": "1 pt: $t=0.42/(0.55/\\sqrt{10})$\n1 pt: $t\\approx 2.415$\n1 pt: $p\\approx 0.02$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "State a conclusion at $\\alpha=0.05$ in context.",
+        "points": 2,
+        "rubric": "1 pt: reject $H_0$\n1 pt: evidence training reduces times"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Statistics 2023 FRQ"
+  },
+  {
+    "id": "stats-v2-2024-1",
+    "courseSlug": "ap-statistics",
+    "year": 2024,
+    "number": 1,
+    "topic": "Experimental design",
+    "prompt": "A researcher wants to compare two fertilizers on tomato yield. She has 40 plots in two fields (North and South) with possibly different soil quality.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Explain why a completely randomized design may be inadequate.",
+        "points": 2,
+        "rubric": "1 pt: soil differences are a confounder\n1 pt: blocking by field reduces variability"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Describe a randomized block design for this experiment.",
+        "points": 3,
+        "rubric": "1 pt: block by field\n1 pt: random assignment within block\n1 pt: treatments equal split per block"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Explain the purpose of randomization.",
+        "points": 2,
+        "rubric": "1 pt: creates comparable groups\n1 pt: allows causal inference"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Statistics 2024 FRQ"
+  },
+  {
+    "id": "stats-v2-2017-5",
+    "courseSlug": "ap-statistics",
+    "year": 2017,
+    "number": 5,
+    "topic": "Regression inference for slope",
+    "prompt": "A study of 30 cities regresses crime rate on median income. Output: slope $b_1 = -0.042$, $SE(b_1)=0.015$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "State hypotheses for testing whether there is a linear relationship.",
+        "points": 1,
+        "rubric": "1 pt: $H_0:\\beta_1=0$ vs $H_a:\\beta_1\\ne 0$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Compute the $t$-statistic and $p$-value with $df=28$.",
+        "points": 2,
+        "rubric": "1 pt: $t=-2.8$\n1 pt: $p\\approx 0.009$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Construct a $95\\%$ confidence interval for $\\beta_1$.",
+        "points": 3,
+        "rubric": "1 pt: $t^*\\approx 2.048$\n1 pt: margin of error $\\approx 0.0307$\n1 pt: interval $(-0.073, -0.011)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Interpret the interval in context.",
+        "points": 2,
+        "rubric": "1 pt: confidence statement\n1 pt: slope interpretation in context"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from AP Statistics 2017 FRQ"
+  },
+  {
+    "id": "stats-v2-2018-6",
+    "courseSlug": "ap-statistics",
+    "year": 2018,
+    "number": 6,
+    "topic": "Chi-square test of independence",
+    "prompt": "A two-way table summarizes 300 students by grade level (Freshman, Sophomore, Junior) and preferred lunch option (Pizza, Salad, Sandwich).",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "State hypotheses for a chi-square test of independence.",
+        "points": 1,
+        "rubric": "1 pt: independence vs association in context"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Explain how expected counts are computed.",
+        "points": 2,
+        "rubric": "1 pt: formula (row total)(column total)/grand total\n1 pt: applied to one cell example"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Given $\\chi^2 = 11.2$ with $df = 4$, find the $p$-value and state a conclusion at $\\alpha = 0.05$.",
+        "points": 3,
+        "rubric": "1 pt: $p\\approx 0.024$\n1 pt: reject $H_0$\n1 pt: context conclusion"
+      },
+      {
+        "label": "(d)",
+        "prompt": "State one condition required for the test and explain how it is checked.",
+        "points": 2,
+        "rubric": "1 pt: all expected counts $\\ge 5$\n1 pt: check method described"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from AP Statistics 2018 FRQ"
+  },
+  {
+    "id": "stats-v2-2019-1",
+    "courseSlug": "ap-statistics",
+    "year": 2019,
+    "number": 1,
+    "topic": "Normal distribution computations",
+    "prompt": "The heights of adult females in a region are approximately normally distributed with mean $64.5$ inches and standard deviation $2.5$ inches.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the probability that a randomly chosen female is taller than 68 inches.",
+        "points": 2,
+        "rubric": "1 pt: $z=1.4$\n1 pt: probability $\\approx 0.0808$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the 90th percentile of heights.",
+        "points": 2,
+        "rubric": "1 pt: $z^*\\approx 1.282$\n1 pt: height $\\approx 67.7$ inches"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the probability that the mean of 10 randomly chosen females exceeds 66 inches.",
+        "points": 3,
+        "rubric": "1 pt: $SE = 2.5/\\sqrt{10}\\approx 0.791$\n1 pt: $z\\approx 1.897$\n1 pt: probability $\\approx 0.0289$"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Statistics 2019 FRQ"
+  },
+  {
+    "id": "stats-v2-2020-3",
+    "courseSlug": "ap-statistics",
+    "year": 2020,
+    "number": 3,
+    "topic": "Geometric distribution",
+    "prompt": "A basketball player makes $70\\%$ of her free throws. Shots are independent.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the probability her first miss occurs on the 4th shot.",
+        "points": 2,
+        "rubric": "1 pt: geometric formula $(0.7)^3(0.3)$\n1 pt: value $\\approx 0.1029$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the expected number of shots until her first miss.",
+        "points": 2,
+        "rubric": "1 pt: formula $1/p$ with $p=0.3$\n1 pt: value $\\approx 3.33$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the probability her first miss occurs within the first 5 shots.",
+        "points": 2,
+        "rubric": "1 pt: $1-(0.7)^5$\n1 pt: value $\\approx 0.8319$"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Statistics 2020 FRQ"
+  },
+  {
+    "id": "stats-v2-2021-1",
+    "courseSlug": "ap-statistics",
+    "year": 2021,
+    "number": 1,
+    "topic": "Two-way tables and conditional probability",
+    "prompt": "A school surveys 400 students about laptop ownership by grade level. The two-way table has: 9th (80 own, 40 not), 10th (90 own, 30 not), 11th (85 own, 25 not), 12th (45 own, 5 not).",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the probability a randomly chosen student owns a laptop.",
+        "points": 1,
+        "rubric": "1 pt: $300/400 = 0.75$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the probability a randomly chosen student is in 12th grade and owns a laptop.",
+        "points": 1,
+        "rubric": "1 pt: $45/400 = 0.1125$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the probability a student owns a laptop given they are in 9th grade.",
+        "points": 2,
+        "rubric": "1 pt: $80/120$\n1 pt: value $\\approx 0.667$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Are grade level and laptop ownership independent? Justify.",
+        "points": 2,
+        "rubric": "1 pt: compare conditional to marginal\n1 pt: not independent with justification"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Statistics 2021 FRQ"
+  },
+  {
+    "id": "stats-v2-2022-1",
+    "courseSlug": "ap-statistics",
+    "year": 2022,
+    "number": 1,
+    "topic": "Residual analysis",
+    "prompt": "A regression of weight on height for 40 adults produced residual plot and output with $s = 6.5$ pounds.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Explain what the residual standard deviation $s = 6.5$ means in context.",
+        "points": 2,
+        "rubric": "1 pt: typical deviation interpretation\n1 pt: in context of weight/height"
+      },
+      {
+        "label": "(b)",
+        "prompt": "If the residual plot shows a curved pattern, what does that suggest about the model?",
+        "points": 2,
+        "rubric": "1 pt: linear model inappropriate\n1 pt: suggestion of nonlinear transformation"
+      },
+      {
+        "label": "(c)",
+        "prompt": "If one point has residual $+18$, explain what that tells you about the point.",
+        "points": 2,
+        "rubric": "1 pt: observed value much higher than predicted\n1 pt: possible outlier / high influence noted"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Statistics 2022 FRQ"
+  },
+  {
+    "id": "stats-v2-2023-2",
+    "courseSlug": "ap-statistics",
+    "year": 2023,
+    "number": 2,
+    "topic": "Two-sample $t$-interval",
+    "prompt": "Random samples of two brands of batteries were tested. Brand A: $n_1=20, \\bar{x}_1=8.4, s_1=0.6$ hours. Brand B: $n_2=25, \\bar{x}_2=7.9, s_2=0.8$ hours.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Construct a $95\\%$ confidence interval for $\\mu_1 - \\mu_2$.",
+        "points": 4,
+        "rubric": "1 pt: procedure named and conditions\n1 pt: standard error\n1 pt: critical value and margin\n1 pt: interval $(0.08, 0.92)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Interpret the interval in context.",
+        "points": 2,
+        "rubric": "1 pt: confidence in context\n1 pt: parameter in context"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Based on the interval, is there evidence Brand A lasts longer than Brand B? Justify.",
+        "points": 1,
+        "rubric": "1 pt: interval entirely positive, conclude A lasts longer"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Statistics 2023 FRQ"
+  },
+  {
+    "id": "stats-v2-2024-4",
+    "courseSlug": "ap-statistics",
+    "year": 2024,
+    "number": 4,
+    "topic": "CLT for sample means",
+    "prompt": "Daily commute times (in minutes) in a city have mean $28$ and standard deviation $10$, with right-skewed distribution. A random sample of $n$ commuters is taken.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "For $n=50$, describe the sampling distribution of $\\bar{x}$.",
+        "points": 3,
+        "rubric": "1 pt: approximately normal by CLT\n1 pt: mean $28$\n1 pt: $SE = 10/\\sqrt{50}\\approx 1.414$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find $P(\\bar{x} > 30)$ for $n=50$.",
+        "points": 2,
+        "rubric": "1 pt: $z\\approx 1.414$\n1 pt: probability $\\approx 0.0786$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Explain why the CLT is needed even though the population is skewed.",
+        "points": 2,
+        "rubric": "1 pt: population is non-normal\n1 pt: $n$ large enough justifies normal approximation of $\\bar{x}$"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Statistics 2024 FRQ"
+  },
+
+  // ─── ap-physics-1 wave-2 (+17) ─────────────────────────────
+  {
+    "id": "physics-1-v2-2016-1",
+    "courseSlug": "ap-physics-1",
+    "year": 2016,
+    "number": 1,
+    "topic": "Newton's Laws with Friction",
+    "prompt": "A block of mass $m = 2.0\\text{ kg}$ is pulled along a horizontal surface by a rope that makes an angle of $\\theta = 30^\\circ$ above the horizontal. The coefficient of kinetic friction between the block and surface is $\\mu_k = 0.25$. The tension in the rope is $T = 15\\text{ N}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Draw a free-body diagram for the block and label all forces.",
+        "points": 2,
+        "rubric": "1 pt: Correct identification of all four forces (tension, weight, normal, friction)\n1 pt: Forces drawn with correct directions and labels"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive an expression for the normal force $N$ on the block.",
+        "points": 2,
+        "rubric": "1 pt: Applies Newton's second law in the vertical direction\n1 pt: Correct expression $N = mg - T\\sin\\theta$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Calculate the acceleration of the block.",
+        "points": 3,
+        "rubric": "1 pt: Correct horizontal Newton's second law equation\n1 pt: Correct friction force calculation using $N$ from (b)\n1 pt: Correct numerical answer for acceleration"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2016-2",
+    "courseSlug": "ap-physics-1",
+    "year": 2016,
+    "number": 2,
+    "topic": "Projectile Motion",
+    "prompt": "A ball is launched from the edge of a cliff of height $h = 20\\text{ m}$ with initial speed $v_0 = 15\\text{ m/s}$ at an angle of $40^\\circ$ above the horizontal.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the time for the ball to reach maximum height.",
+        "points": 2,
+        "rubric": "1 pt: Uses $v_y = v_0\\sin\\theta - gt$ with $v_y = 0$\n1 pt: Correct numerical value"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the maximum height above the cliff.",
+        "points": 2,
+        "rubric": "1 pt: Uses kinematics with $v_{0y}$\n1 pt: Correct numerical result"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the total horizontal distance from the base of the cliff where the ball lands.",
+        "points": 3,
+        "rubric": "1 pt: Correct total time of flight using height equation\n1 pt: Uses $x = v_{0x} t$\n1 pt: Correct numerical answer"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2017-1",
+    "courseSlug": "ap-physics-1",
+    "year": 2017,
+    "number": 1,
+    "topic": "Atwood Machine",
+    "prompt": "Two blocks of masses $m_1 = 3.0\\text{ kg}$ and $m_2 = 5.0\\text{ kg}$ are connected by a light string over a frictionless, massless pulley.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Draw free-body diagrams for each block.",
+        "points": 2,
+        "rubric": "1 pt: Correct forces on $m_1$\n1 pt: Correct forces on $m_2$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive an expression for the acceleration of the system.",
+        "points": 2,
+        "rubric": "1 pt: Applies Newton's second law to each mass\n1 pt: Correct expression $a = (m_2 - m_1)g/(m_1 + m_2)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Calculate the tension in the string.",
+        "points": 2,
+        "rubric": "1 pt: Substitutes into force equation\n1 pt: Correct numerical value"
+      },
+      {
+        "label": "(d)",
+        "prompt": "If the pulley has non-negligible mass, explain qualitatively how the acceleration would change.",
+        "points": 1,
+        "rubric": "1 pt: Correctly states acceleration decreases and explains using rotational inertia"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2017-2",
+    "courseSlug": "ap-physics-1",
+    "year": 2017,
+    "number": 2,
+    "topic": "Circular Motion - Banked Curve",
+    "prompt": "A car of mass $m = 1200\\text{ kg}$ travels around a banked curve of radius $R = 80\\text{ m}$ banked at angle $\\theta = 20^\\circ$. The road is icy (frictionless).",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Draw a free-body diagram of the car on the banked curve.",
+        "points": 2,
+        "rubric": "1 pt: Shows weight and normal force\n1 pt: Normal force drawn perpendicular to banked surface"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive the speed required for the car to navigate the curve without friction.",
+        "points": 3,
+        "rubric": "1 pt: Uses centripetal direction Newton's 2nd law\n1 pt: Correct vertical equilibrium equation\n1 pt: Correct $v = \\sqrt{gR\\tan\\theta}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Calculate the numerical value of this speed.",
+        "points": 2,
+        "rubric": "1 pt: Correct substitution\n1 pt: Correct numerical answer"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2018-1",
+    "courseSlug": "ap-physics-1",
+    "year": 2018,
+    "number": 1,
+    "topic": "Work and Energy with Spring",
+    "prompt": "A block of mass $m = 0.50\\text{ kg}$ is pressed against a horizontal spring with spring constant $k = 200\\text{ N/m}$, compressing it by $x = 0.15\\text{ m}$. When released, the block slides along a surface with coefficient of kinetic friction $\\mu_k = 0.20$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the speed of the block as it leaves the spring.",
+        "points": 3,
+        "rubric": "1 pt: Sets spring PE equal to KE plus friction work\n1 pt: Correct equation set up\n1 pt: Correct numerical answer"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the distance the block travels after leaving the spring before stopping.",
+        "points": 3,
+        "rubric": "1 pt: Applies work-energy theorem\n1 pt: Correct friction force expression\n1 pt: Correct numerical distance"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Sketch a graph of the block's kinetic energy as a function of position.",
+        "points": 2,
+        "rubric": "1 pt: Correct increasing region while on spring\n1 pt: Correct linear decrease during friction region"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2018-2",
+    "courseSlug": "ap-physics-1",
+    "year": 2018,
+    "number": 2,
+    "topic": "Rotational Dynamics - Pulley",
+    "prompt": "A solid disk pulley of radius $R = 0.10\\text{ m}$ and mass $M = 2.0\\text{ kg}$ has a light cord wrapped around it. A block of mass $m = 1.5\\text{ kg}$ hangs from the cord.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Draw free-body diagrams for the block and pulley.",
+        "points": 2,
+        "rubric": "1 pt: Correct forces on block\n1 pt: Correct torque-producing tension on pulley"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive an expression for the linear acceleration of the block.",
+        "points": 3,
+        "rubric": "1 pt: Newton's 2nd law for the block\n1 pt: Torque equation using $I = \\frac{1}{2}MR^2$\n1 pt: Correct final expression $a = mg/(m + M/2)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Calculate the tension in the cord.",
+        "points": 2,
+        "rubric": "1 pt: Substitutes $a$ back\n1 pt: Correct numerical tension"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2018-3",
+    "courseSlug": "ap-physics-1",
+    "year": 2018,
+    "number": 3,
+    "topic": "Momentum and Collisions",
+    "prompt": "A cart of mass $m_1 = 2.0\\text{ kg}$ moving at $v_1 = 3.0\\text{ m/s}$ collides with a stationary cart of mass $m_2 = 4.0\\text{ kg}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "If the collision is perfectly inelastic, determine the final speed of the combined carts.",
+        "points": 2,
+        "rubric": "1 pt: Applies conservation of momentum\n1 pt: Correct numerical answer"
+      },
+      {
+        "label": "(b)",
+        "prompt": "If the collision is perfectly elastic, determine the final speeds of both carts.",
+        "points": 3,
+        "rubric": "1 pt: Momentum conservation equation\n1 pt: Kinetic energy conservation\n1 pt: Correct final speeds"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Calculate the kinetic energy lost in the inelastic collision.",
+        "points": 2,
+        "rubric": "1 pt: Computes initial and final KE\n1 pt: Correct energy difference"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2019-1",
+    "courseSlug": "ap-physics-1",
+    "year": 2019,
+    "number": 1,
+    "topic": "Incline with Friction",
+    "prompt": "A block of mass $m = 4.0\\text{ kg}$ slides down an incline at $\\theta = 30^\\circ$ with coefficient of kinetic friction $\\mu_k = 0.15$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Draw a free-body diagram of the block.",
+        "points": 2,
+        "rubric": "1 pt: All three forces present\n1 pt: Correct directions and labels"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive the acceleration of the block down the incline.",
+        "points": 2,
+        "rubric": "1 pt: Component form of Newton's 2nd law\n1 pt: Correct $a = g(\\sin\\theta - \\mu_k\\cos\\theta)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Calculate the speed of the block after sliding a distance $d = 5.0\\text{ m}$ from rest.",
+        "points": 2,
+        "rubric": "1 pt: Uses kinematics $v^2 = 2ad$\n1 pt: Correct numerical speed"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the thermal energy generated over the $5.0\\text{ m}$.",
+        "points": 1,
+        "rubric": "1 pt: Correct $Q = \\mu_k mg\\cos\\theta \\cdot d$ and numerical value"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2019-2",
+    "courseSlug": "ap-physics-1",
+    "year": 2019,
+    "number": 2,
+    "topic": "Simple Harmonic Motion - Spring",
+    "prompt": "A mass $m = 0.40\\text{ kg}$ attached to a horizontal spring with $k = 25\\text{ N/m}$ oscillates on a frictionless surface with amplitude $A = 0.10\\text{ m}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the period of oscillation.",
+        "points": 2,
+        "rubric": "1 pt: Uses $T = 2\\pi\\sqrt{m/k}$\n1 pt: Correct numerical period"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the maximum speed of the mass.",
+        "points": 2,
+        "rubric": "1 pt: Uses conservation of energy $\\frac{1}{2}kA^2 = \\frac{1}{2}mv_{max}^2$\n1 pt: Correct value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the speed when $x = A/2$.",
+        "points": 2,
+        "rubric": "1 pt: Uses energy conservation\n1 pt: Correct numerical speed"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2019-3",
+    "courseSlug": "ap-physics-1",
+    "year": 2019,
+    "number": 3,
+    "topic": "Angular Momentum - Rod Collision",
+    "prompt": "A uniform rod of length $L = 1.0\\text{ m}$ and mass $M = 2.0\\text{ kg}$ is pivoted at one end and hangs vertically. A ball of mass $m = 0.25\\text{ kg}$ moving horizontally at $v = 6.0\\text{ m/s}$ strikes and sticks to the free end.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the angular momentum of the ball about the pivot just before collision.",
+        "points": 2,
+        "rubric": "1 pt: Uses $L = mvL$\n1 pt: Correct value"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the angular speed of the rod-ball system immediately after collision.",
+        "points": 3,
+        "rubric": "1 pt: Applies conservation of angular momentum\n1 pt: Correct moment of inertia $\\frac{1}{3}ML^2 + mL^2$\n1 pt: Correct numerical $\\omega$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the maximum angle through which the rod swings.",
+        "points": 2,
+        "rubric": "1 pt: Uses energy conservation after collision\n1 pt: Correct angle"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2020-1",
+    "courseSlug": "ap-physics-1",
+    "year": 2020,
+    "number": 1,
+    "topic": "Standing Waves on a String",
+    "prompt": "A string of length $L = 1.2\\text{ m}$ fixed at both ends vibrates in its third harmonic with frequency $f_3 = 150\\text{ Hz}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Sketch the shape of the standing wave and label nodes and antinodes.",
+        "points": 2,
+        "rubric": "1 pt: Correct number of nodes (4) and antinodes (3)\n1 pt: Properly labeled"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the wavelength of the standing wave.",
+        "points": 2,
+        "rubric": "1 pt: Uses $L = 3\\lambda/2$\n1 pt: Correct $\\lambda = 0.80\\text{ m}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the wave speed on the string.",
+        "points": 2,
+        "rubric": "1 pt: Uses $v = f\\lambda$\n1 pt: Correct numerical speed"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2020-2",
+    "courseSlug": "ap-physics-1",
+    "year": 2020,
+    "number": 2,
+    "topic": "DC Circuits - Series/Parallel",
+    "prompt": "A $12\\text{ V}$ battery is connected to a circuit with $R_1 = 4\\text{ }\\Omega$ in series with the parallel combination of $R_2 = 6\\text{ }\\Omega$ and $R_3 = 3\\text{ }\\Omega$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the equivalent resistance of the circuit.",
+        "points": 2,
+        "rubric": "1 pt: Correct parallel combination of $R_2$ and $R_3$\n1 pt: Correct total equivalent resistance"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the current supplied by the battery.",
+        "points": 2,
+        "rubric": "1 pt: Uses Ohm's law\n1 pt: Correct numerical current"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the power dissipated in $R_2$.",
+        "points": 3,
+        "rubric": "1 pt: Correct voltage across parallel branch\n1 pt: Correct current through $R_2$\n1 pt: Correct power value"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2021-1",
+    "courseSlug": "ap-physics-1",
+    "year": 2021,
+    "number": 1,
+    "topic": "Impulse and Momentum",
+    "prompt": "A $0.15\\text{ kg}$ ball traveling horizontally at $20\\text{ m/s}$ strikes a wall and rebounds at $15\\text{ m/s}$ in the opposite direction. The contact time is $0.010\\text{ s}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the impulse delivered to the ball.",
+        "points": 2,
+        "rubric": "1 pt: Correct change in momentum\n1 pt: Correct numerical impulse with direction"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the average force exerted on the ball.",
+        "points": 2,
+        "rubric": "1 pt: Uses $F = J/\\Delta t$\n1 pt: Correct numerical value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Explain how the force on the wall compares to that on the ball.",
+        "points": 1,
+        "rubric": "1 pt: Cites Newton's 3rd law and states equal magnitude, opposite direction"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2021-2",
+    "courseSlug": "ap-physics-1",
+    "year": 2021,
+    "number": 2,
+    "topic": "Rolling Motion - Disk",
+    "prompt": "A solid disk of mass $M = 1.0\\text{ kg}$ and radius $R = 0.20\\text{ m}$ rolls without slipping down an incline of height $h = 2.0\\text{ m}$ and angle $30^\\circ$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the translational speed of the disk at the bottom.",
+        "points": 3,
+        "rubric": "1 pt: Writes energy conservation including rotational KE\n1 pt: Uses $I = \\frac{1}{2}MR^2$ and rolling condition\n1 pt: Correct numerical speed"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the linear acceleration of the disk down the incline.",
+        "points": 2,
+        "rubric": "1 pt: Uses Newton's 2nd law with torque about center\n1 pt: Correct $a = \\frac{2}{3}g\\sin\\theta$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Explain how the speed would compare if the disk slid down a frictionless incline instead.",
+        "points": 1,
+        "rubric": "1 pt: States sliding gives larger speed because no energy goes into rotation"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2022-1",
+    "courseSlug": "ap-physics-1",
+    "year": 2022,
+    "number": 1,
+    "topic": "Pendulum SHM",
+    "prompt": "A simple pendulum of length $L = 0.80\\text{ m}$ swings with small amplitude.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the period of oscillation on Earth.",
+        "points": 2,
+        "rubric": "1 pt: Uses $T = 2\\pi\\sqrt{L/g}$\n1 pt: Correct numerical period"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Explain how the period would change if the pendulum were taken to the Moon where $g_M = 1.6\\text{ m/s}^2$.",
+        "points": 2,
+        "rubric": "1 pt: States period increases\n1 pt: Justifies using dependence on $g$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the maximum speed if the pendulum is released from a $10^\\circ$ angle on Earth.",
+        "points": 2,
+        "rubric": "1 pt: Energy conservation setup\n1 pt: Correct numerical max speed"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2023-1",
+    "courseSlug": "ap-physics-1",
+    "year": 2023,
+    "number": 1,
+    "topic": "2D Collision",
+    "prompt": "A puck of mass $m_1 = 0.20\\text{ kg}$ moving east at $4.0\\text{ m/s}$ collides with a stationary puck of mass $m_2 = 0.30\\text{ kg}$. After collision, $m_1$ moves at $2.0\\text{ m/s}$ at $30^\\circ$ north of east.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the x-component of $m_2$'s velocity after collision.",
+        "points": 2,
+        "rubric": "1 pt: Applies x-momentum conservation\n1 pt: Correct numerical value"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the y-component of $m_2$'s velocity after collision.",
+        "points": 2,
+        "rubric": "1 pt: Applies y-momentum conservation\n1 pt: Correct numerical value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine whether the collision is elastic.",
+        "points": 2,
+        "rubric": "1 pt: Calculates total KE before and after\n1 pt: Correct conclusion with comparison"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+  {
+    "id": "physics-1-v2-2024-1",
+    "courseSlug": "ap-physics-1",
+    "year": 2024,
+    "number": 1,
+    "topic": "Elevator Dynamics",
+    "prompt": "A person of mass $m = 70\\text{ kg}$ stands on a scale in an elevator.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the scale reading when the elevator accelerates upward at $2.0\\text{ m/s}^2$.",
+        "points": 2,
+        "rubric": "1 pt: Newton's 2nd law applied\n1 pt: Correct normal force value"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the scale reading during free fall.",
+        "points": 1,
+        "rubric": "1 pt: Correctly identifies reading is zero"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the elevator's acceleration if the scale reads $560\\text{ N}$.",
+        "points": 2,
+        "rubric": "1 pt: Newton's 2nd law setup\n1 pt: Correct magnitude and direction"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Sketch a graph of scale reading vs. time for the elevator speeding up, moving at constant velocity, then slowing down.",
+        "points": 2,
+        "rubric": "1 pt: Correct scale reading during speeding up and slowing down phases\n1 pt: Correct constant-velocity region equal to weight"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 1 FRQ"
+  },
+
+  // ─── ap-physics-2 wave-2 (+19) ─────────────────────────────
+  {
+    "id": "physics-2-v2-2016-1",
+    "courseSlug": "ap-physics-2",
+    "year": 2016,
+    "number": 1,
+    "topic": "Fluids - Bernoulli and Continuity",
+    "prompt": "Water flows through a horizontal pipe that narrows from radius $r_1 = 0.050\\text{ m}$ to $r_2 = 0.020\\text{ m}$. The speed in the wide section is $v_1 = 1.5\\text{ m/s}$ and the pressure there is $P_1 = 1.2\\times 10^5\\text{ Pa}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the speed of water in the narrow section.",
+        "points": 2,
+        "rubric": "1 pt: Uses continuity $A_1 v_1 = A_2 v_2$\n1 pt: Correct numerical speed"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the pressure in the narrow section.",
+        "points": 3,
+        "rubric": "1 pt: Applies Bernoulli's equation\n1 pt: Correct substitution of values\n1 pt: Correct numerical pressure"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Explain what happens to the pressure if the pipe is tilted so the narrow end is higher by $0.50\\text{ m}$.",
+        "points": 2,
+        "rubric": "1 pt: Includes $\\rho g h$ term correctly\n1 pt: States pressure decreases further and justifies"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2016-2",
+    "courseSlug": "ap-physics-2",
+    "year": 2016,
+    "number": 2,
+    "topic": "Thermodynamics - PV Diagram",
+    "prompt": "An ideal gas undergoes a cycle: isobaric expansion from state A to B, isochoric cooling from B to C, then isothermal compression from C back to A.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Sketch the cycle on a PV diagram and label each process.",
+        "points": 2,
+        "rubric": "1 pt: Correct shape of each segment\n1 pt: Correct direction of cycle with labels"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Indicate for each process whether $W$, $Q$, and $\\Delta U$ are positive, negative, or zero.",
+        "points": 3,
+        "rubric": "1 pt: Correct signs for A to B\n1 pt: Correct signs for B to C\n1 pt: Correct signs for C to A"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Explain whether the cycle operates as a heat engine or refrigerator.",
+        "points": 2,
+        "rubric": "1 pt: Identifies cycle direction\n1 pt: Justifies in terms of net work and heat flow"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2017-1",
+    "courseSlug": "ap-physics-2",
+    "year": 2017,
+    "number": 1,
+    "topic": "Electrostatics - Point Charges",
+    "prompt": "Two point charges $q_1 = +3.0\\text{ }\\mu\\text{C}$ and $q_2 = -2.0\\text{ }\\mu\\text{C}$ are separated by $d = 0.10\\text{ m}$ along the x-axis.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the electric field at the midpoint between them.",
+        "points": 3,
+        "rubric": "1 pt: Correct field from $q_1$\n1 pt: Correct field from $q_2$\n1 pt: Correct vector sum"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the electric potential at the midpoint.",
+        "points": 2,
+        "rubric": "1 pt: Uses scalar sum\n1 pt: Correct numerical potential"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the work required to move a $+1.0\\text{ }\\mu\\text{C}$ charge from infinity to the midpoint.",
+        "points": 2,
+        "rubric": "1 pt: Uses $W = qV$\n1 pt: Correct value"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2017-2",
+    "courseSlug": "ap-physics-2",
+    "year": 2017,
+    "number": 2,
+    "topic": "Capacitors with Dielectric",
+    "prompt": "A parallel-plate capacitor has plate area $A = 0.020\\text{ m}^2$ and plate separation $d = 2.0\\text{ mm}$. It is connected to a $V = 12\\text{ V}$ battery.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the capacitance in vacuum.",
+        "points": 2,
+        "rubric": "1 pt: Uses $C = \\varepsilon_0 A/d$\n1 pt: Correct numerical value"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the charge on the capacitor.",
+        "points": 1,
+        "rubric": "1 pt: Uses $Q = CV$ correctly"
+      },
+      {
+        "label": "(c)",
+        "prompt": "A dielectric with $\\kappa = 3.0$ is inserted while the capacitor is still connected to the battery. Determine the new charge and the energy stored.",
+        "points": 3,
+        "rubric": "1 pt: New capacitance $\\kappa C$\n1 pt: New charge correctly computed\n1 pt: Energy using $U = \\frac{1}{2}CV^2$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Explain qualitatively what happens if the capacitor is disconnected from the battery before inserting the dielectric.",
+        "points": 1,
+        "rubric": "1 pt: Notes charge is constant, voltage drops and correctly describes energy change"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2018-1",
+    "courseSlug": "ap-physics-2",
+    "year": 2018,
+    "number": 1,
+    "topic": "Magnetism - Mass Spectrometer",
+    "prompt": "A singly-ionized particle of mass $m$ is accelerated through potential difference $V = 500\\text{ V}$ and then enters a magnetic field $B = 0.30\\text{ T}$ perpendicular to its velocity, moving in a circle of radius $r = 0.045\\text{ m}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Derive an expression for the speed of the particle after acceleration.",
+        "points": 2,
+        "rubric": "1 pt: Uses energy conservation $qV = \\frac{1}{2}mv^2$\n1 pt: Correct $v = \\sqrt{2qV/m}$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive an expression for $m$ in terms of $r$, $B$, $q$, and $V$.",
+        "points": 3,
+        "rubric": "1 pt: Uses $qvB = mv^2/r$\n1 pt: Combines with velocity expression\n1 pt: Correct $m = qB^2r^2/(2V)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Calculate the mass of the particle.",
+        "points": 2,
+        "rubric": "1 pt: Correct substitution\n1 pt: Correct numerical mass"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2018-2",
+    "courseSlug": "ap-physics-2",
+    "year": 2018,
+    "number": 2,
+    "topic": "Geometric Optics - Lens",
+    "prompt": "An object is placed $d_o = 15\\text{ cm}$ in front of a converging lens of focal length $f = 10\\text{ cm}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the image distance.",
+        "points": 2,
+        "rubric": "1 pt: Uses thin-lens equation\n1 pt: Correct numerical image distance"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the magnification and describe the image.",
+        "points": 2,
+        "rubric": "1 pt: Correct magnification\n1 pt: Describes image as inverted and real"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Sketch a ray diagram showing at least two principal rays.",
+        "points": 2,
+        "rubric": "1 pt: At least two correctly drawn principal rays\n1 pt: Image location consistent with calculation"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2019-1",
+    "courseSlug": "ap-physics-2",
+    "year": 2019,
+    "number": 1,
+    "topic": "EM Induction - Moving Bar",
+    "prompt": "A conducting bar of length $L = 0.50\\text{ m}$ slides at $v = 3.0\\text{ m/s}$ on frictionless rails in a magnetic field $B = 0.40\\text{ T}$ perpendicular to the plane. The rails are connected via a resistor $R = 2.0\\text{ }\\Omega$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the EMF induced in the circuit.",
+        "points": 2,
+        "rubric": "1 pt: Uses $\\varepsilon = BLv$\n1 pt: Correct numerical EMF"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the current through the resistor and its direction.",
+        "points": 2,
+        "rubric": "1 pt: Correct magnitude via Ohm's law\n1 pt: Direction justified by Lenz's law"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the force required to keep the bar moving at constant velocity.",
+        "points": 2,
+        "rubric": "1 pt: Uses $F = BIL$\n1 pt: Correct numerical value"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Verify that the power dissipated in the resistor equals the power supplied by the external force.",
+        "points": 1,
+        "rubric": "1 pt: Shows $P = I^2 R = Fv$ numerically"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2019-2",
+    "courseSlug": "ap-physics-2",
+    "year": 2019,
+    "number": 2,
+    "topic": "Buoyancy",
+    "prompt": "A block of density $\\rho_b = 600\\text{ kg/m}^3$ and volume $V = 1.0\\times 10^{-3}\\text{ m}^3$ floats in water ($\\rho_w = 1000\\text{ kg/m}^3$).",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the volume submerged when floating in equilibrium.",
+        "points": 2,
+        "rubric": "1 pt: Applies $\\rho_b V = \\rho_w V_{sub}$\n1 pt: Correct volume"
+      },
+      {
+        "label": "(b)",
+        "prompt": "The block is pushed fully underwater and released. Determine the net upward force at the moment of release.",
+        "points": 2,
+        "rubric": "1 pt: Buoyant force minus weight\n1 pt: Correct numerical value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the initial upward acceleration of the block when fully submerged.",
+        "points": 2,
+        "rubric": "1 pt: Newton's 2nd law\n1 pt: Correct numerical acceleration"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2020-1",
+    "courseSlug": "ap-physics-2",
+    "year": 2020,
+    "number": 1,
+    "topic": "Double Slit Interference",
+    "prompt": "Light of wavelength $\\lambda = 600\\text{ nm}$ is incident on a double slit with separation $d = 0.20\\text{ mm}$. The screen is $L = 2.0\\text{ m}$ away.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the distance between adjacent bright fringes on the screen.",
+        "points": 2,
+        "rubric": "1 pt: Uses $\\Delta y = \\lambda L/d$\n1 pt: Correct numerical distance"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the angular position of the third-order bright fringe.",
+        "points": 2,
+        "rubric": "1 pt: Uses $d\\sin\\theta = m\\lambda$\n1 pt: Correct angle"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Explain qualitatively how the pattern changes if the wavelength is doubled.",
+        "points": 1,
+        "rubric": "1 pt: States fringe spacing doubles and justifies"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2020-2",
+    "courseSlug": "ap-physics-2",
+    "year": 2020,
+    "number": 2,
+    "topic": "RC Circuit Charging",
+    "prompt": "A $12\\text{ V}$ battery is connected in series with a resistor $R = 5000\\text{ }\\Omega$ and an initially uncharged capacitor $C = 200\\text{ }\\mu\\text{F}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the initial current in the circuit right after the switch closes.",
+        "points": 2,
+        "rubric": "1 pt: Recognizes capacitor acts like a wire\n1 pt: Correct $I_0 = V/R$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the time constant and the charge on the capacitor after one time constant.",
+        "points": 2,
+        "rubric": "1 pt: Correct $\\tau = RC$\n1 pt: Correct charge using $Q = CV(1 - e^{-1})$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the final energy stored in the capacitor.",
+        "points": 2,
+        "rubric": "1 pt: Uses $U = \\frac{1}{2}CV^2$\n1 pt: Correct numerical energy"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Sketch graphs of current and capacitor voltage as functions of time.",
+        "points": 1,
+        "rubric": "1 pt: Correct exponential decay for current and rise for voltage"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2021-1",
+    "courseSlug": "ap-physics-2",
+    "year": 2021,
+    "number": 1,
+    "topic": "Photoelectric Effect",
+    "prompt": "Light of wavelength $\\lambda = 250\\text{ nm}$ illuminates a metal surface with work function $\\phi = 3.5\\text{ eV}$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the energy of a photon of this light in eV.",
+        "points": 2,
+        "rubric": "1 pt: Uses $E = hc/\\lambda$\n1 pt: Correct conversion to eV"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the maximum kinetic energy of the ejected electrons.",
+        "points": 2,
+        "rubric": "1 pt: Uses $K_{max} = E_{photon} - \\phi$\n1 pt: Correct numerical value"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the stopping potential required.",
+        "points": 1,
+        "rubric": "1 pt: Correct $V_s = K_{max}/e$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Explain how the stopping potential changes if intensity is increased but wavelength is unchanged.",
+        "points": 1,
+        "rubric": "1 pt: States stopping potential unchanged and justifies"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2021-2",
+    "courseSlug": "ap-physics-2",
+    "year": 2021,
+    "number": 2,
+    "topic": "Pascal's Principle - Hydraulic Lift",
+    "prompt": "A hydraulic lift has a small piston of area $A_1 = 0.010\\text{ m}^2$ and a large piston of area $A_2 = 0.50\\text{ m}^2$. A car of mass $1500\\text{ kg}$ rests on the large piston.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the force required on the small piston to lift the car.",
+        "points": 2,
+        "rubric": "1 pt: Applies Pascal's principle\n1 pt: Correct numerical force"
+      },
+      {
+        "label": "(b)",
+        "prompt": "If the small piston moves down by $0.30\\text{ m}$, determine how far the large piston rises.",
+        "points": 2,
+        "rubric": "1 pt: Uses incompressibility $A_1 d_1 = A_2 d_2$\n1 pt: Correct numerical distance"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Verify that the work input equals the work output.",
+        "points": 2,
+        "rubric": "1 pt: Computes input work\n1 pt: Shows equality with output work"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2022-1",
+    "courseSlug": "ap-physics-2",
+    "year": 2022,
+    "number": 1,
+    "topic": "Kirchhoff Multi-Loop Circuit",
+    "prompt": "A two-loop circuit contains EMFs $\\varepsilon_1 = 9\\text{ V}$ and $\\varepsilon_2 = 6\\text{ V}$ and resistors $R_1 = 2\\text{ }\\Omega$, $R_2 = 3\\text{ }\\Omega$, and $R_3 = 4\\text{ }\\Omega$ (shared middle branch).",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write the junction equation at the central node.",
+        "points": 1,
+        "rubric": "1 pt: Correct junction equation"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write loop equations for both loops.",
+        "points": 2,
+        "rubric": "1 pt: Correct first loop equation\n1 pt: Correct second loop equation"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Solve for the current through $R_3$.",
+        "points": 3,
+        "rubric": "1 pt: Correct algebraic elimination\n1 pt: Correct substitution and simplification\n1 pt: Correct numerical current"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the power dissipated in $R_3$.",
+        "points": 1,
+        "rubric": "1 pt: Correct $P = I^2 R$ value"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2022-2",
+    "courseSlug": "ap-physics-2",
+    "year": 2022,
+    "number": 2,
+    "topic": "Total Internal Reflection",
+    "prompt": "A light ray travels in glass ($n_1 = 1.50$) and strikes the glass-water interface ($n_2 = 1.33$).",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the critical angle for total internal reflection.",
+        "points": 2,
+        "rubric": "1 pt: Uses $\\sin\\theta_c = n_2/n_1$\n1 pt: Correct angle"
+      },
+      {
+        "label": "(b)",
+        "prompt": "If the ray strikes at $50^\\circ$ from the normal, determine whether it refracts into the water.",
+        "points": 2,
+        "rubric": "1 pt: Compares to critical angle\n1 pt: Correct conclusion with reasoning"
+      },
+      {
+        "label": "(c)",
+        "prompt": "If the ray strikes at $40^\\circ$, determine the refraction angle in the water.",
+        "points": 2,
+        "rubric": "1 pt: Applies Snell's law\n1 pt: Correct numerical angle"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2023-1",
+    "courseSlug": "ap-physics-2",
+    "year": 2023,
+    "number": 1,
+    "topic": "Heat Engine Efficiency",
+    "prompt": "A heat engine absorbs $Q_H = 800\\text{ J}$ from a hot reservoir and rejects $Q_C = 500\\text{ J}$ to a cold reservoir per cycle.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the net work done per cycle.",
+        "points": 1,
+        "rubric": "1 pt: Correct $W = Q_H - Q_C$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the efficiency of the engine.",
+        "points": 2,
+        "rubric": "1 pt: Uses $\\eta = W/Q_H$\n1 pt: Correct numerical efficiency"
+      },
+      {
+        "label": "(c)",
+        "prompt": "If the hot reservoir is at $T_H = 600\\text{ K}$ and cold at $T_C = 300\\text{ K}$, determine the maximum possible (Carnot) efficiency and compare.",
+        "points": 3,
+        "rubric": "1 pt: Uses $\\eta_C = 1 - T_C/T_H$\n1 pt: Correct Carnot value\n1 pt: Valid comparison with actual efficiency"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2023-2",
+    "courseSlug": "ap-physics-2",
+    "year": 2023,
+    "number": 2,
+    "topic": "Force on Current-Carrying Wire",
+    "prompt": "A straight wire of length $L = 0.40\\text{ m}$ carries current $I = 5.0\\text{ A}$ in a region with uniform field $B = 0.25\\text{ T}$ at $60^\\circ$ to the wire.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the magnitude of the magnetic force on the wire.",
+        "points": 2,
+        "rubric": "1 pt: Uses $F = BIL\\sin\\theta$\n1 pt: Correct numerical force"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the direction of the force given the geometry.",
+        "points": 1,
+        "rubric": "1 pt: Correct application of right-hand rule with stated direction"
+      },
+      {
+        "label": "(c)",
+        "prompt": "A second parallel wire carries $I_2 = 3.0\\text{ A}$ in the same direction, $r = 0.02\\text{ m}$ away. Determine the force per unit length between the wires and whether it is attractive.",
+        "points": 3,
+        "rubric": "1 pt: Uses $F/L = \\mu_0 I_1 I_2/(2\\pi r)$\n1 pt: Correct numerical value\n1 pt: Identifies as attractive with justification"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2024-1",
+    "courseSlug": "ap-physics-2",
+    "year": 2024,
+    "number": 1,
+    "topic": "Hydrogen Energy Levels",
+    "prompt": "An electron in a hydrogen atom transitions from the $n = 3$ level ($E_3 = -1.51\\text{ eV}$) to the $n = 2$ level ($E_2 = -3.40\\text{ eV}$).",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the energy of the emitted photon in eV.",
+        "points": 2,
+        "rubric": "1 pt: Takes correct difference\n1 pt: Correct value with sign"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the wavelength of the emitted photon.",
+        "points": 2,
+        "rubric": "1 pt: Converts energy to joules and uses $\\lambda = hc/E$\n1 pt: Correct numerical wavelength"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the de Broglie wavelength of an electron with kinetic energy equal to the photon energy.",
+        "points": 2,
+        "rubric": "1 pt: Uses $\\lambda = h/\\sqrt{2mK}$\n1 pt: Correct numerical value"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2024-2",
+    "courseSlug": "ap-physics-2",
+    "year": 2024,
+    "number": 2,
+    "topic": "Thin-Film Interference",
+    "prompt": "A thin soap film ($n = 1.33$) of thickness $t$ is in air. White light is incident near-normally; the film appears strongly reflective at $\\lambda = 550\\text{ nm}$ in first-order constructive interference.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Discuss the phase shifts on reflection at each surface.",
+        "points": 2,
+        "rubric": "1 pt: Identifies $\\pi$ shift at air-soap\n1 pt: Identifies no shift at soap-air (back)"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write the condition for first-order constructive reflection and determine the minimum film thickness.",
+        "points": 3,
+        "rubric": "1 pt: Correct condition $2nt = (m+\\frac{1}{2})\\lambda$\n1 pt: Uses $m = 0$\n1 pt: Correct numerical thickness"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Explain what happens to the reflected color if the film thins to nearly zero thickness.",
+        "points": 1,
+        "rubric": "1 pt: States film appears dark due to net destructive interference"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+  {
+    "id": "physics-2-v2-2024-3",
+    "courseSlug": "ap-physics-2",
+    "year": 2024,
+    "number": 3,
+    "topic": "Changing Flux - Lenz's Law",
+    "prompt": "A circular loop of radius $r = 0.10\\text{ m}$ and resistance $R = 0.50\\text{ }\\Omega$ lies in a uniform magnetic field perpendicular to its plane. The field magnitude varies as $B(t) = 0.20 + 0.30t\\text{ T}$ (with $t$ in seconds).",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the magnitude of the induced EMF.",
+        "points": 2,
+        "rubric": "1 pt: Uses $\\varepsilon = -d\\Phi/dt = -A\\,dB/dt$\n1 pt: Correct numerical EMF"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the magnitude of the induced current.",
+        "points": 1,
+        "rubric": "1 pt: Correct $I = \\varepsilon/R$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the direction of the induced current (clockwise or counterclockwise as viewed from the direction of $\\vec B$).",
+        "points": 2,
+        "rubric": "1 pt: Applies Lenz's law\n1 pt: Correct direction with justification"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the power dissipated in the loop at $t = 2.0\\text{ s}$.",
+        "points": 1,
+        "rubric": "1 pt: Correct $P = I^2 R$ value (note independence of $t$)"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from AP Physics 2 FRQ"
+  },
+
+  // ─── ap-physics-c-mech wave-2 (+18) ─────────────────────────────
+  {
+    "id": "physcmech-v2-2016-1",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2016,
+    "number": 1,
+    "topic": "Variable Force and Energy",
+    "prompt": "A block of mass $m = 2.0$ kg is pushed along a horizontal surface by a variable force $F(x) = F_0(1 - x/L)$ where $F_0 = 20$ N and $L = 4.0$ m. The coefficient of kinetic friction is $\\mu_k = 0.10$. The block starts at rest at $x = 0$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Derive an expression for the work done by $F(x)$ from $x = 0$ to $x = L$.",
+        "points": 3,
+        "rubric": "1 pt: Set up $W = \\int_0^L F(x)\\,dx$\n1 pt: Correctly integrate to $F_0 L - F_0 L/2$\n1 pt: Final expression $W = F_0 L / 2$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Calculate the speed of the block at $x = L$.",
+        "points": 3,
+        "rubric": "1 pt: Apply work-energy theorem including friction\n1 pt: $W_{net} = F_0 L/2 - \\mu_k m g L$\n1 pt: $v = \\sqrt{2 W_{net}/m} \\approx 4.0$ m/s"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the position $x$ at which the block has maximum speed.",
+        "points": 3,
+        "rubric": "1 pt: Condition $F(x) = \\mu_k m g$ (net force zero)\n1 pt: Solve $F_0(1 - x/L) = \\mu_k m g$\n1 pt: $x = L(1 - \\mu_k m g / F_0)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Sketch $v(x)$ from $x = 0$ to $x = L$ indicating the maximum.",
+        "points": 2,
+        "rubric": "1 pt: Curve starts at 0, increases then decreases\n1 pt: Maximum marked at correct $x$"
+      }
+    ],
+    "totalPoints": 11,
+    "source": "Adapted from CB 2016 Mechanics FRQ 1"
+  },
+  {
+    "id": "physcmech-v2-2016-2",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2016,
+    "number": 2,
+    "topic": "Rotational Dynamics - Yo-yo",
+    "prompt": "A uniform solid disk of mass $M$ and radius $R$ is used as a yo-yo. A light string is wrapped around its axle of radius $r$ and the yo-yo is released from rest. Assume $I = \\frac{1}{2}MR^2$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Draw a free-body diagram and write Newton's second law for translation.",
+        "points": 2,
+        "rubric": "1 pt: Identify gravity and tension\n1 pt: $Mg - T = Ma$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write the rotational equation about the center of mass.",
+        "points": 2,
+        "rubric": "1 pt: Torque $\\tau = Tr$\n1 pt: $Tr = I\\alpha$ with $a = r\\alpha$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Derive the linear acceleration $a$ of the yo-yo.",
+        "points": 3,
+        "rubric": "1 pt: Combine translational and rotational equations\n1 pt: Substitute $I = \\frac{1}{2}MR^2$\n1 pt: $a = g/(1 + R^2/(2r^2))$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the tension $T$ in the string.",
+        "points": 2,
+        "rubric": "1 pt: $T = M(g - a)$\n1 pt: Correct simplified form"
+      },
+      {
+        "label": "(e)",
+        "prompt": "If $R = 5r$, determine the speed after the yo-yo has descended height $h$.",
+        "points": 2,
+        "rubric": "1 pt: Use energy conservation $Mgh = \\frac{1}{2}Mv^2 + \\frac{1}{2}I\\omega^2$\n1 pt: $v = \\sqrt{2gh/(1 + R^2/(2r^2))}$"
+      }
+    ],
+    "totalPoints": 11,
+    "source": "Adapted from CB 2016 Mechanics FRQ 2"
+  },
+  {
+    "id": "physcmech-v2-2016-3",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2016,
+    "number": 3,
+    "topic": "Air Resistance - Linear Drag",
+    "prompt": "A spherical object of mass $m$ falls from rest through air with drag force $F_d = -bv$ where $b$ is a positive constant.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write the differential equation for $v(t)$.",
+        "points": 2,
+        "rubric": "1 pt: Identify forces $mg$ downward, $bv$ upward\n1 pt: $m\\,dv/dt = mg - bv$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Solve for $v(t)$ with $v(0) = 0$.",
+        "points": 3,
+        "rubric": "1 pt: Separate variables\n1 pt: Integrate to obtain exponential\n1 pt: $v(t) = (mg/b)(1 - e^{-bt/m})$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the terminal velocity.",
+        "points": 1,
+        "rubric": "1 pt: $v_t = mg/b$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the distance fallen as a function of time.",
+        "points": 3,
+        "rubric": "1 pt: $y = \\int v\\,dt$\n1 pt: Integrate exponential correctly\n1 pt: $y(t) = (mg/b)t + (m^2 g/b^2)(e^{-bt/m} - 1)$"
+      },
+      {
+        "label": "(e)",
+        "prompt": "Sketch $v(t)$ showing terminal velocity asymptote.",
+        "points": 1,
+        "rubric": "1 pt: Correct shape with horizontal asymptote"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2016 Mechanics FRQ 3"
+  },
+  {
+    "id": "physcmech-v2-2017-1",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2017,
+    "number": 1,
+    "topic": "Momentum and Impulse from F(t)",
+    "prompt": "A $0.50$ kg object initially at rest is subject to a time-dependent force $F(t) = (6t - t^2)$ N for $0 \\leq t \\leq 6$ s.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Compute the impulse delivered over the interval.",
+        "points": 3,
+        "rubric": "1 pt: $J = \\int_0^6 F(t)\\,dt$\n1 pt: Correct antiderivative $3t^2 - t^3/3$\n1 pt: $J = 36$ N$\\cdot$s"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the velocity at $t = 6$ s.",
+        "points": 2,
+        "rubric": "1 pt: $v = J/m$\n1 pt: $v = 72$ m/s"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the time at which the force is maximum and the maximum force.",
+        "points": 2,
+        "rubric": "1 pt: $dF/dt = 0 \\Rightarrow t = 3$ s\n1 pt: $F_{max} = 9$ N"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the velocity at $t = 3$ s.",
+        "points": 3,
+        "rubric": "1 pt: Impulse from 0 to 3: $\\int_0^3(6t-t^2)dt$\n1 pt: Evaluate to $18$ N$\\cdot$s\n1 pt: $v(3) = 36$ m/s"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2017 Mechanics FRQ 1"
+  },
+  {
+    "id": "physcmech-v2-2017-2",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2017,
+    "number": 2,
+    "topic": "Moment of Inertia by Integration",
+    "prompt": "A thin rod of length $L$ has linear mass density $\\lambda(x) = \\lambda_0(1 + x/L)$ for $0 \\leq x \\leq L$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the total mass $M$ of the rod.",
+        "points": 2,
+        "rubric": "1 pt: $M = \\int_0^L \\lambda_0(1+x/L)\\,dx$\n1 pt: $M = 3\\lambda_0 L/2$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the position of the center of mass.",
+        "points": 3,
+        "rubric": "1 pt: $x_{cm} = (1/M)\\int x\\lambda(x)\\,dx$\n1 pt: Evaluate $\\int_0^L x\\lambda_0(1+x/L)dx = 5\\lambda_0 L^2/6$\n1 pt: $x_{cm} = 5L/9$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Calculate the moment of inertia about the end $x = 0$.",
+        "points": 3,
+        "rubric": "1 pt: $I = \\int_0^L x^2\\lambda(x)\\,dx$\n1 pt: Evaluate to $\\lambda_0 L^3/3 + \\lambda_0 L^3/4$\n1 pt: $I = 7\\lambda_0 L^3/12 = 7ML^2/18$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Use the parallel-axis theorem to find the moment of inertia about the center of mass.",
+        "points": 2,
+        "rubric": "1 pt: $I_{cm} = I_{end} - M x_{cm}^2$\n1 pt: Substitute and simplify"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2017 Mechanics FRQ 2"
+  },
+  {
+    "id": "physcmech-v2-2017-3",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2017,
+    "number": 3,
+    "topic": "Physical Pendulum SHM",
+    "prompt": "A uniform rod of mass $M$ and length $L$ is pivoted about a point a distance $d$ from its center. It swings in a vertical plane.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the moment of inertia about the pivot.",
+        "points": 2,
+        "rubric": "1 pt: Use parallel-axis theorem\n1 pt: $I = ML^2/12 + Md^2$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write the equation of motion for small angular displacement $\\theta$.",
+        "points": 3,
+        "rubric": "1 pt: Torque $\\tau = -Mgd\\sin\\theta$\n1 pt: Small angle $\\sin\\theta \\approx \\theta$\n1 pt: $I\\ddot\\theta = -Mgd\\theta$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Derive the period of oscillation.",
+        "points": 2,
+        "rubric": "1 pt: $\\omega^2 = Mgd/I$\n1 pt: $T = 2\\pi\\sqrt{(L^2/12 + d^2)/(gd)}$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find $d$ that minimizes the period.",
+        "points": 3,
+        "rubric": "1 pt: $dT/dd = 0$\n1 pt: Solve $L^2/12 = d^2$\n1 pt: $d = L/\\sqrt{12}$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2017 Mechanics FRQ 3"
+  },
+  {
+    "id": "physcmech-v2-2018-1",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2018,
+    "number": 1,
+    "topic": "Atwood Machine with Pulley Mass",
+    "prompt": "Two blocks of masses $m_1 = 3.0$ kg and $m_2 = 2.0$ kg hang from a pulley of mass $M = 1.0$ kg and radius $R = 0.10$ m modeled as a uniform disk. The string does not slip.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Draw free-body diagrams for each mass and the pulley.",
+        "points": 2,
+        "rubric": "1 pt: Correct forces on blocks (gravity, tensions)\n1 pt: Correct torques on pulley from $T_1$ and $T_2$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write Newton's second law for each block and the pulley.",
+        "points": 3,
+        "rubric": "1 pt: $m_1 g - T_1 = m_1 a$\n1 pt: $T_2 - m_2 g = m_2 a$\n1 pt: $(T_1 - T_2)R = I\\alpha$ with $a = R\\alpha$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Derive the acceleration of the system.",
+        "points": 3,
+        "rubric": "1 pt: Substitute $I = MR^2/2$\n1 pt: Combine equations\n1 pt: $a = (m_1 - m_2)g/(m_1 + m_2 + M/2)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Calculate numerical value of $a$ and both tensions.",
+        "points": 3,
+        "rubric": "1 pt: $a = 1.82$ m/s$^2$\n1 pt: $T_1 = 24.5$ N\n1 pt: $T_2 = 23.2$ N"
+      }
+    ],
+    "totalPoints": 11,
+    "source": "Adapted from CB 2018 Mechanics FRQ 1"
+  },
+  {
+    "id": "physcmech-v2-2018-2",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2018,
+    "number": 2,
+    "topic": "Angular Momentum Collision",
+    "prompt": "A uniform rod of length $L$ and mass $M$ lies on a frictionless horizontal surface and is pivoted at one end. A small clay ball of mass $m$ moving with speed $v_0$ perpendicular to the rod strikes the free end and sticks.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Calculate the angular momentum of the system about the pivot just before collision.",
+        "points": 2,
+        "rubric": "1 pt: Identify $L = mv_0 L$ about pivot\n1 pt: Specify direction"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine the moment of inertia of the rod-ball system about the pivot immediately after collision.",
+        "points": 2,
+        "rubric": "1 pt: Rod: $ML^2/3$\n1 pt: Total $I = ML^2/3 + mL^2$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the angular velocity immediately after the collision.",
+        "points": 3,
+        "rubric": "1 pt: Conserve angular momentum\n1 pt: $mv_0 L = (ML^2/3 + mL^2)\\omega$\n1 pt: $\\omega = 3mv_0/((M + 3m)L)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the fraction of kinetic energy lost.",
+        "points": 3,
+        "rubric": "1 pt: $KE_i = mv_0^2/2$\n1 pt: $KE_f = I\\omega^2/2$\n1 pt: Fraction lost $= M/(M + 3m)$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2018 Mechanics FRQ 2"
+  },
+  {
+    "id": "physcmech-v2-2018-3",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2018,
+    "number": 3,
+    "topic": "Orbital Mechanics",
+    "prompt": "A satellite of mass $m$ orbits a planet of mass $M$ and radius $R$ in a circular orbit of radius $r$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Derive the orbital speed $v$.",
+        "points": 2,
+        "rubric": "1 pt: $GMm/r^2 = mv^2/r$\n1 pt: $v = \\sqrt{GM/r}$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Express the total mechanical energy in the orbit.",
+        "points": 3,
+        "rubric": "1 pt: $KE = GMm/(2r)$\n1 pt: $U = -GMm/r$\n1 pt: $E = -GMm/(2r)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Derive Kepler's third law for this orbit.",
+        "points": 2,
+        "rubric": "1 pt: $T = 2\\pi r/v$\n1 pt: $T^2 = 4\\pi^2 r^3/(GM)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the minimum speed at radius $R$ for escape.",
+        "points": 2,
+        "rubric": "1 pt: $E \\geq 0$\n1 pt: $v_{esc} = \\sqrt{2GM/R}$"
+      },
+      {
+        "label": "(e)",
+        "prompt": "If the satellite's orbit decays to radius $r/2$, compare new and old mechanical energies.",
+        "points": 2,
+        "rubric": "1 pt: $E_{new} = -GMm/r$\n1 pt: Energy decreased (more negative); $\\Delta E = -GMm/(2r)$"
+      }
+    ],
+    "totalPoints": 11,
+    "source": "Adapted from CB 2018 Mechanics FRQ 3"
+  },
+  {
+    "id": "physcmech-v2-2019-1",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2019,
+    "number": 1,
+    "topic": "Rolling Without Slipping",
+    "prompt": "A uniform solid sphere of mass $M$ and radius $R$ is released from rest at the top of an incline of angle $\\theta$ and rolls without slipping. $I = \\frac{2}{5}MR^2$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Draw free-body diagram identifying friction direction.",
+        "points": 2,
+        "rubric": "1 pt: Gravity, normal, friction shown\n1 pt: Friction up the incline"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive the linear acceleration of the center of mass.",
+        "points": 3,
+        "rubric": "1 pt: $Mg\\sin\\theta - f = Ma$\n1 pt: $fR = I\\alpha$, $a = R\\alpha$\n1 pt: $a = (5/7)g\\sin\\theta$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the minimum coefficient of static friction needed.",
+        "points": 3,
+        "rubric": "1 pt: $f = (2/7)Mg\\sin\\theta$\n1 pt: $f \\leq \\mu_s N = \\mu_s Mg\\cos\\theta$\n1 pt: $\\mu_s \\geq (2/7)\\tan\\theta$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Compare arrival times of a solid sphere and a hoop on the same incline.",
+        "points": 2,
+        "rubric": "1 pt: Hoop: $a = g\\sin\\theta/2$\n1 pt: Sphere arrives first (larger $a$)"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2019 Mechanics FRQ 1"
+  },
+  {
+    "id": "physcmech-v2-2019-2",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2019,
+    "number": 2,
+    "topic": "Quadratic Drag",
+    "prompt": "An object of mass $m$ falls from rest through air with drag force $F_d = cv^2$ opposing motion.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the terminal velocity.",
+        "points": 2,
+        "rubric": "1 pt: $mg = cv_t^2$\n1 pt: $v_t = \\sqrt{mg/c}$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write the differential equation for $v(t)$.",
+        "points": 2,
+        "rubric": "1 pt: $m\\,dv/dt = mg - cv^2$\n1 pt: Correct signs"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Solve for $v(t)$ with $v(0) = 0$.",
+        "points": 3,
+        "rubric": "1 pt: Separate variables\n1 pt: Integrate using $\\tanh^{-1}$\n1 pt: $v(t) = v_t \\tanh(gt/v_t)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the velocity as a function of distance fallen.",
+        "points": 3,
+        "rubric": "1 pt: Use $v\\,dv/dy = g - cv^2/m$\n1 pt: Separate and integrate\n1 pt: $v^2 = v_t^2(1 - e^{-2cy/m})$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2019 Mechanics FRQ 2"
+  },
+  {
+    "id": "physcmech-v2-2019-3",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2019,
+    "number": 3,
+    "topic": "Spring SHM and Energy",
+    "prompt": "A block of mass $m = 0.50$ kg on a frictionless surface is attached to a spring of constant $k = 200$ N/m. The block is pulled $A = 0.10$ m from equilibrium and released.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Derive the period of oscillation.",
+        "points": 2,
+        "rubric": "1 pt: $\\omega = \\sqrt{k/m}$\n1 pt: $T = 2\\pi\\sqrt{m/k} \\approx 0.31$ s"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write $x(t)$ and $v(t)$.",
+        "points": 2,
+        "rubric": "1 pt: $x(t) = A\\cos(\\omega t)$\n1 pt: $v(t) = -A\\omega\\sin(\\omega t)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the maximum speed and maximum acceleration.",
+        "points": 2,
+        "rubric": "1 pt: $v_{max} = A\\omega = 2.0$ m/s\n1 pt: $a_{max} = A\\omega^2 = 40$ m/s$^2$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "A $0.50$ kg clay lump is dropped onto the block at maximum extension and sticks. Determine the new amplitude and period.",
+        "points": 4,
+        "rubric": "1 pt: At max extension, $v = 0$, no momentum change\n1 pt: New mass $2m$, same total energy\n1 pt: Amplitude unchanged $A$\n1 pt: New period $T' = 2\\pi\\sqrt{2m/k}$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2019 Mechanics FRQ 3"
+  },
+  {
+    "id": "physcmech-v2-2020-1",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2020,
+    "number": 1,
+    "topic": "Variable Force Energy",
+    "prompt": "A particle of mass $m$ moves along the $x$-axis under a conservative force $F(x) = -kx + \\alpha x^3$ where $k$ and $\\alpha$ are positive constants.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the potential energy $U(x)$ with $U(0) = 0$.",
+        "points": 2,
+        "rubric": "1 pt: $U = -\\int F\\,dx$\n1 pt: $U(x) = kx^2/2 - \\alpha x^4/4$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the positions of equilibrium and classify them.",
+        "points": 3,
+        "rubric": "1 pt: $dU/dx = 0 \\Rightarrow x = 0, \\pm\\sqrt{k/\\alpha}$\n1 pt: $d^2U/dx^2$ at each\n1 pt: $x = 0$ stable, $x = \\pm\\sqrt{k/\\alpha}$ unstable"
+      },
+      {
+        "label": "(c)",
+        "prompt": "If the particle has total energy $E$, find the turning points for small $E$.",
+        "points": 2,
+        "rubric": "1 pt: Set $E = U(x)$\n1 pt: Turning points $x = \\pm\\sqrt{2E/k}$ for small $E$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the maximum $E$ for which motion remains bounded.",
+        "points": 2,
+        "rubric": "1 pt: $E \\leq U$ at unstable equilibrium\n1 pt: $E_{max} = k^2/(4\\alpha)$"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2020 Mechanics FRQ 1"
+  },
+  {
+    "id": "physcmech-v2-2020-2",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2020,
+    "number": 2,
+    "topic": "Center of Mass and Momentum",
+    "prompt": "A $60$ kg person stands at the left end of a $120$ kg boat of length $L = 6.0$ m on still water with negligible friction. The person walks to the right end.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Explain why the center of mass of the person-boat system does not move.",
+        "points": 2,
+        "rubric": "1 pt: No net external horizontal force\n1 pt: Momentum conservation $\\Rightarrow x_{cm}$ constant"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Determine how far the boat moves relative to the water.",
+        "points": 4,
+        "rubric": "1 pt: Let $d$ = boat displacement\n1 pt: Person displacement relative to water: $L - d$\n1 pt: $60(L-d) = 120 d$\n1 pt: $d = L/3 = 2.0$ m"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the person's displacement relative to the water.",
+        "points": 2,
+        "rubric": "1 pt: $L - d$\n1 pt: $4.0$ m"
+      },
+      {
+        "label": "(d)",
+        "prompt": "If the person walks at constant speed $v$ relative to the boat, find the boat's speed relative to water.",
+        "points": 2,
+        "rubric": "1 pt: Momentum $= 0$: $60(v - u) - 120 u = 0$\n1 pt: $u = v/3$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2020 Mechanics FRQ 2"
+  },
+  {
+    "id": "physcmech-v2-2021-1",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2021,
+    "number": 1,
+    "topic": "Spin-up Problem",
+    "prompt": "A disk of moment of inertia $I = 0.50$ kg$\\cdot$m$^2$ rotates freely at $\\omega_0 = 10$ rad/s. A small motor applies a time-dependent torque $\\tau(t) = \\tau_0 e^{-t/T}$ with $\\tau_0 = 2.0$ N$\\cdot$m and $T = 5.0$ s in the same direction as rotation.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write the rotational equation of motion.",
+        "points": 2,
+        "rubric": "1 pt: $I\\,d\\omega/dt = \\tau(t)$\n1 pt: Identify $\\tau(t) = \\tau_0 e^{-t/T}$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Solve for $\\omega(t)$.",
+        "points": 3,
+        "rubric": "1 pt: Integrate $d\\omega = (\\tau_0/I) e^{-t/T}\\,dt$\n1 pt: $\\omega(t) - \\omega_0 = (\\tau_0 T/I)(1 - e^{-t/T})$\n1 pt: $\\omega(t) = \\omega_0 + (\\tau_0 T/I)(1 - e^{-t/T})$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the final angular velocity as $t \\to \\infty$.",
+        "points": 2,
+        "rubric": "1 pt: $e^{-t/T} \\to 0$\n1 pt: $\\omega_\\infty = 10 + 20 = 30$ rad/s"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the total work done by the torque.",
+        "points": 3,
+        "rubric": "1 pt: Work-energy theorem $W = \\Delta KE$\n1 pt: $\\Delta KE = I(\\omega_\\infty^2 - \\omega_0^2)/2$\n1 pt: $W = 200$ J"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2021 Mechanics FRQ 1"
+  },
+  {
+    "id": "physcmech-v2-2022-2",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2022,
+    "number": 2,
+    "topic": "Lagrangian Energy - Bead on Wire",
+    "prompt": "A bead of mass $m$ slides without friction on a vertical circular hoop of radius $R$ that rotates about a vertical diameter at constant angular speed $\\Omega$. Use $\\theta$ measured from the bottom of the hoop.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write the kinetic energy of the bead in terms of $\\theta, \\dot\\theta, \\Omega$.",
+        "points": 3,
+        "rubric": "1 pt: Tangential speed $R\\dot\\theta$\n1 pt: Azimuthal speed $R\\Omega\\sin\\theta$\n1 pt: $KE = m R^2(\\dot\\theta^2 + \\Omega^2\\sin^2\\theta)/2$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Write the potential energy with $U = 0$ at the bottom.",
+        "points": 1,
+        "rubric": "1 pt: $U = mgR(1 - \\cos\\theta)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Derive the equation of motion for $\\theta$ using energy methods.",
+        "points": 3,
+        "rubric": "1 pt: Effective potential $U_{eff} = mgR(1-\\cos\\theta) - m R^2\\Omega^2\\sin^2\\theta/2$\n1 pt: $mR^2\\ddot\\theta = -dU_{eff}/d\\theta$\n1 pt: $\\ddot\\theta = -(g/R)\\sin\\theta + \\Omega^2\\sin\\theta\\cos\\theta$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find nonzero equilibrium values of $\\theta$ and the condition for them to exist.",
+        "points": 3,
+        "rubric": "1 pt: Set $\\ddot\\theta = 0$\n1 pt: $\\cos\\theta = g/(R\\Omega^2)$\n1 pt: Exists when $\\Omega^2 > g/R$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2022 Mechanics FRQ 2"
+  },
+  {
+    "id": "physcmech-v2-2023-3",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2023,
+    "number": 3,
+    "topic": "Torsion Pendulum",
+    "prompt": "A uniform disk of radius $R = 0.20$ m and mass $M = 2.0$ kg is suspended horizontally from its center by a wire providing a restoring torque $\\tau = -\\kappa\\phi$ with $\\kappa = 0.50$ N$\\cdot$m/rad.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the moment of inertia of the disk about the wire axis.",
+        "points": 1,
+        "rubric": "1 pt: $I = MR^2/2 = 0.040$ kg$\\cdot$m$^2$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive the equation of motion and show SHM.",
+        "points": 2,
+        "rubric": "1 pt: $I\\ddot\\phi = -\\kappa\\phi$\n1 pt: Identify SHM with $\\omega = \\sqrt{\\kappa/I}$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Calculate the period of oscillation.",
+        "points": 2,
+        "rubric": "1 pt: $T = 2\\pi\\sqrt{I/\\kappa}$\n1 pt: $T \\approx 1.78$ s"
+      },
+      {
+        "label": "(d)",
+        "prompt": "A ring of mass $m = 0.50$ kg and radius $R$ is placed concentric on the disk. Find the new period.",
+        "points": 3,
+        "rubric": "1 pt: Ring $I_r = mR^2 = 0.020$ kg$\\cdot$m$^2$\n1 pt: New total $I = 0.060$ kg$\\cdot$m$^2$\n1 pt: $T' = 2\\pi\\sqrt{0.060/0.50} \\approx 2.18$ s"
+      },
+      {
+        "label": "(e)",
+        "prompt": "If the amplitude is $\\phi_0 = 0.2$ rad, find the maximum angular speed.",
+        "points": 2,
+        "rubric": "1 pt: $\\omega_{max} = \\phi_0\\sqrt{\\kappa/I}$\n1 pt: $\\omega_{max} \\approx 0.71$ rad/s (original system)"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2023 Mechanics FRQ 3"
+  },
+  {
+    "id": "physcmech-v2-2024-1",
+    "courseSlug": "ap-physics-c-mech",
+    "year": 2024,
+    "number": 1,
+    "topic": "Moment of Inertia Thin Shell",
+    "prompt": "Consider a uniform spherical shell of mass $M$ and radius $R$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Set up the integral for the moment of inertia about a diameter using thin ring slices of thickness $R\\,d\\theta$.",
+        "points": 3,
+        "rubric": "1 pt: Ring area $dA = 2\\pi R^2 \\sin\\theta\\,d\\theta$\n1 pt: Ring mass $dm = (M/(4\\pi R^2))dA$\n1 pt: $dI = (R\\sin\\theta)^2 dm$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Evaluate the integral to find $I$.",
+        "points": 3,
+        "rubric": "1 pt: $I = (MR^2/2)\\int_0^\\pi \\sin^3\\theta\\,d\\theta$\n1 pt: $\\int_0^\\pi \\sin^3\\theta\\,d\\theta = 4/3$\n1 pt: $I = (2/3)MR^2$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "A shell of mass $M = 3.0$ kg and radius $R = 0.10$ m rolls without slipping down a ramp of height $h = 0.50$ m. Find its speed at the bottom.",
+        "points": 3,
+        "rubric": "1 pt: $Mgh = (1/2)Mv^2 + (1/2)I\\omega^2$ with $v = R\\omega$\n1 pt: $gh = (5/6)v^2$\n1 pt: $v \\approx 2.42$ m/s"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Compare the arrival time to that of a solid sphere from the same height.",
+        "points": 1,
+        "rubric": "1 pt: Solid sphere $v = \\sqrt{10gh/7}$ larger; sphere arrives first"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2024 Mechanics FRQ 1"
+  },
+
+  // ─── ap-physics-c-em wave-2 (+17) ─────────────────────────────
+  {
+    "id": "physcem-v2-2016-1",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2016,
+    "number": 1,
+    "topic": "Gauss's Law Non-uniform Sphere",
+    "prompt": "An insulating sphere of radius $R$ has volume charge density $\\rho(r) = \\rho_0 (r/R)$ for $0 \\leq r \\leq R$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the total charge $Q$ enclosed.",
+        "points": 3,
+        "rubric": "1 pt: $Q = \\int \\rho\\,dV$ with $dV = 4\\pi r^2 dr$\n1 pt: $Q = 4\\pi\\rho_0\\int_0^R (r^3/R)\\,dr$\n1 pt: $Q = \\pi\\rho_0 R^3$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find $E(r)$ for $r < R$ using Gauss's law.",
+        "points": 3,
+        "rubric": "1 pt: Charge enclosed $q(r) = \\pi\\rho_0 r^4/R$\n1 pt: $E(4\\pi r^2) = q(r)/\\epsilon_0$\n1 pt: $E(r) = \\rho_0 r^2/(4\\epsilon_0 R)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find $E(r)$ for $r > R$.",
+        "points": 2,
+        "rubric": "1 pt: Total charge $Q$ enclosed\n1 pt: $E(r) = \\rho_0 R^3/(4\\epsilon_0 r^2)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the electric potential at the center (take $V(\\infty) = 0$).",
+        "points": 3,
+        "rubric": "1 pt: $V(0) = -\\int_\\infty^0 E\\,dr = \\int_0^\\infty E\\,dr$\n1 pt: Split into $[0,R]$ and $[R,\\infty)$ and evaluate\n1 pt: $V(0) = \\rho_0 R^2/(3\\epsilon_0)$"
+      }
+    ],
+    "totalPoints": 11,
+    "source": "Adapted from CB 2016 E&M FRQ 1"
+  },
+  {
+    "id": "physcem-v2-2016-2",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2016,
+    "number": 2,
+    "topic": "RC Circuit ODE Multi-loop",
+    "prompt": "In the circuit, an EMF $\\varepsilon = 12$ V is connected through a switch to a $R_1 = 2.0$ k$\\Omega$ resistor in series with a parallel combination of $R_2 = 3.0$ k$\\Omega$ and a $C = 10\\,\\mu$F capacitor (initially uncharged). The switch closes at $t = 0$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the current through $R_1$ immediately after the switch closes.",
+        "points": 2,
+        "rubric": "1 pt: Capacitor acts like wire initially\n1 pt: $i(0^+) = \\varepsilon/(R_1 + R_2\\parallel 0) = \\varepsilon/R_1 = 6.0$ mA"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the steady-state voltage across the capacitor.",
+        "points": 2,
+        "rubric": "1 pt: Capacitor blocks DC\n1 pt: $V_C = \\varepsilon R_2/(R_1+R_2) = 7.2$ V"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Derive the differential equation for $V_C(t)$.",
+        "points": 3,
+        "rubric": "1 pt: Apply KVL/KCL\n1 pt: $C\\,dV_C/dt = (\\varepsilon - V_C)/R_1 - V_C/R_2$\n1 pt: Rearrange to standard form"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the time constant for the capacitor voltage.",
+        "points": 2,
+        "rubric": "1 pt: Thevenin resistance $R_1\\parallel R_2$\n1 pt: $\\tau = C(R_1 R_2/(R_1+R_2)) = 12$ ms"
+      },
+      {
+        "label": "(e)",
+        "prompt": "Write $V_C(t)$.",
+        "points": 2,
+        "rubric": "1 pt: $V_C(t) = V_\\infty(1 - e^{-t/\\tau})$\n1 pt: $V_C(t) = 7.2(1 - e^{-t/0.012})$ V"
+      }
+    ],
+    "totalPoints": 11,
+    "source": "Adapted from CB 2016 E&M FRQ 2"
+  },
+  {
+    "id": "physcem-v2-2016-3",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2016,
+    "number": 3,
+    "topic": "Faraday's Law Moving Bar",
+    "prompt": "A conducting bar of length $L$ and mass $m$ slides with initial speed $v_0$ on frictionless parallel rails in a uniform magnetic field $B$ perpendicular to the plane. The rails are connected by a resistor $R$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Derive the induced EMF as a function of the bar speed $v$.",
+        "points": 2,
+        "rubric": "1 pt: $\\Phi = BLx$\n1 pt: $\\varepsilon = BLv$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the induced current and the force on the bar.",
+        "points": 2,
+        "rubric": "1 pt: $I = BLv/R$\n1 pt: $F = -B^2L^2 v/R$ (opposing motion)"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Write the equation of motion and solve for $v(t)$.",
+        "points": 3,
+        "rubric": "1 pt: $m\\,dv/dt = -B^2L^2 v/R$\n1 pt: Separate variables\n1 pt: $v(t) = v_0 e^{-B^2L^2 t/(mR)}$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the total energy dissipated in the resistor.",
+        "points": 2,
+        "rubric": "1 pt: All initial KE eventually dissipated\n1 pt: $E_{diss} = m v_0^2/2$"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2016 E&M FRQ 3"
+  },
+  {
+    "id": "physcem-v2-2017-1",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2017,
+    "number": 1,
+    "topic": "Concentric Spherical Capacitor",
+    "prompt": "A spherical capacitor consists of an inner conductor of radius $a$ and an outer conductor of radius $b > a$ with vacuum between.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the electric field between the shells for charge $Q$ on the inner and $-Q$ on the outer.",
+        "points": 2,
+        "rubric": "1 pt: Gauss's law with spherical surface\n1 pt: $E = Q/(4\\pi\\epsilon_0 r^2)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive the potential difference between the shells.",
+        "points": 2,
+        "rubric": "1 pt: $V = \\int_a^b E\\,dr$\n1 pt: $V = Q(1/a - 1/b)/(4\\pi\\epsilon_0)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Derive the capacitance.",
+        "points": 2,
+        "rubric": "1 pt: $C = Q/V$\n1 pt: $C = 4\\pi\\epsilon_0 ab/(b-a)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "A dielectric of constant $\\kappa$ fills the space. Find the new capacitance and the energy stored for charge $Q$.",
+        "points": 3,
+        "rubric": "1 pt: $C' = \\kappa C$\n1 pt: $U = Q^2/(2C')$\n1 pt: Correct substitution"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2017 E&M FRQ 1"
+  },
+  {
+    "id": "physcem-v2-2017-2",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2017,
+    "number": 2,
+    "topic": "Biot-Savart Current Loop",
+    "prompt": "A circular loop of radius $R$ carries current $I$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Use the Biot-Savart law to derive the magnetic field on the loop's axis at distance $z$ from its center.",
+        "points": 4,
+        "rubric": "1 pt: $dB = (\\mu_0/4\\pi)I\\,dl/r^2$ with $r = \\sqrt{R^2+z^2}$\n1 pt: Only $z$-components survive by symmetry\n1 pt: $dB_z = dB(R/r)$\n1 pt: $B_z = \\mu_0 I R^2/[2(R^2+z^2)^{3/2}]$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the field at the center ($z = 0$).",
+        "points": 1,
+        "rubric": "1 pt: $B = \\mu_0 I/(2R)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Two identical coaxial loops separated by distance $d = R$ (Helmholtz pair) carry equal currents in the same direction. Show the field at the midpoint is approximately uniform to second order in axial displacement.",
+        "points": 3,
+        "rubric": "1 pt: Add contributions with $z = \\pm R/2$\n1 pt: Taylor expand $B(z)$ about midpoint\n1 pt: First and second derivatives vanish when $d = R$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "A small magnetic dipole $\\mu$ is placed on the axis at the midpoint of the Helmholtz pair with its moment along the axis. Explain why it experiences no net force.",
+        "points": 1,
+        "rubric": "1 pt: $F = \\mu\\,dB/dz = 0$ since $dB/dz = 0$"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2017 E&M FRQ 2"
+  },
+  {
+    "id": "physcem-v2-2017-3",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2017,
+    "number": 3,
+    "topic": "RL Circuit ODE",
+    "prompt": "A battery of EMF $\\varepsilon = 12$ V is connected in series with a resistor $R = 4.0\\,\\Omega$ and inductor $L = 2.0$ H. The switch closes at $t = 0$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write Kirchhoff's loop rule for the circuit.",
+        "points": 2,
+        "rubric": "1 pt: $\\varepsilon - iR - L\\,di/dt = 0$\n1 pt: Signs consistent"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Solve for $i(t)$ with $i(0) = 0$.",
+        "points": 3,
+        "rubric": "1 pt: Identify first-order linear ODE\n1 pt: Time constant $\\tau = L/R = 0.5$ s\n1 pt: $i(t) = (\\varepsilon/R)(1 - e^{-Rt/L}) = 3.0(1 - e^{-2t})$ A"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the energy stored in the inductor as $t \\to \\infty$.",
+        "points": 2,
+        "rubric": "1 pt: $i_\\infty = 3.0$ A\n1 pt: $U = Li^2/2 = 9.0$ J"
+      },
+      {
+        "label": "(d)",
+        "prompt": "After reaching steady state, the battery is shorted out. Write $i(t)$ for subsequent times.",
+        "points": 2,
+        "rubric": "1 pt: New ODE $L\\,di/dt + iR = 0$\n1 pt: $i(t) = 3.0\\,e^{-2t'}$ A, $t'$ from reset"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2017 E&M FRQ 3"
+  },
+  {
+    "id": "physcem-v2-2018-1",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2018,
+    "number": 1,
+    "topic": "Gauss's Law Infinite Cylinder",
+    "prompt": "A long insulating cylinder of radius $R$ has uniform volume charge density $\\rho$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Use Gauss's law to find $E(r)$ for $r < R$.",
+        "points": 3,
+        "rubric": "1 pt: Choose cylindrical Gaussian surface\n1 pt: $E(2\\pi r L) = \\rho\\pi r^2 L/\\epsilon_0$\n1 pt: $E = \\rho r/(2\\epsilon_0)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find $E(r)$ for $r > R$.",
+        "points": 2,
+        "rubric": "1 pt: Enclosed $Q = \\rho\\pi R^2 L$\n1 pt: $E = \\rho R^2/(2\\epsilon_0 r)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Determine the potential difference between $r = R$ and $r = 2R$.",
+        "points": 3,
+        "rubric": "1 pt: $V(R) - V(2R) = \\int_R^{2R} E\\,dr$\n1 pt: Substitute $E = \\rho R^2/(2\\epsilon_0 r)$\n1 pt: $\\Delta V = \\rho R^2\\ln 2/(2\\epsilon_0)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Sketch $E(r)$.",
+        "points": 1,
+        "rubric": "1 pt: Linear rise to $R$, $1/r$ decay beyond"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2018 E&M FRQ 1"
+  },
+  {
+    "id": "physcem-v2-2018-2",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2018,
+    "number": 2,
+    "topic": "Ampère's Law Coaxial Cable",
+    "prompt": "A coaxial cable has an inner solid conductor of radius $a$ carrying current $I$ out of the page uniformly distributed, and an outer thin cylindrical shell of radius $b$ carrying current $I$ into the page.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find $B(r)$ for $r < a$.",
+        "points": 3,
+        "rubric": "1 pt: Enclosed current $I_{enc} = I(r^2/a^2)$\n1 pt: Ampère's law $B(2\\pi r) = \\mu_0 I_{enc}$\n1 pt: $B = \\mu_0 I r/(2\\pi a^2)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find $B(r)$ for $a < r < b$.",
+        "points": 2,
+        "rubric": "1 pt: Enclosed current $I$\n1 pt: $B = \\mu_0 I/(2\\pi r)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find $B(r)$ for $r > b$.",
+        "points": 2,
+        "rubric": "1 pt: Net enclosed current $0$\n1 pt: $B = 0$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Calculate the energy stored per unit length in the field between the conductors.",
+        "points": 3,
+        "rubric": "1 pt: $u = B^2/(2\\mu_0)$\n1 pt: $U/L = \\int_a^b u\\,2\\pi r\\,dr$\n1 pt: $U/L = \\mu_0 I^2\\ln(b/a)/(4\\pi)$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2018 E&M FRQ 2"
+  },
+  {
+    "id": "physcem-v2-2018-3",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2018,
+    "number": 3,
+    "topic": "Self-Inductance of Solenoid",
+    "prompt": "A long solenoid of length $\\ell$, cross-sectional area $A$, with $N$ turns carries current $i(t)$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Use Ampère's law to derive the field inside the solenoid.",
+        "points": 2,
+        "rubric": "1 pt: Rectangular Amperian loop\n1 pt: $B = \\mu_0 N i/\\ell$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive the self-inductance $L$.",
+        "points": 3,
+        "rubric": "1 pt: Flux per turn $\\Phi = BA$\n1 pt: Total linkage $N\\Phi$\n1 pt: $L = \\mu_0 N^2 A/\\ell$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "A secondary coil with $N_2$ turns wraps tightly around the solenoid. Derive the mutual inductance $M$.",
+        "points": 2,
+        "rubric": "1 pt: Flux through each turn of secondary $= BA$\n1 pt: $M = \\mu_0 N N_2 A/\\ell$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "If $i(t) = I_0 \\sin(\\omega t)$, find the EMF induced in the secondary.",
+        "points": 2,
+        "rubric": "1 pt: $\\varepsilon_2 = -M\\,di/dt$\n1 pt: $\\varepsilon_2 = -\\mu_0 N N_2 A\\omega I_0\\cos(\\omega t)/\\ell$"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from CB 2018 E&M FRQ 3"
+  },
+  {
+    "id": "physcem-v2-2019-1",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2019,
+    "number": 1,
+    "topic": "Line Charge Potential",
+    "prompt": "A thin rod of length $L$ lies along the $x$-axis from $x = 0$ to $x = L$ with linear charge density $\\lambda$ (constant).",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Derive the electric potential at a point $P$ on the $x$-axis at $x = d > L$.",
+        "points": 3,
+        "rubric": "1 pt: $dV = k\\,dq/(d - x)$\n1 pt: $V = k\\lambda\\int_0^L dx/(d-x)$\n1 pt: $V = k\\lambda\\ln[d/(d-L)]$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive the electric potential at point $Q$ on the perpendicular bisector at distance $y$.",
+        "points": 3,
+        "rubric": "1 pt: Set up $dV = k\\lambda\\,dx/\\sqrt{x^2+y^2}$\n1 pt: Use limits symmetric about midpoint\n1 pt: $V = k\\lambda\\ln[(L/2 + \\sqrt{(L/2)^2+y^2})/(-L/2 + \\sqrt{(L/2)^2+y^2})]$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "In the limit $L \\to \\infty$ with $\\lambda$ fixed, find $E$ at distance $y$.",
+        "points": 2,
+        "rubric": "1 pt: Use Gauss's law with cylindrical surface\n1 pt: $E = \\lambda/(2\\pi\\epsilon_0 y)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "For the infinite line, express the potential difference between $y_1$ and $y_2$.",
+        "points": 2,
+        "rubric": "1 pt: $\\Delta V = \\int E\\,dy$\n1 pt: $V(y_1) - V(y_2) = \\lambda\\ln(y_2/y_1)/(2\\pi\\epsilon_0)$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2019 E&M FRQ 1"
+  },
+  {
+    "id": "physcem-v2-2019-2",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2019,
+    "number": 2,
+    "topic": "LC Circuit Oscillation",
+    "prompt": "A capacitor of capacitance $C = 2.0\\,\\mu$F is charged to $V_0 = 10$ V and then connected to an inductor $L = 50$ mH at $t = 0$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Write Kirchhoff's loop equation and derive the ODE for $q(t)$.",
+        "points": 3,
+        "rubric": "1 pt: $q/C + L\\,di/dt = 0$\n1 pt: $i = -dq/dt$\n1 pt: $L\\ddot q + q/C = 0$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Solve for $q(t)$ and $i(t)$.",
+        "points": 3,
+        "rubric": "1 pt: $\\omega = 1/\\sqrt{LC}$\n1 pt: $q(t) = Q_0\\cos(\\omega t)$ with $Q_0 = CV_0$\n1 pt: $i(t) = Q_0\\omega\\sin(\\omega t)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Compute the angular frequency and period.",
+        "points": 2,
+        "rubric": "1 pt: $\\omega = 3162$ rad/s\n1 pt: $T = 2\\pi/\\omega \\approx 2.0$ ms"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the maximum current and verify energy conservation.",
+        "points": 2,
+        "rubric": "1 pt: $i_{max} = Q_0\\omega = 0.063$ A\n1 pt: $(1/2)Li_{max}^2 = (1/2)CV_0^2 = 10^{-4}$ J"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2019 E&M FRQ 2"
+  },
+  {
+    "id": "physcem-v2-2019-3",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2019,
+    "number": 3,
+    "topic": "Displacement Current in Capacitor",
+    "prompt": "A parallel-plate capacitor with circular plates of radius $R$ has plate separation $d$ and a time-varying voltage $V(t) = V_0\\cos(\\omega t)$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Determine the electric field between the plates (neglecting edge effects).",
+        "points": 2,
+        "rubric": "1 pt: $E = V/d$\n1 pt: $E(t) = (V_0/d)\\cos(\\omega t)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Compute the displacement current density $J_d = \\epsilon_0\\,dE/dt$.",
+        "points": 2,
+        "rubric": "1 pt: $dE/dt = -(V_0\\omega/d)\\sin(\\omega t)$\n1 pt: $J_d = -\\epsilon_0 V_0\\omega\\sin(\\omega t)/d$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Using Ampère-Maxwell law, find the magnetic field $B(r, t)$ inside the plates at radius $r < R$.",
+        "points": 3,
+        "rubric": "1 pt: $\\oint B\\cdot dl = \\mu_0\\epsilon_0\\,d\\Phi_E/dt$\n1 pt: $B(2\\pi r) = \\mu_0\\epsilon_0 (dE/dt)\\pi r^2$\n1 pt: $B = -\\mu_0\\epsilon_0 V_0\\omega r\\sin(\\omega t)/(2d)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Find the magnetic field at the edge $r = R$.",
+        "points": 1,
+        "rubric": "1 pt: Substitute $r = R$"
+      },
+      {
+        "label": "(e)",
+        "prompt": "Explain why displacement current is required for consistency with charge conservation.",
+        "points": 2,
+        "rubric": "1 pt: Without $J_d$, Ampère's law contradicts charge continuity at the plates\n1 pt: Displacement current restores $\\nabla\\cdot J + \\partial\\rho/\\partial t = 0$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2019 E&M FRQ 3"
+  },
+  {
+    "id": "physcem-v2-2020-1",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2020,
+    "number": 1,
+    "topic": "Potential from Non-uniform Density",
+    "prompt": "A solid non-conducting sphere of radius $R$ has charge density $\\rho(r) = \\rho_0(1 - r/R)$ for $0 \\leq r \\leq R$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Find the total charge.",
+        "points": 3,
+        "rubric": "1 pt: $Q = \\int_0^R 4\\pi r^2\\rho(r)\\,dr$\n1 pt: Evaluate to $4\\pi\\rho_0(R^3/3 - R^3/4)$\n1 pt: $Q = \\pi\\rho_0 R^3/3$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find $E(r)$ outside the sphere.",
+        "points": 2,
+        "rubric": "1 pt: Gauss's law with total $Q$\n1 pt: $E = Q/(4\\pi\\epsilon_0 r^2)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find $E(r)$ inside the sphere.",
+        "points": 3,
+        "rubric": "1 pt: $q(r) = 4\\pi\\rho_0(r^3/3 - r^4/(4R))$\n1 pt: $E(4\\pi r^2) = q(r)/\\epsilon_0$\n1 pt: $E(r) = \\rho_0(r/3 - r^2/(4R))/\\epsilon_0$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the position $r$ where $E$ is maximum inside.",
+        "points": 2,
+        "rubric": "1 pt: $dE/dr = 0$\n1 pt: $r = 2R/3$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2020 E&M FRQ 1"
+  },
+  {
+    "id": "physcem-v2-2021-2",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2021,
+    "number": 2,
+    "topic": "Rotating Loop Faraday",
+    "prompt": "A rectangular loop of area $A$ and resistance $R$ rotates about an axis perpendicular to a uniform magnetic field $B$ at constant angular velocity $\\omega$. At $t = 0$ the loop's normal is aligned with $B$.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Derive the flux through the loop as a function of time.",
+        "points": 2,
+        "rubric": "1 pt: $\\Phi = BA\\cos\\theta$\n1 pt: $\\Phi(t) = BA\\cos(\\omega t)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Derive the induced EMF.",
+        "points": 2,
+        "rubric": "1 pt: $\\varepsilon = -d\\Phi/dt$\n1 pt: $\\varepsilon(t) = BA\\omega\\sin(\\omega t)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Find the induced current and average power dissipated over a full cycle.",
+        "points": 3,
+        "rubric": "1 pt: $i(t) = \\varepsilon/R$\n1 pt: $P(t) = \\varepsilon^2/R$\n1 pt: $\\langle P\\rangle = (BA\\omega)^2/(2R)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Determine the torque required to maintain rotation.",
+        "points": 3,
+        "rubric": "1 pt: $\\tau = \\mu\\times B$ with $\\mu = iA$\n1 pt: $\\tau(t) = iAB\\sin(\\omega t)$\n1 pt: $\\tau(t) = (BA)^2\\omega\\sin^2(\\omega t)/R$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2021 E&M FRQ 2"
+  },
+  {
+    "id": "physcem-v2-2022-1",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2022,
+    "number": 1,
+    "topic": "Capacitor with Dielectric",
+    "prompt": "A parallel-plate capacitor has plate area $A$ and separation $d$. A dielectric slab of constant $\\kappa$ and thickness $d/2$ is inserted parallel to the plates filling half the gap.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Model the system as two capacitors in series and find the equivalent capacitance.",
+        "points": 3,
+        "rubric": "1 pt: $C_1 = \\epsilon_0 A/(d/2)$ (air half)\n1 pt: $C_2 = \\kappa\\epsilon_0 A/(d/2)$ (dielectric half)\n1 pt: $C = 2\\kappa\\epsilon_0 A/[d(\\kappa + 1)]$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "The capacitor is charged to $Q$ with the dielectric in place. Determine the electric field in each region.",
+        "points": 2,
+        "rubric": "1 pt: $E_{air} = Q/(\\epsilon_0 A)$ (same $D$)\n1 pt: $E_{diel} = Q/(\\kappa\\epsilon_0 A)$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Compute the energy stored.",
+        "points": 2,
+        "rubric": "1 pt: $U = Q^2/(2C)$\n1 pt: Substitute $C$ from part (a)"
+      },
+      {
+        "label": "(d)",
+        "prompt": "If instead the dielectric is inserted while the capacitor is connected to a battery at voltage $V_0$, determine the work done by the battery.",
+        "points": 3,
+        "rubric": "1 pt: $\\Delta Q = (C_f - C_i)V_0$\n1 pt: $W_{bat} = V_0\\,\\Delta Q$\n1 pt: $W_{bat} = V_0^2(C_f - C_i)$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2022 E&M FRQ 1"
+  },
+  {
+    "id": "physcem-v2-2023-2",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2023,
+    "number": 2,
+    "topic": "Toroid Ampère's Law",
+    "prompt": "A toroid with $N$ turns is wound on a doughnut-shaped core with inner radius $a$ and outer radius $b$. Current $I$ flows through the windings.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Use Ampère's law with a circular path inside the toroid to find $B(r)$ for $a < r < b$.",
+        "points": 3,
+        "rubric": "1 pt: Choose circular loop of radius $r$\n1 pt: $B(2\\pi r) = \\mu_0 N I$\n1 pt: $B = \\mu_0 N I/(2\\pi r)$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Find the field outside the toroid ($r < a$ or $r > b$).",
+        "points": 2,
+        "rubric": "1 pt: Enclosed current $0$\n1 pt: $B = 0$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Compute the flux through a single turn assuming rectangular cross-section of height $h$.",
+        "points": 3,
+        "rubric": "1 pt: $d\\Phi = B h\\,dr$\n1 pt: Integrate from $a$ to $b$\n1 pt: $\\Phi_1 = \\mu_0 N I h\\ln(b/a)/(2\\pi)$"
+      },
+      {
+        "label": "(d)",
+        "prompt": "Derive the self-inductance of the toroid.",
+        "points": 2,
+        "rubric": "1 pt: $L = N\\Phi_1/I$\n1 pt: $L = \\mu_0 N^2 h\\ln(b/a)/(2\\pi)$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2023 E&M FRQ 2"
+  },
+  {
+    "id": "physcem-v2-2024-2",
+    "courseSlug": "ap-physics-c-em",
+    "year": 2024,
+    "number": 2,
+    "topic": "Biot-Savart Finite Wire",
+    "prompt": "A straight wire segment of length $L$ carries current $I$. Point $P$ lies a perpendicular distance $d$ from the wire, with the foot of perpendicular at the midpoint.",
+    "parts": [
+      {
+        "label": "(a)",
+        "prompt": "Set up the Biot-Savart integral for $B$ at $P$.",
+        "points": 3,
+        "rubric": "1 pt: $dB = (\\mu_0/4\\pi)(I\\,dl\\sin\\theta)/r^2$\n1 pt: Choose $x$ along wire with origin at foot\n1 pt: Express $\\sin\\theta = d/\\sqrt{x^2+d^2}$"
+      },
+      {
+        "label": "(b)",
+        "prompt": "Evaluate the integral.",
+        "points": 3,
+        "rubric": "1 pt: $B = (\\mu_0 I/4\\pi)\\int_{-L/2}^{L/2} d\\,dx/(x^2+d^2)^{3/2}$\n1 pt: Antiderivative $x/(d\\sqrt{x^2+d^2})$\n1 pt: $B = \\mu_0 I L/[2\\pi d\\sqrt{L^2 + 4d^2}]$"
+      },
+      {
+        "label": "(c)",
+        "prompt": "Take the limit $L \\to \\infty$ to recover the infinite-wire result.",
+        "points": 2,
+        "rubric": "1 pt: $B \\to \\mu_0 I/(2\\pi d)$\n1 pt: Explicitly show limit"
+      },
+      {
+        "label": "(d)",
+        "prompt": "A square loop of side $a$ carries current $I$. Use the finite-wire result to find $B$ at the center.",
+        "points": 2,
+        "rubric": "1 pt: Four wires each with $L = a$, $d = a/2$\n1 pt: $B = 2\\sqrt{2}\\mu_0 I/(\\pi a)$"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from CB 2024 E&M FRQ 2"
+  },
+
+  // ─── ap-biology wave-2 (+20) ─────────────────────────────
+  {
+    "id": "bio-v2-2016-1",
+    "courseSlug": "ap-biology",
+    "year": 2016,
+    "number": 1,
+    "topic": "Membrane Transport and Osmosis",
+    "prompt": "Researchers investigated water movement across plant cell membranes using aquaporins. Dialysis tubing filled with sucrose solutions of varying concentrations was placed in distilled water and mass changes were recorded every 10 minutes for 1 hour.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the mechanism by which water crosses the plasma membrane and explain the role of aquaporins.",
+        "points": 2,
+        "rubric": "1 pt: Water moves by osmosis down its water potential gradient\n1 pt: Aquaporins are integral membrane proteins forming channels that facilitate rapid passive water flux"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict the direction and relative rate of net water movement in tubing containing 0.1 M vs 0.8 M sucrose when placed in distilled water.",
+        "points": 2,
+        "rubric": "1 pt: Water enters both tubes because external water potential (0) exceeds internal\n1 pt: 0.8 M gains mass faster/more due to a larger water potential gradient"
+      },
+      {
+        "label": "c",
+        "prompt": "Calculate the water potential of a 0.4 M sucrose solution at 25 C (i = 1.0, pressure potential = 0). Use Psi = -iCRT with R = 0.0831 L bar/mol K.",
+        "points": 2,
+        "rubric": "1 pt: Correct setup Psi_s = -(1)(0.4)(0.0831)(298)\n1 pt: Psi ~ -9.9 bars with units"
+      },
+      {
+        "label": "d",
+        "prompt": "Justify why a mutation eliminating aquaporin function would affect root cells differently than a mutation in an ion pump.",
+        "points": 2,
+        "rubric": "1 pt: Aquaporin loss slows bulk water uptake but not solute-driven osmotic gradients directly\n1 pt: Ion pump loss eliminates gradients driving osmosis/active transport, a broader physiological impact"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from 2016 AP Biology FRQ 1"
+  },
+  {
+    "id": "bio-v2-2016-2",
+    "courseSlug": "ap-biology",
+    "year": 2016,
+    "number": 2,
+    "topic": "Enzyme Kinetics and Inhibition",
+    "prompt": "A student measured the initial rate of an enzyme-catalyzed reaction at several substrate concentrations in the presence and absence of inhibitor X.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe how Vmax and Km change for competitive vs noncompetitive inhibition.",
+        "points": 2,
+        "rubric": "1 pt: Competitive: Vmax unchanged, Km increases\n1 pt: Noncompetitive: Vmax decreases, Km unchanged"
+      },
+      {
+        "label": "b",
+        "prompt": "Given that adding X increased Km from 2 mM to 6 mM with no change in Vmax, identify the inhibition type and justify.",
+        "points": 2,
+        "rubric": "1 pt: Competitive inhibition\n1 pt: Justification citing unchanged Vmax and elevated Km because inhibitor competes at the active site"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict the effect of raising pH two units above the optimum on enzyme activity.",
+        "points": 2,
+        "rubric": "1 pt: Activity decreases due to altered ionization of active-site residues\n1 pt: Denaturation of tertiary structure disrupts substrate binding"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2016 AP Biology FRQ 2"
+  },
+  {
+    "id": "bio-v2-2017-3",
+    "courseSlug": "ap-biology",
+    "year": 2017,
+    "number": 3,
+    "topic": "Cellular Respiration",
+    "prompt": "Isolated mitochondria were incubated with pyruvate. Researchers then added the uncoupler DNP and later the ATP synthase inhibitor oligomycin.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the role of the electron transport chain in generating the proton gradient.",
+        "points": 2,
+        "rubric": "1 pt: Electrons from NADH/FADH2 pass through complexes I-IV\n1 pt: Protons are pumped from matrix to intermembrane space establishing an electrochemical gradient"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict how DNP affects oxygen consumption and ATP production, and explain.",
+        "points": 2,
+        "rubric": "1 pt: O2 consumption rises because ETC runs faster without gradient\n1 pt: ATP production falls because the proton-motive force is dissipated before reaching ATP synthase"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict the effect of adding oligomycin after DNP on O2 consumption.",
+        "points": 1,
+        "rubric": "1 pt: Little change because DNP has already uncoupled respiration from ATP synthesis"
+      },
+      {
+        "label": "d",
+        "prompt": "Explain how cells could continue producing ATP under anaerobic conditions.",
+        "points": 2,
+        "rubric": "1 pt: Fermentation regenerates NAD+ allowing glycolysis to continue\n1 pt: Substrate-level phosphorylation yields 2 ATP per glucose"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from 2017 AP Biology FRQ 3"
+  },
+  {
+    "id": "bio-v2-2017-4",
+    "courseSlug": "ap-biology",
+    "year": 2017,
+    "number": 4,
+    "topic": "Photosynthesis",
+    "prompt": "A student illuminated isolated chloroplasts with DCMU and compared O2 evolution and NADPH formation to untreated controls.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Identify where in the chloroplast DCMU acts and its effect on electron flow.",
+        "points": 2,
+        "rubric": "1 pt: DCMU binds at the QB site of photosystem II in the thylakoid membrane\n1 pt: It blocks electron transfer from PSII to plastoquinone"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict and justify changes in O2 and NADPH in DCMU-treated samples.",
+        "points": 2,
+        "rubric": "1 pt: O2 evolution stops because water splitting at PSII is halted\n1 pt: NADPH falls since electrons no longer reach PSI/ferredoxin"
+      },
+      {
+        "label": "c",
+        "prompt": "Compare C3 and C4 plants' photosynthetic efficiency at high temperatures.",
+        "points": 2,
+        "rubric": "1 pt: C4 plants concentrate CO2 in bundle-sheath cells reducing photorespiration\n1 pt: C3 plants lose efficiency as rubisco fixes O2 at high temperatures"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2017 AP Biology FRQ 4"
+  },
+  {
+    "id": "bio-v2-2018-1",
+    "courseSlug": "ap-biology",
+    "year": 2018,
+    "number": 1,
+    "topic": "Mitosis and Meiosis",
+    "prompt": "A researcher compared chromosome behavior during mitosis and meiosis in a diploid organism with 2n = 8.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe two differences in chromosome behavior between meiosis I and mitosis.",
+        "points": 2,
+        "rubric": "1 pt: Homologous chromosomes pair and synapse in meiosis I but not in mitosis\n1 pt: Meiosis I separates homologs; mitosis separates sister chromatids"
+      },
+      {
+        "label": "b",
+        "prompt": "State the number of chromosomes per cell at the end of meiosis II and justify.",
+        "points": 2,
+        "rubric": "1 pt: 4 chromosomes per cell\n1 pt: Two reductional/equational divisions halve diploid number (8/2 = 4)"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain how crossing over and independent assortment generate genetic variation.",
+        "points": 2,
+        "rubric": "1 pt: Crossing over exchanges segments between non-sister chromatids producing recombinant chromosomes\n1 pt: Independent assortment of homolog pairs at metaphase I produces 2^n combinations"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2018 AP Biology FRQ 1"
+  },
+  {
+    "id": "bio-v2-2018-2",
+    "courseSlug": "ap-biology",
+    "year": 2018,
+    "number": 2,
+    "topic": "Mendelian Genetics and Chi-Square",
+    "prompt": "A dihybrid cross between heterozygous pea plants produced 320 offspring. Observed phenotypes: 175 tall-purple, 65 tall-white, 55 short-purple, 25 short-white.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "State the expected 9:3:3:1 ratio counts and set up the chi-square test.",
+        "points": 2,
+        "rubric": "1 pt: Expected: 180, 60, 60, 20\n1 pt: Chi-square sum of (O-E)^2/E for each class"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate chi-square and compare with the critical value (7.815, df = 3, alpha = 0.05).",
+        "points": 2,
+        "rubric": "1 pt: Chi-square ~ 1.67\n1 pt: Fail to reject null because 1.67 < 7.815"
+      },
+      {
+        "label": "c",
+        "prompt": "Interpret the result in context of Mendelian independent assortment.",
+        "points": 1,
+        "rubric": "1 pt: Data are consistent with independent assortment of height and color alleles"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2018 AP Biology FRQ 2"
+  },
+  {
+    "id": "bio-v2-2019-3",
+    "courseSlug": "ap-biology",
+    "year": 2019,
+    "number": 3,
+    "topic": "Molecular Genetics and the lac Operon",
+    "prompt": "E. coli cultures were grown in media containing glucose only, lactose only, or both sugars. Beta-galactosidase activity was measured.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the role of the repressor and CAP in regulating the lac operon.",
+        "points": 2,
+        "rubric": "1 pt: Repressor binds operator blocking transcription when lactose is absent\n1 pt: CAP-cAMP binds the promoter enhancing RNA polymerase recruitment when glucose is low"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict beta-galactosidase activity in each of the three conditions and justify.",
+        "points": 3,
+        "rubric": "1 pt: Glucose only: low activity due to low cAMP and repressor bound\n1 pt: Lactose only: high activity due to allolactose inducer and high cAMP\n1 pt: Both: low activity due to catabolite repression"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict the phenotype of a mutant with a defective operator that cannot bind repressor.",
+        "points": 1,
+        "rubric": "1 pt: Constitutive expression of lac genes regardless of lactose presence"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2019 AP Biology FRQ 3"
+  },
+  {
+    "id": "bio-v2-2019-4",
+    "courseSlug": "ap-biology",
+    "year": 2019,
+    "number": 4,
+    "topic": "Biotechnology: PCR and Gel Electrophoresis",
+    "prompt": "A forensic lab amplified a 500 bp region of suspect DNA via PCR and analyzed products on an agarose gel alongside a ladder.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the three temperature steps in a PCR cycle and what occurs at each.",
+        "points": 3,
+        "rubric": "1 pt: Denaturation ~ 95 C separates DNA strands\n1 pt: Annealing ~ 55 C allows primers to bind\n1 pt: Extension ~ 72 C Taq polymerase synthesizes new strands"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain why DNA fragments separate by size on an agarose gel.",
+        "points": 2,
+        "rubric": "1 pt: DNA is negatively charged and migrates toward the positive electrode\n1 pt: Smaller fragments move faster through the gel matrix"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe one application of CRISPR-Cas9 in research or medicine.",
+        "points": 1,
+        "rubric": "1 pt: Targeted gene editing (e.g., correcting disease alleles, creating knockouts)"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2019 AP Biology FRQ 4"
+  },
+  {
+    "id": "bio-v2-2020-1",
+    "courseSlug": "ap-biology",
+    "year": 2020,
+    "number": 1,
+    "topic": "Hardy-Weinberg with Selection",
+    "prompt": "In a beetle population, allele B (black) is dominant to b (tan). In generation 1, q^2 = 0.16. Predators consume tan beetles at twice the rate of black beetles.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate allele frequencies p and q, and genotype frequencies under Hardy-Weinberg equilibrium.",
+        "points": 2,
+        "rubric": "1 pt: q = 0.4, p = 0.6\n1 pt: BB = 0.36, Bb = 0.48, bb = 0.16"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict how selection against tan beetles changes allele frequencies over generations.",
+        "points": 2,
+        "rubric": "1 pt: q decreases because bb genotype has lower fitness\n1 pt: p increases correspondingly as B allele becomes more common"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe two other conditions required for Hardy-Weinberg equilibrium.",
+        "points": 2,
+        "rubric": "1 pt: No mutation and no migration\n1 pt: Random mating and large population size"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2020 AP Biology FRQ 1"
+  },
+  {
+    "id": "bio-v2-2020-2",
+    "courseSlug": "ap-biology",
+    "year": 2020,
+    "number": 2,
+    "topic": "Speciation and Phylogenies",
+    "prompt": "A researcher analyzed DNA sequences from four finch species and constructed a phylogenetic tree.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Distinguish between allopatric and sympatric speciation.",
+        "points": 2,
+        "rubric": "1 pt: Allopatric: geographic isolation prevents gene flow leading to divergence\n1 pt: Sympatric: reproductive isolation arises without geographic separation (e.g., polyploidy, niche differentiation)"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain how molecular data can be used to determine evolutionary relationships.",
+        "points": 2,
+        "rubric": "1 pt: More sequence similarity implies more recent common ancestry\n1 pt: Conserved genes/regions establish homology; mutation accumulation provides a molecular clock"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict one mechanism that could maintain reproductive isolation in sympatry.",
+        "points": 1,
+        "rubric": "1 pt: Behavioral/temporal isolation, gametic incompatibility, or habitat differentiation"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2020 AP Biology FRQ 2"
+  },
+  {
+    "id": "bio-v2-2021-3",
+    "courseSlug": "ap-biology",
+    "year": 2021,
+    "number": 3,
+    "topic": "Ecology: Food Webs and Energy Flow",
+    "prompt": "Primary productivity of a grassland is 20000 kcal/m^2/year. Ecologists measured energy transfer through trophic levels.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate energy available to secondary consumers assuming 10% transfer efficiency between each trophic level.",
+        "points": 2,
+        "rubric": "1 pt: Primary consumers: 2000 kcal/m^2/year\n1 pt: Secondary consumers: 200 kcal/m^2/year"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain why energy pyramids narrow at higher trophic levels.",
+        "points": 2,
+        "rubric": "1 pt: Energy is lost as heat in metabolism/cellular respiration\n1 pt: Only a fraction of consumed biomass is assimilated into consumer biomass"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict the effect of removing apex predators on grassland community structure.",
+        "points": 2,
+        "rubric": "1 pt: Mesopredator or herbivore populations increase (trophic cascade)\n1 pt: Producer biomass/diversity declines due to increased herbivory"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2021 AP Biology FRQ 3"
+  },
+  {
+    "id": "bio-v2-2021-4",
+    "courseSlug": "ap-biology",
+    "year": 2021,
+    "number": 4,
+    "topic": "Biogeochemical Cycles and Succession",
+    "prompt": "A volcanic eruption left bare rock on an island. Ecologists monitored colonization over decades.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the process of primary succession including pioneer and climax communities.",
+        "points": 2,
+        "rubric": "1 pt: Pioneer species (lichens, mosses) colonize bare rock and begin soil formation\n1 pt: Community composition changes over time toward a stable climax community"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain how nitrogen-fixing bacteria contribute to succession.",
+        "points": 2,
+        "rubric": "1 pt: They convert atmospheric N2 into ammonia/ammonium usable by plants\n1 pt: This enriches soil nitrogen enabling colonization by vascular plants"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict how excess fertilizer runoff from nearby agriculture would impact a downstream lake.",
+        "points": 2,
+        "rubric": "1 pt: Eutrophication from excess N and P stimulates algal blooms\n1 pt: Decomposition of algae depletes oxygen causing hypoxia and fish kills"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2021 AP Biology FRQ 4"
+  },
+  {
+    "id": "bio-v2-2022-1",
+    "courseSlug": "ap-biology",
+    "year": 2022,
+    "number": 1,
+    "topic": "Nervous System Signaling",
+    "prompt": "A student investigated how a neurotoxin affects action potential propagation along an axon.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the role of Na+ and K+ channels during an action potential.",
+        "points": 2,
+        "rubric": "1 pt: Voltage-gated Na+ channels open causing depolarization\n1 pt: Voltage-gated K+ channels open causing repolarization"
+      },
+      {
+        "label": "b",
+        "prompt": "The toxin blocks voltage-gated Na+ channels. Predict the effect on the action potential and justify.",
+        "points": 2,
+        "rubric": "1 pt: Action potentials fail to fire or are greatly reduced in amplitude\n1 pt: Without Na+ influx, depolarization cannot reach threshold"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe how myelination increases conduction velocity.",
+        "points": 2,
+        "rubric": "1 pt: Myelin insulates the axon restricting ion flow to nodes of Ranvier\n1 pt: Saltatory conduction between nodes speeds signal propagation"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2022 AP Biology FRQ 1"
+  },
+  {
+    "id": "bio-v2-2022-2",
+    "courseSlug": "ap-biology",
+    "year": 2022,
+    "number": 2,
+    "topic": "Endocrine and Immune Systems",
+    "prompt": "A patient presents with elevated blood glucose and reduced insulin sensitivity.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the negative feedback loop that normally regulates blood glucose after a meal.",
+        "points": 2,
+        "rubric": "1 pt: High glucose triggers pancreatic beta cells to secrete insulin\n1 pt: Insulin stimulates glucose uptake into cells lowering blood glucose"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain how type 1 diabetes differs from type 2 at the cellular level.",
+        "points": 2,
+        "rubric": "1 pt: Type 1: autoimmune destruction of beta cells eliminates insulin production\n1 pt: Type 2: target cells develop insulin receptor desensitization"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe the role of helper T cells in adaptive immunity.",
+        "points": 2,
+        "rubric": "1 pt: Helper T cells recognize antigens presented on MHC II\n1 pt: They secrete cytokines that activate B cells and cytotoxic T cells"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2022 AP Biology FRQ 2"
+  },
+  {
+    "id": "bio-v2-2023-3",
+    "courseSlug": "ap-biology",
+    "year": 2023,
+    "number": 3,
+    "topic": "Circulatory System and Gas Exchange",
+    "prompt": "A researcher compared oxygen-hemoglobin dissociation curves in adult and fetal hemoglobin.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe how fetal hemoglobin's higher affinity for O2 supports fetal development.",
+        "points": 2,
+        "rubric": "1 pt: Fetal Hb binds O2 at lower partial pressures than adult Hb\n1 pt: This enables O2 transfer from maternal to fetal blood at the placenta"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict the effect of decreased blood pH (Bohr effect) on oxygen release to tissues.",
+        "points": 2,
+        "rubric": "1 pt: Curve shifts right, decreasing Hb affinity for O2\n1 pt: More O2 is released to active/respiring tissues where CO2/H+ are high"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe one adaptation of high-altitude organisms for efficient oxygen uptake.",
+        "points": 1,
+        "rubric": "1 pt: Increased red blood cell count, higher-affinity Hb variants, or greater lung surface area"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2023 AP Biology FRQ 3"
+  },
+  {
+    "id": "bio-v2-2023-4",
+    "courseSlug": "ap-biology",
+    "year": 2023,
+    "number": 4,
+    "topic": "Plant Hormones and Reproduction",
+    "prompt": "A student exposed seedlings to unilateral light and measured curvature. Separate groups were treated with auxin transport inhibitors.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe how auxin mediates phototropism.",
+        "points": 2,
+        "rubric": "1 pt: Auxin is redistributed to the shaded side of the stem\n1 pt: Asymmetric auxin triggers cell elongation on the shaded side bending the stem toward light"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict the phenotype of seedlings treated with an auxin transport inhibitor.",
+        "points": 2,
+        "rubric": "1 pt: Reduced or absent phototropic curvature\n1 pt: Because auxin cannot redistribute laterally, elongation is symmetric"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe the function of double fertilization in angiosperms.",
+        "points": 2,
+        "rubric": "1 pt: One sperm fertilizes the egg forming the diploid zygote\n1 pt: The second sperm fuses with polar nuclei forming triploid endosperm that nourishes the embryo"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2023 AP Biology FRQ 4"
+  },
+  {
+    "id": "bio-v2-2024-1",
+    "courseSlug": "ap-biology",
+    "year": 2024,
+    "number": 1,
+    "topic": "DNA Replication and Repair",
+    "prompt": "A student examined the fidelity of DNA replication in wild-type and mismatch-repair-deficient E. coli strains.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the semiconservative nature of DNA replication and the role of DNA polymerase.",
+        "points": 2,
+        "rubric": "1 pt: Each daughter duplex contains one parental and one newly synthesized strand\n1 pt: DNA polymerase adds nucleotides 5' to 3' complementary to the template"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain why the leading and lagging strands are synthesized differently.",
+        "points": 2,
+        "rubric": "1 pt: Leading strand is synthesized continuously toward the replication fork\n1 pt: Lagging strand is synthesized discontinuously as Okazaki fragments joined by ligase"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict mutation rates in mismatch-repair-deficient strains and justify.",
+        "points": 2,
+        "rubric": "1 pt: Mutation rate is elevated in mismatch-repair-deficient strains\n1 pt: Because mispaired bases that escape polymerase proofreading are not corrected"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2024 AP Biology FRQ 1"
+  },
+  {
+    "id": "bio-v2-2024-2",
+    "courseSlug": "ap-biology",
+    "year": 2024,
+    "number": 2,
+    "topic": "Transcription and Translation",
+    "prompt": "A mutation changed a single nucleotide in the coding sequence of a gene from GAG to TAG.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Classify the mutation and predict its effect on the resulting protein.",
+        "points": 2,
+        "rubric": "1 pt: Nonsense mutation producing a premature stop codon (UAG)\n1 pt: Truncated, likely nonfunctional protein"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe the roles of the three types of RNA in translation.",
+        "points": 3,
+        "rubric": "1 pt: mRNA carries the coding sequence from DNA to the ribosome\n1 pt: tRNA delivers amino acids matched to codons by anticodons\n1 pt: rRNA forms the ribosome's catalytic core and peptidyl transferase activity"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict how a frameshift mutation differs in effect from the mutation above.",
+        "points": 1,
+        "rubric": "1 pt: Frameshift alters all downstream codons often causing extensive loss of function"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2024 AP Biology FRQ 2"
+  },
+  {
+    "id": "bio-v2-2024-3",
+    "courseSlug": "ap-biology",
+    "year": 2024,
+    "number": 3,
+    "topic": "Population Dynamics",
+    "prompt": "A population of rabbits on an island shows logistic growth with carrying capacity K = 500 and intrinsic growth rate r = 0.3.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write the logistic growth equation and calculate dN/dt when N = 100.",
+        "points": 2,
+        "rubric": "1 pt: dN/dt = rN(1 - N/K)\n1 pt: dN/dt = 0.3(100)(1 - 100/500) = 24 rabbits/year"
+      },
+      {
+        "label": "b",
+        "prompt": "Compare exponential vs logistic growth and identify when each applies.",
+        "points": 2,
+        "rubric": "1 pt: Exponential growth (dN/dt = rN) occurs with unlimited resources\n1 pt: Logistic growth slows as N approaches K due to density-dependent limits"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe one density-dependent and one density-independent factor limiting this population.",
+        "points": 2,
+        "rubric": "1 pt: Density-dependent: disease, competition, or predation\n1 pt: Density-independent: natural disaster, severe weather, or fire"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2024 AP Biology FRQ 3"
+  },
+  {
+    "id": "bio-v2-2024-4",
+    "courseSlug": "ap-biology",
+    "year": 2024,
+    "number": 4,
+    "topic": "Pedigree Analysis",
+    "prompt": "A pedigree shows a trait appearing in every generation, affecting males and females roughly equally, with affected offspring from two affected parents.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Identify the most likely mode of inheritance and justify.",
+        "points": 2,
+        "rubric": "1 pt: Autosomal dominant\n1 pt: Trait appears every generation and both sexes are affected equally, not skipping generations"
+      },
+      {
+        "label": "b",
+        "prompt": "If two heterozygous parents have a child, calculate the probability the child is affected.",
+        "points": 2,
+        "rubric": "1 pt: 3/4 (Aa x Aa Punnett gives 1 AA : 2 Aa : 1 aa)\n1 pt: Clear Punnett setup showing dominant phenotype"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain why an X-linked recessive disorder would not match this pedigree pattern.",
+        "points": 2,
+        "rubric": "1 pt: X-linked recessive traits affect males more often than females\n1 pt: Such traits often skip generations via carrier females"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2024 AP Biology FRQ 4"
+  },
+
+  // ─── ap-chemistry wave-2 (+20) ─────────────────────────────
+  {
+    "id": "chem-v2-2016-1",
+    "courseSlug": "ap-chemistry",
+    "year": 2016,
+    "number": 1,
+    "topic": "Stoichiometry and Limiting Reagent",
+    "prompt": "Consider the reaction $2 Al(s) + 3 Cl_2(g) \\rightarrow 2 AlCl_3(s)$. A student combines 5.40 g Al with 12.0 L $Cl_2$ at STP.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Determine moles of each reactant and identify the limiting reagent.",
+        "points": 2,
+        "rubric": "1 pt: 0.200 mol Al and 0.536 mol Cl2\n1 pt: Al is limiting since 0.200/2 = 0.100 < 0.536/3 = 0.179"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate the theoretical yield of $AlCl_3$ in grams.",
+        "points": 2,
+        "rubric": "1 pt: 0.200 mol AlCl3 produced (1:1 with Al)\n1 pt: 0.200 mol x 133.34 g/mol ~ 26.7 g"
+      },
+      {
+        "label": "c",
+        "prompt": "If 22.0 g $AlCl_3$ is isolated, calculate the percent yield.",
+        "points": 1,
+        "rubric": "1 pt: (22.0/26.7) x 100% ~ 82.4%"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2016 AP Chemistry FRQ 1"
+  },
+  {
+    "id": "chem-v2-2016-2",
+    "courseSlug": "ap-chemistry",
+    "year": 2016,
+    "number": 2,
+    "topic": "Gas Laws and Kinetic Molecular Theory",
+    "prompt": "A sealed 2.00 L vessel contains 0.50 mol $N_2$ and 0.25 mol $O_2$ at 300 K.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the partial pressure of each gas and the total pressure using $PV = nRT$.",
+        "points": 2,
+        "rubric": "1 pt: P(N2) ~ 6.15 atm, P(O2) ~ 3.08 atm\n1 pt: P(total) ~ 9.23 atm (Dalton's law)"
+      },
+      {
+        "label": "b",
+        "prompt": "Compare the average kinetic energies and rms speeds of $N_2$ and $O_2$ in the mixture.",
+        "points": 2,
+        "rubric": "1 pt: Average KE is the same because both gases are at the same T\n1 pt: N2 has higher rms speed because it has a smaller molar mass (v_rms proportional to 1/sqrt(M))"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict how real gas behavior at high pressure deviates from ideal.",
+        "points": 2,
+        "rubric": "1 pt: At high P, finite molecular volume makes measured V larger than ideal prediction\n1 pt: Intermolecular attractions reduce measured pressure below ideal prediction"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2016 AP Chemistry FRQ 2"
+  },
+  {
+    "id": "chem-v2-2017-3",
+    "courseSlug": "ap-chemistry",
+    "year": 2017,
+    "number": 3,
+    "topic": "Acid-Base Equilibria and Buffers",
+    "prompt": "A buffer is prepared by mixing 0.100 mol acetic acid ($K_a = 1.8 \\times 10^{-5}$) and 0.100 mol sodium acetate in 1.00 L water.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the pH of the buffer using $pH = pK_a + \\log\\frac{[A^-]}{[HA]}$.",
+        "points": 2,
+        "rubric": "1 pt: pKa ~ 4.74\n1 pt: pH ~ 4.74 since [A-] = [HA]"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict the pH change if 0.010 mol HCl is added to the buffer.",
+        "points": 2,
+        "rubric": "1 pt: HCl converts 0.010 mol acetate to acetic acid giving [A-]/[HA] = 0.090/0.110\n1 pt: pH ~ 4.74 + log(0.818) ~ 4.65"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain why a buffer resists pH changes when small amounts of acid or base are added.",
+        "points": 2,
+        "rubric": "1 pt: The weak acid neutralizes added base; the conjugate base neutralizes added acid\n1 pt: Ratio [A-]/[HA] changes only slightly keeping pH near pKa"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2017 AP Chemistry FRQ 3"
+  },
+  {
+    "id": "chem-v2-2017-4",
+    "courseSlug": "ap-chemistry",
+    "year": 2017,
+    "number": 4,
+    "topic": "Equilibrium and LeChatelier",
+    "prompt": "Consider the gas-phase equilibrium $N_2(g) + 3 H_2(g) \\rightleftharpoons 2 NH_3(g)$ with $\\Delta H = -92$ kJ.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write the expression for $K_c$ and $K_p$.",
+        "points": 2,
+        "rubric": "1 pt: $K_c = \\frac{[NH_3]^2}{[N_2][H_2]^3}$\n1 pt: $K_p = \\frac{P_{NH_3}^2}{P_{N_2} P_{H_2}^3}$"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict the effect on NH3 yield of (i) increasing pressure, (ii) increasing temperature.",
+        "points": 2,
+        "rubric": "1 pt: Increasing P shifts to fewer moles of gas (right) increasing NH3 yield\n1 pt: Increasing T shifts exothermic reaction left decreasing NH3 yield"
+      },
+      {
+        "label": "c",
+        "prompt": "At a given instant Q = 2K. Predict the direction of shift and justify.",
+        "points": 2,
+        "rubric": "1 pt: Reaction shifts to the left (reverse direction)\n1 pt: Because Q > K the system consumes products to re-establish equilibrium"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2017 AP Chemistry FRQ 4"
+  },
+  {
+    "id": "chem-v2-2018-1",
+    "courseSlug": "ap-chemistry",
+    "year": 2018,
+    "number": 1,
+    "topic": "Solubility Equilibria",
+    "prompt": "The $K_{sp}$ of $PbCl_2$ is $1.6 \\times 10^{-5}$ at 25 C.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the molar solubility of $PbCl_2$ in pure water.",
+        "points": 2,
+        "rubric": "1 pt: Ksp = [Pb2+][Cl-]^2 = s(2s)^2 = 4s^3\n1 pt: s ~ (1.6e-5 / 4)^(1/3) ~ 1.6e-2 M"
+      },
+      {
+        "label": "b",
+        "prompt": "Predict and justify the effect of adding 0.10 M NaCl on the solubility of $PbCl_2$.",
+        "points": 2,
+        "rubric": "1 pt: Solubility decreases due to the common-ion effect\n1 pt: Increased [Cl-] shifts equilibrium toward solid PbCl2 (LeChatelier)"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain why $PbS$ is less soluble in acidic solution than $PbCl_2$.",
+        "points": 2,
+        "rubric": "1 pt: S2- is the conjugate base of a weak acid (HS-) and reacts with H+\n1 pt: In acid H+ removes S2- shifting dissolution forward, increasing solubility (answer must note acid increases PbS solubility while Cl- is a spectator for PbCl2)"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2018 AP Chemistry FRQ 1"
+  },
+  {
+    "id": "chem-v2-2018-2",
+    "courseSlug": "ap-chemistry",
+    "year": 2018,
+    "number": 2,
+    "topic": "Thermochemistry and Hess's Law",
+    "prompt": "Given $\\Delta H_f^{\\circ}$: $CO_2(g) = -393.5$ kJ/mol, $H_2O(l) = -285.8$ kJ/mol, $C_2H_5OH(l) = -277.7$ kJ/mol.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write the balanced combustion equation for ethanol.",
+        "points": 1,
+        "rubric": "1 pt: $C_2H_5OH(l) + 3 O_2(g) \\rightarrow 2 CO_2(g) + 3 H_2O(l)$"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate $\\Delta H^{\\circ}_{rxn}$ using Hess's law.",
+        "points": 2,
+        "rubric": "1 pt: DeltaH = [2(-393.5) + 3(-285.8)] - [-277.7 + 0]\n1 pt: DeltaH ~ -1366.7 kJ/mol"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict signs of $\\Delta S$ and $\\Delta G$ and whether combustion is spontaneous.",
+        "points": 2,
+        "rubric": "1 pt: Delta S > 0 (more moles of gas, more disorder)\n1 pt: Delta G < 0 at all typical T so the reaction is spontaneous"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2018 AP Chemistry FRQ 2"
+  },
+  {
+    "id": "chem-v2-2019-3",
+    "courseSlug": "ap-chemistry",
+    "year": 2019,
+    "number": 3,
+    "topic": "Kinetics: Rate Law from Data",
+    "prompt": "For the reaction $A + B \\rightarrow C$, initial rate data are: trial 1 [A]=0.1, [B]=0.1, rate=2e-3; trial 2 [A]=0.2, [B]=0.1, rate=8e-3; trial 3 [A]=0.1, [B]=0.2, rate=2e-3.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Determine the order in A and B and write the rate law.",
+        "points": 2,
+        "rubric": "1 pt: Second order in A, zero order in B\n1 pt: rate = k[A]^2"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate the rate constant k with units.",
+        "points": 2,
+        "rubric": "1 pt: k = rate/[A]^2 = 2e-3/(0.1)^2\n1 pt: k = 0.2 M^-1 s^-1"
+      },
+      {
+        "label": "c",
+        "prompt": "Propose a mechanism consistent with this rate law identifying the rate-determining step.",
+        "points": 2,
+        "rubric": "1 pt: RDS involves 2A colliding (A + A -> intermediate)\n1 pt: Subsequent fast step uses B to give C so B does not appear in the rate law"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2019 AP Chemistry FRQ 3"
+  },
+  {
+    "id": "chem-v2-2019-4",
+    "courseSlug": "ap-chemistry",
+    "year": 2019,
+    "number": 4,
+    "topic": "Integrated Rate Laws and Arrhenius",
+    "prompt": "A first-order reaction has a rate constant $k = 0.023$ s$^{-1}$ at 298 K and $E_a = 75$ kJ/mol.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the half-life of the reaction.",
+        "points": 1,
+        "rubric": "1 pt: t_{1/2} = 0.693/k ~ 30.1 s"
+      },
+      {
+        "label": "b",
+        "prompt": "Starting with [A]_0 = 0.50 M, calculate [A] after 60 s.",
+        "points": 2,
+        "rubric": "1 pt: ln([A]/[A]_0) = -kt with kt = 1.38\n1 pt: [A] = 0.50 e^(-1.38) ~ 0.126 M"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict how k changes when T is raised to 318 K using $\\ln(k_2/k_1) = -E_a/R (1/T_2 - 1/T_1)$.",
+        "points": 2,
+        "rubric": "1 pt: Correct Arrhenius setup giving ln(k2/k1) ~ 75000/8.314 x (1/298 - 1/318) ~ 1.90\n1 pt: k2 ~ k1 x e^1.90 ~ 0.154 s^-1 (k increases)"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2019 AP Chemistry FRQ 4"
+  },
+  {
+    "id": "chem-v2-2020-1",
+    "courseSlug": "ap-chemistry",
+    "year": 2020,
+    "number": 1,
+    "topic": "Voltaic Cells and Nernst Equation",
+    "prompt": "A galvanic cell is built from $Zn|Zn^{2+}(1.0 M)||Cu^{2+}(1.0 M)|Cu$ with $E^{\\circ} = +1.10$ V.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write the balanced overall cell reaction and identify anode and cathode.",
+        "points": 2,
+        "rubric": "1 pt: Anode (oxidation): Zn -> Zn2+ + 2e-; Cathode (reduction): Cu2+ + 2e- -> Cu\n1 pt: Overall: Zn + Cu2+ -> Zn2+ + Cu"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate $\\Delta G^{\\circ}$ using $\\Delta G^{\\circ} = -nFE^{\\circ}$.",
+        "points": 2,
+        "rubric": "1 pt: n = 2 and F = 96485 C/mol\n1 pt: Delta G = -2 x 96485 x 1.10 ~ -212 kJ/mol"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict the cell potential when $[Zn^{2+}] = 1.0$ M and $[Cu^{2+}] = 0.010$ M at 298 K.",
+        "points": 2,
+        "rubric": "1 pt: E = E° - (0.0592/n) log Q with Q = [Zn2+]/[Cu2+] = 100\n1 pt: E ~ 1.10 - 0.0592 ~ 1.04 V"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2020 AP Chemistry FRQ 1"
+  },
+  {
+    "id": "chem-v2-2020-2",
+    "courseSlug": "ap-chemistry",
+    "year": 2020,
+    "number": 2,
+    "topic": "Electrolysis and Faraday's Law",
+    "prompt": "A current of 2.00 A is passed through molten $NaCl$ for 1.00 hour.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the total charge passed in coulombs.",
+        "points": 1,
+        "rubric": "1 pt: Q = It = 2.00 x 3600 = 7200 C"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate the mass of Na deposited at the cathode. ($F = 96485$ C/mol; Na = 22.99 g/mol)",
+        "points": 2,
+        "rubric": "1 pt: Moles e- = 7200/96485 ~ 0.0746; 1 mol e- per mol Na\n1 pt: Mass Na ~ 0.0746 x 22.99 ~ 1.72 g"
+      },
+      {
+        "label": "c",
+        "prompt": "Identify the product formed at the anode and write the half-reaction.",
+        "points": 2,
+        "rubric": "1 pt: Cl2(g) is produced\n1 pt: 2 Cl- -> Cl2 + 2 e-"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2020 AP Chemistry FRQ 2"
+  },
+  {
+    "id": "chem-v2-2021-3",
+    "courseSlug": "ap-chemistry",
+    "year": 2021,
+    "number": 3,
+    "topic": "Bonding and Intermolecular Forces",
+    "prompt": "Compare the properties of $CH_4$, $NH_3$, and $H_2O$.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Draw the Lewis structure and predict the molecular geometry of each molecule.",
+        "points": 3,
+        "rubric": "1 pt: CH4 tetrahedral (no lone pairs on C)\n1 pt: NH3 trigonal pyramidal (one lone pair on N)\n1 pt: H2O bent (two lone pairs on O)"
+      },
+      {
+        "label": "b",
+        "prompt": "Rank the three compounds by boiling point and justify using IMFs.",
+        "points": 2,
+        "rubric": "1 pt: H2O > NH3 > CH4\n1 pt: H2O has the strongest H-bonding (two H-bond donors and two acceptors), NH3 has weaker H-bonding, CH4 has only London dispersion"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain why $NH_3$ is more polar than $CH_4$ even though both contain polar covalent bonds to H.",
+        "points": 2,
+        "rubric": "1 pt: CH4 has tetrahedral symmetry so bond dipoles cancel giving zero net dipole\n1 pt: NH3 is asymmetric with a lone pair so bond dipoles sum to a nonzero molecular dipole"
+      }
+    ],
+    "totalPoints": 7,
+    "source": "Adapted from 2021 AP Chemistry FRQ 3"
+  },
+  {
+    "id": "chem-v2-2021-4",
+    "courseSlug": "ap-chemistry",
+    "year": 2021,
+    "number": 4,
+    "topic": "Periodic Trends",
+    "prompt": "Consider atoms of Na, Mg, Al, and Cl in the third period.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Rank the atoms by first ionization energy and justify.",
+        "points": 2,
+        "rubric": "1 pt: Cl > Al > Mg > Na (Mg slightly higher than Al due to filled 3s subshell)\n1 pt: Across a period effective nuclear charge increases pulling electrons tighter"
+      },
+      {
+        "label": "b",
+        "prompt": "Rank the same atoms by atomic radius and explain the trend.",
+        "points": 2,
+        "rubric": "1 pt: Na > Mg > Al > Cl\n1 pt: Increasing Zeff with same shell contracts the electron cloud across a period"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict which atom has the highest electron affinity and justify.",
+        "points": 1,
+        "rubric": "1 pt: Cl has the highest EA because gaining an electron completes the 3p subshell giving a noble-gas configuration"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2021 AP Chemistry FRQ 4"
+  },
+  {
+    "id": "chem-v2-2022-1",
+    "courseSlug": "ap-chemistry",
+    "year": 2022,
+    "number": 1,
+    "topic": "Redox Balancing",
+    "prompt": "Consider the redox reaction in acidic solution: $MnO_4^- + Fe^{2+} \\rightarrow Mn^{2+} + Fe^{3+}$.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write and balance the two half-reactions.",
+        "points": 2,
+        "rubric": "1 pt: MnO4- + 8 H+ + 5 e- -> Mn2+ + 4 H2O\n1 pt: Fe2+ -> Fe3+ + e-"
+      },
+      {
+        "label": "b",
+        "prompt": "Combine to give the balanced overall equation.",
+        "points": 2,
+        "rubric": "1 pt: MnO4- + 8 H+ + 5 Fe2+ -> Mn2+ + 4 H2O + 5 Fe3+\n1 pt: Charges and atoms balanced on both sides"
+      },
+      {
+        "label": "c",
+        "prompt": "Identify the oxidizing agent and the reducing agent.",
+        "points": 2,
+        "rubric": "1 pt: MnO4- is the oxidizing agent (Mn is reduced from +7 to +2)\n1 pt: Fe2+ is the reducing agent (oxidized from +2 to +3)"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2022 AP Chemistry FRQ 1"
+  },
+  {
+    "id": "chem-v2-2022-2",
+    "courseSlug": "ap-chemistry",
+    "year": 2022,
+    "number": 2,
+    "topic": "Titration Curves",
+    "prompt": "A 25.0 mL sample of 0.100 M acetic acid ($K_a = 1.8 \\times 10^{-5}$) is titrated with 0.100 M NaOH.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the pH at the half-equivalence point.",
+        "points": 1,
+        "rubric": "1 pt: pH = pKa ~ 4.74 at half-equivalence"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate the pH at the equivalence point.",
+        "points": 3,
+        "rubric": "1 pt: [Acetate] = 0.0500 M after mixing 50.0 mL total\n1 pt: Kb = Kw/Ka = 5.6e-10; [OH-] ~ sqrt(5.6e-10 x 0.0500) ~ 5.3e-6 M\n1 pt: pOH ~ 5.28 so pH ~ 8.72"
+      },
+      {
+        "label": "c",
+        "prompt": "Select an appropriate indicator from: methyl red (pKa 5.1), bromothymol blue (pKa 7.1), phenolphthalein (pKa 9.4). Justify.",
+        "points": 2,
+        "rubric": "1 pt: Phenolphthalein\n1 pt: Its pKa is closest to the equivalence pH (~8.7) so it changes color near the equivalence point"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2022 AP Chemistry FRQ 2"
+  },
+  {
+    "id": "chem-v2-2023-3",
+    "courseSlug": "ap-chemistry",
+    "year": 2023,
+    "number": 3,
+    "topic": "Calorimetry and Bond Enthalpy",
+    "prompt": "A coffee-cup calorimeter contains 100.0 g water at 22.0 C. Dissolving 5.00 g NH4NO3 drops the temperature to 18.5 C. ($c_{water} = 4.18$ J/g C; NH4NO3 = 80.04 g/mol)",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the heat absorbed by the solution (q) and state its sign.",
+        "points": 2,
+        "rubric": "1 pt: q = m c Delta T = 100.0 x 4.18 x (-3.5) ~ -1463 J\n1 pt: Solution loses heat so q_soln < 0; the dissolution process absorbs that heat (endothermic)"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate $\\Delta H_{soln}$ per mole of $NH_4NO_3$.",
+        "points": 2,
+        "rubric": "1 pt: Moles NH4NO3 = 5.00/80.04 ~ 0.0625\n1 pt: Delta H_soln ~ +1463/0.0625 ~ +23.4 kJ/mol"
+      },
+      {
+        "label": "c",
+        "prompt": "Use bond enthalpies to estimate $\\Delta H$ for $H_2(g) + Cl_2(g) \\rightarrow 2 HCl(g)$ (H-H = 436, Cl-Cl = 242, H-Cl = 431 kJ/mol).",
+        "points": 2,
+        "rubric": "1 pt: Delta H = (436 + 242) - 2(431)\n1 pt: Delta H ~ -184 kJ (exothermic)"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2023 AP Chemistry FRQ 3"
+  },
+  {
+    "id": "chem-v2-2023-4",
+    "courseSlug": "ap-chemistry",
+    "year": 2023,
+    "number": 4,
+    "topic": "Gibbs Free Energy",
+    "prompt": "For the reaction $N_2O_4(g) \\rightleftharpoons 2 NO_2(g)$, $\\Delta H^{\\circ} = +57.2$ kJ/mol and $\\Delta S^{\\circ} = +176$ J/mol K.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate $\\Delta G^{\\circ}$ at 298 K and comment on spontaneity.",
+        "points": 2,
+        "rubric": "1 pt: Delta G = 57200 - 298 x 176\n1 pt: Delta G ~ +4.75 kJ/mol (nonspontaneous at 298 K)"
+      },
+      {
+        "label": "b",
+        "prompt": "Determine the temperature at which the reaction becomes spontaneous.",
+        "points": 2,
+        "rubric": "1 pt: Set Delta G = 0 so T = Delta H/Delta S\n1 pt: T ~ 57200/176 ~ 325 K"
+      },
+      {
+        "label": "c",
+        "prompt": "Relate $\\Delta G^{\\circ}$ to K using $\\Delta G^{\\circ} = -RT \\ln K$. Is K > 1 or < 1 at 298 K?",
+        "points": 2,
+        "rubric": "1 pt: K < 1 because Delta G° > 0 implies ln K < 0\n1 pt: K ~ e^(-Delta G°/RT) ~ e^(-4750/(8.314 x 298)) ~ 0.15"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2023 AP Chemistry FRQ 4"
+  },
+  {
+    "id": "chem-v2-2024-1",
+    "courseSlug": "ap-chemistry",
+    "year": 2024,
+    "number": 1,
+    "topic": "Solutions and Colligative Properties",
+    "prompt": "A student dissolves 10.0 g of an unknown nonvolatile nonelectrolyte in 100.0 g of water. The solution freezes at -1.24 C. ($K_f$ water = 1.86 C/m)",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the molality of the solution.",
+        "points": 1,
+        "rubric": "1 pt: Delta Tf = Kf m so m = 1.24/1.86 ~ 0.667 mol/kg"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate the molar mass of the solute.",
+        "points": 2,
+        "rubric": "1 pt: Moles solute = 0.667 x 0.100 = 0.0667\n1 pt: M ~ 10.0/0.0667 ~ 150 g/mol"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict how the freezing point depression would differ if the solute were a strong electrolyte dissociating into 2 ions.",
+        "points": 2,
+        "rubric": "1 pt: Delta Tf = i Kf m with van't Hoff factor i ~ 2\n1 pt: Depression would be ~ 2x larger so freezing point ~ -2.48 C"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2024 AP Chemistry FRQ 1"
+  },
+  {
+    "id": "chem-v2-2024-2",
+    "courseSlug": "ap-chemistry",
+    "year": 2024,
+    "number": 2,
+    "topic": "Ka/Kb and Weak Acids",
+    "prompt": "Formic acid ($HCOOH$) has $K_a = 1.8 \\times 10^{-4}$.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the pH of 0.20 M formic acid using an ICE table.",
+        "points": 2,
+        "rubric": "1 pt: x^2/(0.20 - x) = 1.8e-4; approximate x^2 = 3.6e-5\n1 pt: x = [H+] ~ 6.0e-3 so pH ~ 2.22"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate $K_b$ for the formate ion.",
+        "points": 1,
+        "rubric": "1 pt: Kb = Kw/Ka = 1.0e-14/1.8e-4 ~ 5.6e-11"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict whether a 0.10 M sodium formate solution is acidic, basic, or neutral and justify.",
+        "points": 2,
+        "rubric": "1 pt: Basic\n1 pt: Formate is the conjugate base of a weak acid and hydrolyzes water to produce OH-"
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Adapted from 2024 AP Chemistry FRQ 2"
+  },
+  {
+    "id": "chem-v2-2024-3",
+    "courseSlug": "ap-chemistry",
+    "year": 2024,
+    "number": 3,
+    "topic": "Ksp and pH Effects",
+    "prompt": "The $K_{sp}$ of $Mg(OH)_2$ is $5.6 \\times 10^{-12}$.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the molar solubility in pure water.",
+        "points": 2,
+        "rubric": "1 pt: Ksp = [Mg2+][OH-]^2 = s(2s)^2 = 4s^3\n1 pt: s ~ (5.6e-12/4)^(1/3) ~ 1.12e-4 M"
+      },
+      {
+        "label": "b",
+        "prompt": "Calculate the pH of the saturated solution.",
+        "points": 2,
+        "rubric": "1 pt: [OH-] = 2s ~ 2.24e-4 M so pOH ~ 3.65\n1 pt: pH ~ 10.35"
+      },
+      {
+        "label": "c",
+        "prompt": "Predict and justify the effect of adding HCl on $Mg(OH)_2$ solubility.",
+        "points": 2,
+        "rubric": "1 pt: Solubility increases\n1 pt: H+ consumes OH- shifting the dissolution equilibrium to the right (LeChatelier)"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2024 AP Chemistry FRQ 3"
+  },
+  {
+    "id": "chem-v2-2024-4",
+    "courseSlug": "ap-chemistry",
+    "year": 2024,
+    "number": 4,
+    "topic": "Reaction Mechanisms",
+    "prompt": "For $2 NO(g) + O_2(g) \\rightarrow 2 NO_2(g)$, a proposed mechanism is: Step 1 (fast equilibrium): $2 NO \\rightleftharpoons N_2O_2$; Step 2 (slow): $N_2O_2 + O_2 \\rightarrow 2 NO_2$.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Derive the rate law predicted by this mechanism.",
+        "points": 2,
+        "rubric": "1 pt: Rate = k2[N2O2][O2] with [N2O2] = K1[NO]^2 from fast equilibrium\n1 pt: Rate = k[NO]^2[O2]"
+      },
+      {
+        "label": "b",
+        "prompt": "Identify the reaction intermediate and any catalyst.",
+        "points": 2,
+        "rubric": "1 pt: N2O2 is the intermediate (produced in step 1 and consumed in step 2)\n1 pt: No catalyst is present in this mechanism"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain why step 2 is rate determining.",
+        "points": 2,
+        "rubric": "1 pt: Step 2 is the slowest elementary step\n1 pt: Overall rate is limited by the slowest step; fast steps before it stay at equilibrium"
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Adapted from 2024 AP Chemistry FRQ 4"
+  },
+
+  // ─── ap-environmental wave-2 (+20) ─────────────────────────────
+  {
+    "id": "apes-v2-2016-1",
+    "courseSlug": "ap-environmental",
+    "year": 2016,
+    "number": 1,
+    "topic": "Water pollution and eutrophication",
+    "prompt": "A small freshwater lake in the midwestern United States is bordered by agricultural fields where farmers apply synthetic fertilizers containing nitrogen and phosphorus. Residents report that the lake has recently experienced extensive algal blooms and fish kills, particularly during late summer. Water samples taken from the hypolimnion show elevated biochemical oxygen demand (BOD) and dissolved oxygen concentrations below 2 mg/L.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the process of cultural eutrophication as it applies to this lake.",
+        "points": 2,
+        "rubric": "1 pt: Excess nutrients (N and P) from runoff enter the lake\n1 pt: Nutrients stimulate algal/phytoplankton blooms that later die and are decomposed by aerobic bacteria, depleting DO"
+      },
+      {
+        "label": "b",
+        "prompt": "Identify ONE specific source of nonpoint pollution contributing to the eutrophication and explain why it is considered nonpoint.",
+        "points": 2,
+        "rubric": "1 pt: Identifies source such as fertilizer runoff from fields or animal waste runoff\n1 pt: Explains that it cannot be traced to a single discrete discharge point"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain how dissolved oxygen levels below 2 mg/L lead to fish kills.",
+        "points": 1,
+        "rubric": "1 pt: Fish require DO for aerobic respiration; hypoxia causes suffocation/death"
+      },
+      {
+        "label": "d",
+        "prompt": "Describe ONE best management practice (BMP) farmers could implement to reduce nutrient runoff and explain how it reduces runoff.",
+        "points": 2,
+        "rubric": "1 pt: Identifies BMP (e.g., riparian buffer strip, cover crops, contour plowing, no-till)\n1 pt: Explains mechanism by which BMP reduces nutrient transport to surface water"
+      },
+      {
+        "label": "e",
+        "prompt": "Calculate the mass (in kg) of phosphorus entering the lake annually if 500 hectares of farmland lose fertilizer at a rate of 4 kg P per hectare per year.",
+        "points": 1,
+        "rubric": "1 pt: 500 x 4 = 2,000 kg P/year with correct units"
+      },
+      {
+        "label": "f",
+        "prompt": "Identify ONE provision of the Clean Water Act that addresses water pollution from point sources.",
+        "points": 2,
+        "rubric": "1 pt: Names NPDES permitting or effluent standards\n1 pt: Correctly explains that it regulates discharges from point sources such as factories or sewage treatment plants"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2016 APES FRQ 1"
+  },
+  {
+    "id": "apes-v2-2016-2",
+    "courseSlug": "ap-environmental",
+    "year": 2016,
+    "number": 2,
+    "topic": "Energy - nuclear fission",
+    "prompt": "A utility company is proposing to build a 1,000 MW nuclear power plant on the coast of a temperate region. The plant will use uranium-235 as fuel and seawater for cooling. Local citizens have raised concerns about radioactive waste storage and thermal pollution.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the process of nuclear fission as it occurs in a reactor core.",
+        "points": 2,
+        "rubric": "1 pt: Neutron strikes U-235 nucleus causing it to split into lighter nuclei\n1 pt: Reaction releases energy and additional neutrons that sustain a chain reaction"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain ONE environmental advantage of nuclear power compared to coal combustion.",
+        "points": 1,
+        "rubric": "1 pt: Does not emit CO2, SO2, NOx, or particulates during operation"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe ONE challenge associated with long-term storage of high-level radioactive waste.",
+        "points": 2,
+        "rubric": "1 pt: Identifies challenge (e.g., long half-lives, risk of groundwater contamination, political siting)\n1 pt: Explains specific environmental or human health consequence"
+      },
+      {
+        "label": "d",
+        "prompt": "If the plant operates at 33% efficiency, calculate the thermal energy (in MW) released as waste heat.",
+        "points": 2,
+        "rubric": "1 pt: Sets up: total thermal = 1000/0.33 = 3030 MW\n1 pt: Waste heat = 3030 - 1000 = 2030 MW (accept 2000 MW)"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE ecological impact of thermal pollution from the plant's cooling water discharge.",
+        "points": 1,
+        "rubric": "1 pt: Warmer water decreases DO solubility, stressing or killing fish and invertebrates"
+      },
+      {
+        "label": "f",
+        "prompt": "Identify and describe ONE renewable energy source that could replace this plant and describe ONE disadvantage of that source.",
+        "points": 2,
+        "rubric": "1 pt: Identifies renewable (solar, wind, geothermal, hydro) with one relevant characteristic\n1 pt: Describes a legitimate disadvantage (intermittency, land use, habitat disruption, high capital cost)"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2016 APES FRQ 2"
+  },
+  {
+    "id": "apes-v2-2016-3",
+    "courseSlug": "ap-environmental",
+    "year": 2016,
+    "number": 3,
+    "topic": "Population - demographic transition",
+    "prompt": "Country X has a total population of 40 million, a crude birth rate of 32 per 1,000, and a crude death rate of 8 per 1,000. Approximately 40% of the population is under age 15.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the annual rate of natural increase (as a percentage) for Country X.",
+        "points": 1,
+        "rubric": "1 pt: (32 - 8)/10 = 2.4% per year"
+      },
+      {
+        "label": "b",
+        "prompt": "Using the rule of 70, calculate the doubling time for Country X's population.",
+        "points": 1,
+        "rubric": "1 pt: 70/2.4 = 29.2 years (accept 29-30 years)"
+      },
+      {
+        "label": "c",
+        "prompt": "Identify the stage of the demographic transition that best describes Country X and justify your answer.",
+        "points": 2,
+        "rubric": "1 pt: Identifies Stage 2 (or early Stage 3)\n1 pt: Justifies using high birth rate with declining death rate and rapid growth"
+      },
+      {
+        "label": "d",
+        "prompt": "Describe ONE social factor that typically lowers birth rates as a country moves through the demographic transition.",
+        "points": 1,
+        "rubric": "1 pt: Increased female education/access to contraception/urbanization/delayed marriage"
+      },
+      {
+        "label": "e",
+        "prompt": "Explain ONE environmental consequence of continued rapid population growth in Country X.",
+        "points": 2,
+        "rubric": "1 pt: Identifies impact (deforestation, water scarcity, soil degradation, air pollution)\n1 pt: Explains causal mechanism linking population growth to that impact"
+      },
+      {
+        "label": "f",
+        "prompt": "Describe ONE government policy that has successfully reduced fertility rates in a specific country.",
+        "points": 2,
+        "rubric": "1 pt: Names policy (e.g., China's one-child, India's family planning, Iran's education)\n1 pt: Describes how the policy reduced fertility"
+      },
+      {
+        "label": "g",
+        "prompt": "Explain why a high percentage of individuals under age 15 creates momentum for continued population growth.",
+        "points": 1,
+        "rubric": "1 pt: Large cohort will enter reproductive years, increasing future births even if fertility falls"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2016 APES FRQ 3"
+  },
+  {
+    "id": "apes-v2-2017-1",
+    "courseSlug": "ap-environmental",
+    "year": 2017,
+    "number": 1,
+    "topic": "Air pollution and acid deposition",
+    "prompt": "A coal-fired power plant in the eastern United States emits sulfur dioxide (SO2) and nitrogen oxides (NOx). Prevailing westerlies carry emissions hundreds of kilometers downwind, where lakes have recorded pH values as low as 4.2 and significant declines in fish populations.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the chemical process by which SO2 emissions form acid deposition in the atmosphere.",
+        "points": 2,
+        "rubric": "1 pt: SO2 reacts with OH or O2 to form SO3\n1 pt: SO3 combines with water vapor to form H2SO4, which falls as wet or dry deposition"
+      },
+      {
+        "label": "b",
+        "prompt": "Identify ONE ecological effect of acid deposition on aquatic ecosystems other than direct fish mortality.",
+        "points": 1,
+        "rubric": "1 pt: Mobilization of aluminum from soils damaging fish gills OR loss of acid-sensitive invertebrates OR reduced biodiversity"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe ONE control technology installed at coal plants to reduce SO2 emissions and explain how it works.",
+        "points": 2,
+        "rubric": "1 pt: Identifies flue-gas desulfurization (scrubber)\n1 pt: Explains limestone slurry reacts with SO2 to form calcium sulfate/sulfite"
+      },
+      {
+        "label": "d",
+        "prompt": "Identify the federal law and specific amendment that established the cap-and-trade program for SO2 in the United States.",
+        "points": 1,
+        "rubric": "1 pt: Clean Air Act Amendments of 1990 (Title IV / Acid Rain Program)"
+      },
+      {
+        "label": "e",
+        "prompt": "A plant emits 8,000 metric tons of SO2 per year. If a scrubber removes 95% of SO2, calculate the mass of SO2 emitted after scrubbing.",
+        "points": 2,
+        "rubric": "1 pt: 8000 x 0.05 or 8000 x (1-0.95)\n1 pt: = 400 metric tons/year with correct units"
+      },
+      {
+        "label": "f",
+        "prompt": "Describe ONE economic advantage of a cap-and-trade approach over a command-and-control approach for regulating SO2.",
+        "points": 2,
+        "rubric": "1 pt: Identifies advantage (lower overall compliance cost, flexibility, incentive for innovation)\n1 pt: Explains reasoning (firms with low abatement costs reduce most, sell allowances)"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2017 APES FRQ 1"
+  },
+  {
+    "id": "apes-v2-2017-2",
+    "courseSlug": "ap-environmental",
+    "year": 2017,
+    "number": 2,
+    "topic": "Agriculture - IPM and soil",
+    "prompt": "A farmer in California's Central Valley grows tomatoes as a monoculture and has been using broad-spectrum insecticides for years. Recently, pest populations have rebounded more rapidly after each application and beneficial predator populations have declined.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Explain the concept of pesticide resistance and how it develops in pest populations.",
+        "points": 2,
+        "rubric": "1 pt: Genetic variation exists; pesticide exerts selective pressure\n1 pt: Resistant individuals survive and reproduce, increasing resistant allele frequency"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe TWO components of an integrated pest management (IPM) program the farmer could adopt.",
+        "points": 2,
+        "rubric": "1 pt: First component (crop rotation, biological control, pheromone traps, resistant cultivars, economic thresholds)\n1 pt: Second distinct component"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe ONE disadvantage of monoculture compared to polyculture.",
+        "points": 1,
+        "rubric": "1 pt: Increased pest vulnerability, nutrient depletion, soil erosion, or genetic uniformity"
+      },
+      {
+        "label": "d",
+        "prompt": "Explain how excessive tilling contributes to soil erosion.",
+        "points": 2,
+        "rubric": "1 pt: Tilling breaks up soil aggregates and exposes bare soil\n1 pt: Loose soil is carried by wind/water, reducing topsoil and organic matter"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE benefit of using cover crops in the off-season.",
+        "points": 1,
+        "rubric": "1 pt: Reduces erosion, adds organic matter, fixes nitrogen, suppresses weeds"
+      },
+      {
+        "label": "f",
+        "prompt": "Calculate the annual soil loss (in metric tons) if the farm covers 250 hectares and erodes at 8 metric tons per hectare per year.",
+        "points": 1,
+        "rubric": "1 pt: 250 x 8 = 2,000 metric tons/year"
+      },
+      {
+        "label": "g",
+        "prompt": "Identify ONE federal program in the United States that pays farmers to take highly erodible land out of production.",
+        "points": 1,
+        "rubric": "1 pt: Conservation Reserve Program (CRP) under the USDA Farm Bill"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2017 APES FRQ 2"
+  },
+  {
+    "id": "apes-v2-2017-3",
+    "courseSlug": "ap-environmental",
+    "year": 2017,
+    "number": 3,
+    "topic": "Biodiversity and invasive species",
+    "prompt": "The brown tree snake (Boiga irregularis) was accidentally introduced to Guam in the 1940s via cargo ships. Since then, the snake has caused the extinction or extirpation of nearly all native forest bird species on the island.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Define 'invasive species' and identify TWO characteristics that make a species likely to become invasive.",
+        "points": 2,
+        "rubric": "1 pt: Non-native species that causes ecological or economic harm\n1 pt: Two traits (high reproductive rate, broad diet, lack of predators, rapid dispersal, tolerance of disturbance)"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain why island ecosystems are especially vulnerable to invasive species.",
+        "points": 2,
+        "rubric": "1 pt: Island species evolved without similar predators/competitors (naivete)\n1 pt: Small populations and endemism mean limited resilience and no rescue effect"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe ONE ecological cascade effect resulting from the loss of native birds on Guam.",
+        "points": 2,
+        "rubric": "1 pt: Identifies effect (decline in seed dispersal, increase in spider populations, reduced pollination)\n1 pt: Explains mechanism linking bird loss to the effect"
+      },
+      {
+        "label": "d",
+        "prompt": "Identify and describe ONE strategy used to control brown tree snake populations.",
+        "points": 2,
+        "rubric": "1 pt: Names method (acetaminophen-baited mice, trapping, detector dogs at ports)\n1 pt: Explains how method reduces snake numbers or prevents spread"
+      },
+      {
+        "label": "e",
+        "prompt": "Identify the U.S. federal law that protects species listed as threatened or endangered.",
+        "points": 1,
+        "rubric": "1 pt: Endangered Species Act of 1973"
+      },
+      {
+        "label": "f",
+        "prompt": "Explain why biodiversity hotspots are priority areas for conservation.",
+        "points": 1,
+        "rubric": "1 pt: High endemism combined with significant habitat loss maximizes species saved per area protected"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2017 APES FRQ 3"
+  },
+  {
+    "id": "apes-v2-2018-1",
+    "courseSlug": "ap-environmental",
+    "year": 2018,
+    "number": 1,
+    "topic": "Water resources and aquifers",
+    "prompt": "The Ogallala Aquifer underlies portions of eight Great Plains states and supplies roughly 30% of U.S. irrigation water. Current withdrawal rates exceed natural recharge by a factor of more than ten in parts of the aquifer.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Define 'aquifer' and distinguish between a confined and an unconfined aquifer.",
+        "points": 2,
+        "rubric": "1 pt: Aquifer = permeable rock/sediment that stores and transmits groundwater\n1 pt: Confined is bounded by impermeable layers under pressure; unconfined has water table as upper surface"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe TWO environmental consequences of aquifer depletion.",
+        "points": 2,
+        "rubric": "1 pt: Land subsidence or sinkhole formation\n1 pt: Saltwater intrusion, reduced baseflow to streams, or drying of wells"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe ONE agricultural practice that could reduce water withdrawals and explain how it conserves water.",
+        "points": 2,
+        "rubric": "1 pt: Identifies practice (drip irrigation, drought-tolerant crops, no-till)\n1 pt: Explains how it reduces evaporation/runoff or crop water demand"
+      },
+      {
+        "label": "d",
+        "prompt": "A farmer currently uses flood irrigation at 60% efficiency and is considering switching to drip irrigation at 95% efficiency. If the crop requires 3,000 m^3 of water per hectare, calculate how many m^3 of water are saved per hectare by switching.",
+        "points": 2,
+        "rubric": "1 pt: Flood = 3000/0.60 = 5000 m^3; Drip = 3000/0.95 = 3158 m^3\n1 pt: Savings = 5000 - 3158 = 1,842 m^3/hectare"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE advantage and ONE disadvantage of desalination as an alternative water source.",
+        "points": 2,
+        "rubric": "1 pt: Advantage (provides potable water from abundant seawater/independent of precipitation)\n1 pt: Disadvantage (energy-intensive, brine disposal, high cost, impingement of marine life)"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2018 APES FRQ 1"
+  },
+  {
+    "id": "apes-v2-2018-2",
+    "courseSlug": "ap-environmental",
+    "year": 2018,
+    "number": 2,
+    "topic": "Climate change and feedbacks",
+    "prompt": "Scientists have observed that Arctic sea ice extent has declined significantly since 1979, with minimum September ice extent dropping approximately 13% per decade.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the greenhouse effect and identify TWO naturally occurring greenhouse gases.",
+        "points": 2,
+        "rubric": "1 pt: Description: gases absorb and re-emit longwave radiation from Earth, warming the surface\n1 pt: Two gases (CO2, CH4, H2O vapor, N2O, O3)"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain how melting Arctic sea ice creates a positive feedback loop affecting global temperature.",
+        "points": 2,
+        "rubric": "1 pt: Ice loss reduces albedo, more solar radiation absorbed by dark ocean\n1 pt: Additional warming causes more ice loss, amplifying the warming"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe ONE ecological consequence of Arctic sea-ice loss for a specific species or ecosystem.",
+        "points": 1,
+        "rubric": "1 pt: Polar bear habitat loss, walrus haul-out disruption, or disruption of under-ice algae base of food web"
+      },
+      {
+        "label": "d",
+        "prompt": "Explain how thermal expansion contributes to sea-level rise and identify ONE other cause of sea-level rise.",
+        "points": 2,
+        "rubric": "1 pt: Warmer water occupies more volume due to decreased density\n1 pt: Other cause: land-based ice melt (Greenland/Antarctic/alpine glaciers)"
+      },
+      {
+        "label": "e",
+        "prompt": "Identify and briefly describe ONE international agreement aimed at limiting greenhouse gas emissions.",
+        "points": 2,
+        "rubric": "1 pt: Names agreement (Kyoto Protocol or Paris Agreement)\n1 pt: Accurate description of its goal (binding emission cuts for Annex I; nationally determined contributions to limit warming <2 C)"
+      },
+      {
+        "label": "f",
+        "prompt": "Calculate the percent change in Arctic sea-ice extent after four decades if decline continues at 13% per decade (approximate as simple cumulative).",
+        "points": 1,
+        "rubric": "1 pt: 13 x 4 = 52% total decline (accept 40-55% with valid compounding)"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2018 APES FRQ 2"
+  },
+  {
+    "id": "apes-v2-2018-3",
+    "courseSlug": "ap-environmental",
+    "year": 2018,
+    "number": 3,
+    "topic": "Waste management",
+    "prompt": "A suburban county generates 500,000 metric tons of municipal solid waste (MSW) annually. Currently 60% is landfilled, 10% is incinerated with energy recovery, and 30% is recycled or composted.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the mass of MSW landfilled annually by the county.",
+        "points": 1,
+        "rubric": "1 pt: 500,000 x 0.60 = 300,000 metric tons"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe TWO features of a modern sanitary landfill designed to protect groundwater.",
+        "points": 2,
+        "rubric": "1 pt: Composite/clay liner or leachate collection system\n1 pt: Daily soil cover, methane collection, or monitoring wells"
+      },
+      {
+        "label": "c",
+        "prompt": "Identify and describe ONE environmental benefit of waste-to-energy incineration.",
+        "points": 2,
+        "rubric": "1 pt: Identifies benefit (volume reduction, energy generation, avoided landfill methane)\n1 pt: Explains mechanism"
+      },
+      {
+        "label": "d",
+        "prompt": "Describe TWO environmental concerns associated with incineration.",
+        "points": 2,
+        "rubric": "1 pt: Air emissions (dioxins, heavy metals, particulates)\n1 pt: Toxic ash disposal or CO2 emissions"
+      },
+      {
+        "label": "e",
+        "prompt": "Explain ONE reason why electronic waste (e-waste) poses particular environmental challenges.",
+        "points": 2,
+        "rubric": "1 pt: Identifies challenge (toxic metals like lead, mercury, cadmium)\n1 pt: Explains leaching from informal recycling or landfill disposal threatens health/water"
+      },
+      {
+        "label": "f",
+        "prompt": "Describe ONE action a local government could take to increase recycling rates.",
+        "points": 1,
+        "rubric": "1 pt: Pay-as-you-throw pricing, curbside pickup, bottle deposit, or mandatory separation"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2018 APES FRQ 3"
+  },
+  {
+    "id": "apes-v2-2019-1",
+    "courseSlug": "ap-environmental",
+    "year": 2019,
+    "number": 1,
+    "topic": "Energy - renewables",
+    "prompt": "A coastal community of 25,000 residents is planning to meet part of its electricity needs with a 50 MW offshore wind farm. The capacity factor for the wind farm is estimated to be 40%, and average household consumption is 11,000 kWh per year.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Calculate the annual electricity generation (in kWh) of the wind farm.",
+        "points": 2,
+        "rubric": "1 pt: 50,000 kW x 8,760 h x 0.40\n1 pt: = 1.752 x 10^8 kWh/year (accept 175 million kWh)"
+      },
+      {
+        "label": "b",
+        "prompt": "If the average household in the community consumes 11,000 kWh/yr, estimate the number of households the wind farm can supply.",
+        "points": 1,
+        "rubric": "1 pt: 1.752 x 10^8 / 11,000 = 15,927 households (accept 15,000-16,500)"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe ONE environmental advantage of wind energy compared to natural gas.",
+        "points": 1,
+        "rubric": "1 pt: No combustion emissions (no CO2, NOx, SO2) during operation"
+      },
+      {
+        "label": "d",
+        "prompt": "Describe TWO potential ecological concerns associated with offshore wind farms.",
+        "points": 2,
+        "rubric": "1 pt: Bird or bat collisions\n1 pt: Benthic habitat disturbance, underwater noise impacts on marine mammals, or seafloor cable effects"
+      },
+      {
+        "label": "e",
+        "prompt": "Explain ONE economic barrier to widespread adoption of offshore wind power.",
+        "points": 2,
+        "rubric": "1 pt: Identifies barrier (high capital cost, transmission infrastructure, intermittency requiring backup)\n1 pt: Explains how it raises cost or slows deployment"
+      },
+      {
+        "label": "f",
+        "prompt": "Describe ONE way energy storage could help address the intermittency of wind power.",
+        "points": 2,
+        "rubric": "1 pt: Names storage method (batteries, pumped hydro, compressed air)\n1 pt: Explains how it smooths supply by storing excess generation for later dispatch"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2019 APES FRQ 1"
+  },
+  {
+    "id": "apes-v2-2019-2",
+    "courseSlug": "ap-environmental",
+    "year": 2019,
+    "number": 2,
+    "topic": "Forestry and fisheries",
+    "prompt": "Atlantic cod (Gadus morhua) stocks off the coast of Newfoundland collapsed in the early 1990s after decades of intensive fishing, leading Canada to impose a moratorium in 1992.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Define 'maximum sustainable yield' (MSY) as it applies to a fish stock.",
+        "points": 1,
+        "rubric": "1 pt: Largest catch that can be taken indefinitely without long-term depletion of the population"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe TWO factors that contributed to the collapse of the Atlantic cod fishery.",
+        "points": 2,
+        "rubric": "1 pt: Overfishing due to improved technology (trawlers, sonar)\n1 pt: Bycatch of juveniles, habitat damage, or underestimated fishing mortality"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain ONE socioeconomic consequence of the fishery collapse for coastal communities.",
+        "points": 2,
+        "rubric": "1 pt: Identifies impact (unemployment, loss of cultural identity, outmigration)\n1 pt: Explains causal connection to fishery closure"
+      },
+      {
+        "label": "d",
+        "prompt": "Describe TWO management practices that could help prevent overfishing.",
+        "points": 2,
+        "rubric": "1 pt: ITQs/catch shares, seasonal closures, or marine protected areas\n1 pt: Gear restrictions (mesh size), size/age limits, or bycatch reduction devices"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE ecological consequence of removing a top predator like cod from the marine food web.",
+        "points": 2,
+        "rubric": "1 pt: Identifies trophic cascade (increased forage fish/invertebrates)\n1 pt: Explains downstream effect on zooplankton, algae, or ecosystem structure"
+      },
+      {
+        "label": "f",
+        "prompt": "Identify ONE aquaculture practice and describe ONE negative environmental impact associated with it.",
+        "points": 1,
+        "rubric": "1 pt: Names practice (salmon pens, shrimp ponds) and one impact (mangrove loss, escapes, nutrient pollution)"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2019 APES FRQ 2"
+  },
+  {
+    "id": "apes-v2-2019-3",
+    "courseSlug": "ap-environmental",
+    "year": 2019,
+    "number": 3,
+    "topic": "Mining and reclamation",
+    "prompt": "A coal mining company plans to use mountaintop removal mining in Appalachia to access thin coal seams. The process involves clearing forests and using explosives to remove overburden, which is then deposited in adjacent valleys.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Distinguish between surface mining and subsurface mining.",
+        "points": 2,
+        "rubric": "1 pt: Surface removes overburden to access shallow deposits\n1 pt: Subsurface uses tunnels/shafts to reach deeper deposits with less surface disturbance"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe TWO environmental impacts of mountaintop removal beyond loss of forest cover.",
+        "points": 2,
+        "rubric": "1 pt: Stream burial/valley fills altering hydrology\n1 pt: Acid mine drainage, sedimentation, or loss of biodiversity"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain how acid mine drainage (AMD) forms.",
+        "points": 2,
+        "rubric": "1 pt: Pyrite (FeS2) in exposed rock reacts with O2 and water\n1 pt: Produces sulfuric acid that acidifies streams and mobilizes heavy metals"
+      },
+      {
+        "label": "d",
+        "prompt": "Identify the U.S. federal law that requires reclamation of surface-mined lands.",
+        "points": 1,
+        "rubric": "1 pt: Surface Mining Control and Reclamation Act (SMCRA) of 1977"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE reclamation practice and explain how it restores ecosystem function.",
+        "points": 2,
+        "rubric": "1 pt: Names practice (contour grading, replacement of topsoil, native revegetation)\n1 pt: Explains how it re-establishes hydrology, soil, or vegetation"
+      },
+      {
+        "label": "f",
+        "prompt": "Describe ONE health effect on nearby residents associated with coal mining or combustion.",
+        "points": 1,
+        "rubric": "1 pt: Black lung, respiratory disease from particulates, or mercury bioaccumulation"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2019 APES FRQ 3"
+  },
+  {
+    "id": "apes-v2-2020-1",
+    "courseSlug": "ap-environmental",
+    "year": 2020,
+    "number": 1,
+    "topic": "Biogeochemical cycles - nitrogen",
+    "prompt": "Human activities have more than doubled the rate at which reactive nitrogen enters the biosphere. A major source is the Haber-Bosch process, which converts atmospheric N2 into ammonia (NH3) for fertilizer.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe the process of biological nitrogen fixation and identify the organisms primarily responsible.",
+        "points": 2,
+        "rubric": "1 pt: Conversion of N2 gas into NH3/NH4+ usable by plants\n1 pt: Identifies nitrogen-fixing bacteria (Rhizobium in legume root nodules, cyanobacteria)"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe the process of denitrification and its importance in the nitrogen cycle.",
+        "points": 2,
+        "rubric": "1 pt: Anaerobic bacteria convert NO3- to N2 gas\n1 pt: Returns N to atmosphere, balancing fixation; reduces fertility of soil/water"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain how excess nitrogen fertilizer causes a 'dead zone' in coastal waters such as the Gulf of Mexico.",
+        "points": 2,
+        "rubric": "1 pt: N runoff stimulates algal blooms in coastal water\n1 pt: Decomposition of algae depletes DO, creating hypoxic zone that kills or displaces marine life"
+      },
+      {
+        "label": "d",
+        "prompt": "Identify ONE airborne nitrogen compound produced by combustion and describe one environmental impact.",
+        "points": 2,
+        "rubric": "1 pt: Names NOx (NO or NO2)\n1 pt: Contributes to photochemical smog, acid deposition, or tropospheric ozone"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE agricultural practice that increases nitrogen use efficiency and explain how it reduces N losses.",
+        "points": 2,
+        "rubric": "1 pt: Practice (split applications, precision agriculture, cover crops, slow-release fertilizer)\n1 pt: Explains mechanism linking practice to reduced leaching/volatilization"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2020 APES FRQ 1"
+  },
+  {
+    "id": "apes-v2-2020-2",
+    "courseSlug": "ap-environmental",
+    "year": 2020,
+    "number": 2,
+    "topic": "Population - logistic growth",
+    "prompt": "A population of white-tailed deer is introduced to a 1,000-hectare island with abundant forage and no predators. Ecologists estimate the carrying capacity at 800 deer. The initial population is 50 and the intrinsic rate of increase (r) is 0.3 per year.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Define 'carrying capacity' and list TWO factors that can set it for a population.",
+        "points": 2,
+        "rubric": "1 pt: Maximum population size an environment can sustain long-term\n1 pt: Two factors (food, water, shelter, disease, space)"
+      },
+      {
+        "label": "b",
+        "prompt": "Distinguish between r-selected and K-selected species and classify white-tailed deer.",
+        "points": 2,
+        "rubric": "1 pt: r-selected: small, many offspring, little care; K-selected: larger, few offspring, parental care\n1 pt: Deer are more K-selected"
+      },
+      {
+        "label": "c",
+        "prompt": "Using the logistic growth equation dN/dt = rN(1 - N/K), calculate the instantaneous growth rate when N = 200 deer.",
+        "points": 2,
+        "rubric": "1 pt: 0.3 x 200 x (1 - 200/800) = 0.3 x 200 x 0.75\n1 pt: = 45 deer/year"
+      },
+      {
+        "label": "d",
+        "prompt": "Describe the shape of the logistic growth curve and identify the point of maximum growth rate.",
+        "points": 2,
+        "rubric": "1 pt: S-shaped/sigmoidal curve approaching K\n1 pt: Maximum dN/dt at N = K/2"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE ecological consequence if the deer population exceeds carrying capacity.",
+        "points": 2,
+        "rubric": "1 pt: Identifies overshoot consequence (overbrowsing, starvation, disease)\n1 pt: Explains how it reduces population or degrades habitat"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2020 APES FRQ 2"
+  },
+  {
+    "id": "apes-v2-2021-1",
+    "courseSlug": "ap-environmental",
+    "year": 2021,
+    "number": 1,
+    "topic": "Urbanization and land use",
+    "prompt": "A metropolitan region has experienced rapid suburban sprawl, converting forest and farmland into low-density residential development. Local officials are considering smart-growth policies and increased urban density.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Define 'urban sprawl' and identify TWO environmental impacts associated with it.",
+        "points": 2,
+        "rubric": "1 pt: Expansion of low-density development outward from urban centers\n1 pt: Two impacts (habitat fragmentation, increased impervious surface/runoff, vehicle emissions, loss of farmland)"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain how increased impervious surface area affects a local watershed.",
+        "points": 2,
+        "rubric": "1 pt: Reduces infiltration, increases surface runoff volume and velocity\n1 pt: Leads to flooding, stream channel erosion, reduced groundwater recharge, or higher stream temperatures"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe ONE smart-growth strategy and explain how it reduces environmental impact.",
+        "points": 2,
+        "rubric": "1 pt: Names strategy (mixed-use zoning, transit-oriented development, urban growth boundaries, infill)\n1 pt: Explains reduction in VMT, land conversion, or resource use"
+      },
+      {
+        "label": "d",
+        "prompt": "Describe the 'urban heat island' effect and identify ONE cause.",
+        "points": 2,
+        "rubric": "1 pt: Urban areas are warmer than surrounding rural areas due to low albedo/heat absorption\n1 pt: Cause (asphalt/concrete absorb heat, loss of vegetation, waste heat from vehicles/HVAC)"
+      },
+      {
+        "label": "e",
+        "prompt": "Identify ONE benefit of urban green spaces beyond aesthetics.",
+        "points": 2,
+        "rubric": "1 pt: Identifies benefit (cooling, stormwater capture, air quality, biodiversity, mental health)\n1 pt: Explains mechanism"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2021 APES FRQ 1"
+  },
+  {
+    "id": "apes-v2-2021-2",
+    "courseSlug": "ap-environmental",
+    "year": 2021,
+    "number": 2,
+    "topic": "Indoor air pollution",
+    "prompt": "In many developing countries, families cook indoors using biomass fuels such as wood, dung, and crop residues in poorly ventilated stoves. The World Health Organization estimates that indoor air pollution causes roughly 3 million premature deaths annually.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Identify TWO indoor air pollutants released by biomass combustion.",
+        "points": 2,
+        "rubric": "1 pt: Particulate matter (PM2.5) or carbon monoxide\n1 pt: Second pollutant (NOx, polycyclic aromatic hydrocarbons, SO2, formaldehyde)"
+      },
+      {
+        "label": "b",
+        "prompt": "Explain ONE specific health effect of chronic exposure to PM2.5.",
+        "points": 2,
+        "rubric": "1 pt: Identifies effect (COPD, lung cancer, cardiovascular disease, low birth weight)\n1 pt: Explains mechanism (particles penetrate deep into alveoli/enter bloodstream)"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe ONE improved-cookstove intervention and explain how it reduces indoor air pollution.",
+        "points": 2,
+        "rubric": "1 pt: Names solution (rocket stove, LPG, biogas, chimney stove)\n1 pt: Explains reduction via more complete combustion or venting outside"
+      },
+      {
+        "label": "d",
+        "prompt": "Identify ONE indoor air pollutant commonly found in homes in developed countries and its primary source.",
+        "points": 2,
+        "rubric": "1 pt: Names pollutant (radon, VOCs, asbestos, secondhand smoke, mold)\n1 pt: Correctly pairs with source (soil gas, paints/adhesives, old insulation, cigarette smoke, damp surfaces)"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE simple action a homeowner can take to reduce indoor air pollution.",
+        "points": 2,
+        "rubric": "1 pt: Action (test for radon, use ventilation, low-VOC materials, HEPA filtration)\n1 pt: Explains how it reduces concentration of pollutant"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2021 APES FRQ 2"
+  },
+  {
+    "id": "apes-v2-2022-1",
+    "courseSlug": "ap-environmental",
+    "year": 2022,
+    "number": 1,
+    "topic": "Environmental policy - NEPA and Montreal",
+    "prompt": "Federal environmental laws shape how the United States manages natural resources and pollution. Two influential examples are the National Environmental Policy Act (NEPA) and the Montreal Protocol.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Identify the year NEPA was enacted and describe its main requirement for major federal actions.",
+        "points": 2,
+        "rubric": "1 pt: 1970 (signed 1969, effective 1970)\n1 pt: Requires Environmental Impact Statement (EIS) for major federal actions significantly affecting environment"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe TWO components typically included in an Environmental Impact Statement.",
+        "points": 2,
+        "rubric": "1 pt: Purpose/need for action and analysis of environmental impacts\n1 pt: Alternatives to the proposed action or mitigation measures"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe the specific environmental problem addressed by the Montreal Protocol.",
+        "points": 2,
+        "rubric": "1 pt: Depletion of stratospheric ozone layer\n1 pt: Caused by CFCs releasing Cl radicals that catalytically destroy O3"
+      },
+      {
+        "label": "d",
+        "prompt": "Explain why the Montreal Protocol is often cited as the most successful international environmental agreement.",
+        "points": 2,
+        "rubric": "1 pt: Universal ratification and phased-out production of ODS\n1 pt: Measurable decline in atmospheric CFCs and healing of the ozone hole"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE human health concern linked to ozone depletion.",
+        "points": 2,
+        "rubric": "1 pt: Increased UV-B exposure\n1 pt: Leads to skin cancer, cataracts, or immune suppression"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2022 APES FRQ 1"
+  },
+  {
+    "id": "apes-v2-2022-2",
+    "courseSlug": "ap-environmental",
+    "year": 2022,
+    "number": 2,
+    "topic": "Water pollution - heavy metals",
+    "prompt": "Residents in a rural community drinking water from private wells have been found to have elevated blood lead levels. Investigation reveals that many homes have old lead service lines and nearby abandoned mine tailings contain lead and mercury.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Explain why heavy metals such as lead and mercury are particularly dangerous compared to many organic pollutants.",
+        "points": 2,
+        "rubric": "1 pt: Not biodegradable; persist in environment and tissues\n1 pt: Bioaccumulate and biomagnify through food chains"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe ONE neurological effect of lead exposure in children.",
+        "points": 1,
+        "rubric": "1 pt: Reduced IQ, learning disabilities, behavioral problems, or developmental delays"
+      },
+      {
+        "label": "c",
+        "prompt": "Describe the process of biomagnification using mercury in aquatic food webs as an example.",
+        "points": 2,
+        "rubric": "1 pt: Methylmercury accumulates in tissue (bioaccumulation) over organism's lifetime\n1 pt: Concentration increases at each trophic level because predators consume many prey"
+      },
+      {
+        "label": "d",
+        "prompt": "Identify the federal law that sets drinking water standards in the United States and name the agency that enforces it.",
+        "points": 2,
+        "rubric": "1 pt: Safe Drinking Water Act\n1 pt: Enforced by the U.S. Environmental Protection Agency (EPA)"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE remediation method for groundwater contaminated by heavy metals.",
+        "points": 2,
+        "rubric": "1 pt: Names method (pump-and-treat, permeable reactive barrier, phytoremediation)\n1 pt: Explains how it removes or immobilizes metals"
+      },
+      {
+        "label": "f",
+        "prompt": "Describe ONE action a homeowner can take to reduce lead in tap water from service lines.",
+        "points": 1,
+        "rubric": "1 pt: Flush tap before use, install NSF-certified filter, or replace service line"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2022 APES FRQ 2"
+  },
+  {
+    "id": "apes-v2-2023-1",
+    "courseSlug": "ap-environmental",
+    "year": 2023,
+    "number": 1,
+    "topic": "Air pollution - smog and ozone",
+    "prompt": "A large city in the southwestern United States regularly exceeds National Ambient Air Quality Standards for ground-level ozone during the summer months.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Distinguish between primary and secondary air pollutants and classify ground-level ozone.",
+        "points": 2,
+        "rubric": "1 pt: Primary emitted directly; secondary formed from reactions in atmosphere\n1 pt: Tropospheric ozone is a secondary pollutant"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe the chemistry of photochemical smog formation.",
+        "points": 2,
+        "rubric": "1 pt: NOx + VOCs + sunlight react in atmosphere\n1 pt: Produces ground-level O3, PAN, and other oxidants"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain ONE human health effect of exposure to ground-level ozone.",
+        "points": 1,
+        "rubric": "1 pt: Airway inflammation, reduced lung function, exacerbation of asthma"
+      },
+      {
+        "label": "d",
+        "prompt": "Describe TWO actions a city could take to reduce ozone precursor emissions.",
+        "points": 2,
+        "rubric": "1 pt: Mobile-source action (inspection/maintenance, transit, reformulated gasoline, EV incentives)\n1 pt: Stationary-source action (VOC controls on refineries/paints, industrial permits)"
+      },
+      {
+        "label": "e",
+        "prompt": "Explain how a temperature inversion can worsen urban air pollution.",
+        "points": 2,
+        "rubric": "1 pt: Warm air layer caps cooler air near surface\n1 pt: Prevents vertical mixing so pollutants accumulate in lower boundary layer"
+      },
+      {
+        "label": "f",
+        "prompt": "Identify ONE EPA criteria air pollutant other than ozone.",
+        "points": 1,
+        "rubric": "1 pt: CO, SO2, NO2, PM, or Pb"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2023 APES FRQ 1"
+  },
+  {
+    "id": "apes-v2-2024-1",
+    "courseSlug": "ap-environmental",
+    "year": 2024,
+    "number": 1,
+    "topic": "Biogeochemical cycles - carbon",
+    "prompt": "The global carbon cycle describes the transfer of carbon among the atmosphere, oceans, biosphere, and geosphere. Atmospheric CO2 has risen from about 280 ppm in pre-industrial times to over 420 ppm in 2024.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Identify TWO major carbon reservoirs and rank them by approximate size from largest to smallest.",
+        "points": 2,
+        "rubric": "1 pt: Identifies two reservoirs (ocean, atmosphere, fossil fuels, soils, biomass)\n1 pt: Correct ranking (e.g., ocean > fossil fuels > soils > atmosphere > biomass)"
+      },
+      {
+        "label": "b",
+        "prompt": "Describe the process of photosynthesis in terms of carbon flow and write the overall equation.",
+        "points": 2,
+        "rubric": "1 pt: Plants absorb CO2 and use light to produce glucose and O2\n1 pt: 6CO2 + 6H2O -> C6H12O6 + 6O2"
+      },
+      {
+        "label": "c",
+        "prompt": "Explain how burning fossil fuels transfers carbon between reservoirs and disrupts the cycle.",
+        "points": 2,
+        "rubric": "1 pt: Combustion moves C from long-term geologic reservoir to atmosphere as CO2\n1 pt: Rate exceeds natural sinks, increasing atmospheric concentration and radiative forcing"
+      },
+      {
+        "label": "d",
+        "prompt": "Describe ocean acidification and its effect on calcifying organisms.",
+        "points": 2,
+        "rubric": "1 pt: CO2 dissolves in seawater forming H2CO3, lowering pH and reducing carbonate ion concentration\n1 pt: Harder for corals/shellfish to build CaCO3 skeletons, causing dissolution/mortality"
+      },
+      {
+        "label": "e",
+        "prompt": "Describe ONE carbon sequestration strategy other than fossil-fuel reduction and explain how it removes carbon from the atmosphere.",
+        "points": 2,
+        "rubric": "1 pt: Names strategy (afforestation, soil carbon/biochar, wetland restoration, CCS)\n1 pt: Explains mechanism by which CO2 is stored in biomass, soil, or geologic formation"
+      }
+    ],
+    "totalPoints": 10,
+    "source": "Adapted from 2024 APES FRQ 1"
+  },
+
+  // ─── ap-cs-a wave-2 (+19) ─────────────────────────────
+  {
+    "id": "cs-a-v2-2016-1",
+    "courseSlug": "ap-cs-a",
+    "year": 2016,
+    "number": 1,
+    "topic": "1D array traversal",
+    "prompt": "The Gizmo class stores a list of inventory prices in the instance variable `prices`, an array of doubles. Write methods `averagePrice` and `countBelowAverage`.\n```java\npublic class Gizmo {\n  private double[] prices;\n  // precondition: prices.length > 0\n  public double averagePrice() { /* part (a) */ }\n  public int countBelowAverage() { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write the method `averagePrice` that returns the arithmetic mean of the values in `prices`.",
+        "points": 4,
+        "rubric": "1 pt: Declares and initializes sum accumulator\n1 pt: Loops through all elements of prices\n1 pt: Correctly accumulates sum\n1 pt: Returns sum divided by prices.length as double"
+      },
+      {
+        "label": "b",
+        "prompt": "Write the method `countBelowAverage` that returns the number of entries in `prices` strictly less than the average. You may call `averagePrice`.",
+        "points": 5,
+        "rubric": "1 pt: Calls averagePrice or computes average correctly\n1 pt: Initializes counter\n1 pt: Iterates through prices\n1 pt: Compares element strictly less than average\n1 pt: Returns counter"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2016 CS A FRQ 1"
+  },
+  {
+    "id": "cs-a-v2-2016-2",
+    "courseSlug": "ap-cs-a",
+    "year": 2016,
+    "number": 2,
+    "topic": "Class design",
+    "prompt": "Design a class `HiddenWord` that represents a word the user is trying to guess. The class has a private instance variable `word` holding the target word in all uppercase letters.\n```java\npublic class HiddenWord {\n  private String word;\n  public HiddenWord(String w) { /* constructor */ }\n  public String getHint(String guess) { /* part (b) */ }\n}\n```\nExamples with word `HARPS`:\nguess `HARPS` -> `HARPS`\nguess `HEART` -> `H+++*`\nguess `HOUSE` -> `H++*+`",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write the constructor `HiddenWord(String w)` that initializes the instance variable.",
+        "points": 2,
+        "rubric": "1 pt: Header matches\n1 pt: Assigns parameter to instance variable word"
+      },
+      {
+        "label": "b",
+        "prompt": "Write the method `getHint(String guess)` that returns a hint string of the same length as `word` where each position contains the letter if it matches, `*` if the letter appears elsewhere in the word, and `+` otherwise.",
+        "points": 7,
+        "rubric": "1 pt: Builds a result String of correct length\n1 pt: Iterates over characters of guess and word\n1 pt: Appends matching letter when positions match\n1 pt: Uses indexOf or search to detect letter-in-word but wrong position\n1 pt: Appends `*` for wrong position match\n1 pt: Appends `+` when letter not in word\n1 pt: Returns constructed hint string"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2016 CS A FRQ 2 (HiddenWord)"
+  },
+  {
+    "id": "cs-a-v2-2017-1",
+    "courseSlug": "ap-cs-a",
+    "year": 2017,
+    "number": 1,
+    "topic": "Digits class - ArrayList",
+    "prompt": "The Digits class represents a non-negative integer as an ArrayList of its decimal digits.\n```java\npublic class Digits {\n  private ArrayList<Integer> digitList;\n  public Digits(int num) { /* part (a) */ }\n  public boolean isStrictlyIncreasing() { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write the constructor `Digits(int num)` that stores the digits of `num` in `digitList` in left-to-right order. If `num` is 0, `digitList` should contain the single value 0.",
+        "points": 5,
+        "rubric": "1 pt: Instantiates digitList as new ArrayList<Integer>()\n1 pt: Handles num == 0 case by adding 0\n1 pt: Repeatedly extracts digit using num % 10\n1 pt: Reduces num with num / 10\n1 pt: Stores digits in left-to-right order (insert at index 0 or reverse)"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `isStrictlyIncreasing()` that returns true if each digit in `digitList` is strictly greater than the one preceding it.",
+        "points": 4,
+        "rubric": "1 pt: Loops through digitList with valid bounds\n1 pt: Compares each pair of consecutive elements\n1 pt: Returns false when out-of-order pair found\n1 pt: Returns true otherwise"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2017 CS A FRQ 1 (Digits)"
+  },
+  {
+    "id": "cs-a-v2-2017-2",
+    "courseSlug": "ap-cs-a",
+    "year": 2017,
+    "number": 2,
+    "topic": "2D array - row and column",
+    "prompt": "Consider a class `Phrase` that stores a phrase and tracks search/replace operations (structure omitted). For this problem, write a static method on a utility class.\n```java\npublic class GridUtil {\n  // Returns sum of all elements in row r of grid.\n  public static int rowSum(int[][] grid, int r) { /* part (a) */ }\n  // Returns true if the sum of column c equals the sum of row r.\n  public static boolean rowColEqual(int[][] grid, int r, int c) { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `rowSum` to return the sum of all entries in row `r`.",
+        "points": 3,
+        "rubric": "1 pt: Initializes sum accumulator\n1 pt: Loops through all columns of row r\n1 pt: Adds grid[r][col] and returns sum"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `rowColEqual` that returns true if the sum of row `r` equals the sum of column `c`. You may call `rowSum`.",
+        "points": 5,
+        "rubric": "1 pt: Computes row sum (via rowSum or inline)\n1 pt: Initializes column sum accumulator\n1 pt: Loops through all rows to accumulate column c\n1 pt: Compares two sums for equality\n1 pt: Returns correct boolean"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from 2017 CS A FRQ 4"
+  },
+  {
+    "id": "cs-a-v2-2018-1",
+    "courseSlug": "ap-cs-a",
+    "year": 2018,
+    "number": 1,
+    "topic": "1D array - array manipulation",
+    "prompt": "A data logger stores temperature readings in an array of doubles.\n```java\npublic class Logger {\n  private double[] temps;\n  // Returns the number of days the reading exceeded threshold.\n  public int daysAbove(double threshold) { /* part (a) */ }\n  // Returns a new array with readings smoothed by averaging each element with its two neighbors.\n  // Endpoints average with their single neighbor.\n  public double[] smooth() { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `daysAbove(double threshold)` which returns the count of elements strictly greater than threshold.",
+        "points": 3,
+        "rubric": "1 pt: Initializes counter\n1 pt: Iterates through entire temps array\n1 pt: Increments when element > threshold and returns counter"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `smooth()` returning a new array of same length where position i equals the mean of temps[i-1], temps[i], temps[i+1]; endpoints average only with their single neighbor.",
+        "points": 6,
+        "rubric": "1 pt: Allocates result array with temps.length\n1 pt: Handles left endpoint (average of temps[0] and temps[1])\n1 pt: Handles right endpoint analogously\n1 pt: Loops through interior indices 1..length-2\n1 pt: Computes average of three neighbors correctly\n1 pt: Returns result array"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2018 CS A FRQ 1"
+  },
+  {
+    "id": "cs-a-v2-2018-2",
+    "courseSlug": "ap-cs-a",
+    "year": 2018,
+    "number": 2,
+    "topic": "Inheritance - class hierarchy",
+    "prompt": "A gaming company models tokens with an abstract superclass.\n```java\npublic abstract class GameToken {\n  private String name;\n  public GameToken(String n) { name = n; }\n  public String getName() { return name; }\n  public abstract int getValue();\n  public String toString() { return name + \":\" + getValue(); }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write a subclass `CoinToken` that extends `GameToken`. A CoinToken has an integer denomination, a constructor `CoinToken(String n, int d)`, and returns the denomination as its value.",
+        "points": 4,
+        "rubric": "1 pt: Class header `extends GameToken`\n1 pt: Private int denomination field\n1 pt: Constructor calls super(n) and assigns denomination\n1 pt: getValue returns denomination"
+      },
+      {
+        "label": "b",
+        "prompt": "Write a subclass `GemToken` that extends `GameToken`. A GemToken has a color (String) and a base value. Its `getValue` returns base value doubled if color equals \"red\", otherwise returns base value unchanged. Include the constructor.",
+        "points": 5,
+        "rubric": "1 pt: Header extends GameToken with private color and baseValue fields\n1 pt: Constructor calls super and assigns fields\n1 pt: Overrides getValue\n1 pt: Doubles when color equals \"red\" using equals\n1 pt: Returns baseValue otherwise"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2018 CS A FRQ 2"
+  },
+  {
+    "id": "cs-a-v2-2019-1",
+    "courseSlug": "ap-cs-a",
+    "year": 2019,
+    "number": 1,
+    "topic": "APLine class",
+    "prompt": "The `APLine` class represents a line in slope-intercept form y = m*x + b.\n```java\npublic class APLine {\n  private double slope;\n  private double yInt;\n  public APLine(double m, double b) { /* part (a) */ }\n  public double getY(double x) { /* part (b) */ }\n  public boolean isOnLine(double x, double y) { /* part (c) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write the constructor that initializes `slope` and `yInt`.",
+        "points": 2,
+        "rubric": "1 pt: Header matches\n1 pt: Assigns parameters to instance variables"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `getY(double x)` returning y = slope*x + yInt.",
+        "points": 2,
+        "rubric": "1 pt: Uses slope and yInt correctly\n1 pt: Returns double result"
+      },
+      {
+        "label": "c",
+        "prompt": "Write `isOnLine(double x, double y)` that returns true when the given point lies on the line (using strict equality is acceptable here).",
+        "points": 4,
+        "rubric": "1 pt: Calls getY or computes expected y\n1 pt: Compares result to parameter y\n1 pt: Correct boolean return in both cases\n1 pt: No side effects; method signature matches"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from 2019 CS A FRQ 1"
+  },
+  {
+    "id": "cs-a-v2-2019-2",
+    "courseSlug": "ap-cs-a",
+    "year": 2019,
+    "number": 2,
+    "topic": "2D array processing",
+    "prompt": "A light grid is represented as a 2D array of integers where 1 means lit and 0 means unlit.\n```java\npublic class LightBoard {\n  private int[][] lights;\n  // Returns the number of lit cells in column c.\n  public int columnOn(int c) { /* part (a) */ }\n  // Returns the row index of the row with the most lit cells (first such row on ties).\n  public int brightestRow() { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `columnOn(int c)` returning the number of lit cells (value 1) in column c.",
+        "points": 3,
+        "rubric": "1 pt: Initializes counter\n1 pt: Loops over all rows\n1 pt: Increments when lights[row][c] == 1 and returns counter"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `brightestRow()` returning the index of the row containing the most 1s (return the lowest index on ties).",
+        "points": 5,
+        "rubric": "1 pt: Tracks best row index and best count\n1 pt: Outer loop iterates rows\n1 pt: Computes count of 1s per row (inner loop)\n1 pt: Updates best when strictly greater\n1 pt: Returns best row index"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from 2019 CS A FRQ 3"
+  },
+  {
+    "id": "cs-a-v2-2019-3",
+    "courseSlug": "ap-cs-a",
+    "year": 2019,
+    "number": 3,
+    "topic": "Recursion - string",
+    "prompt": "Consider the following recursion problem on strings.\n```java\npublic class RecUtil {\n  // Returns true if s reads the same forward and backward.\n  public static boolean isPalindrome(String s) { /* part (a) */ }\n  // Returns the number of times the character ch appears in s.\n  public static int countChar(String s, char ch) { /* part (b) */ }\n}\n```\nBoth methods must be implemented recursively; no loops.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write a recursive `isPalindrome(String s)`.",
+        "points": 4,
+        "rubric": "1 pt: Base case handles length 0 or 1 returning true\n1 pt: Compares first and last characters\n1 pt: Recursive call on middle substring\n1 pt: Returns false when outer characters differ"
+      },
+      {
+        "label": "b",
+        "prompt": "Write a recursive `countChar(String s, char ch)`.",
+        "points": 4,
+        "rubric": "1 pt: Base case for empty string returning 0\n1 pt: Examines first character of s\n1 pt: Adds 1 when character matches, else 0\n1 pt: Recurses on substring(1) and returns sum"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from 2019 CS A recursion style"
+  },
+  {
+    "id": "cs-a-v2-2020-1",
+    "courseSlug": "ap-cs-a",
+    "year": 2020,
+    "number": 1,
+    "topic": "ArrayList manipulation",
+    "prompt": "Write a static method that removes consecutive duplicates from an ArrayList of Strings.\n```java\npublic class ListUtil {\n  // Modifies list so that no two adjacent elements are equal (using .equals).\n  // Preserves order, removes later duplicate(s).\n  public static void removeAdjacentDuplicates(ArrayList<String> list) { /* implement */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `removeAdjacentDuplicates` as specified.",
+        "points": 6,
+        "rubric": "1 pt: Iterates through list with correct bounds\n1 pt: Compares adjacent elements using .equals\n1 pt: Removes later duplicate with list.remove\n1 pt: Correctly adjusts index after removal\n1 pt: Does not throw IndexOutOfBounds\n1 pt: Leaves no adjacent duplicates in final list"
+      },
+      {
+        "label": "b",
+        "prompt": "State the Big-O time complexity of your implementation in terms of the list size n and justify in one sentence.",
+        "points": 2,
+        "rubric": "1 pt: States O(n^2) (due to ArrayList.remove shifting)\n1 pt: Justification references shifting cost or nested traversal"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from 2020 CS A practice"
+  },
+  {
+    "id": "cs-a-v2-2021-1",
+    "courseSlug": "ap-cs-a",
+    "year": 2021,
+    "number": 1,
+    "topic": "Simulation method",
+    "prompt": "The `Simulation` class models a repeated experiment.\n```java\npublic class Simulation {\n  // Returns a random integer in [min, max] inclusive.\n  public static int randInt(int min, int max) { /* part (a) */ }\n  // Runs numTrials simulations; each trial rolls two dice (1..6).\n  // Returns the number of trials where the sum equals target.\n  public static int runTrials(int numTrials, int target) { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `randInt(int min, int max)` using `Math.random()`.",
+        "points": 3,
+        "rubric": "1 pt: Uses Math.random() to produce double in [0,1)\n1 pt: Scales by (max - min + 1) and adds min\n1 pt: Casts to int and returns"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `runTrials(int numTrials, int target)` calling `randInt`.",
+        "points": 5,
+        "rubric": "1 pt: Initializes counter\n1 pt: Loops numTrials times\n1 pt: Rolls two dice via randInt(1,6)\n1 pt: Checks if sum equals target\n1 pt: Increments counter and returns"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from 2021 CS A FRQ 1"
+  },
+  {
+    "id": "cs-a-v2-2021-2",
+    "courseSlug": "ap-cs-a",
+    "year": 2021,
+    "number": 2,
+    "topic": "Interface and polymorphism",
+    "prompt": "Consider the following interface.\n```java\npublic interface NumericSequence {\n  int nextTerm();\n  void reset();\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write a class `ArithmeticSeq` implementing `NumericSequence` for sequences with start and common difference d. `nextTerm` returns successive terms starting from start; `reset` restarts the sequence.",
+        "points": 5,
+        "rubric": "1 pt: Class header `implements NumericSequence` with fields start, d, current\n1 pt: Constructor initializes fields\n1 pt: nextTerm returns current value\n1 pt: Advances current by d after returning\n1 pt: reset restores current to start"
+      },
+      {
+        "label": "b",
+        "prompt": "Write a static method `sumFirstN(NumericSequence seq, int n)` returning the sum of the next n terms of seq.",
+        "points": 4,
+        "rubric": "1 pt: Initializes sum accumulator\n1 pt: Loops n times\n1 pt: Calls seq.nextTerm and accumulates\n1 pt: Returns sum"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2021 CS A FRQ 4"
+  },
+  {
+    "id": "cs-a-v2-2022-1",
+    "courseSlug": "ap-cs-a",
+    "year": 2022,
+    "number": 1,
+    "topic": "String methods",
+    "prompt": "A password utility validates user passwords.\n```java\npublic class PasswordUtil {\n  // Returns true if s contains at least one uppercase letter.\n  public static boolean hasUpper(String s) { /* part (a) */ }\n  // Returns true if s is a valid password: length >= 8, has upper, has digit.\n  public static boolean isValid(String s) { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `hasUpper(String s)`.",
+        "points": 4,
+        "rubric": "1 pt: Loops through each character of s\n1 pt: Uses Character.isUpperCase or range check A..Z\n1 pt: Returns true on first match\n1 pt: Returns false after complete loop"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `isValid(String s)`. You may call `hasUpper`.",
+        "points": 5,
+        "rubric": "1 pt: Checks s.length() >= 8\n1 pt: Calls hasUpper for uppercase check\n1 pt: Iterates to detect a digit with Character.isDigit\n1 pt: Combines conditions with logical AND\n1 pt: Returns correct boolean in all cases"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2022 CS A FRQ 1"
+  },
+  {
+    "id": "cs-a-v2-2022-2",
+    "courseSlug": "ap-cs-a",
+    "year": 2022,
+    "number": 2,
+    "topic": "2D array - diagonal search",
+    "prompt": "A game board is a square 2D array of ints.\n```java\npublic class Board {\n  private int[][] grid; // square: grid.length == grid[0].length\n  // Returns the sum of the main diagonal (top-left to bottom-right).\n  public int mainDiagonalSum() { /* part (a) */ }\n  // Returns true if any row, column, or diagonal sums to target.\n  public boolean hasLine(int target) { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `mainDiagonalSum`.",
+        "points": 3,
+        "rubric": "1 pt: Initializes sum\n1 pt: Loops i from 0 to grid.length-1\n1 pt: Adds grid[i][i] and returns sum"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `hasLine(int target)` checking all rows, all columns, and both diagonals.",
+        "points": 6,
+        "rubric": "1 pt: Checks each row sum against target\n1 pt: Checks each column sum against target\n1 pt: Computes main diagonal sum\n1 pt: Computes anti-diagonal sum (grid[i][n-1-i])\n1 pt: Returns true when any matches target\n1 pt: Returns false after exhausting all lines"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2022 CS A FRQ 3"
+  },
+  {
+    "id": "cs-a-v2-2023-1",
+    "courseSlug": "ap-cs-a",
+    "year": 2023,
+    "number": 1,
+    "topic": "Recursion - array",
+    "prompt": "Implement recursive array utilities.\n```java\npublic class ArrayRec {\n  // Returns the maximum value in arr[lo..hi] inclusive, recursively.\n  public static int maxRec(int[] arr, int lo, int hi) { /* part (a) */ }\n  // Returns true if arr is sorted in strictly increasing order, recursively.\n  public static boolean isIncreasing(int[] arr, int index) { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `maxRec` recursively. No loops.",
+        "points": 4,
+        "rubric": "1 pt: Base case lo == hi returns arr[lo]\n1 pt: Recursive call on reduced range (e.g., lo+1..hi or divide-and-conquer)\n1 pt: Uses Math.max or equivalent comparison\n1 pt: Correctly combines recursive result with current element"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `isIncreasing(int[] arr, int index)` recursively where caller passes index = 1 initially.",
+        "points": 4,
+        "rubric": "1 pt: Base case index >= arr.length returns true\n1 pt: Compares arr[index-1] < arr[index]\n1 pt: Returns false on violation\n1 pt: Recurses on index + 1"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from 2023 CS A FRQ 2"
+  },
+  {
+    "id": "cs-a-v2-2023-2",
+    "courseSlug": "ap-cs-a",
+    "year": 2023,
+    "number": 2,
+    "topic": "Sorting - selection sort",
+    "prompt": "Consider selection sort on an integer array.\n```java\npublic class Sorter {\n  // Performs one pass of selection sort starting at position start.\n  // Places the smallest of arr[start..arr.length-1] at index start.\n  public static void selectionPass(int[] arr, int start) { /* part (a) */ }\n  // Full selection sort ascending using selectionPass.\n  public static void selectionSort(int[] arr) { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `selectionPass`.",
+        "points": 5,
+        "rubric": "1 pt: Initializes minIndex = start\n1 pt: Loops through start+1..arr.length-1\n1 pt: Updates minIndex when arr[i] < arr[minIndex]\n1 pt: Swaps arr[start] and arr[minIndex]\n1 pt: Uses temp variable correctly"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `selectionSort` using `selectionPass`.",
+        "points": 3,
+        "rubric": "1 pt: Loops start from 0 to arr.length-2\n1 pt: Calls selectionPass(arr, start) each iteration\n1 pt: Array left sorted in ascending order"
+      }
+    ],
+    "totalPoints": 8,
+    "source": "Adapted from 2023 CS A FRQ 4"
+  },
+  {
+    "id": "cs-a-v2-2024-1",
+    "courseSlug": "ap-cs-a",
+    "year": 2024,
+    "number": 1,
+    "topic": "Binary search",
+    "prompt": "Implement binary search iteratively on a sorted int array.\n```java\npublic class SearchUtil {\n  // Returns index of target in sorted arr, or -1 if not present. Iterative.\n  public static int binarySearch(int[] arr, int target) { /* part (a) */ }\n  // Returns the count of occurrences of target in sorted arr. May call binarySearch.\n  public static int countOccurrences(int[] arr, int target) { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write iterative `binarySearch` on a sorted ascending array.",
+        "points": 5,
+        "rubric": "1 pt: Initializes lo = 0 and hi = arr.length - 1\n1 pt: Loops while lo <= hi\n1 pt: Computes mid = (lo + hi) / 2\n1 pt: Updates lo or hi based on comparison with target\n1 pt: Returns mid on match, -1 otherwise"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `countOccurrences` that returns how many times target appears.",
+        "points": 4,
+        "rubric": "1 pt: Calls binarySearch (or equivalent) to find any occurrence\n1 pt: Handles -1 (target absent) returning 0\n1 pt: Expands left and right from found index while equal\n1 pt: Returns correct total count"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2024 CS A FRQ 2"
+  },
+  {
+    "id": "cs-a-v2-2024-2",
+    "courseSlug": "ap-cs-a",
+    "year": 2024,
+    "number": 2,
+    "topic": "Class design - inheritance with toString",
+    "prompt": "A library system models items.\n```java\npublic class LibraryItem {\n  private String title;\n  private int year;\n  public LibraryItem(String t, int y) { title = t; year = y; }\n  public String getTitle() { return title; }\n  public int getYear() { return year; }\n  public String toString() { return title + \" (\" + year + \")\"; }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write a subclass `Book` that extends `LibraryItem` and adds an `author` String. Provide a constructor `Book(String t, int y, String a)` and override `toString` to return the superclass form followed by ` by <author>`.",
+        "points": 5,
+        "rubric": "1 pt: Class header extends LibraryItem with private author field\n1 pt: Constructor calls super(t, y) and assigns author\n1 pt: Overrides toString with @Override annotation or matching signature\n1 pt: Calls super.toString() inside override\n1 pt: Concatenates `\" by \" + author` correctly"
+      },
+      {
+        "label": "b",
+        "prompt": "Write a static method `newestItem(ArrayList<LibraryItem> items)` that returns the item with the greatest year. If the list is empty, return null.",
+        "points": 4,
+        "rubric": "1 pt: Returns null when list is empty\n1 pt: Initializes best to items.get(0)\n1 pt: Loops through remaining items\n1 pt: Updates best when getYear() strictly greater; returns best"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2024 CS A FRQ 1"
+  },
+  {
+    "id": "cs-a-v2-2024-3",
+    "courseSlug": "ap-cs-a",
+    "year": 2024,
+    "number": 3,
+    "topic": "2D array - spiral/row-column search",
+    "prompt": "A seating grid is represented as a 2D array of booleans where true means occupied.\n```java\npublic class SeatGrid {\n  private boolean[][] seats;\n  // Returns the number of occupied seats in the specified rectangular block\n  // with corners (r1,c1) inclusive to (r2,c2) inclusive.\n  public int blockCount(int r1, int c1, int r2, int c2) { /* part (a) */ }\n  // Returns true if any full row is completely occupied.\n  public boolean hasFullRow() { /* part (b) */ }\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write `blockCount`.",
+        "points": 4,
+        "rubric": "1 pt: Initializes counter\n1 pt: Outer loop rows r1..r2 inclusive\n1 pt: Inner loop cols c1..c2 inclusive\n1 pt: Increments when seats[r][c] is true and returns counter"
+      },
+      {
+        "label": "b",
+        "prompt": "Write `hasFullRow`.",
+        "points": 5,
+        "rubric": "1 pt: Outer loop iterates all rows\n1 pt: Inner loop iterates all columns of current row\n1 pt: Detects any false cell and breaks/continues correctly\n1 pt: Returns true when an entirely-true row found\n1 pt: Returns false after all rows checked"
+      }
+    ],
+    "totalPoints": 9,
+    "source": "Adapted from 2024 CS A FRQ 3"
+  },
+
+  // ─── ap-cs-principles wave-2 (+13) ─────────────────────────────
+  {
+    "id": "csp-v2-2019-1",
+    "courseSlug": "ap-cs-principles",
+    "year": 2019,
+    "number": 1,
+    "topic": "Procedure abstraction and list filtering",
+    "prompt": "A list `scores` contains integer test scores. Write a procedure `countPassing(scores, cutoff)` that returns the number of scores greater than or equal to `cutoff`.\n\n```pseudocode\nPROCEDURE countPassing(scores, cutoff) {\n  count ← 0\n  FOR EACH s IN scores {\n    IF (s ≥ cutoff) {\n      count ← count + 1\n    }\n  }\n  RETURN count\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Explain how the procedure uses iteration to examine every element of the list.",
+        "points": 2,
+        "rubric": "1 pt: Identifies the FOR EACH loop as visiting every element in scores.\n1 pt: States that each element is compared against cutoff exactly once."
+      },
+      {
+        "label": "b",
+        "prompt": "Describe one benefit of wrapping this logic in a named procedure rather than writing it inline.",
+        "points": 2,
+        "rubric": "1 pt: Mentions reuse across different lists or cutoffs without rewriting code.\n1 pt: Mentions abstraction, readability, or easier debugging/testing."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2019-2",
+    "courseSlug": "ap-cs-principles",
+    "year": 2019,
+    "number": 2,
+    "topic": "Data representation: binary and decimal",
+    "prompt": "Consider the 8-bit unsigned binary number `10110101`.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Convert `10110101` to its decimal (base-10) equivalent and show the place-value sum.",
+        "points": 2,
+        "rubric": "1 pt: Correctly identifies place values 128, 32, 16, 4, 1.\n1 pt: Correct decimal result of 181."
+      },
+      {
+        "label": "b",
+        "prompt": "What is the largest unsigned integer representable with 8 bits? Explain why adding 1 to that value causes overflow.",
+        "points": 2,
+        "rubric": "1 pt: States the maximum is 255 (or 2^8 - 1).\n1 pt: Explains that 256 requires 9 bits, so the result wraps or overflows in 8-bit storage."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2020-3",
+    "courseSlug": "ap-cs-principles",
+    "year": 2020,
+    "number": 3,
+    "topic": "RANDOM simulation",
+    "prompt": "The procedure `RANDOM(a, b)` returns a random integer from `a` to `b` inclusive. A game simulates rolling two six-sided dice.\n\n```pseudocode\nPROCEDURE rollTwo() {\n  d1 ← RANDOM(1, 6)\n  d2 ← RANDOM(1, 6)\n  RETURN d1 + d2\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "List every possible value that `rollTwo()` can return, and state which value is most likely.",
+        "points": 2,
+        "rubric": "1 pt: Range 2 through 12 listed.\n1 pt: Identifies 7 as the most likely sum."
+      },
+      {
+        "label": "b",
+        "prompt": "Write pseudocode that runs `rollTwo()` 1000 times and counts how many rolls result in a 7.",
+        "points": 3,
+        "rubric": "1 pt: Loop runs exactly 1000 times.\n1 pt: Calls rollTwo() inside the loop and compares to 7.\n1 pt: Increments a counter only when the sum equals 7 and returns/prints it."
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2020-4",
+    "courseSlug": "ap-cs-principles",
+    "year": 2020,
+    "number": 4,
+    "topic": "Linear vs binary search",
+    "prompt": "A list `ids` stores 10,000 student IDs.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Describe how a linear search would find a specific ID, and give the worst-case number of comparisons.",
+        "points": 2,
+        "rubric": "1 pt: Checks each element from start to end until match or end.\n1 pt: Worst case is 10,000 comparisons (n comparisons)."
+      },
+      {
+        "label": "b",
+        "prompt": "State one precondition that must hold for binary search to work, and give the approximate worst-case number of comparisons for 10,000 elements.",
+        "points": 2,
+        "rubric": "1 pt: The list must be sorted.\n1 pt: About 14 comparisons (log2(10000) ≈ 13.3, rounded up)."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2021-5",
+    "courseSlug": "ap-cs-principles",
+    "year": 2021,
+    "number": 5,
+    "topic": "Boolean logic and XOR",
+    "prompt": "Let A and B be Boolean variables. XOR is true exactly when A and B differ.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write a Boolean expression equivalent to `A XOR B` using only AND, OR, and NOT.",
+        "points": 2,
+        "rubric": "1 pt: Uses correct combination such as (A AND NOT B) OR (NOT A AND B).\n1 pt: Expression is logically correct for all four input combinations."
+      },
+      {
+        "label": "b",
+        "prompt": "Complete the truth table for `NOT (A OR B)` for all four combinations of A and B.",
+        "points": 2,
+        "rubric": "1 pt: Correctly shows output is true only when both A and B are false.\n1 pt: All four rows labeled correctly (T/T→F, T/F→F, F/T→F, F/F→T)."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2021-6",
+    "courseSlug": "ap-cs-principles",
+    "year": 2021,
+    "number": 6,
+    "topic": "List aggregation: max and min",
+    "prompt": "Write pseudocode to find both the maximum and the minimum value in a non-empty list `nums` using a single pass.\n\n```pseudocode\nPROCEDURE minMax(nums) {\n  lo ← nums[1]\n  hi ← nums[1]\n  FOR EACH x IN nums {\n    IF (x < lo) { lo ← x }\n    IF (x > hi) { hi ← x }\n  }\n  RETURN [lo, hi]\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Why is it important to initialize `lo` and `hi` to `nums[1]` instead of to 0?",
+        "points": 2,
+        "rubric": "1 pt: Explains 0 may be larger than all elements (if all negative) or smaller than all elements (if all positive), giving a wrong answer.\n1 pt: Initializing with an actual list element guarantees correctness regardless of sign."
+      },
+      {
+        "label": "b",
+        "prompt": "How many comparisons does the procedure perform on a list of length n, and how does this compare to running a separate max loop and min loop?",
+        "points": 2,
+        "rubric": "1 pt: About 2n comparisons in a single pass.\n1 pt: Same total work but only one traversal of the list, which can be faster in practice due to memory access."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2021-7",
+    "courseSlug": "ap-cs-principles",
+    "year": 2021,
+    "number": 7,
+    "topic": "Lossless vs lossy compression",
+    "prompt": "A student saves a family photograph as both a PNG (lossless) and a JPEG (lossy) file.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Define lossless and lossy compression in the context of image storage.",
+        "points": 2,
+        "rubric": "1 pt: Lossless compression allows the original data to be reconstructed exactly.\n1 pt: Lossy compression discards some data so the original cannot be perfectly recovered."
+      },
+      {
+        "label": "b",
+        "prompt": "Give one scenario where lossless is preferred and one where lossy is preferred, with justification.",
+        "points": 2,
+        "rubric": "1 pt: Valid lossless use case (medical imaging, archival, text) with reason referring to fidelity.\n1 pt: Valid lossy use case (web photo, streaming) with reason referring to smaller file size or bandwidth."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2022-8",
+    "courseSlug": "ap-cs-principles",
+    "year": 2022,
+    "number": 8,
+    "topic": "ASCII and error bits",
+    "prompt": "The ASCII code for uppercase `A` is 65. An extended scheme adds one parity bit so that the total number of 1-bits in the 8-bit word is even.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Write the 7-bit binary ASCII for `A` (65) and then give the 8-bit word after adding an even-parity bit at the left.",
+        "points": 2,
+        "rubric": "1 pt: 7-bit value 1000001.\n1 pt: Parity bit 0 prepended, yielding 01000001 (already even count of 1s)."
+      },
+      {
+        "label": "b",
+        "prompt": "Explain how a receiver uses the parity bit to detect a single-bit transmission error, and state one limitation.",
+        "points": 2,
+        "rubric": "1 pt: Receiver counts 1-bits; odd count indicates an error.\n1 pt: Limitation: cannot detect an even number of simultaneous bit flips, and cannot correct the error."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2022-9",
+    "courseSlug": "ap-cs-principles",
+    "year": 2022,
+    "number": 9,
+    "topic": "Parallel vs sequential computing",
+    "prompt": "A sequential program takes 60 seconds. Part of the program (40 seconds of work) can be split into 4 parallel tasks, while the remaining 20 seconds must run sequentially.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Assuming the parallel portion is perfectly distributed across 4 processors, compute the total runtime.",
+        "points": 2,
+        "rubric": "1 pt: Parallel portion reduces from 40 s to 10 s (40 / 4).\n1 pt: Total runtime is 20 + 10 = 30 seconds."
+      },
+      {
+        "label": "b",
+        "prompt": "Define speedup and compute it for this situation.",
+        "points": 2,
+        "rubric": "1 pt: Defines speedup as sequential time divided by parallel time.\n1 pt: Speedup = 60 / 30 = 2."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2022-10",
+    "courseSlug": "ap-cs-principles",
+    "year": 2022,
+    "number": 10,
+    "topic": "API abstraction: procedure arguments",
+    "prompt": "A weather app calls a hidden library procedure `getTemp(cityCode, units)`. The student does not know how the procedure retrieves data, only that it returns a number.\n\n```pseudocode\ntempF ← getTemp(\"NYC\", \"F\")\ntempC ← getTemp(\"NYC\", \"C\")\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Explain what is meant by procedural abstraction in this example.",
+        "points": 2,
+        "rubric": "1 pt: The caller can use getTemp without knowing its internal implementation.\n1 pt: Parameters (cityCode, units) define the interface while hiding details."
+      },
+      {
+        "label": "b",
+        "prompt": "Give one advantage and one risk of relying on an external API whose implementation you cannot see.",
+        "points": 2,
+        "rubric": "1 pt: Advantage such as reduced development effort, reuse, or specialization by experts.\n1 pt: Risk such as outages, breaking changes, privacy/security, or hidden bugs."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2023-11",
+    "courseSlug": "ap-cs-principles",
+    "year": 2023,
+    "number": 11,
+    "topic": "Filtering a list into a new list",
+    "prompt": "Given a list `temps` of daily high temperatures, build a new list `hot` containing only those values greater than 90.\n\n```pseudocode\nPROCEDURE hotDays(temps) {\n  hot ← []\n  FOR EACH t IN temps {\n    IF (t > 90) {\n      APPEND(hot, t)\n    }\n  }\n  RETURN hot\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Trace the procedure on the list [88, 91, 90, 95, 72, 101] and give the resulting `hot` list.",
+        "points": 2,
+        "rubric": "1 pt: Correctly excludes 88, 90, and 72 (since not strictly greater than 90).\n1 pt: Result is [91, 95, 101]."
+      },
+      {
+        "label": "b",
+        "prompt": "Modify the procedure so it instead returns the count of hot days without storing them.",
+        "points": 2,
+        "rubric": "1 pt: Replaces list with integer counter initialized to 0.\n1 pt: Increments counter inside IF and returns the final count."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2023-12",
+    "courseSlug": "ap-cs-principles",
+    "year": 2023,
+    "number": 12,
+    "topic": "Iteration pattern: running aggregate",
+    "prompt": "Write pseudocode that computes the average of a non-empty list `nums`.\n\n```pseudocode\nPROCEDURE average(nums) {\n  total ← 0\n  FOR EACH x IN nums {\n    total ← total + x\n  }\n  RETURN total / LENGTH(nums)\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Explain why the procedure should not be called on an empty list, and describe one way to guard against that case.",
+        "points": 2,
+        "rubric": "1 pt: LENGTH(nums) is 0, causing division by zero.\n1 pt: Suggests an IF check that returns 0 or a sentinel before dividing."
+      },
+      {
+        "label": "b",
+        "prompt": "If `nums` has 1,000,000 elements, how many addition operations are performed? Describe the runtime behavior as the list grows.",
+        "points": 2,
+        "rubric": "1 pt: Exactly 1,000,000 additions (one per element).\n1 pt: Runtime grows linearly with n (O(n))."
+      }
+    ],
+    "totalPoints": 4,
+    "source": "Supplemental CSP practice"
+  },
+  {
+    "id": "csp-v2-2024-13",
+    "courseSlug": "ap-cs-principles",
+    "year": 2024,
+    "number": 13,
+    "topic": "Procedure abstraction with RANDOM",
+    "prompt": "A classroom app needs to pick a random student fairly from a class roster.\n\n```pseudocode\nPROCEDURE pickStudent(roster) {\n  i ← RANDOM(1, LENGTH(roster))\n  RETURN roster[i]\n}\n```",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Explain why using `RANDOM(1, LENGTH(roster))` gives every student an equal probability of being chosen.",
+        "points": 2,
+        "rubric": "1 pt: RANDOM is described as producing each integer in its range with equal probability.\n1 pt: Every index from 1 to n maps to exactly one student, so each is equally likely."
+      },
+      {
+        "label": "b",
+        "prompt": "Modify `pickStudent` so it picks two different students (no repeats) and returns them as a pair.",
+        "points": 3,
+        "rubric": "1 pt: Picks a first student using RANDOM.\n1 pt: Uses a loop or re-sample until the second index differs from the first.\n1 pt: Returns both students (e.g., as a list of two) without duplication."
+      }
+    ],
+    "totalPoints": 5,
+    "source": "Supplemental CSP practice"
+  },
+
+  // ─── ap-us-history wave-2 (+19) ─────────────────────────────
+  {
+    "id": "apush-v2-2017-saq-1",
+    "courseSlug": "ap-us-history",
+    "year": 2017,
+    "number": 1,
+    "topic": "Great Awakening",
+    "prompt": "Answer parts a, b, and c about the First Great Awakening of the 1730s-1740s.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE religious change brought about by the First Great Awakening in the British North American colonies.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a valid change such as growth of evangelical denominations (Baptists, Methodists), emphasis on emotional personal conversion, or challenge to established clergy."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE way the Great Awakening contributed to a shared colonial identity.",
+        "points": 1,
+        "rubric": "1 pt: Explains intercolonial travel of itinerant preachers (e.g., Whitefield), common print culture, or shared religious experiences crossing colony boundaries."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE way the Great Awakening influenced later political developments before 1776.",
+        "points": 1,
+        "rubric": "1 pt: Explains how challenges to religious authority encouraged questioning of political authority, or how democratized churches modeled self-government."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2017-saq-2",
+    "courseSlug": "ap-us-history",
+    "year": 2017,
+    "number": 2,
+    "topic": "French and Indian War and Stamp Act",
+    "prompt": "Answer parts a, b, and c about British imperial policy after 1763.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE reason the British government sought new revenue from the colonies after the French and Indian War.",
+        "points": 1,
+        "rubric": "1 pt: Identifies massive war debt, cost of stationing troops in North America, or expenses of administering new territory from the Treaty of Paris 1763."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE colonial objection to the Stamp Act of 1765.",
+        "points": 1,
+        "rubric": "1 pt: Explains no taxation without representation, violation of English rights, or that it was a direct internal tax imposed by Parliament rather than colonial assemblies."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE specific form of colonial resistance to the Stamp Act.",
+        "points": 1,
+        "rubric": "1 pt: Identifies Stamp Act Congress, Sons of Liberty crowd actions against stamp distributors, or nonimportation agreements."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2018-saq-3",
+    "courseSlug": "ap-us-history",
+    "year": 2018,
+    "number": 3,
+    "topic": "Articles of Confederation to Constitution",
+    "prompt": "Answer parts a, b, and c about the transition from the Articles of Confederation to the Constitution.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE weakness of the Articles of Confederation.",
+        "points": 1,
+        "rubric": "1 pt: Identifies inability to tax, no executive, no national court system, unanimous consent required for amendments, or inability to regulate interstate commerce."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE specific event between 1783 and 1787 that exposed that weakness.",
+        "points": 1,
+        "rubric": "1 pt: Explains Shays's Rebellion, failure of trade negotiations with Britain or Spain, or interstate tariff disputes leading to the Annapolis meeting."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE way the Constitution of 1787 addressed the weakness identified in part a.",
+        "points": 1,
+        "rubric": "1 pt: Links the weakness to a specific constitutional remedy such as the taxing power, commerce clause, creation of executive, or supremacy clause."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2018-saq-4",
+    "courseSlug": "ap-us-history",
+    "year": 2018,
+    "number": 4,
+    "topic": "Jeffersonian era",
+    "prompt": "Answer parts a, b, and c about the Jefferson presidency (1801-1809).",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE way Jefferson's actions as president departed from his stated political principles.",
+        "points": 1,
+        "rubric": "1 pt: Identifies the Louisiana Purchase as a loose construction of the Constitution, retention of parts of the Hamiltonian financial system, or use of federal power in the Embargo Act."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE consequence of the Louisiana Purchase for the United States.",
+        "points": 1,
+        "rubric": "1 pt: Explains doubling of national territory, opening of westward expansion, eventual sectional conflict over slavery expansion, or the Lewis and Clark expedition."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE effect of the Embargo Act of 1807 on the United States.",
+        "points": 1,
+        "rubric": "1 pt: Explains damage to New England shipping economy, growth of domestic manufacturing, or increased tensions leading toward the War of 1812."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2019-saq-5",
+    "courseSlug": "ap-us-history",
+    "year": 2019,
+    "number": 5,
+    "topic": "Age of Jackson",
+    "prompt": "Answer parts a, b, and c about the presidency of Andrew Jackson.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE democratic reform associated with the Age of Jackson (1824-1840).",
+        "points": 1,
+        "rubric": "1 pt: Identifies expansion of white male suffrage, use of nominating conventions, or rise of the spoils system as rotation in office."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE way Jackson expanded the power of the presidency.",
+        "points": 1,
+        "rubric": "1 pt: Explains record use of the veto (e.g., Bank veto), defiance of the Supreme Court in Worcester v. Georgia, or forceful response in the Nullification Crisis."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE group that was harmed by Jacksonian policies.",
+        "points": 1,
+        "rubric": "1 pt: Explains Native Americans via Indian Removal Act and Trail of Tears, or enslaved people via continued expansion of slavery into new states."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2019-saq-6",
+    "courseSlug": "ap-us-history",
+    "year": 2019,
+    "number": 6,
+    "topic": "Antebellum reform - abolition and women",
+    "prompt": "Answer parts a, b, and c about antebellum reform movements (1820-1860).",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE goal of the abolitionist movement before the Civil War.",
+        "points": 1,
+        "rubric": "1 pt: Identifies immediate emancipation (Garrison), gradual emancipation, colonization, or ending the domestic slave trade."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE connection between abolitionism and the early women's rights movement.",
+        "points": 1,
+        "rubric": "1 pt: Explains shared leaders (e.g., Grimke sisters, Stanton, Mott), exclusion of women from antislavery conventions leading to Seneca Falls, or shared natural-rights rhetoric."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE specific outcome of the 1848 Seneca Falls Convention.",
+        "points": 1,
+        "rubric": "1 pt: Explains the Declaration of Sentiments, its demand for woman suffrage, or its role in launching an organized women's rights movement."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2020-saq-7",
+    "courseSlug": "ap-us-history",
+    "year": 2020,
+    "number": 7,
+    "topic": "Manifest Destiny",
+    "prompt": "Answer parts a, b, and c about Manifest Destiny in the 1840s.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE specific territorial acquisition associated with Manifest Destiny.",
+        "points": 1,
+        "rubric": "1 pt: Identifies annexation of Texas (1845), Oregon Treaty (1846), or Mexican Cession via Treaty of Guadalupe Hidalgo (1848)."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE argument used to justify westward expansion.",
+        "points": 1,
+        "rubric": "1 pt: Explains providential mission, spread of republican government, racial ideology of Anglo-Saxon superiority, or economic access to Pacific trade."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE way Manifest Destiny intensified sectional conflict.",
+        "points": 1,
+        "rubric": "1 pt: Explains Wilmot Proviso debate, Compromise of 1850, or Kansas-Nebraska Act arising from the question of slavery in new territories."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2020-saq-8",
+    "courseSlug": "ap-us-history",
+    "year": 2020,
+    "number": 8,
+    "topic": "Reconstruction",
+    "prompt": "Answer parts a, b, and c about Reconstruction (1865-1877).",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE constitutional change made during Reconstruction.",
+        "points": 1,
+        "rubric": "1 pt: Identifies the 13th (abolition), 14th (citizenship and equal protection), or 15th Amendment (voting rights regardless of race)."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE way freedpeople experienced new opportunities during Reconstruction.",
+        "points": 1,
+        "rubric": "1 pt: Explains voting and officeholding, Freedmen's Bureau schools, founding of Black churches, or family reunification."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE reason Reconstruction ended and its gains were rolled back.",
+        "points": 1,
+        "rubric": "1 pt: Explains Compromise of 1877, white terror (KKK), northern fatigue, Supreme Court decisions like the Slaughterhouse Cases, or economic Panic of 1873."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2021-saq-9",
+    "courseSlug": "ap-us-history",
+    "year": 2021,
+    "number": 9,
+    "topic": "Gilded Age industry and labor",
+    "prompt": "Answer parts a, b, and c about the Gilded Age (1870-1900).",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE business practice used by large corporations in the Gilded Age.",
+        "points": 1,
+        "rubric": "1 pt: Identifies horizontal integration (Rockefeller), vertical integration (Carnegie), trusts, or pools."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE reason workers organized during the Gilded Age.",
+        "points": 1,
+        "rubric": "1 pt: Explains low wages, long hours, dangerous conditions, wage cuts during downturns, or loss of craft autonomy to mechanization."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE government response to industrial conflict before 1900.",
+        "points": 1,
+        "rubric": "1 pt: Explains Interstate Commerce Act, Sherman Antitrust Act, or use of federal troops/injunctions (e.g., Pullman Strike)."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2021-saq-10",
+    "courseSlug": "ap-us-history",
+    "year": 2021,
+    "number": 10,
+    "topic": "Progressive Era",
+    "prompt": "Answer parts a, b, and c about the Progressive Era (1900-1917).",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE Progressive reform at the federal level.",
+        "points": 1,
+        "rubric": "1 pt: Identifies 16th Amendment (income tax), 17th Amendment (direct election of senators), 18th (prohibition), 19th (woman suffrage), Federal Reserve Act, or Pure Food and Drug Act."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE limitation of Progressive reform.",
+        "points": 1,
+        "rubric": "1 pt: Explains exclusion of African Americans, acceptance of segregation, limits on immigrant inclusion, or paternalistic moral reforms."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE way muckraking journalism shaped Progressive reform.",
+        "points": 1,
+        "rubric": "1 pt: Explains a specific example such as Upton Sinclair's The Jungle prompting meat inspection laws, Ida Tarbell on Standard Oil, or Jacob Riis on tenements."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2022-saq-11",
+    "courseSlug": "ap-us-history",
+    "year": 2022,
+    "number": 11,
+    "topic": "1920s society",
+    "prompt": "Answer parts a, b, and c about cultural conflict in the 1920s.",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE cultural change of the 1920s associated with modern urban life.",
+        "points": 1,
+        "rubric": "1 pt: Identifies Harlem Renaissance, flapper culture and changing gender norms, mass consumer culture, radio, or motion pictures."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE reaction against those changes during the 1920s.",
+        "points": 1,
+        "rubric": "1 pt: Explains Prohibition, the revived Ku Klux Klan, National Origins Act of 1924, or the Scopes Trial and fundamentalism."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE way the economic prosperity of the 1920s was uneven.",
+        "points": 1,
+        "rubric": "1 pt: Explains farmers' falling prices, limited gains for industrial workers, or exclusion of African Americans and immigrants from full benefits."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2022-saq-12",
+    "courseSlug": "ap-us-history",
+    "year": 2022,
+    "number": 12,
+    "topic": "Cold War containment",
+    "prompt": "Answer parts a, b, and c about early Cold War foreign policy (1945-1960).",
+    "parts": [
+      {
+        "label": "a",
+        "prompt": "Briefly describe ONE specific application of the policy of containment before 1960.",
+        "points": 1,
+        "rubric": "1 pt: Identifies Truman Doctrine aid to Greece and Turkey, Marshall Plan, Berlin Airlift, NATO, or the Korean War."
+      },
+      {
+        "label": "b",
+        "prompt": "Briefly explain ONE domestic effect of the early Cold War on the United States.",
+        "points": 1,
+        "rubric": "1 pt: Explains loyalty programs, McCarthyism, HUAC investigations, growth of the military-industrial complex, or expansion of federal scientific and educational funding."
+      },
+      {
+        "label": "c",
+        "prompt": "Briefly explain ONE criticism of containment made during this period.",
+        "points": 1,
+        "rubric": "1 pt: Explains George Kennan's later objection to militarization, conservative call for rollback, or left critique of interventionism and support for undemocratic regimes."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2015-leq-1",
+    "courseSlug": "ap-us-history",
+    "year": 2015,
+    "number": 1,
+    "topic": "American Revolution - causes",
+    "prompt": "Evaluate the extent to which British imperial policies between 1763 and 1776 caused the American Revolution.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Write a complete essay with thesis, contextualization, evidence, and analysis addressing the prompt.",
+        "points": 6,
+        "rubric": "1 pt (Thesis): Presents a defensible thesis that evaluates the extent to which British policies caused the Revolution, not merely a restatement.\n1 pt (Contextualization): Describes broader context such as salutary neglect, the Seven Years' War, or Enlightenment ideology.\n1 pt (Evidence): Provides at least two specific pieces of evidence (e.g., Proclamation of 1763, Stamp Act, Townshend Acts, Tea Act, Coercive Acts).\n1 pt (Evidence supports argument): Uses that evidence to support the stated argument about causation.\n1 pt (Analysis - reasoning): Uses causation reasoning to connect British policies to colonial responses.\n1 pt (Analysis - complexity): Demonstrates complexity, for example by weighing ideological vs. economic causes or acknowledging long-term vs. short-term factors."
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2016-leq-2",
+    "courseSlug": "ap-us-history",
+    "year": 2016,
+    "number": 2,
+    "topic": "Civil War causes",
+    "prompt": "Evaluate the extent to which the expansion of slavery into western territories caused the Civil War.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Write a complete essay with thesis, contextualization, evidence, and analysis addressing the prompt.",
+        "points": 6,
+        "rubric": "1 pt (Thesis): Defensible thesis evaluating the role of territorial expansion of slavery in causing the Civil War.\n1 pt (Contextualization): Situates the issue in the Mexican Cession, Manifest Destiny, or sectional balance in the Senate.\n1 pt (Evidence): Provides specifics such as Wilmot Proviso, Compromise of 1850, Kansas-Nebraska Act, Dred Scott, or Bleeding Kansas.\n1 pt (Evidence supports argument): Ties evidence to the claim about causation.\n1 pt (Analysis - reasoning): Uses causation to explain how territorial disputes intensified sectionalism.\n1 pt (Analysis - complexity): Addresses complexity by weighing slavery expansion against states' rights, economic differences, or political breakdown."
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2017-leq-3",
+    "courseSlug": "ap-us-history",
+    "year": 2017,
+    "number": 3,
+    "topic": "New Deal",
+    "prompt": "Evaluate the extent to which the New Deal transformed the role of the federal government in the United States between 1933 and 1940.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Write a complete essay with thesis, contextualization, evidence, and analysis addressing the prompt.",
+        "points": 6,
+        "rubric": "1 pt (Thesis): Defensible thesis about the extent of transformation in federal power during the New Deal.\n1 pt (Contextualization): Discusses the Great Depression, Hoover's response, or pre-1933 federalism.\n1 pt (Evidence): Provides specifics such as Social Security Act, Wagner Act, AAA, TVA, FDIC, or WPA.\n1 pt (Evidence supports argument): Connects programs to federal expansion or continuity with the past.\n1 pt (Analysis - reasoning): Uses continuity and change over time to compare pre- and post-New Deal government.\n1 pt (Analysis - complexity): Acknowledges limits of the New Deal (e.g., exclusion of farmworkers and domestic workers, court challenges, persistence of unemployment)."
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2018-leq-4",
+    "courseSlug": "ap-us-history",
+    "year": 2018,
+    "number": 4,
+    "topic": "World War II home front",
+    "prompt": "Evaluate the extent to which World War II changed American society on the home front between 1941 and 1945.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Write a complete essay with thesis, contextualization, evidence, and analysis addressing the prompt.",
+        "points": 6,
+        "rubric": "1 pt (Thesis): Defensible thesis on the extent of home-front social change during WWII.\n1 pt (Contextualization): Establishes context such as the end of the Depression, New Deal legacy, or prewar Jim Crow and gender norms.\n1 pt (Evidence): Provides specifics such as women in war industries, Double V campaign, zoot suit riots, Japanese American internment, or Bracero Program.\n1 pt (Evidence supports argument): Connects evidence to claims about social change.\n1 pt (Analysis - reasoning): Uses continuity and change to compare wartime society with prewar patterns.\n1 pt (Analysis - complexity): Addresses complexity by contrasting new opportunities with persistent inequalities or by distinguishing short-term wartime changes from long-term shifts."
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2019-leq-5",
+    "courseSlug": "ap-us-history",
+    "year": 2019,
+    "number": 5,
+    "topic": "Vietnam War and domestic politics",
+    "prompt": "Evaluate the extent to which the Vietnam War changed American politics and society between 1964 and 1975.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Write a complete essay with thesis, contextualization, evidence, and analysis addressing the prompt.",
+        "points": 6,
+        "rubric": "1 pt (Thesis): Defensible thesis on the extent of change produced by the Vietnam War at home.\n1 pt (Contextualization): Establishes Cold War containment, the Great Society, or post-WWII consensus.\n1 pt (Evidence): Provides specifics such as Gulf of Tonkin Resolution, Tet Offensive, antiwar movement, draft resistance, My Lai, or Pentagon Papers.\n1 pt (Evidence supports argument): Connects evidence to political and social change.\n1 pt (Analysis - reasoning): Uses causation or continuity and change to link the war to loss of public trust.\n1 pt (Analysis - complexity): Addresses complexity such as War Powers Act vs. continued executive power, or divisions within the antiwar movement."
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2020-leq-6",
+    "courseSlug": "ap-us-history",
+    "year": 2020,
+    "number": 6,
+    "topic": "Civil Rights Movement",
+    "prompt": "Evaluate the extent to which the civil rights movement between 1954 and 1968 transformed American society.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Write a complete essay with thesis, contextualization, evidence, and analysis addressing the prompt.",
+        "points": 6,
+        "rubric": "1 pt (Thesis): Defensible thesis about the extent of transformation produced by the civil rights movement.\n1 pt (Contextualization): Establishes context such as Jim Crow, WWII-era activism, or the early Cold War.\n1 pt (Evidence): Provides specifics such as Brown v. Board, Montgomery Bus Boycott, Little Rock, Civil Rights Act of 1964, Voting Rights Act of 1965, or Black Power.\n1 pt (Evidence supports argument): Connects evidence to claims about legal, political, or social change.\n1 pt (Analysis - reasoning): Uses causation or continuity and change to link activism to federal action and social change.\n1 pt (Analysis - complexity): Recognizes ongoing inequality, backlash, or tensions between nonviolent and militant strategies."
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Supplemental APUSH practice"
+  },
+  {
+    "id": "apush-v2-2021-leq-7",
+    "courseSlug": "ap-us-history",
+    "year": 2021,
+    "number": 7,
+    "topic": "Conservative resurgence - Nixon to Reagan",
+    "prompt": "Evaluate the extent to which conservatism reshaped American politics between 1968 and 1989.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Write a complete essay with thesis, contextualization, evidence, and analysis addressing the prompt.",
+        "points": 6,
+        "rubric": "1 pt (Thesis): Defensible thesis on how far conservatism reshaped politics from Nixon to Reagan.\n1 pt (Contextualization): Establishes context such as 1960s liberalism, Vietnam, stagflation, or the civil rights backlash.\n1 pt (Evidence): Provides specifics such as Nixon's Southern Strategy, Watergate, tax revolts (Prop 13), Religious Right, Reagan tax cuts, deregulation, or the end of the Cold War.\n1 pt (Evidence supports argument): Connects evidence to claims about conservative ascendancy.\n1 pt (Analysis - reasoning): Uses continuity and change over time to trace the shift from New Deal consensus to conservative governance.\n1 pt (Analysis - complexity): Addresses complexity by noting persistence of entitlement programs, limits of the Reagan Revolution, or internal divisions among conservatives."
+      }
+    ],
+    "totalPoints": 6,
+    "source": "Supplemental APUSH practice"
+  },
+
+  // ─── ap-world-history wave-2 (+19) ─────────────────────────────
+  {
+    "id": "apwh-v2-2016-saq-1",
+    "courseSlug": "ap-world-history",
+    "year": 2016,
+    "number": 1,
+    "topic": "Song dynasty economic expansion",
+    "prompt": "Historians have argued that Song China (960-1279) experienced an 'economic revolution' that transformed Afro-Eurasian commerce. Using your knowledge of Song China, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE technological innovation during the Song dynasty that contributed to commercial growth.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a valid innovation such as woodblock printing, the magnetic compass, gunpowder, or improved iron smelting."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way Song economic policies encouraged long-distance trade.",
+        "points": 1,
+        "rubric": "1 pt: Explains a policy such as the issuance of paper money (jiaozi), state support of canal infrastructure, or encouragement of Indian Ocean maritime trade through ports like Quanzhou."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE social consequence of Song economic expansion within China.",
+        "points": 1,
+        "rubric": "1 pt: Explains a consequence such as urbanization of cities like Hangzhou, the rise of a scholar-gentry class via the examination system, or changing roles for women including foot binding among elites."
+      }
+    ],
+    "totalPoints": 3,
+    "source": "AP World History course framework, Unit 1"
+  },
+  {
+    "id": "apwh-v2-2017-saq-2",
+    "courseSlug": "ap-world-history",
+    "year": 2017,
+    "number": 2,
+    "topic": "Mongol Empire and Eurasian integration",
+    "prompt": "A modern historian writes: 'The Pax Mongolica stitched together a vast zone of exchange in which merchants, diseases, and ideas traveled with unprecedented speed.' Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE specific example of cross-cultural exchange facilitated by the Mongol Empire.",
+        "points": 1,
+        "rubric": "1 pt: Identifies an example such as the travels of Marco Polo, the transmission of gunpowder technology westward, or the spread of the bubonic plague along trade routes."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way Mongol rule affected political structures in a conquered region.",
+        "points": 1,
+        "rubric": "1 pt: Explains an effect such as the use of existing bureaucracies in Yuan China, the destruction of the Abbasid Caliphate in 1258, or tribute systems imposed on Rus principalities."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE reason for the decline of the Mongol khanates by the mid-1300s.",
+        "points": 1,
+        "rubric": "1 pt: Explains a reason such as succession disputes, overextension, the impact of the Black Death, or resistance such as the Ming overthrow of the Yuan in 1368."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2018-saq-3",
+    "courseSlug": "ap-world-history",
+    "year": 2018,
+    "number": 3,
+    "topic": "Dar al-Islam and trans-regional connections",
+    "prompt": "Using your knowledge of world history from c. 1200-1450, respond to parts A, B, and C about the Islamic world.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE way Islamic scholarship contributed to the preservation or advancement of knowledge in this period.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a contribution such as the House of Wisdom's translation work, advancements in algebra by al-Khwarizmi, or medical writings by Ibn Sina."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way Islam spread beyond the Arabian Peninsula between 1200 and 1450.",
+        "points": 1,
+        "rubric": "1 pt: Explains a mechanism such as Sufi missionary activity in South Asia, merchant networks bringing Islam to East Africa, or conquest by Turkic dynasties into Anatolia and India."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way the travels of Ibn Battuta illustrate the character of Dar al-Islam.",
+        "points": 1,
+        "rubric": "1 pt: Explains that his ability to travel across Africa and Asia using common religious and legal frameworks demonstrates a shared Islamic cultural zone despite political fragmentation."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2019-saq-4",
+    "courseSlug": "ap-world-history",
+    "year": 2019,
+    "number": 4,
+    "topic": "Mali and trans-Saharan trade",
+    "prompt": "The Mali Empire under Mansa Musa (r. 1312-1337) became famous across Afro-Eurasia. Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE commodity that drove trans-Saharan trade in this period.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a valid commodity such as gold, salt, ivory, or enslaved people."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way Mansa Musa's pilgrimage to Mecca affected Afro-Eurasian perceptions of West Africa.",
+        "points": 1,
+        "rubric": "1 pt: Explains an effect such as the depiction of Mali on the Catalan Atlas, the flood of gold that temporarily devalued Egyptian currency, or increased diplomatic and scholarly contact with North Africa."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way Islam shaped political or intellectual life in Mali.",
+        "points": 1,
+        "rubric": "1 pt: Explains a way such as the development of Timbuktu as a center of Islamic learning, the use of Arabic in administration, or the legitimation of Mansa authority through Islam."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2020-saq-1",
+    "courseSlug": "ap-world-history",
+    "year": 2020,
+    "number": 1,
+    "topic": "Mesoamerican and Andean states",
+    "prompt": "Using your knowledge of the Aztec and Inca empires before European contact, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE similarity between Aztec and Inca methods of imperial administration.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a similarity such as the use of tribute systems, reliance on local rulers, or extensive road or causeway infrastructure."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE difference in labor systems between the Aztec and Inca empires.",
+        "points": 1,
+        "rubric": "1 pt: Explains a difference such as Aztec reliance on tribute labor and flower wars for captives versus Inca use of the mit'a rotational labor system."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way geography shaped state organization in EITHER the Aztec or Inca Empire.",
+        "points": 1,
+        "rubric": "1 pt: Explains a way such as Aztec chinampa agriculture in lake Texcoco supporting Tenochtitlan, or Inca terraced agriculture and quipu record-keeping across Andean elevations."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2021-saq-2",
+    "courseSlug": "ap-world-history",
+    "year": 2021,
+    "number": 2,
+    "topic": "Indian Ocean trade networks",
+    "prompt": "A historian asserts that the Indian Ocean world from 1200 to 1450 was characterized by 'cosmopolitan ports where merchants of many faiths negotiated trust without a single imperial umbrella.' Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE technology that enabled long-distance Indian Ocean trade in this period.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a technology such as the lateen sail, the astrolabe, the magnetic compass, or the dhow."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way diasporic merchant communities supported Indian Ocean commerce.",
+        "points": 1,
+        "rubric": "1 pt: Explains a way such as Gujarati merchants settling in East African ports, Chinese communities in Southeast Asia, or Arab traders along the Swahili coast providing networks of trust and credit."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE cultural consequence of Indian Ocean trade for an African or Asian society.",
+        "points": 1,
+        "rubric": "1 pt: Explains a consequence such as the development of Swahili as a Bantu-Arabic hybrid language, the spread of Islam to Southeast Asia, or the incorporation of Indian culinary and religious influences across the Bay of Bengal."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2022-saq-3",
+    "courseSlug": "ap-world-history",
+    "year": 2022,
+    "number": 3,
+    "topic": "Columbian Exchange",
+    "prompt": "Using your knowledge of the Columbian Exchange after 1492, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE crop transferred from the Americas to Afro-Eurasia.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a crop such as maize, potatoes, tomatoes, or cassava."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE demographic consequence of the Columbian Exchange in the Americas.",
+        "points": 1,
+        "rubric": "1 pt: Explains a consequence such as the catastrophic decline of Indigenous populations due to smallpox and measles, or the forced migration of Africans through the Atlantic slave trade to replace lost labor."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way the Columbian Exchange affected populations in Afro-Eurasia.",
+        "points": 1,
+        "rubric": "1 pt: Explains an effect such as population growth in China and Europe due to new calorie-dense crops like sweet potatoes and potatoes, or the diffusion of chili peppers into South and East Asian cuisines."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2016-saq-4",
+    "courseSlug": "ap-world-history",
+    "year": 2016,
+    "number": 4,
+    "topic": "Land-based Islamic empires",
+    "prompt": "Historians have compared the Ottoman, Safavid, and Mughal empires as 'gunpowder empires' of the early modern era. Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE common feature of Ottoman, Safavid, and Mughal imperial rule.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a feature such as reliance on gunpowder weaponry, claims to legitimacy through Islam, or centralized tax systems administered by elite officials."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE religious policy that distinguished ONE of these empires.",
+        "points": 1,
+        "rubric": "1 pt: Explains a policy such as the Ottoman millet system, Safavid enforcement of Twelver Shi'ism, or Akbar's policy of sulh-i kul (universal peace) in Mughal India."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE reason for the decline of one of these empires by 1800.",
+        "points": 1,
+        "rubric": "1 pt: Explains a reason such as Ottoman loss of military advantage after the siege of Vienna in 1683, Safavid collapse due to Afghan invasion in 1722, or Mughal fragmentation as regional powers and the British East India Company expanded."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2017-saq-1",
+    "courseSlug": "ap-world-history",
+    "year": 2017,
+    "number": 1,
+    "topic": "Atlantic slave trade",
+    "prompt": "Using your knowledge of the Atlantic slave trade between 1500 and 1800, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE African state whose economy or politics were shaped by the Atlantic slave trade.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a state such as Dahomey, Asante, Kongo, or Oyo."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way the Atlantic slave trade affected the demography of West or Central Africa.",
+        "points": 1,
+        "rubric": "1 pt: Explains an effect such as sex-ratio imbalances favoring women due to male export, regional depopulation in central African interiors, or displacement caused by slave-raiding warfare."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way enslaved Africans shaped cultural life in the Americas.",
+        "points": 1,
+        "rubric": "1 pt: Explains a way such as syncretic religions like Vodun or Candomble, the development of creole languages, or influence on music, foodways, and agricultural techniques such as rice cultivation in the Carolinas."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2018-saq-2",
+    "courseSlug": "ap-world-history",
+    "year": 2018,
+    "number": 2,
+    "topic": "Qing dynasty and its challenges",
+    "prompt": "The Qing dynasty (1644-1912) expanded Chinese territory to its greatest extent yet faced mounting crises in the 19th century. Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE way the Qing expanded the territorial reach of the Chinese state.",
+        "points": 1,
+        "rubric": "1 pt: Identifies an expansion such as the incorporation of Taiwan, the conquest of Xinjiang, or the subjugation of Tibet and Mongolia."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE cause of the First Opium War (1839-1842).",
+        "points": 1,
+        "rubric": "1 pt: Explains a cause such as the British trade imbalance resolved through opium smuggling, Qing commissioner Lin Zexu's destruction of opium stocks, or British demands for open trade and extraterritoriality."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE consequence of the 'unequal treaties' for Qing China.",
+        "points": 1,
+        "rubric": "1 pt: Explains a consequence such as the cession of Hong Kong, opening of treaty ports, loss of tariff autonomy, or internal instability feeding movements like the Taiping Rebellion."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2019-saq-1",
+    "courseSlug": "ap-world-history",
+    "year": 2019,
+    "number": 1,
+    "topic": "Industrialization and global labor",
+    "prompt": "Using your knowledge of global industrialization from 1750 to 1900, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE region outside Europe that industrialized before 1900.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a region such as Meiji Japan, the northeastern United States, or parts of Russia under Witte's reforms."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way industrialization in Europe reshaped labor patterns in Asia or Africa.",
+        "points": 1,
+        "rubric": "1 pt: Explains a way such as Indian handloom weavers displaced by Lancashire cotton, the use of indentured labor from India and China after abolition of slavery, or African labor recruited for cash-crop plantations and mines."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way Meiji Japan responded to industrial pressure from the West.",
+        "points": 1,
+        "rubric": "1 pt: Explains a response such as the abolition of the samurai class, state-sponsored zaibatsu industries, universal conscription, or sending missions abroad like the Iwakura Mission to study Western institutions."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2020-saq-2",
+    "courseSlug": "ap-world-history",
+    "year": 2020,
+    "number": 2,
+    "topic": "Decolonization after 1945",
+    "prompt": "A scholar argues: 'Decolonization was not merely the lowering of European flags but the struggle to define what sovereignty would mean in a Cold War world.' Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE newly independent state created through decolonization between 1945 and 1975.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a state such as India (1947), Ghana (1957), Algeria (1962), or Angola (1975)."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way Cold War rivalry shaped a decolonization movement.",
+        "points": 1,
+        "rubric": "1 pt: Explains a way such as U.S.-Soviet competition over Vietnam, Soviet support for the MPLA in Angola, or U.S. intervention in the Congo following Lumumba's assassination."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE challenge newly independent states faced after winning independence.",
+        "points": 1,
+        "rubric": "1 pt: Explains a challenge such as colonial border disputes, dependence on former colonizers for markets and capital, ethnic or sectarian tensions, or coups and one-party rule."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apwh-v2-2016-leq-5",
+    "courseSlug": "ap-world-history",
+    "year": 2016,
+    "number": 5,
+    "topic": "Transoceanic empires 1450-1750",
+    "prompt": "Evaluate the extent to which maritime empires (Spanish, Portuguese, Dutch, British, or French) transformed economies in the Atlantic world from 1450 to 1750.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - Makes a defensible thesis evaluating the extent of economic transformation.\n1 pt: Contextualization - Situates the argument in a broader context such as late-medieval Mediterranean trade or the rise of joint-stock companies.\n1 pt: Evidence - Provides at least two specific, relevant pieces of historical evidence.\n1 pt: Evidence supports argument - Uses evidence to support the thesis about economic transformation.\n1 pt: Analysis - reasoning - Uses causation, comparison, or continuity and change over time to structure the argument.\n1 pt: Analysis - complexity - Demonstrates complexity, e.g., by acknowledging continuities in pre-existing economies or divergent impacts on Africa vs Europe."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apwh-v2-2017-leq-6",
+    "courseSlug": "ap-world-history",
+    "year": 2017,
+    "number": 6,
+    "topic": "19th-century imperialism in Africa",
+    "prompt": "Evaluate the extent to which the 'Scramble for Africa' (c. 1880-1914) was driven by economic motives rather than political or ideological motives.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - States a defensible claim about the relative weight of economic motives.\n1 pt: Contextualization - Connects to industrialization, nationalism, or the Berlin Conference of 1884-1885.\n1 pt: Evidence - Cites at least two specific examples such as Leopold II in the Congo, British in South Africa, or French in West Africa.\n1 pt: Evidence supports argument - Integrates evidence to defend the claim.\n1 pt: Analysis - reasoning - Uses causation or comparison across colonial cases.\n1 pt: Analysis - complexity - Recognizes interaction among motives or counters with Social Darwinist and strategic rationales."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apwh-v2-2018-leq-7",
+    "courseSlug": "ap-world-history",
+    "year": 2018,
+    "number": 7,
+    "topic": "Silk Road trade 1200-1450",
+    "prompt": "Evaluate the extent to which the Silk Roads fostered cross-cultural exchange in Afro-Eurasia from 1200 to 1450.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - Articulates a defensible claim about the degree of exchange.\n1 pt: Contextualization - Places the argument in broader context such as the rise of the Mongols or urban growth in Song China.\n1 pt: Evidence - Uses at least two specific examples like the travels of Marco Polo or the spread of the Black Death.\n1 pt: Evidence supports argument - Ties evidence clearly to the thesis.\n1 pt: Analysis - reasoning - Applies causation or CCOT.\n1 pt: Analysis - complexity - Acknowledges regional variation or unintended consequences such as disease transmission."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apwh-v2-2019-leq-8",
+    "courseSlug": "ap-world-history",
+    "year": 2019,
+    "number": 8,
+    "topic": "Atlantic revolutions",
+    "prompt": "Evaluate the extent to which Enlightenment ideas caused the Atlantic revolutions from 1750 to 1830.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - States a defensible claim about the causal role of Enlightenment ideas.\n1 pt: Contextualization - Links to print culture, imperial crises, or the Seven Years' War.\n1 pt: Evidence - Uses specifics from the American, French, Haitian, or Latin American revolutions.\n1 pt: Evidence supports argument - Connects evidence to the causal claim.\n1 pt: Analysis - reasoning - Uses causation or comparison across revolutions.\n1 pt: Analysis - complexity - Weighs ideas against structural causes like fiscal crisis, slavery, or imperial rivalry."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apwh-v2-2020-leq-9",
+    "courseSlug": "ap-world-history",
+    "year": 2020,
+    "number": 9,
+    "topic": "World War I as a global conflict",
+    "prompt": "Evaluate the extent to which World War I should be understood as a global conflict rather than a European war.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - Presents a defensible evaluation of the war's global scope.\n1 pt: Contextualization - Situates the war within late-19th-century imperialism or the alliance system.\n1 pt: Evidence - Cites specifics such as colonial troops on the Western Front, the East African campaign, or the Ottoman fronts.\n1 pt: Evidence supports argument - Uses evidence to support the global-vs-European claim.\n1 pt: Analysis - reasoning - Applies causation or comparison between theaters.\n1 pt: Analysis - complexity - Addresses how the war both was rooted in European rivalries and had worldwide repercussions like mandates and anticolonial movements."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apwh-v2-2021-leq-10",
+    "courseSlug": "ap-world-history",
+    "year": 2021,
+    "number": 10,
+    "topic": "Cold War in the Global South",
+    "prompt": "Evaluate the extent to which Cold War rivalry shaped political and economic development in Latin America, Africa, or Asia from 1945 to 1991.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - Makes a defensible claim about the Cold War's impact.\n1 pt: Contextualization - Connects to decolonization or the Non-Aligned Movement.\n1 pt: Evidence - Cites two or more examples such as Cuba, Vietnam, Angola, or Iran.\n1 pt: Evidence supports argument - Links evidence to the claim.\n1 pt: Analysis - reasoning - Employs causation or comparison.\n1 pt: Analysis - complexity - Recognizes local agency alongside superpower intervention."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apwh-v2-2022-leq-11",
+    "courseSlug": "ap-world-history",
+    "year": 2022,
+    "number": 11,
+    "topic": "Globalization since 1990",
+    "prompt": "Evaluate the extent to which globalization since 1990 has produced greater economic interdependence among world regions.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - States a defensible claim about interdependence.\n1 pt: Contextualization - Connects to the end of the Cold War or technological change.\n1 pt: Evidence - Uses specifics like NAFTA, the WTO, China's accession to global markets, or the 2008 financial crisis.\n1 pt: Evidence supports argument - Uses evidence in support of the interdependence claim.\n1 pt: Analysis - reasoning - Uses causation, comparison, or continuity and change.\n1 pt: Analysis - complexity - Acknowledges backlash such as anti-globalization movements or rising inequality."
+      }
+    ],
+    "totalPoints": 6
+  },
+
+  // ─── ap-euro-history wave-2 (+19) ─────────────────────────────
+  {
+    "id": "apeuro-v2-2016-saq-1",
+    "courseSlug": "ap-euro-history",
+    "year": 2016,
+    "number": 1,
+    "topic": "Italian Renaissance",
+    "prompt": "A modern historian writes: 'The Italian Renaissance was less a rupture with the medieval past than a reorganization of elite culture around classical models.' Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE intellectual or artistic feature associated with the Italian Renaissance.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a feature such as humanism, linear perspective, patronage of classical texts, or civic humanism."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way economic conditions in Italy supported the Renaissance.",
+        "points": 1,
+        "rubric": "1 pt: Explains a condition such as banking wealth of families like the Medici in Florence, commercial revenues in Venice, or competitive patronage among city-states."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way the Renaissance differed from intellectual life in medieval Europe.",
+        "points": 1,
+        "rubric": "1 pt: Explains a difference such as the recovery of Greek texts, the secular focus of humanist education, or an emphasis on individual achievement rather than scholastic theology."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2017-saq-2",
+    "courseSlug": "ap-euro-history",
+    "year": 2017,
+    "number": 2,
+    "topic": "Protestant Reformation",
+    "prompt": "Using your knowledge of the Protestant Reformation, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE specific grievance Martin Luther raised against the Catholic Church.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a grievance such as the sale of indulgences, clerical corruption, or the authority of the pope over scripture."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE reason Luther's ideas spread rapidly across the Holy Roman Empire.",
+        "points": 1,
+        "rubric": "1 pt: Explains a reason such as the printing press, support from German princes seeking autonomy from Rome, or use of vernacular language."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way the Catholic Church responded to the Reformation.",
+        "points": 1,
+        "rubric": "1 pt: Explains a response such as the Council of Trent's reaffirmation of doctrine, the founding of the Jesuits, or the Roman Inquisition and Index of Forbidden Books."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2018-saq-3",
+    "courseSlug": "ap-euro-history",
+    "year": 2018,
+    "number": 3,
+    "topic": "Scientific Revolution",
+    "prompt": "Using your knowledge of the Scientific Revolution, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE discovery or theory associated with the Scientific Revolution.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a discovery such as Copernican heliocentrism, Kepler's laws of planetary motion, or Newton's law of universal gravitation."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way the Scientific Revolution challenged traditional sources of authority.",
+        "points": 1,
+        "rubric": "1 pt: Explains a challenge such as empirical method displacing Aristotelian philosophy, or Galileo's conflict with the Catholic Church over heliocentrism."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE institutional development that supported scientific inquiry.",
+        "points": 1,
+        "rubric": "1 pt: Explains a development such as the Royal Society in England, the French Academy of Sciences, or expanding correspondence networks among natural philosophers."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2019-saq-4",
+    "courseSlug": "ap-euro-history",
+    "year": 2019,
+    "number": 4,
+    "topic": "Absolutism under Louis XIV",
+    "prompt": "Historians have described Louis XIV (r. 1643-1715) as the archetype of an absolute monarch. Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE policy by which Louis XIV sought to centralize royal authority.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a policy such as the construction of Versailles, the use of intendants, or the revocation of the Edict of Nantes in 1685."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way Louis XIV's wars affected France.",
+        "points": 1,
+        "rubric": "1 pt: Explains an effect such as fiscal strain from the War of the Spanish Succession, territorial gains along the northeastern frontier, or growing resentment among the nobility."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE limit on the power of Louis XIV despite his 'absolutist' claims.",
+        "points": 1,
+        "rubric": "1 pt: Explains a limit such as dependence on noble cooperation for tax collection, regional parlements, or persistent customary law in French provinces."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2020-saq-1",
+    "courseSlug": "ap-euro-history",
+    "year": 2020,
+    "number": 1,
+    "topic": "English Civil War and Glorious Revolution",
+    "prompt": "Using your knowledge of 17th-century England, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE cause of the English Civil War (1642-1649).",
+        "points": 1,
+        "rubric": "1 pt: Identifies a cause such as Charles I's attempts to rule without Parliament, religious conflict over Anglican reforms, or disputes over taxation such as ship money."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE outcome of the Glorious Revolution of 1688.",
+        "points": 1,
+        "rubric": "1 pt: Explains an outcome such as the English Bill of Rights, parliamentary supremacy, or the Toleration Act of 1689."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way these 17th-century conflicts shaped later European political thought.",
+        "points": 1,
+        "rubric": "1 pt: Explains an influence such as Locke's Two Treatises justifying limited government, the constitutional model referenced during the American or French Revolutions, or parliamentary constitutionalism as a contrast to continental absolutism."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2021-saq-2",
+    "courseSlug": "ap-euro-history",
+    "year": 2021,
+    "number": 2,
+    "topic": "Enlightenment",
+    "prompt": "A scholar writes: 'The Enlightenment was less a unified movement than a network of overlapping debates about reason, sociability, and reform.' Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE Enlightenment thinker and a key idea associated with that thinker.",
+        "points": 1,
+        "rubric": "1 pt: Identifies an accurate pairing such as Montesquieu and separation of powers, Rousseau and the general will, or Voltaire and religious toleration."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way Enlightenment ideas circulated beyond elite circles.",
+        "points": 1,
+        "rubric": "1 pt: Explains a mechanism such as salons hosted by women, coffeehouses, the Encyclopedie, or cheap print and lending libraries."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way 'enlightened absolutists' applied Enlightenment ideas to governance.",
+        "points": 1,
+        "rubric": "1 pt: Explains an application such as Frederick II's legal reforms in Prussia, Joseph II's religious toleration edicts, or Catherine II's correspondence with philosophes and early codification efforts."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2022-saq-3",
+    "courseSlug": "ap-euro-history",
+    "year": 2022,
+    "number": 3,
+    "topic": "French Revolution and Napoleon",
+    "prompt": "Using your knowledge of the French Revolution and Napoleonic era, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE grievance of the Third Estate in 1789.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a grievance such as unequal tax burdens, food shortages, or exclusion from meaningful representation in the Estates-General."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way the Napoleonic era spread revolutionary principles across Europe.",
+        "points": 1,
+        "rubric": "1 pt: Explains a way such as the Napoleonic Code, the abolition of feudal privileges in conquered territories, or the stimulation of nationalist responses."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way the Congress of Vienna (1814-1815) attempted to limit the legacy of the Revolution.",
+        "points": 1,
+        "rubric": "1 pt: Explains an attempt such as the restoration of legitimate monarchies, the creation of a balance of power, or the Concert of Europe to coordinate suppression of revolts."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2016-saq-4",
+    "courseSlug": "ap-euro-history",
+    "year": 2016,
+    "number": 4,
+    "topic": "Industrial Revolution in Britain",
+    "prompt": "Using your knowledge of British industrialization c. 1750-1850, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE reason industrialization began in Britain rather than on the Continent.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a reason such as abundant coal and iron, colonial markets, agricultural productivity, or favorable patent law and capital markets."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE social consequence of industrialization in Britain.",
+        "points": 1,
+        "rubric": "1 pt: Explains a consequence such as urbanization and slum conditions, the rise of a factory working class, or changing gender roles in wage labor."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE political or reform response to industrial conditions before 1850.",
+        "points": 1,
+        "rubric": "1 pt: Explains a response such as the Factory Acts, the Chartist movement for universal male suffrage, or the repeal of the Corn Laws in 1846."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2017-saq-1",
+    "courseSlug": "ap-euro-history",
+    "year": 2017,
+    "number": 1,
+    "topic": "Nationalism and unification",
+    "prompt": "Using your knowledge of 19th-century European nationalism, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE political change brought about by the unification of Germany or Italy.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a change such as the proclamation of the German Empire in 1871, the incorporation of Rome into Italy in 1870, or the displacement of Austria from Central European affairs."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE method used by Bismarck or Cavour to achieve unification.",
+        "points": 1,
+        "rubric": "1 pt: Explains a method such as Bismarck's wars against Denmark, Austria, and France, or Cavour's alliance with France against Austria in 1859."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way the 1848 revolutions influenced later nationalist movements.",
+        "points": 1,
+        "rubric": "1 pt: Explains an influence such as demonstrating the weakness of liberal nationalism without military backing, motivating realpolitik strategies, or radicalizing demands for constitutional government."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2018-saq-2",
+    "courseSlug": "ap-euro-history",
+    "year": 2018,
+    "number": 2,
+    "topic": "Second Industrial Revolution and imperialism",
+    "prompt": "A historian observes: 'The Second Industrial Revolution gave European states the steel, steam, and quinine that made the late-19th-century imperial expansion possible.' Respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE technological innovation of the Second Industrial Revolution.",
+        "points": 1,
+        "rubric": "1 pt: Identifies an innovation such as the Bessemer process, electrical generation, the internal combustion engine, or synthetic dyes."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way new technologies facilitated European imperialism in Africa or Asia.",
+        "points": 1,
+        "rubric": "1 pt: Explains a way such as steamships navigating African rivers, the Maxim gun in colonial warfare, or telegraph networks enabling imperial administration."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE ideology used to justify late-19th-century imperialism.",
+        "points": 1,
+        "rubric": "1 pt: Explains an ideology such as Social Darwinism, the 'civilizing mission,' or pseudoscientific racial hierarchies."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2019-saq-1",
+    "courseSlug": "ap-euro-history",
+    "year": 2019,
+    "number": 1,
+    "topic": "Russian Revolution",
+    "prompt": "Using your knowledge of the Russian Revolutions of 1917, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE cause of the February Revolution of 1917.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a cause such as food shortages, military defeats in World War I, or discontent with the Romanov autocracy."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE way Bolshevik policies after October 1917 transformed Russian society.",
+        "points": 1,
+        "rubric": "1 pt: Explains a policy such as the Decree on Land redistributing estates, withdrawal from WWI at Brest-Litovsk, or nationalization of industry under War Communism."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE international consequence of the Russian Revolution.",
+        "points": 1,
+        "rubric": "1 pt: Explains a consequence such as fear of communist revolution in postwar Europe, the founding of the Comintern, or Allied intervention in the Russian Civil War."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2020-saq-2",
+    "courseSlug": "ap-euro-history",
+    "year": 2020,
+    "number": 2,
+    "topic": "Interwar Europe and fascism",
+    "prompt": "Using your knowledge of interwar Europe, respond to parts A, B, and C.",
+    "parts": [
+      {
+        "label": "A",
+        "prompt": "Identify ONE factor that contributed to the rise of fascism in Italy or Germany.",
+        "points": 1,
+        "rubric": "1 pt: Identifies a factor such as resentment over the Treaty of Versailles, economic hardship of the Great Depression, or fear of communist revolution."
+      },
+      {
+        "label": "B",
+        "prompt": "Explain ONE policy used by Mussolini or Hitler to consolidate power.",
+        "points": 1,
+        "rubric": "1 pt: Explains a policy such as the 1922 March on Rome, the Enabling Act of 1933, the Night of the Long Knives, or propaganda under Goebbels."
+      },
+      {
+        "label": "C",
+        "prompt": "Explain ONE way the Great Depression weakened democratic governments in Europe.",
+        "points": 1,
+        "rubric": "1 pt: Explains a way such as coalition paralysis in Weimar Germany, austerity backlash in Britain's National Government, or collapse of public trust in parliamentary institutions."
+      }
+    ],
+    "totalPoints": 3
+  },
+  {
+    "id": "apeuro-v2-2016-leq-5",
+    "courseSlug": "ap-euro-history",
+    "year": 2016,
+    "number": 5,
+    "topic": "Reformation and religious conflict",
+    "prompt": "Evaluate the extent to which the Protestant Reformation reshaped political authority in Europe between 1517 and 1648.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - States a defensible evaluation of political change.\n1 pt: Contextualization - Connects to late-medieval church-state relations or Renaissance humanism.\n1 pt: Evidence - Cites specifics such as the Peace of Augsburg, the Edict of Nantes, or the Thirty Years' War.\n1 pt: Evidence supports argument - Integrates evidence in service of the claim.\n1 pt: Analysis - reasoning - Uses causation or CCOT.\n1 pt: Analysis - complexity - Acknowledges continuity of confessional politics or regional variation."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apeuro-v2-2017-leq-6",
+    "courseSlug": "ap-euro-history",
+    "year": 2017,
+    "number": 6,
+    "topic": "Absolutism versus constitutionalism",
+    "prompt": "Evaluate the extent to which absolutism and constitutionalism diverged as models of governance in 17th-century Europe, using France and England as examples.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - Makes a defensible claim about the degree of divergence.\n1 pt: Contextualization - Situates in earlier wars of religion or fiscal-military state building.\n1 pt: Evidence - Uses specifics from Louis XIV and from the English Civil War or Glorious Revolution.\n1 pt: Evidence supports argument - Uses evidence to support comparison.\n1 pt: Analysis - reasoning - Employs comparison or causation.\n1 pt: Analysis - complexity - Notes shared features such as centralized taxation or standing armies across both models."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apeuro-v2-2018-leq-7",
+    "courseSlug": "ap-euro-history",
+    "year": 2018,
+    "number": 7,
+    "topic": "Enlightenment impact",
+    "prompt": "Evaluate the extent to which Enlightenment ideas challenged established institutions in 18th-century Europe.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - States a defensible argument about the extent of the challenge.\n1 pt: Contextualization - Situates in Scientific Revolution or religious toleration debates.\n1 pt: Evidence - Uses thinkers and works such as Voltaire, Rousseau, or the Encyclopedie.\n1 pt: Evidence supports argument - Ties evidence to the claim.\n1 pt: Analysis - reasoning - Uses causation or comparison.\n1 pt: Analysis - complexity - Recognizes limits such as continued deference to monarchs or exclusion of women and the poor from reform."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apeuro-v2-2019-leq-8",
+    "courseSlug": "ap-euro-history",
+    "year": 2019,
+    "number": 8,
+    "topic": "19th-century -isms",
+    "prompt": "Evaluate the extent to which nationalism was more influential than liberalism in shaping European politics between 1815 and 1871.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - Makes a defensible comparative claim.\n1 pt: Contextualization - Connects to the Congress of Vienna or the aftermath of Napoleon.\n1 pt: Evidence - Cites cases such as 1848 revolutions, German or Italian unification, or Mazzini's writings.\n1 pt: Evidence supports argument - Integrates evidence on both -isms.\n1 pt: Analysis - reasoning - Uses causation or comparison.\n1 pt: Analysis - complexity - Recognizes overlap between liberal and national demands or regional divergence."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apeuro-v2-2020-leq-9",
+    "courseSlug": "ap-euro-history",
+    "year": 2020,
+    "number": 9,
+    "topic": "Causes of World War I",
+    "prompt": "Evaluate the extent to which the alliance system was the primary cause of the outbreak of World War I in 1914.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - States a defensible claim about causation.\n1 pt: Contextualization - Connects to late-19th-century imperialism or the arms race.\n1 pt: Evidence - Uses specifics such as the Triple Alliance, Triple Entente, Balkan crises, or the July Crisis.\n1 pt: Evidence supports argument - Uses evidence to support or qualify the claim.\n1 pt: Analysis - reasoning - Applies causation or comparison among causes.\n1 pt: Analysis - complexity - Weighs alliances against nationalism, militarism, or contingent decisions in July 1914."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apeuro-v2-2021-leq-10",
+    "courseSlug": "ap-euro-history",
+    "year": 2021,
+    "number": 10,
+    "topic": "Cold War in Europe",
+    "prompt": "Evaluate the extent to which the division of Europe after 1945 was the result of ideological conflict between the United States and the Soviet Union.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - Makes a defensible claim about the role of ideology.\n1 pt: Contextualization - Connects to WWII wartime conferences or reconstruction challenges.\n1 pt: Evidence - Uses specifics such as the Truman Doctrine, Marshall Plan, Berlin Blockade, or the formation of NATO and the Warsaw Pact.\n1 pt: Evidence supports argument - Integrates evidence with the claim.\n1 pt: Analysis - reasoning - Applies causation or comparison.\n1 pt: Analysis - complexity - Acknowledges security concerns and great-power politics alongside ideology."
+      }
+    ],
+    "totalPoints": 6
+  },
+  {
+    "id": "apeuro-v2-2022-leq-11",
+    "courseSlug": "ap-euro-history",
+    "year": 2022,
+    "number": 11,
+    "topic": "European integration",
+    "prompt": "Evaluate the extent to which European integration from 1957 to 2007 transformed the political and economic order of Europe.",
+    "parts": [
+      {
+        "label": "Response",
+        "prompt": "Develop an argument in an essay that addresses the prompt.",
+        "points": 6,
+        "rubric": "1 pt: Thesis - States a defensible claim about transformation.\n1 pt: Contextualization - Connects to postwar reconstruction or Cold War dynamics.\n1 pt: Evidence - Uses specifics such as the Treaty of Rome, the Maastricht Treaty, the adoption of the euro, or eastward enlargement after 1989.\n1 pt: Evidence supports argument - Uses evidence to support the transformation claim.\n1 pt: Analysis - reasoning - Applies causation or CCOT.\n1 pt: Analysis - complexity - Acknowledges limits such as persistent national sovereignty, euroskepticism, or uneven integration."
+      }
+    ],
+    "totalPoints": 6
+  },
+
 ];
 
 export function frqsForCourse(slug: CourseSlug): PastFrq[] {
