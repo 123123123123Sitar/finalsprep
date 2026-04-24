@@ -1,29 +1,37 @@
 # FinalsPrep
 
-An AI tutor that explains math, physics, CS, and history step by step. Covers **16 AP courses** organized by the official College Board unit structure. Free to try, one-time PayPal purchases for paid access. Built with Next.js 14, Firebase (auth + Firestore), PayPal Orders API (one-time payments), Anthropic Claude (streaming responses), KaTeX (math rendering), and Tailwind.
+An AI tutor that explains math, physics, CS, and history step by step. Covers **16 AP courses** organized by the official College Board unit structure. Free to try, one-time Ko-fi shop orders for paid access. Built with Next.js 14, Firebase (Auth + Firestore + Storage), Ko-fi (payments), Anthropic Claude (streaming responses), KaTeX (math rendering), and Tailwind.
 
-## What's in the box
+## Feature surface
 
-- **`app/page.tsx`** — landing page with hero, live solver demo, stats strip, coverage of all 16 APs, pricing cards (monthly + yearly), email capture, FAQ, closing CTA
-- **`app/study/page.tsx`** — study tool: categorized AP course picker, sidebar grouped by AP unit number, per-lesson tabs (Lesson / Diagram / Flashcards / Links / Solver)
-- **`app/chat/page.tsx`** — tutor chat with streaming LaTeX responses, history sidebar, voice input, Claude-style 5-hour token budget
-- **`app/signin/page.tsx`** — dedicated sign-in / sign-up page with email verification flow
-- **`app/privacy/page.tsx`**, **`app/terms/page.tsx`** — plain-English legal pages
-- **`app/api/chat/route.ts`** — streaming Anthropic endpoint with server-side auth, token-based rate limiting, plan lookup
-- **`app/api/explain/route.ts`** — one-shot explain endpoint: curated walkthroughs (free, instant) + AI fallback (gated)
-- **`app/api/paypal/create-order/route.ts`** — creates a PayPal Order for the chosen plan (Pro/Hacker × monthly/6-month) or token pack, embeds `{uid, plan, coupon}` in `custom_id`
-- **`app/api/paypal/capture-order/route.ts`** — captures an approved order, extends the user's access period in Firestore
-- **`app/api/webhooks/paypal/route.ts`** — verified PayPal webhook (PAYMENT.CAPTURE.COMPLETED) for belt-and-braces idempotent re-grant
-- **`app/checkout/page.tsx`** — PayPal Buttons checkout page used for all paid purchases
-- **`lib/firebase.ts`** — client SDK init
-- **`lib/firebaseAdmin.ts`** — server SDK init from base64-encoded service account
-- **`lib/authGuard.ts`** — server-side ID token verification
-- **`lib/userPlan.ts`** — Firestore read/write for access-period state (auto-downgrades to learner when `currentPeriodEnd` passes)
-- **`lib/paypal.ts`** — server-side PayPal REST helper (OAuth, create/capture orders, verify webhook)
-- **`lib/rateLimit.ts`** — sliding 5-hour token window limiter
-- **`lib/topics.ts`** — 16 AP courses, official unit structures, 21 curated lessons with walkthroughs, flashcards, links, diagrams
-- **`lib/autoLatex.ts`** — plain-text math → KaTeX auto-wrapper
-- **`MARKETING.md`** — launch content pack (Reddit, TikTok, Twitter, email, ads)
+- **Landing + study + chat** — hero with live solver demo, AP course catalog with per-unit lesson tabs, streaming tutor chat with voice input, image uploads, and a sliding 5-hour token budget.
+- **Practice** — MCQ exams assembled from a per-course bank (gated behind Pro/Hacker), FRQ grading, diagnostic quizzes, and a mastery-unlock toggle that enforces easy → medium → hard.
+- **Social** — public profiles at `/users/{uid}`, followers, direct messages, lesson comments, course leaderboards, activity feed, and subject-scoped forums.
+- **Profile + account** — tabbed `/account` (profile / preferences / billing / support) with display name, bio, photo upload, emoji+color fallback, grade level, and interests. `/profile` is a share-friendly redirect to the signed-in user's public page.
+- **Billing + growth loops** — Ko-fi one-time orders for Pro/Hacker (monthly + 6-month) and token packs, referral codes that grant 5k tokens to both sides on email verification, and gift SKUs that mint a redemption code + credit the buyer 1k (Pro) / 2.5k (Hacker) bonus tokens.
+- **Contact** — `/contact` form writes to `contactMessages/*` and emails `finalsprephelp@gmail.com` via Resend.
+
+## Repo map
+
+- `app/` — App Router pages + API routes.
+  - `app/api/chat/route.ts` — streaming Anthropic endpoint with ID-token auth, token-based rate limiting, plan lookup.
+  - `app/api/explain/route.ts` — one-shot explain endpoint: curated walkthroughs (free) + AI fallback (gated).
+  - `app/api/webhooks/kofi/route.ts` — Ko-fi webhook: verifies the shared token, resolves shop SKUs to plan/pack/gift, grants idempotently.
+  - `app/api/me/avatar/route.ts` — multipart avatar upload + delete; writes to `avatars/{uid}/` in Firebase Storage with a stable `firebaseStorageDownloadTokens` URL.
+  - `app/api/me/profile/route.ts` — GET/PATCH for the caller's `publicProfiles/{uid}` doc.
+  - `app/api/referral/{code,attribute}/route.ts` — lazy code issuance + one-way referee attribution on email verify.
+  - `app/api/gifts/{mine,preview,redeem}/route.ts` — list buyer codes, unauthed preview, and authed redemption.
+  - `app/api/contact/route.ts` — contact-form ingestion; Firestore persistence + Resend email.
+- `lib/` — server + shared helpers.
+  - `lib/firebase.ts`, `lib/firebaseAdmin.ts` — client and server SDK init.
+  - `lib/kofiSkus.ts`, `lib/kofiGrant.ts` — Ko-fi SKU catalog + idempotent post-purchase grant.
+  - `lib/gifts.ts` — gift-code minting + transactional redemption.
+  - `lib/referral.ts` — referral code lifecycle + paired token grants.
+  - `lib/social.ts`, `lib/socialAdmin.ts` — profile types + server-side helpers.
+  - `lib/userPlan.ts`, `lib/tokenBank.ts`, `lib/rateLimit.ts` — plan state, bonus tokens, sliding-window limiter.
+  - `lib/topics.ts` — 16 AP courses, official unit structures, curated lessons + flashcards + diagrams.
+- `firestore.rules`, `storage.rules` — published security rules. Firestore is server-authoritative for every cross-user collection; client writes only hit `users/{uid}/...`. Storage locks writes entirely and exposes `avatars/{uid}/*` for public read.
+- `MARKETING.md` — launch content pack (Reddit, TikTok, Twitter, email, ads).
 
 ## Local run (3 min)
 
@@ -39,39 +47,30 @@ Open http://localhost:3000.
 
 ## Required environment variables
 
-Minimum needed for the full flow to work:
+Minimum needed for a usable dev instance:
 
-1. **`ANTHROPIC_API_KEY`** — https://console.anthropic.com → API Keys → Create Key. Add $5+ credit.
+1. **`ANTHROPIC_API_KEY`** — https://console.anthropic.com → API Keys → Create Key.
 2. **Firebase client config** — 6 `NEXT_PUBLIC_FIREBASE_*` values. Firebase Console → Project Settings → Web app → Config.
-3. **`FIREBASE_ADMIN_KEY_B64`** — base64-encoded service account JSON. See "Firebase Admin setup" below.
-4. **`PAYPAL_CLIENT_ID`** + **`NEXT_PUBLIC_PAYPAL_CLIENT_ID`** (same value), **`PAYPAL_CLIENT_SECRET`**, **`PAYPAL_ENV`** (`sandbox` or `live`) — see "PayPal setup" below.
-5. **`PAYPAL_WEBHOOK_ID`** — optional, for the belt-and-braces webhook. Only add once you have a public URL.
+3. **`FIREBASE_ADMIN_KEY_B64`** — base64-encoded service account JSON (see "Firebase Admin setup").
+4. **`FIREBASE_STORAGE_BUCKET`** — usually the same value as `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`. Required for avatar uploads.
+5. **Ko-fi config** (only for paid flows) — `KOFI_VERIFICATION_TOKEN` + `KOFI_CODE_*` direct-link codes per SKU. See "Ko-fi setup" below.
+6. **Email delivery** (optional):
+   - `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` — for contact-form delivery via nodemailer (see "Email" below).
+   - `RESEND_API_KEY` — for the lead-magnet formula sheet at `/api/capture`.
 
 Everything else in `.env.example` is optional.
 
 ## Firebase setup
 
-The chat requires a Firebase project for authentication and storing chat history. Each user must verify their email before they can chat.
+FinalsPrep uses Firebase for auth, Firestore persistence, and Storage (avatars).
 
-### 1. Create the project + enable auth
+### 1. Create the project + enable Auth + Firestore
 
-1. https://console.firebase.google.com → Add project (or use an existing one).
-2. Left sidebar → **Build → Authentication → Get started**.
-3. **Sign-in method** tab → **Email/Password** → Enable → Save.
-4. Left sidebar → **Build → Firestore Database → Create database** → Production mode → pick closest region.
-5. Firestore → **Rules** tab → paste:
-   ```
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /users/{uid}/{document=**} {
-         allow read, write: if request.auth != null && request.auth.uid == uid;
-       }
-     }
-   }
-   ```
-   → Publish.
-6. Gear icon → **Project settings → Your apps → Web (`</>`)** → register app → copy each value into `.env.local`:
+1. https://console.firebase.google.com → Add project.
+2. **Build → Authentication → Get started** → enable **Email/Password**.
+3. **Build → Firestore Database → Create database** → Production mode → pick your region.
+4. **Firestore → Rules** → paste the contents of `firestore.rules` from this repo → Publish.
+5. Gear icon → **Project settings → Your apps → Web (`</>`)** → register app → copy each value into `.env.local`:
    - `apiKey` → `NEXT_PUBLIC_FIREBASE_API_KEY`
    - `authDomain` → `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
    - `projectId` → `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
@@ -79,123 +78,132 @@ The chat requires a Firebase project for authentication and storing chat history
    - `messagingSenderId` → `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
    - `appId` → `NEXT_PUBLIC_FIREBASE_APP_ID`
 
-### 2. Firebase Admin setup (for server-side auth + webhook)
+### 2. Firebase Admin setup (server-side)
 
-The server verifies ID tokens and writes subscription state to Firestore using Firebase Admin SDK. Admin requires a service account key.
+The server verifies ID tokens and writes billing/profile state using the Admin SDK.
 
-1. Firebase Console → **Project Settings → Service accounts** → **Generate new private key** → Save the downloaded `.json` somewhere private.
-2. Base64-encode the JSON and paste into `.env.local`:
+1. Firebase Console → **Project Settings → Service accounts** → **Generate new private key** → save the JSON privately.
+2. Base64-encode it and paste into `.env.local`:
    ```
    cat /path/to/service-account.json | base64 | tr -d '\n'
    ```
    Set `FIREBASE_ADMIN_KEY_B64` to the output.
 3. Restart the dev server. The admin SDK auto-initializes on first API request.
 
-### 3. Authorized production domains
+### 3. Firebase Storage (for avatar uploads)
+
+1. **Build → Storage → Get started** → Production mode → same region as Firestore.
+2. **Storage → Rules** → paste the contents of `storage.rules` from this repo → Publish.
+3. Set `FIREBASE_STORAGE_BUCKET` in `.env.local` to the bucket name shown in the Storage UI (usually `<project-id>.appspot.com`).
+
+### 4. Authorized production domains
 
 When you deploy, Firebase only accepts auth from whitelisted domains. Go to **Authentication → Settings → Authorized domains** and add your production domain alongside `localhost`.
 
-## PayPal setup
+## Ko-fi setup
 
-We use **one-time PayPal Orders** (not subscriptions). Each purchase unlocks
-access for a fixed period and does not auto-renew — the user revisits
-`/checkout` to renew. This is the only model that works on PayPal Personal
-accounts; if you upgrade to PayPal Business you can switch to the
-Subscriptions API later.
+Paid access is sold as **one-time Ko-fi shop orders**. Ko-fi routes the payment directly to your connected PayPal / Stripe; we only listen on the webhook to grant access.
 
-### 1. Create a REST API app (sandbox)
+### 1. Enable the webhook
 
-1. https://developer.paypal.com/dashboard/applications/sandbox → log in.
-2. Apps & Credentials → **Create App** → name it "FinalsPrep" → Type: Merchant → Create.
-3. Copy the **Client ID** and reveal + copy **Secret key 1**.
-4. In `.env.local`:
+1. https://ko-fi.com/manage/webhooks → copy the verification token.
+2. Set `KOFI_VERIFICATION_TOKEN` in `.env.local`.
+3. After you have a public URL (Vercel), paste `https://yourdomain.com/api/webhooks/kofi` as the endpoint.
+
+### 2. Create Shop products + map SKUs
+
+Each paid SKU gets its own shop product on Ko-fi. Create the product, copy the direct-link code from the URL (`ko-fi.com/s/<code>`), and paste it into the matching env var:
+
+| SKU                    | Env var                          |
+| ---------------------- | -------------------------------- |
+| Pro, 1 month           | `KOFI_CODE_PRO_MONTHLY`          |
+| Pro, 6 months          | `KOFI_CODE_PRO_SIXMONTH`         |
+| Hacker, 1 month        | `KOFI_CODE_HACKER_MONTHLY`       |
+| Hacker, 6 months       | `KOFI_CODE_HACKER_SIXMONTH`      |
+| Token pack (small/med/large) | `KOFI_CODE_PACK_{SMALL,MEDIUM,LARGE}` |
+| Gift — Pro, 1 month    | `KOFI_CODE_GIFT_PRO_MONTHLY`     |
+| Gift — Pro, 6 months   | `KOFI_CODE_GIFT_PRO_SIXMONTH`    |
+| Gift — Hacker, 1 month | `KOFI_CODE_GIFT_HACKER_MONTHLY`  |
+| Gift — Hacker, 6 months| `KOFI_CODE_GIFT_HACKER_SIXMONTH` |
+
+Gift SKUs are the same duration/tier as the regular plan, but the webhook mints a one-time redemption code instead of activating the buyer's plan, and credits the buyer 1,000 bonus tokens (Pro) or 2,500 (Hacker). Recipients claim at `/gift?code=XXXX`.
+
+## Email
+
+Two separate email paths, on purpose:
+
+- **Contact form (`/api/contact`)** — nodemailer over SMTP. No verified-domain requirement, so it works with a plain Gmail inbox.
+- **Lead-magnet capture (`/api/capture`)** — Resend, because it sends to untrusted user-provided addresses and needs a verified sending domain.
+
+### Contact form (SMTP via nodemailer)
+
+Recommended setup for `finalsprephelp@gmail.com`:
+
+1. Enable 2-Step Verification: https://myaccount.google.com/security
+2. Create an App Password (Mail, "Other: FinalsPrep"): https://myaccount.google.com/apppasswords
+3. Set env:
    ```
-   PAYPAL_ENV=sandbox
-   PAYPAL_CLIENT_ID=...
-   NEXT_PUBLIC_PAYPAL_CLIENT_ID=...   # same value, exposed to the browser SDK
-   PAYPAL_CLIENT_SECRET=...
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=465
+   SMTP_USER=finalsprephelp@gmail.com
+   SMTP_PASS=<16-char app password, no spaces>
    ```
-5. Sandbox test accounts: developer dashboard → Testing Tools → Sandbox Accounts.
-   Use the generated "personal" account's email + password in the PayPal popup
-   on the /checkout page to simulate a buyer.
 
-### 2. PayPal webhook (optional, recommended after deploy)
+Sender and recipient are both hardcoded to `finalsprephelp@gmail.com` — the support inbox sends itself every submission. If you need a different routing setup, change the constants at the top of `sendContactEmail` in [app/api/contact/route.ts](app/api/contact/route.ts).
 
-The `/api/paypal/capture-order` route is authoritative — it writes the
-user's new plan/expiration to Firestore as soon as PayPal returns a
-completed capture. The webhook at `/api/webhooks/paypal` is a belt-and-
-braces idempotent re-grant in case the browser drops between approval
-and capture.
+If SMTP env is missing, the contact form still writes to Firestore but no email goes out — nothing is lost.
 
-1. Deploy to Vercel so you have a public URL.
-2. Developer dashboard → your FinalsPrep app → **Sandbox Webhooks** →
-   **Add Webhook** → URL: `https://yourdomain.com/api/webhooks/paypal`.
-3. Event types: **Payment capture completed** (`PAYMENT.CAPTURE.COMPLETED`).
-4. Copy the **Webhook ID** → set as `PAYPAL_WEBHOOK_ID` in Vercel env vars.
+### Lead-magnet capture (Resend)
 
-### 3. Going live
-
-1. Upgrade your PayPal account to **PayPal for Business** (free, 5 min).
-2. Developer dashboard → switch to **Live** → **Create App** → copy live
-   Client ID + Secret. Recreate the webhook under **Live Webhooks**.
-3. In production env: `PAYPAL_ENV=live` + the live client ID/secret/webhook.
+1. https://resend.com → API Keys → create one → set `RESEND_API_KEY`.
+2. Add your sending domain under **Domains** and verify the DNS records. Set `CAPTURE_FROM_EMAIL` to something like `FinalsPrep <hello@yourdomain.com>`. Defaults to `FinalsPrep <hello@finalsprep.com>`.
 
 ## Deploy to Vercel (10 min)
 
 1. `git init && git add . && git commit -m "initial"`
-2. Create a new GitHub repo (keep it private - your `.env.local` is gitignored but don't push service account JSONs).
+2. Create a new GitHub repo (keep it private — `.env.local` is gitignored but don't commit service account JSONs either).
 3. `git remote add origin ... && git push -u origin main`
-4. https://vercel.com/new → Import the repo → Deploy.
-5. Vercel → Project → Settings → Environment Variables → paste **every** line from your `.env.local`. Make sure to set `NEXT_PUBLIC_SITE_URL` to your real domain.
-6. Vercel → Settings → Domains → add your custom domain → follow DNS instructions.
+4. https://vercel.com/new → import the repo → deploy.
+5. Vercel → Project → Settings → Environment Variables → paste every line from `.env.local`. Set `NEXT_PUBLIC_SITE_URL` to the real domain.
+6. Vercel → Settings → Domains → add your custom domain.
 7. Redeploy.
-8. Firebase Console → Authentication → Settings → Authorized domains → add your production domain.
-9. PayPal developer dashboard → Webhooks → Add endpoint → URL `https://yourdomain.com/api/webhooks/paypal` → copy Webhook ID → set as `PAYPAL_WEBHOOK_ID` in Vercel env vars.
+8. Firebase Console → Authentication → Settings → Authorized domains → add the production domain.
+9. Ko-fi → Webhooks → endpoint URL `https://yourdomain.com/api/webhooks/kofi`.
 
-## How the plan enforcement works end to end
+## How access enforcement works end to end
 
-1. **Signup**: user creates account at `/signin`, receives verification email, clicks link, signs in. Firestore has the user doc but no billing record yet → plan defaults to `learner`.
-2. **Free chat**: every chat request sends `Authorization: Bearer <idToken>`. Server verifies the token with Firebase Admin, looks up the user's plan in Firestore, and rate-limits against the `learner` tier.
-3. **Purchase**: user clicks "Start Pro". Client redirects to `/checkout?plan=pro-monthly`. The PayPal Buttons calls `/api/paypal/create-order` with the ID token. Server creates a PayPal Order with `custom_id = "<uid>|<plan>|<coupon?>"`.
-4. **Approval + capture**: user approves in the PayPal popup. Client calls `/api/paypal/capture-order` with the order ID. Server verifies the buyer, captures via PayPal, then writes `{ plan: "pro"|"hacker", billingInterval, paypalOrderId, currentPeriodEnd }` to `users/{uid}/profile/billing` in Firestore. `currentPeriodEnd` is extended from `max(now, currentPeriodEnd)`.
-5. **Webhook** (belt-and-braces): PayPal posts `PAYMENT.CAPTURE.COMPLETED` to `/api/webhooks/paypal`. The route verifies the signature and performs the same grant idempotently (no-op if the capture route already ran).
-6. **Paid chat**: AuthProvider is subscribed via `onSnapshot` to the billing doc, so the chat footer instantly reflects the new tier.
-7. **Expiration**: `getPlan()` compares `currentPeriodEnd` to `now` on every request. Once the period passes, the user silently reverts to `learner` until they buy again.
+1. **Signup**: user creates account at `/signin`, receives a verification email, clicks the link, signs in. Firestore has the user doc but no billing record → plan defaults to `learner`.
+2. **Free chat**: every chat request sends `Authorization: Bearer <idToken>`. Server verifies with Firebase Admin, reads the user's plan from Firestore, and rate-limits against the `learner` tier.
+3. **Purchase**: user hits `/checkout?plan=pro-monthly` (or `?pack=...` / `?gift=...`). The page renders a `CheckoutPopup` that opens the Ko-fi product URL.
+4. **Ko-fi webhook**: after the Ko-fi shop order clears, Ko-fi POSTs to `/api/webhooks/kofi`. We verify the token, look up the buyer by email, and dispatch per SKU:
+   - **Plan** — extend `users/{uid}/profile/billing.currentPeriodEnd` from `max(now, currentPeriodEnd)`.
+   - **Pack** — credit tokens to `users/{uid}/profile/tokenBank`.
+   - **Gift** — mint a `giftCodes/{CODE}` doc tied to the buyer, mirror it under their `users/{uid}/profile/giftPurchases`, and credit the buyer thank-you tokens. Recipients redeem at `/gift?code=XXXX`.
+5. **Live UI**: `AuthProvider` is subscribed via `onSnapshot` to the billing doc so the header and chat footer reflect the new tier the moment the webhook writes.
+6. **Expiration**: `getPlan()` compares `currentPeriodEnd` to `now` on every request; once it passes, the user silently reverts to `learner` until they renew.
+7. **Idempotency**: every grant dedupes on `users/{uid}/kofiOrders/{messageId}:{sku}:{i}` so Ko-fi retries never double-credit.
+
+## Referrals + gifts (growth loops)
+
+- **Referrals** — every signed-in user has a lazily-created code at `users/{uid}/profile/referral`. `/signin?mode=signup&ref=CODE` stashes the code in localStorage; when the referee verifies their email, `/api/referral/attribute` pairs them and grants both sides 5,000 tokens. The pairing is claimed in a Firestore transaction so parallel calls can't double-grant.
+- **Gifts** — see the Ko-fi setup above for SKUs. Codes redeem transactionally (recipient can't claim twice, can't self-redeem), stack on top of existing plan periods, and buyers see a copyable `/gift?code=XXXX` link in their `/account?tab=billing` panel.
 
 ## Rate limits
 
-Defined in `lib/rateLimit.ts`. Sliding 5-hour window, same shape as Claude's free plan.
-
-| Tier | Tokens / 5h | Messages / 5h |
-|---|---|---|
-| Free | 4,000 | 10 |
-| Paid | 60,000 | 120 |
-
-`paid` is derived from the Firestore billing doc (see above). Both limits are enforced server-side using the authenticated `uid` as the bucket key. Curated walkthroughs never count against the budget.
-
-**Production note:** the limiter is in-memory (`new Map()`). Local dev is fine; Vercel serverless cold-starts reset the Map. For real production abuse protection, swap the backing store for Upstash Redis (~15 min of work, single file change).
+Defined in `lib/rateLimit.ts`. Sliding 5-hour window, same shape as Claude's free plan. Paid tiers raise both the token ceiling and per-message count; the bonus-token bank at `users/{uid}/profile/tokenBank` covers spillover once the daily budget is exhausted. The in-memory store works for single-region dev and Vercel's warm-start model; swap for Upstash Redis if you need cross-instance fairness.
 
 ## Launch plan
 
-See `MARKETING.md` for the full launch content pack (Reddit posts, TikTok scripts, Twitter threads, cold emails, ad copy, 48-hour launch checklist).
-
-## Domain suggestions
-
-- finalsprep.com / .app / .io
-- apprep.io / .app
-- cramapp.io
-- studystreak.app
-- myaptutor.com
-
-Grab one from Namecheap or Cloudflare ($10-15/year).
+See `MARKETING.md` for the full launch content pack (Reddit posts, TikTok scripts, Twitter threads, cold emails, ad copy, launch checklist).
 
 ## Troubleshooting
 
-- **"Firebase isn't wired up yet"** — `NEXT_PUBLIC_FIREBASE_*` env vars are missing. Fill in all six.
-- **"auth/operation-not-allowed"** — Email/Password sign-in isn't enabled in Firebase Console. Enable it under Authentication → Sign-in method.
-- **"Authentication required" on chat/explain** — the client is signed in but the server can't verify the ID token. Check that `FIREBASE_ADMIN_KEY_B64` is set and base64-encodes valid JSON.
-- **Webhook signature verification fails** — `PAYPAL_WEBHOOK_ID` is wrong or missing. Copy it from Developer Dashboard → your app → Sandbox Webhooks → Webhook ID. (The webhook route is belt-and-braces; the primary grant path is `/api/paypal/capture-order`.)
-- **"paypal-not-configured"** — `PAYPAL_CLIENT_ID` and/or `PAYPAL_CLIENT_SECRET` are missing on the server. Check `.env.local` / Vercel env vars.
-- **PayPal Buttons never render** — `NEXT_PUBLIC_PAYPAL_CLIENT_ID` is missing on the client. It must be set at build time (it's a `NEXT_PUBLIC_` var).
-- **"Demo mode"** — `ANTHROPIC_API_KEY` isn't set. Add it to `.env.local` and restart.
-- **Rate limit not resetting** — the 5-hour window is sliding, not fixed. Wait until the oldest entry ages out. Check `resetMinutes` in the chat footer.
+- **"Firebase isn't wired up yet"** — the six `NEXT_PUBLIC_FIREBASE_*` env vars are missing.
+- **"auth/operation-not-allowed"** — Email/Password sign-in isn't enabled in Firebase Console.
+- **"Authentication required" on chat/explain** — the client has a token but the server can't verify it. Check `FIREBASE_ADMIN_KEY_B64` is set and decodes to valid JSON.
+- **Avatar uploads return 503 `storage-unconfigured`** — `FIREBASE_STORAGE_BUCKET` is missing, or Firebase Storage isn't enabled / its rules aren't published.
+- **Ko-fi webhook returns `no-token-configured`** — set `KOFI_VERIFICATION_TOKEN` in your environment.
+- **Webhook returns `sku-not-mapped`** — the incoming direct-link code doesn't match any `KOFI_CODE_*` env var. Copy the code from the Ko-fi product URL exactly.
+- **Contact form returns success but no email arrives** — the four `SMTP_*` env vars are missing or wrong. Firestore still has the message — check `contactMessages/*`. Grep Vercel logs for `[contact] nodemailer failed to send` to see the exact SMTP error. For Gmail, the most common cause is using your normal password instead of an App Password; see the Email section.
+- **"Demo mode"** — `ANTHROPIC_API_KEY` isn't set.
+- **Rate limit not resetting** — the 5-hour window is sliding, not fixed. Check `resetMinutes` in the chat footer.

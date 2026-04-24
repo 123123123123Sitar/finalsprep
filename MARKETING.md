@@ -1,16 +1,25 @@
 # FinalsPrep — Launch Content Pack
 
-**Last updated:** April 13, 2026
-**Status:** Ready to post, refresh copy to match the latest pricing if you change it.
-**Pricing reference used throughout:** Free plan (5-hour token budget) · Pro Monthly $9/mo · Pro Yearly $50/yr.
+**Last updated:** April 13, 2026 (pricing reference refreshed April 23, 2026)
+**Status:** Ready to post, but the per-post copy below still references the original $9/mo launch price — do a find-and-replace pass against the **current pricing** table before you publish.
 
-Everything in this document is ready to copy-paste. Your job is to open each platform, paste, tweak if you want, and publish.
+**Current pricing reference (source of truth: `lib/plans.ts`)**
+
+| Plan     | Monthly | 6-month (/ mo) | AP-season first-month promo |
+| -------- | ------- | -------------- | --------------------------- |
+| Learner  | Free    | —              | —                           |
+| Pro      | $16     | $90 ($15/mo)   | $11 first month             |
+| Hacker   | $29     | $160 ($27/mo)  | n/a                         |
+
+Payments are one-time Ko-fi shop orders; plans don't auto-renew. Growth loops beyond subscriptions: referrals grant 5k tokens to both sides on signup + email verify, and gift SKUs credit the buyer 1k (Pro) or 2.5k (Hacker) bonus tokens plus a redeemable code for a friend.
+
+Everything below is ready to copy-paste, **but update the dollar figures and swap "yearly" for "6-month" before posting.** The scripts still work pedagogically; only the prices have moved.
 
 ---
 
 ## 1. Positioning one-liner
 
-**AI tutor for every AP. Free to try, $9/month for unlimited.**
+**AI tutor for every AP. Free to try, $11 first month, $16/month after.**
 
 ---
 

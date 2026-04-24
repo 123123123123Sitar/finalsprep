@@ -8,9 +8,7 @@ export const metadata = {
 export default function TermsPage() {
   return (
     <main className="bg-paper text-body">
-      <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-      </SiteNav>
+      <SiteNav />
 
       <article className="mx-auto max-w-3xl px-6 py-16">
         <div className="label mb-3">Legal</div>

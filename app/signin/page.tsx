@@ -28,9 +28,7 @@ function SignInPageInner() {
 
   return (
     <main className="bg-paper text-body">
-      <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-      </SiteNav>
+      <SiteNav />
 
       <section className="mx-auto max-w-5xl px-6 py-16">
         {!configured ? (
@@ -99,9 +97,7 @@ function SignInPageInner() {
 function SignInPageSkeleton() {
   return (
     <main className="bg-paper text-body">
-      <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-      </SiteNav>
+      <SiteNav />
 
       <section className="mx-auto max-w-5xl px-6 py-16">
         <div className="flex h-64 items-center justify-center text-muted">

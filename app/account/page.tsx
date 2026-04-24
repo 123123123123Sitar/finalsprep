@@ -55,9 +55,7 @@ export default function AccountPage() {
 function AccountSkeleton() {
   return (
     <main className="bg-paper text-body">
-      <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-      </SiteNav>
+      <SiteNav />
       <PageLoader />
     </main>
   );
@@ -347,9 +345,7 @@ function AccountInner() {
 
   return (
     <main className="bg-paper text-body">
-      <SiteNav>
-        <a href="/study" className="nav-link">Study</a>
-      </SiteNav>
+      <SiteNav />
 
       <section className="mx-auto max-w-3xl px-6 pb-24 pt-12 sm:pt-16">
         <div className="flex flex-col gap-1">

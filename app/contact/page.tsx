@@ -86,11 +86,7 @@ export default function ContactPage() {
 function ContactPageSkeleton() {
   return (
     <main className="bg-paper text-body">
-      <SiteNav>
-        <a href="/study" className="nav-link">
-          Study
-        </a>
-      </SiteNav>
+      <SiteNav />
       <section className="mx-auto max-w-3xl px-6 py-16">
         <div className="label mb-3">Contact</div>
         <div className="h-16 w-3/4 animate-pulse rounded bg-hair/40" />
@@ -203,11 +199,7 @@ function ContactPageInner() {
 
   return (
     <main className="bg-paper text-body">
-      <SiteNav>
-        <a href="/study" className="nav-link">
-          Study
-        </a>
-      </SiteNav>
+      <SiteNav />
 
       <section className="mx-auto max-w-3xl px-6 py-16">
         <div className="label mb-3">Contact</div>
@@ -224,7 +216,7 @@ function ContactPageInner() {
           <div className="mt-10 rounded-lg border border-hair bg-paper p-6">
             <div className="label mb-2">Message sent</div>
             <h2 className="font-serif text-2xl text-ink">
-              Thanks — we've got it.
+              Thanks, we've got it.
             </h2>
             <p className="mt-2 text-[15px] text-body">
               We'll reply to <strong className="text-ink">{email}</strong>{" "}
