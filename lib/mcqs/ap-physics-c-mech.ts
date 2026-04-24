@@ -75,6 +75,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Distance is a scalar that adds all path segments regardless of direction: 40 + 30 = 70 km.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A cyclist travels 25 km east, then 35 km west. What is the cyclist's total distance traveled?`,
+          options: [
+          `10 km`,
+          `60 km`,
+          `−10 km`,
+          `35 km`,
+          ],
+          correctIndex: 1,
+          explanation: `Distance is a scalar that adds all path segments regardless of direction: 25 + 35 = 60 km.`,
+        },
+        {
+          id: "q6",
+          question: `A hiker walks 18 km north, then 22 km south. What is the hiker's total distance traveled?`,
+          options: [
+          `4 km`,
+          `40 km`,
+          `−4 km`,
+          `22 km`,
+          ],
+          correctIndex: 1,
+          explanation: `Distance is a scalar that adds all path segments regardless of direction: 18 + 22 = 40 km.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -99,6 +125,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Displacement is the net change in position: +6 m − 4 m = +2 m to the right.`,
+      variations: [
+        {
+          id: "q8",
+          question: `A toy car moves 9 m east, then 3 m west along a straight line. What is the toy car's displacement?`,
+          options: [
+          `12 m east`,
+          `6 m west`,
+          `+6 m (or 6 m east)`,
+          `−9 m`,
+          ],
+          correctIndex: 2,
+          explanation: `Displacement is the net change in position: +9 m − 3 m = +6 m east.`,
+        },
+        {
+          id: "q8",
+          question: `A puck slides 8 m to the right, then 3 m to the left along a straight line. What is the puck's displacement?`,
+          options: [
+          `11 m to the right`,
+          `3 m to the left`,
+          `+5 m (or 5 m to the right)`,
+          `−8 m`,
+          ],
+          correctIndex: 2,
+          explanation: `Displacement is the net change in position: +8 m − 3 m = +5 m to the right.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -135,6 +187,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The negative sign indicates motion in the negative direction. Since rightward is positive, −8 m means 8 m to the left.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A displacement vector is given as −12 m along a horizontal line where eastward is positive. Which statement correctly describes this displacement?`,
+          options: [
+          `The object moved 12 m east`,
+          `The object moved 12 m west`,
+          `The object's distance traveled is −12 m`,
+          `The object moved 12 m but the direction is unknown`,
+          ],
+          correctIndex: 1,
+          explanation: `The negative sign indicates motion in the negative direction. Since eastward is positive, −12 m means 12 m west.`,
+        },
+        {
+          id: "q11",
+          question: `A displacement vector is given as −5 m along a vertical line where upward is positive. Which statement correctly describes this displacement?`,
+          options: [
+          `The object moved 5 m up`,
+          `The object moved 5 m down`,
+          `The object's distance traveled is −5 m`,
+          `The object moved 5 m but the direction is unknown`,
+          ],
+          correctIndex: 1,
+          explanation: `The negative sign indicates motion in the negative direction. Since upward is positive, −5 m means 5 m downward.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -147,6 +225,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Total displacement is +12 m − 5 m = +7 m. The magnitude of displacement is the absolute value, which is 7 m.`,
+      variations: [
+        {
+          id: "q12",
+          question: `An object undergoes two successive displacements: first +9 m, then −3 m, both along the same line. What is the magnitude of the total displacement?`,
+          options: [
+          `12 m`,
+          `6 m`,
+          `−6 m`,
+          `9 m`,
+          ],
+          correctIndex: 1,
+          explanation: `Total displacement is +9 m − 3 m = +6 m. The magnitude is |+6| = 6 m.`,
+        },
+        {
+          id: "q12",
+          question: `An object undergoes two successive displacements: first +15 m, then −11 m, both along the same line. What is the magnitude of the total displacement?`,
+          options: [
+          `26 m`,
+          `4 m`,
+          `−4 m`,
+          `15 m`,
+          ],
+          correctIndex: 1,
+          explanation: `Total displacement is +15 m − 11 m = +4 m. The magnitude is |+4| = 4 m.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -159,6 +263,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `If distance is 50 m and displacement is +30 m, the particle must have traveled 40 m forward and 10 m backward: 40 + 10 = 50 m (distance) and 40 − 10 = 30 m (displacement).`,
+      variations: [
+        {
+          id: "q13",
+          question: `A particle moves along a line and travels a distance of 60 m. Its displacement is +40 m. Which scenario could explain this?`,
+          options: [
+          `The particle moved 40 m in the positive direction only`,
+          `The particle moved 50 m in the positive direction and 10 m in the negative direction`,
+          `The particle moved 60 m in the positive direction and then returned 20 m`,
+          `The particle's speed was constant throughout the motion`,
+          ],
+          correctIndex: 1,
+          explanation: `If distance is 60 m and displacement is +40 m, the particle must have traveled 50 m forward and 10 m backward: 50 + 10 = 60 m (distance) and 50 − 10 = 40 m (displacement).`,
+        },
+        {
+          id: "q13",
+          question: `A particle moves along a line and travels a distance of 80 m. Its displacement is +20 m. Which scenario could explain this?`,
+          options: [
+          `The particle moved 20 m in the positive direction only`,
+          `The particle moved 50 m in the positive direction and 30 m in the negative direction`,
+          `The particle moved 80 m in the positive direction and then returned 60 m`,
+          `The particle's speed was constant throughout the motion`,
+          ],
+          correctIndex: 1,
+          explanation: `If distance is 80 m and displacement is +20 m, the particle must have traveled 50 m forward and 30 m backward: 50 + 30 = 80 m (distance) and 50 − 30 = 20 m (displacement).`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -260,10 +390,36 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Acceleration is the derivative of velocity: $a = \\frac{dv}{dt} = \\frac{d}{dt}(4t + 3) = 4$. The constant term vanishes upon differentiation.`,
+      variations: [
+        {
+          id: "q6",
+          question: `An object has velocity $v(t) = 7t - 2$. What is its acceleration?`,
+          options: [
+          `$a = 7$`,
+          `$a = 7t$`,
+          `$a = -2$`,
+          `$a = 7t - 2$`,
+          ],
+          correctIndex: 0,
+          explanation: `Acceleration is the derivative of velocity: $a = \\frac{dv}{dt} = \\frac{d}{dt}(7t - 2) = 7$. The constant term vanishes upon differentiation.`,
+        },
+        {
+          id: "q6",
+          question: `An object has velocity $v(t) = 3t^2 + 5$. What is its acceleration?`,
+          options: [
+          `$a = 6t$`,
+          `$a = 6$`,
+          `$a = 3t^2 + 5$`,
+          `$a = 5$`,
+          ],
+          correctIndex: 0,
+          explanation: `Acceleration is the derivative of velocity: $a = \\frac{dv}{dt} = \\frac{d}{dt}(3t^2 + 5) = 6t$.`,
+        },
+      ],
     },
     {
       id: "q7",
-      question: `A particle starts at position $x_0 = 2$ m and moves with constant acceleration $a = 5$ m/s². Its initial velocity is $v_0 = 0$ m/s. What is its position after 3 seconds?`,
+      question: `A particle starts at position $x_0 = 5$ m and moves with constant acceleration $a = 5$ m/s². Its initial velocity is $v_0 = 0$ m/s. What is its position after 3 seconds?`,
       options: [
       `$x = 22.5$ m`,
       `$x = 17$ m`,
@@ -271,7 +427,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$x = 15$ m`,
       ],
       correctIndex: 2,
-      explanation: `Using the constant-acceleration equation $x = x_0 + v_0 t + \\frac{1}{2}at^2$: $x = 2 + 0(3) + \\frac{1}{2}(5)(3)^2 = 2 + 22.5 = 24.5$ m. Wait, let me recalculate: $x = 2 + 0 + \\frac{1}{2}(5)(9) = 2 + 22.5 = 24.5$. Actually the correct answer is 27.5 m when $x_0 = 5$ m, but with $x_0 = 2$, it should be 24.5 m. Let me verify the question setup: if the answer is 27.5, then $27.5 = 2 + 0 + \\frac{1}{2}(5)t^2$ gives $t^2 = 10.2$, which doesn't match. The correct calculation is $x = 2 + \\frac{1}{2}(5)(9) = 2 + 22.5 = 24.5$ m. I need to adjust: with $x_0 = 5$, we get $x = 5 + 22.5 = 27.5$ m.`,
+      explanation: `Using $x = x_0 + v_0 t + \\frac{1}{2}at^2$: $x = 5 + 0(3) + \\frac{1}{2}(5)(3)^2 = 5 + 22.5 = 27.5$ m.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A particle starts at position $x_0 = 3$ m and moves with constant acceleration $a = 4$ m/s². Its initial velocity is $v_0 = 0$ m/s. What is its position after 2 seconds?`,
+          options: [
+          `$x = 8$ m`,
+          `$x = 5$ m`,
+          `$x = 11$ m`,
+          `$x = 7$ m`,
+          ],
+          correctIndex: 2,
+          explanation: `Using $x = x_0 + v_0 t + \\frac{1}{2}at^2$: $x = 3 + 0(2) + \\frac{1}{2}(4)(2)^2 = 3 + 8 = 11$ m.`,
+        },
+        {
+          id: "q7",
+          question: `A particle starts at position $x_0 = 10$ m and moves with constant acceleration $a = 6$ m/s². Its initial velocity is $v_0 = 0$ m/s. What is its position after 4 seconds?`,
+          options: [
+          `$x = 48$ m`,
+          `$x = 34$ m`,
+          `$x = 58$ m`,
+          `$x = 24$ m`,
+          ],
+          correctIndex: 2,
+          explanation: `Using $x = x_0 + v_0 t + \\frac{1}{2}at^2$: $x = 10 + 0(4) + \\frac{1}{2}(6)(4)^2 = 10 + 48 = 58$ m.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -284,6 +466,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Integrating velocity: $x(t) = \\int (2t + 1) \\, dt = t^2 + t + C$. Using the initial condition $x(0) = 3$: $3 = 0 + 0 + C$, so $C = 3$. Therefore $x(t) = t^2 + t + 3$.`,
+      variations: [
+        {
+          id: "q8",
+          question: `Given $v(t) = 4t + 2$ and initial position $x(0) = 1$, find $x(t)$.`,
+          options: [
+          `$x(t) = 2t^2 + 2t + 1$`,
+          `$x(t) = 4t + 2$`,
+          `$x(t) = 2t^2 + 2t$`,
+          `$x(t) = 4t^2 + 2t + 1$`,
+          ],
+          correctIndex: 0,
+          explanation: `Integrating velocity: $x(t) = \\int (4t + 2) \\, dt = 2t^2 + 2t + C$. With $x(0) = 1$: $C = 1$. Therefore $x(t) = 2t^2 + 2t + 1$.`,
+        },
+        {
+          id: "q8",
+          question: `Given $v(t) = 6t - 1$ and initial position $x(0) = 5$, find $x(t)$.`,
+          options: [
+          `$x(t) = 3t^2 - t + 5$`,
+          `$x(t) = 6t - 1$`,
+          `$x(t) = 3t^2 - t$`,
+          `$x(t) = 6t^2 - t + 5$`,
+          ],
+          correctIndex: 0,
+          explanation: `Integrating velocity: $x(t) = \\int (6t - 1) \\, dt = 3t^2 - t + C$. With $x(0) = 5$: $C = 5$. Therefore $x(t) = 3t^2 - t + 5$.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -296,6 +504,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Velocity is the derivative of position: $v(t) = \\frac{dx}{dt} = 15t^2 - 2$. At $t = 2$: $v(2) = 15(4) - 2 = 60 - 2 = 58$ m/s.`,
+      variations: [
+        {
+          id: "q9",
+          question: `An object's position is given by $x(t) = 2t^3 + 4t$. What is its velocity at $t = 3$ seconds?`,
+          options: [
+          `$v(3) = 58$ m/s`,
+          `$v(3) = 54$ m/s`,
+          `$v(3) = 22$ m/s`,
+          `$v(3) = 66$ m/s`,
+          ],
+          correctIndex: 0,
+          explanation: `Velocity is the derivative of position: $v(t) = \\frac{dx}{dt} = 6t^2 + 4$. At $t = 3$: $v(3) = 6(9) + 4 = 54 + 4 = 58$ m/s.`,
+        },
+        {
+          id: "q9",
+          question: `An object's position is given by $x(t) = 4t^3 - 5t$. What is its velocity at $t = 2$ seconds?`,
+          options: [
+          `$v(2) = 43$ m/s`,
+          `$v(2) = 27$ m/s`,
+          `$v(2) = 48$ m/s`,
+          `$v(2) = 22$ m/s`,
+          ],
+          correctIndex: 0,
+          explanation: `Velocity is the derivative of position: $v(t) = \\frac{dx}{dt} = 12t^2 - 5$. At $t = 2$: $v(2) = 12(4) - 5 = 48 - 5 = 43$ m/s.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -308,6 +542,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Integrating velocity: $x(t) = \\int 3t^2 \\, dt = t^3 + C$. With $x(0) = 0$, we have $C = 0$, so $x(t) = t^3$. At $t = 4$: $x(4) = 4^3 = 64$ m.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A car travels with velocity $v(t) = 6t^2$ m/s. If it starts at position $x(0) = 0$ m, how far has it traveled after 3 seconds?`,
+          options: [
+          `$x(3) = 54$ m`,
+          `$x(3) = 27$ m`,
+          `$x(3) = 162$ m`,
+          `$x(3) = 108$ m`,
+          ],
+          correctIndex: 0,
+          explanation: `Integrating velocity: $x(t) = \\int 6t^2 \\, dt = 2t^3 + C$. With $x(0) = 0$, $C = 0$, so $x(t) = 2t^3$. At $t = 3$: $x(3) = 2(27) = 54$ m.`,
+        },
+        {
+          id: "q10",
+          question: `A car travels with velocity $v(t) = 9t^2$ m/s. If it starts at position $x(0) = 0$ m, how far has it traveled after 2 seconds?`,
+          options: [
+          `$x(2) = 24$ m`,
+          `$x(2) = 12$ m`,
+          `$x(2) = 72$ m`,
+          `$x(2) = 36$ m`,
+          ],
+          correctIndex: 0,
+          explanation: `Integrating velocity: $x(t) = \\int 9t^2 \\, dt = 3t^3 + C$. With $x(0) = 0$, $C = 0$, so $x(t) = 3t^3$. At $t = 2$: $x(2) = 3(8) = 24$ m.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -319,7 +579,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$a = 0.5$ m/s²`,
       ],
       correctIndex: 0,
-      explanation: `Using the kinematic equation $v^2 = v_0^2 + 2a\\Delta x$: $(30)^2 = (10)^2 + 2a(200)$, so $900 = 100 + 400a$, giving $a = 2$ m/s².`,
+      explanation: `Using $v^2 = v_0^2 + 2a\\Delta x$: $(30)^2 = (10)^2 + 2a(200)$, so $900 = 100 + 400a$, giving $a = 2$ m/s².`,
+      variations: [
+        {
+          id: "q11",
+          question: `An object undergoes constant acceleration. Its velocity changes from 5 m/s to 25 m/s while traveling 300 m. What is its acceleration?`,
+          options: [
+          `$a = 1$ m/s²`,
+          `$a = 2$ m/s²`,
+          `$a = 0.5$ m/s²`,
+          `$a = 4$ m/s²`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $v^2 = v_0^2 + 2a\\Delta x$: $(25)^2 = (5)^2 + 2a(300)$, so $625 = 25 + 600a$, giving $a = 1$ m/s².`,
+        },
+        {
+          id: "q11",
+          question: `An object undergoes constant acceleration. Its velocity changes from 8 m/s to 20 m/s while traveling 56 m. What is its acceleration?`,
+          options: [
+          `$a = 3$ m/s²`,
+          `$a = 1.5$ m/s²`,
+          `$a = 6$ m/s²`,
+          `$a = 2$ m/s²`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $v^2 = v_0^2 + 2a\\Delta x$: $(20)^2 = (8)^2 + 2a(56)$, so $400 = 64 + 112a$, giving $a = 3$ m/s².`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -332,10 +618,36 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Velocity is found by integrating acceleration: $v(t) = \\int 6t \\, dt = 3t^2 + C$. Using $v(0) = 2$: $2 = 0 + C$, so $C = 2$. Therefore $v(t) = 3t^2 + 2$.`,
+      variations: [
+        {
+          id: "q12",
+          question: `The acceleration of a particle is $a(t) = 10t$. If $v(0) = 3$ m/s, what is $v(t)$?`,
+          options: [
+          `$v(t) = 5t^2 + 3$`,
+          `$v(t) = 10t + 3$`,
+          `$v(t) = 5t^2$`,
+          `$v(t) = 10t^2 + 3$`,
+          ],
+          correctIndex: 0,
+          explanation: `Integrating: $v(t) = \\int 10t \\, dt = 5t^2 + C$. With $v(0) = 3$: $C = 3$. Therefore $v(t) = 5t^2 + 3$.`,
+        },
+        {
+          id: "q12",
+          question: `The acceleration of a particle is $a(t) = 4t$. If $v(0) = -1$ m/s, what is $v(t)$?`,
+          options: [
+          `$v(t) = 2t^2 - 1$`,
+          `$v(t) = 4t - 1$`,
+          `$v(t) = 2t^2$`,
+          `$v(t) = 4t^2 - 1$`,
+          ],
+          correctIndex: 0,
+          explanation: `Integrating: $v(t) = \\int 4t \\, dt = 2t^2 + C$. With $v(0) = -1$: $C = -1$. Therefore $v(t) = 2t^2 - 1$.`,
+        },
+      ],
     },
     {
       id: "q13",
-      question: `A particle's position is $x(t) = t^4 - 3t^2 + 5$. What is its acceleration at $t = 1$ second?`,
+      question: `A particle's position is $x(t) = t^4 - 5t^2 + 5$. What is its acceleration at $t = 1$ second?`,
       options: [
       `$a(1) = -2$ m/s²`,
       `$a(1) = 2$ m/s²`,
@@ -343,7 +655,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$a(1) = 0$ m/s²`,
       ],
       correctIndex: 1,
-      explanation: `Velocity is $v(t) = 4t^3 - 6t$. Acceleration is $a(t) = \\frac{dv}{dt} = 12t^2 - 6$. At $t = 1$: $a(1) = 12(1) - 6 = 6$ m/s². Let me recalculate: $a(1) = 12 - 6 = 6$. The correct answer should be 6, but that's not an option. Checking again: $a(t) = 12t^2 - 6$, so $a(1) = 12 - 6 = 6$. I need to revise the problem. If $x(t) = t^4 - 2t^2 + 5$, then $v(t) = 4t^3 - 4t$ and $a(t) = 12t^2 - 4$, giving $a(1) = 8$. Let me use $x(t) = t^4 - 4t^2 + 5$: $v(t) = 4t^3 - 8t$, $a(t) = 12t^2 - 8$, $a(1) = 4$. Actually, for $a(1) = 2$: if $a(t) = 12t^2 - 10$, then $a(1) = 2$. This requires $v(t) = 4t^3 - 10t + C$, so $x(t) = t^4 - 5t^2 + Ct + D$. Let's use $x(t) = t^4 - 5t^2 + 5$.`,
+      explanation: `Velocity is $v(t) = \\frac{dx}{dt} = 4t^3 - 10t$. Acceleration is $a(t) = \\frac{dv}{dt} = 12t^2 - 10$. At $t = 1$: $a(1) = 12 - 10 = 2$ m/s².`,
+      variations: [
+        {
+          id: "q13",
+          question: `A particle's position is $x(t) = t^4 - 2t^2 + 3$. What is its acceleration at $t = 1$ second?`,
+          options: [
+          `$a(1) = -4$ m/s²`,
+          `$a(1) = 8$ m/s²`,
+          `$a(1) = 12$ m/s²`,
+          `$a(1) = 0$ m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `Velocity is $v(t) = 4t^3 - 4t$. Acceleration is $a(t) = 12t^2 - 4$. At $t = 1$: $a(1) = 12 - 4 = 8$ m/s².`,
+        },
+        {
+          id: "q13",
+          question: `A particle's position is $x(t) = 2t^3 - 3t^2$. What is its acceleration at $t = 2$ seconds?`,
+          options: [
+          `$a(2) = -6$ m/s²`,
+          `$a(2) = 18$ m/s²`,
+          `$a(2) = 12$ m/s²`,
+          `$a(2) = 6$ m/s²`,
+          ],
+          correctIndex: 1,
+          explanation: `Velocity is $v(t) = 6t^2 - 6t$. Acceleration is $a(t) = 12t - 6$. At $t = 2$: $a(2) = 24 - 6 = 18$ m/s².`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -368,6 +706,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The particle stops when velocity equals zero: $5 - 2t = 0$, which gives $t = 2.5$ s. At this instant, the particle's velocity is zero before it reverses direction.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A particle's velocity is $v(t) = 12 - 3t$ m/s. At what time does the particle momentarily stop?`,
+          options: [
+          `$t = 4$ s`,
+          `$t = 12$ s`,
+          `$t = 3$ s`,
+          `$t = 0$ s`,
+          ],
+          correctIndex: 0,
+          explanation: `The particle stops when velocity equals zero: $12 - 3t = 0$, which gives $t = 4$ s.`,
+        },
+        {
+          id: "q15",
+          question: `A particle's velocity is $v(t) = 9 - 4t$ m/s. At what time does the particle momentarily stop?`,
+          options: [
+          `$t = 2.25$ s`,
+          `$t = 9$ s`,
+          `$t = 4$ s`,
+          `$t = 0$ s`,
+          ],
+          correctIndex: 0,
+          explanation: `The particle stops when velocity equals zero: $9 - 4t = 0$, which gives $t = 2.25$ s.`,
+        },
+      ],
     },
     ],
   },
