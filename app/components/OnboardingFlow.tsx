@@ -477,12 +477,13 @@ function OnboardingDialog({
       role="dialog"
       aria-modal="true"
       aria-label="Welcome to FinalsPrep"
-      className="animate-fadeIn fixed inset-0 z-[60] flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-sm"
+      className="animate-fadeIn fixed inset-0 z-[60] flex flex-col overflow-hidden bg-paper"
     >
-      <div className="animate-scaleIn relative flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-hair bg-paper shadow-[0_40px_120px_-20px_rgba(0,0,0,0.5)]">
+      <div className="animate-fadeIn relative flex h-full w-full flex-col overflow-hidden">
         <ProgressHeader step={step} total={totalSteps} />
 
-        <div className="flex-1 overflow-y-auto px-7 py-6 sm:px-10">
+        <div className="flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-2xl px-6 py-10 sm:px-10 sm:py-14">
           {step === 0 && (
             <NameStep
               name={name}
@@ -550,9 +551,11 @@ function OnboardingDialog({
               {stepError}
             </div>
           )}
+          </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t border-hair bg-offwhite px-7 py-4 sm:px-10">
+        <div className="border-t border-hair bg-offwhite">
+          <div className="mx-auto flex w-full max-w-2xl items-center justify-between gap-3 px-6 py-4 sm:px-10">
           <button
             type="button"
             onClick={goBack}
@@ -575,6 +578,7 @@ function OnboardingDialog({
                 : "Jump in"
               : "Continue"}
           </button>
+          </div>
         </div>
       </div>
     </div>
@@ -590,7 +594,8 @@ function planChoiceToTier(c: PaidChoice | null): PlanTier {
 function ProgressHeader({ step, total }: { step: number; total: number }) {
   const pct = Math.round(((step + 1) / total) * 100);
   return (
-    <div className="border-b border-hair px-7 pb-4 pt-6 sm:px-10">
+    <div className="border-b border-hair">
+      <div className="mx-auto w-full max-w-2xl px-6 pb-4 pt-6 sm:px-10">
       <div className="flex items-center justify-between text-[11px] uppercase tracking-wider text-muted">
         <span>Welcome to FinalsPrep</span>
         <span>
@@ -602,6 +607,7 @@ function ProgressHeader({ step, total }: { step: number; total: number }) {
           className="h-full rounded-full bg-orange transition-all duration-300"
           style={{ width: `${pct}%` }}
         />
+      </div>
       </div>
     </div>
   );

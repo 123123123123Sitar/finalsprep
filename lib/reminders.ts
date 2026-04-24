@@ -7,15 +7,21 @@ import { STREAK_MIN_MINUTES } from "@/lib/activity";
  * Reminders live in the same `notifications` collection as follow / DM
  * notifications, under `kind: "system"`. Each evaluation is guarded by a
  * marker doc at `users/{uid}/reminders/{kind}_{YYYY-MM-DD}` so we never
- * send the same reminder twice on the same local day.
+ * send the same reminder twice on the same local day. The one-shot
+ * `welcome` kind uses a date-less marker so it fires exactly once per
+ * account.
  *
  * Kinds evaluated on each call to /api/notifications:
+ *   - welcome          : one-time greeting for an account that has never
+ *                        been active. Suppresses the "come_back" path so
+ *                        a brand-new user isn't told they've been gone.
  *   - streak_at_risk   : user has a streak >=2, kept it yesterday, but has
  *                        <30 active minutes today and it's already past
  *                        mid-afternoon local.
  *   - review_reminder  : user has saved review problems but hasn't opened
  *                        the review surface in 3+ days.
- *   - come_back        : user has zero active minutes in the last 48 hours.
+ *   - come_back        : user has logged at least one prior active day and
+ *                        has zero active minutes in the last 48 hours.
  */
 
 const REMINDER_AFTER_HOUR_LOCAL = 15;
@@ -53,6 +59,25 @@ async function markSent(
   today: string
 ): Promise<void> {
   const ref = db.doc(`users/${uid}/reminders/${kind}_${today}`);
+  await ref.set({ sentAt: Date.now() });
+}
+
+async function alreadySentEver(
+  db: AdminDb,
+  uid: string,
+  kind: string
+): Promise<boolean> {
+  const ref = db.doc(`users/${uid}/reminders/${kind}`);
+  const snap = await ref.get();
+  return snap.exists;
+}
+
+async function markSentEver(
+  db: AdminDb,
+  uid: string,
+  kind: string
+): Promise<void> {
+  const ref = db.doc(`users/${uid}/reminders/${kind}`);
   await ref.set({ sentAt: Date.now() });
 }
 
@@ -107,7 +132,24 @@ export async function evaluateReminders(
     uid,
     yesterday(today)
   );
-  if (activeToday === 0 && activeYesterday === 0 && hour >= 12) {
+
+  // A user counts as "ever active" if they've logged a streak day OR if
+  // we've recorded any activity yesterday/today. This is what gates the
+  // "come_back" reminder — without it, brand-new accounts get told they've
+  // been gone before they've even started.
+  const hasEverBeenActive =
+    !!lastActiveDate || activeToday > 0 || activeYesterday > 0;
+
+  if (!hasEverBeenActive) {
+    if (!(await alreadySentEver(db, uid, "welcome"))) {
+      await writeNotification(db, uid, {
+        kind: "system",
+        text: "Welcome to FinalsPrep! Pick your AP courses, then open a unit to get started.",
+        link: "/study",
+      });
+      await markSentEver(db, uid, "welcome");
+    }
+  } else if (activeToday === 0 && activeYesterday === 0 && hour >= 12) {
     if (!(await alreadySentToday(db, uid, "come_back", today))) {
       await writeNotification(db, uid, {
         kind: "system",
