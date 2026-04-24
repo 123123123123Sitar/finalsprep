@@ -75,6 +75,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Each electron carries a charge of $-1.6 \\times 10^{-19}$ C. Five electrons give a total charge of $5 \\times (-1.6 \\times 10^{-19}) = -8.0 \\times 10^{-19}$ C.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A neutral object gains 8 excess electrons. What is the net charge on the object?`,
+          options: [
+            `$+1.28 \\times 10^{-18}$ C`,
+            `$-1.28 \\times 10^{-18}$ C`,
+            `$+8$ C`,
+            `$-8$ C`,
+          ],
+          correctIndex: 1,
+          explanation: `Each electron carries a charge of $-1.6 \\times 10^{-19}$ C. Eight electrons give a total charge of $8 \\times (-1.6 \\times 10^{-19}) = -1.28 \\times 10^{-18}$ C.`,
+        },
+        {
+          id: "q6",
+          question: `A neutral object gains 12 excess electrons. What is the net charge on the object?`,
+          options: [
+            `$-1.92 \\times 10^{-18}$ C`,
+            `$+1.92 \\times 10^{-18}$ C`,
+            `$-12$ C`,
+            `$+12$ C`,
+          ],
+          correctIndex: 0,
+          explanation: `Each electron carries a charge of $-1.6 \\times 10^{-19}$ C. Twelve electrons give a total charge of $12 \\times (-1.6 \\times 10^{-19}) = -1.92 \\times 10^{-18}$ C.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -111,6 +137,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The number of excess electrons is the magnitude of the charge divided by the elementary charge: $\\frac{4.8 \\times 10^{-18}}{1.6 \\times 10^{-19}} = 30$ electrons.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A sphere has a net charge of $-6.4 \\times 10^{-18}$ C. How many excess electrons does the sphere carry? (Use $e = 1.6 \\times 10^{-19}$ C.)`,
+          options: [
+            `4 excess electrons`,
+            `40 excess electrons`,
+            `400 excess electrons`,
+            `$4 \\times 10^{-37}$ excess electrons`,
+          ],
+          correctIndex: 1,
+          explanation: `The number of excess electrons is the magnitude of the charge divided by the elementary charge: $\\frac{6.4 \\times 10^{-18}}{1.6 \\times 10^{-19}} = 40$ electrons.`,
+        },
+        {
+          id: "q9",
+          question: `A sphere has a net charge of $-9.6 \\times 10^{-18}$ C. How many excess electrons does the sphere carry? (Use $e = 1.6 \\times 10^{-19}$ C.)`,
+          options: [
+            `6 excess electrons`,
+            `60 excess electrons`,
+            `600 excess electrons`,
+            `$6 \\times 10^{-37}$ excess electrons`,
+          ],
+          correctIndex: 1,
+          explanation: `The number of excess electrons is the magnitude of the charge divided by the elementary charge: $\\frac{9.6 \\times 10^{-18}}{1.6 \\times 10^{-19}} = 60$ electrons.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -123,6 +175,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `When identical conducting spheres touch, charge distributes equally. Total charge is $12 + (-4) = 8$ μC. Each sphere gets half: $8 / 2 = 4$ μC each. Charge is conserved and equally shared.`,
+      variations: [
+        {
+          id: "q10",
+          question: `Two identical conducting spheres are initially separated. Sphere A has a charge of $+18$ μC and sphere B has a charge of $-6$ μC. The spheres are brought into contact and then separated again. What is the final charge on each sphere?`,
+          options: [
+            `Sphere A: $+18$ μC; Sphere B: $-6$ μC (unchanged)`,
+            `Sphere A: $+12$ μC; Sphere B: $+12$ μC`,
+            `Sphere A: $+6$ μC; Sphere B: $+6$ μC`,
+            `Sphere A: $+9$ μC; Sphere B: $+3$ μC`,
+          ],
+          correctIndex: 0,
+          explanation: `When identical conducting spheres touch, charge distributes equally. Total charge is $18 + (-6) = 12$ μC. Each sphere gets half: $12 / 2 = 6$ μC each.`,
+        },
+        {
+          id: "q10",
+          question: `Two identical conducting spheres are initially separated. Sphere A has a charge of $+20$ μC and sphere B has a charge of $-8$ μC. The spheres are brought into contact and then separated again. What is the final charge on each sphere?`,
+          options: [
+            `Sphere A: $+20$ μC; Sphere B: $-8$ μC (unchanged)`,
+            `Sphere A: $+12$ μC; Sphere B: $+12$ μC`,
+            `Sphere A: $+6$ μC; Sphere B: $+6$ μC`,
+            `Sphere A: $+10$ μC; Sphere B: $-4$ μC`,
+          ],
+          correctIndex: 2,
+          explanation: `When identical conducting spheres touch, charge distributes equally. Total charge is $20 + (-8) = 12$ μC. Each sphere gets half: $12 / 2 = 6$ μC each.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -147,6 +225,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `A positive charge indicates a deficit of electrons. The number of missing electrons is $\\frac{3.2 \\times 10^{-18}}{1.6 \\times 10^{-19}} = 20$. The object has 20 fewer electrons than protons.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A student measures that an object has a net charge of $+4.8 \\times 10^{-18}$ C. Which of the following correctly describes the charge carriers in this object?`,
+          options: [
+            `The object has 30 excess protons and no electrons.`,
+            `The object has 30 excess electrons.`,
+            `The object has a deficit of 30 electrons (30 fewer electrons than protons).`,
+            `The object has 3 excess electrons.`,
+          ],
+          correctIndex: 2,
+          explanation: `A positive charge indicates a deficit of electrons. The number of missing electrons is $\\frac{4.8 \\times 10^{-18}}{1.6 \\times 10^{-19}} = 30$. The object has 30 fewer electrons than protons.`,
+        },
+        {
+          id: "q12",
+          question: `A student measures that an object has a net charge of $+8.0 \\times 10^{-18}$ C. Which of the following correctly describes the charge carriers in this object?`,
+          options: [
+            `The object has 50 excess electrons.`,
+            `The object has a deficit of 50 electrons (50 fewer electrons than protons).`,
+            `The object has 5 fewer electrons than protons.`,
+            `The object has 50 protons and no electrons.`,
+          ],
+          correctIndex: 1,
+          explanation: `A positive charge indicates a deficit of electrons. The number of missing electrons is $\\frac{8.0 \\times 10^{-18}}{1.6 \\times 10^{-19}} = 50$. The object has 50 fewer electrons than protons.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -183,6 +287,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `After first contact: sphere 1 and sphere 2 each have $(5.0 + 0)/2 = 2.5 \\times 10^{-18}$ C. After second contact: sphere 1 and sphere 3 each have $(2.5 + 0)/2 = 1.25 \\times 10^{-18}$ C. The first sphere ends with $+1.25 \\times 10^{-18}$ C.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A conducting sphere initially has a net charge of $+8.0 \\times 10^{-18}$ C. It is then brought into contact with an identical uncharged conducting sphere, and the two are separated. Next, the first sphere is brought into contact with a third identical uncharged sphere, and they are separated. What is the charge on the first sphere after all these operations?`,
+          options: [
+            `$+8.0 \\times 10^{-18}$ C`,
+            `$+4.0 \\times 10^{-18}$ C`,
+            `$+2.0 \\times 10^{-18}$ C`,
+            `$+1.0 \\times 10^{-18}$ C`,
+          ],
+          correctIndex: 2,
+          explanation: `After first contact: sphere 1 and sphere 2 each have $(8.0 + 0)/2 = 4.0 \\times 10^{-18}$ C. After second contact: sphere 1 and sphere 3 each have $(4.0 + 0)/2 = 2.0 \\times 10^{-18}$ C.`,
+        },
+        {
+          id: "q15",
+          question: `A conducting sphere initially has a net charge of $+12.0 \\times 10^{-18}$ C. It is then brought into contact with an identical uncharged conducting sphere, and the two are separated. Next, the first sphere is brought into contact with a third identical uncharged sphere, and they are separated. What is the charge on the first sphere after all these operations?`,
+          options: [
+            `$+12.0 \\times 10^{-18}$ C`,
+            `$+6.0 \\times 10^{-18}$ C`,
+            `$+3.0 \\times 10^{-18}$ C`,
+            `$+1.5 \\times 10^{-18}$ C`,
+          ],
+          correctIndex: 2,
+          explanation: `After first contact: sphere 1 and sphere 2 each have $(12.0 + 0)/2 = 6.0 \\times 10^{-18}$ C. After second contact: sphere 1 and sphere 3 each have $(6.0 + 0)/2 = 3.0 \\times 10^{-18}$ C.`,
+        },
+      ],
     },
     ],
   },
@@ -260,6 +390,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $F = k\\frac{q_1 q_2}{r^2} = (8.99 \\times 10^9)\\frac{(2.0 \\times 10^{-6})(2.0 \\times 10^{-6})}{(0.20)^2} = (8.99 \\times 10^9)\\frac{4.0 \\times 10^{-12}}{0.04} = 0.90$ N.`,
+      variations: [
+        {
+          id: "q6",
+          question: `Two identical point charges of $+3.0$ μC are separated by $0.20$ m. What is the magnitude of the electrostatic force between them? (Use $k = 8.99 \\times 10^9$ N·m²/C²)`,
+          options: [
+            `$0.90$ N`,
+            `$2.0$ N`,
+            `$4.0$ N`,
+            `$8.1$ N`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $F = k\\frac{q_1 q_2}{r^2} = (8.99 \\times 10^9)\\frac{(3.0 \\times 10^{-6})(3.0 \\times 10^{-6})}{(0.20)^2} \\approx 2.0$ N.`,
+        },
+        {
+          id: "q6",
+          question: `Two identical point charges of $+4.0$ μC are separated by $0.20$ m. What is the magnitude of the electrostatic force between them? (Use $k = 8.99 \\times 10^9$ N·m²/C²)`,
+          options: [
+            `$0.45$ N`,
+            `$0.90$ N`,
+            `$3.6$ N`,
+            `$7.2$ N`,
+          ],
+          correctIndex: 2,
+          explanation: `Using $F = k\\frac{q_1 q_2}{r^2} = (8.99 \\times 10^9)\\frac{(4.0 \\times 10^{-6})(4.0 \\times 10^{-6})}{(0.20)^2} \\approx 3.6$ N.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -320,6 +476,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $F = k\\frac{|q_1 q_2|}{r^2} = (8.99 \\times 10^9)\\frac{(4.0 \\times 10^{-6})(2.0 \\times 10^{-6})}{(0.30)^2} = (8.99 \\times 10^9)\\frac{8.0 \\times 10^{-12}}{0.09} = 0.80$ N.`,
+      variations: [
+        {
+          id: "q11",
+          question: `Two point charges, $q_1 = +6.0$ μC and $q_2 = -3.0$ μC, are separated by $0.30$ m. What is the magnitude of the force on $q_1$? (Use $k = 8.99 \\times 10^9$ N·m²/C²)`,
+          options: [
+            `$0.90$ N`,
+            `$1.8$ N`,
+            `$0.45$ N`,
+            `$3.6$ N`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $F = k\\frac{|q_1 q_2|}{r^2} = (8.99 \\times 10^9)\\frac{(6.0 \\times 10^{-6})(3.0 \\times 10^{-6})}{(0.30)^2} \\approx 1.8$ N.`,
+        },
+        {
+          id: "q11",
+          question: `Two point charges, $q_1 = +5.0$ μC and $q_2 = -2.0$ μC, are separated by $0.50$ m. What is the magnitude of the force on $q_1$? (Use $k = 8.99 \\times 10^9$ N·m²/C²)`,
+          options: [
+            `$0.18$ N`,
+            `$0.36$ N`,
+            `$0.72$ N`,
+            `$1.8$ N`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $F = k\\frac{|q_1 q_2|}{r^2} = (8.99 \\times 10^9)\\frac{(5.0 \\times 10^{-6})(2.0 \\times 10^{-6})}{(0.50)^2} \\approx 0.36$ N.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -445,6 +627,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `$E = kQ/r^2 = (8.99 \\times 10^9)(3.0 \\times 10^{-9})/(0.50)^2 = 26.97/0.25 \\approx 1.1 \\times 10^4$ N/C.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A point charge of $+4.0$ nC is located 0.40 m away. Using $k = 8.99 \\times 10^9$ N·m²/C², what is the magnitude of the electric field at that location?`,
+          options: [
+            `$2.25 \\times 10^2$ N/C`,
+            `$2.25 \\times 10^3$ N/C`,
+            `$2.25 \\times 10^4$ N/C`,
+            `$2.25 \\times 10^5$ N/C`,
+          ],
+          correctIndex: 0,
+          explanation: `$E = kQ/r^2 = (8.99 \\times 10^9)(4.0 \\times 10^{-9})/(0.40)^2 = 35.96/0.16 \\approx 2.25 \\times 10^2$ N/C.`,
+        },
+        {
+          id: "q6",
+          question: `A point charge of $+5.0$ nC is located 0.20 m away. Using $k = 8.99 \\times 10^9$ N·m²/C², what is the magnitude of the electric field at that location?`,
+          options: [
+            `$1.1 \\times 10^2$ N/C`,
+            `$1.1 \\times 10^3$ N/C`,
+            `$1.1 \\times 10^4$ N/C`,
+            `$1.1 \\times 10^5$ N/C`,
+          ],
+          correctIndex: 1,
+          explanation: `$E = kQ/r^2 = (8.99 \\times 10^9)(5.0 \\times 10^{-9})/(0.20)^2 = 44.95/0.04 \\approx 1.1 \\times 10^3$ N/C.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -517,6 +725,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Doubling the distance from 0.10 m to 0.20 m means the field is divided by $2^2 = 4$, so $500/4 = 125$ N/C.`,
+      variations: [
+        {
+          id: "q12",
+          question: `An electric field has magnitude 900 N/C at a distance of 0.20 m from a point charge. What is the magnitude of the field at a distance of 0.60 m from the same charge?`,
+          options: [
+            `100 N/C`,
+            `300 N/C`,
+            `2700 N/C`,
+            `8100 N/C`,
+          ],
+          correctIndex: 0,
+          explanation: `Tripling the distance from 0.20 m to 0.60 m means the field is divided by $3^2 = 9$, so $900/9 = 100$ N/C.`,
+        },
+        {
+          id: "q12",
+          question: `An electric field has magnitude 800 N/C at a distance of 0.10 m from a point charge. What is the magnitude of the field at a distance of 0.40 m from the same charge?`,
+          options: [
+            `50 N/C`,
+            `200 N/C`,
+            `3200 N/C`,
+            `12800 N/C`,
+          ],
+          correctIndex: 0,
+          explanation: `Increasing the distance from 0.10 m to 0.40 m multiplies the distance by 4, so the field is divided by $4^2 = 16$: $800/16 = 50$ N/C.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -541,6 +775,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `From $E = F/q$, we get $q = F/E = (8.0 \\times 10^{-6})/(200) = 4.0 \\times 10^{-8}$ C.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A uniform electric field has magnitude 300 N/C and points to the right. If a positive test charge experiences a force of 9.0 × 10⁻⁶ N to the right, what is the magnitude of the test charge?`,
+          options: [
+            `$3.0 \\times 10^{-8}$ C`,
+            `$2.7 \\times 10^{-6}$ C`,
+            `$3.0 \\times 10^{-5}$ C`,
+            `$2.7 \\times 10^{-3}$ C`,
+          ],
+          correctIndex: 0,
+          explanation: `From $E = F/q$, we get $q = F/E = (9.0 \\times 10^{-6})/(300) = 3.0 \\times 10^{-8}$ C.`,
+        },
+        {
+          id: "q14",
+          question: `A uniform electric field has magnitude 400 N/C and points to the right. If a positive test charge experiences a force of 2.0 × 10⁻⁵ N to the right, what is the magnitude of the test charge?`,
+          options: [
+            `$5.0 \\times 10^{-8}$ C`,
+            `$8.0 \\times 10^{-6}$ C`,
+            `$5.0 \\times 10^{-5}$ C`,
+            `$8.0 \\times 10^{-3}$ C`,
+          ],
+          correctIndex: 0,
+          explanation: `From $E = F/q$, we get $q = F/E = (2.0 \\times 10^{-5})/(400) = 5.0 \\times 10^{-8}$ C.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -582,6 +842,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `$\\lambda = \\frac{Q}{L} = \\frac{2 \\times 10^{-6}}{0.5} = 4 \\times 10^{-6}$ C/m. Linear charge density is the total charge divided by the length.`,
+      variations: [
+        {
+          id: "q2",
+          question: `A uniform linear charge distribution has linear charge density $\\lambda = \\frac{dq}{dL}$. If a wire of length 0.25 m carries a total charge of 3 μC, what is the linear charge density?`,
+          options: [
+            `$1.2 \\times 10^{-5}$ C/m`,
+            `$7.5 \\times 10^{-7}$ C/m`,
+            `$3.25 \\times 10^{-6}$ C/m`,
+            `$8.3 \\times 10^4$ C/m`,
+          ],
+          correctIndex: 0,
+          explanation: `$\\lambda = \\frac{Q}{L} = \\frac{3 \\times 10^{-6}}{0.25} = 1.2 \\times 10^{-5}$ C/m.`,
+        },
+        {
+          id: "q2",
+          question: `A uniform linear charge distribution has linear charge density $\\lambda = \\frac{dq}{dL}$. If a wire of length 2.0 m carries a total charge of 6 μC, what is the linear charge density?`,
+          options: [
+            `$3 \\times 10^{-6}$ C/m`,
+            `$12 \\times 10^{-6}$ C/m`,
+            `$8 \\times 10^{-6}$ C/m`,
+            `$3 \\times 10^6$ C/m`,
+          ],
+          correctIndex: 0,
+          explanation: `$\\lambda = \\frac{Q}{L} = \\frac{6 \\times 10^{-6}}{2.0} = 3 \\times 10^{-6}$ C/m.`,
+        },
+      ],
     },
     {
       id: "q3",
@@ -875,6 +1161,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The enclosed charge is $Q_{\\text{enc}} = \\lambda L = 2.0 \\times 10^{-8} \\times 0.50 = 1.0 \\times 10^{-8}$ C. By Gauss's law, the total flux is $\\Phi = Q_{\\text{enc}}/\\varepsilon_0 \\approx 9.0 \\times 10^2$ N·m²/C, all through the curved surface.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A long straight wire carries a uniform linear charge density λ = 3.0 × 10⁻⁸ C/m. Using Gauss's law with a cylindrical surface of radius 0.20 m and length 0.40 m, what is the electric flux through the curved surface?`,
+          options: [
+            `$$\\Phi = \\frac{\\lambda L}{\\varepsilon_0} \\approx 1.36 \\times 10^3 \\text{ N·m}^2/\\text{C}$$`,
+            `$$\\Phi = \\frac{\\lambda L}{2\\varepsilon_0} \\approx 6.8 \\times 10^2 \\text{ N·m}^2/\\text{C}$$`,
+            `$$\\Phi = \\lambda \\pi r L \\approx 7.5 \\times 10^{-9} \\text{ N·m}^2/\\text{C}$$`,
+            `$$\\Phi = 0$$`,
+          ],
+          correctIndex: 0,
+          explanation: `The enclosed charge is $Q_{\\text{enc}} = \\lambda L = 3.0 \\times 10^{-8} \\times 0.40 = 1.2 \\times 10^{-8}$ C. By Gauss's law, $\\Phi = Q_{\\text{enc}}/\\varepsilon_0 \\approx 1.36 \\times 10^3$ N·m²/C.`,
+        },
+        {
+          id: "q11",
+          question: `A long straight wire carries a uniform linear charge density λ = 4.0 × 10⁻⁸ C/m. Using Gauss's law with a cylindrical surface of radius 0.15 m and length 0.25 m, what is the electric flux through the curved surface?`,
+          options: [
+            `$$\\Phi = \\frac{\\lambda L}{\\varepsilon_0} \\approx 1.13 \\times 10^3 \\text{ N·m}^2/\\text{C}$$`,
+            `$$\\Phi = \\frac{\\lambda L}{2\\varepsilon_0} \\approx 5.65 \\times 10^2 \\text{ N·m}^2/\\text{C}$$`,
+            `$$\\Phi = \\lambda \\pi r L \\approx 4.7 \\times 10^{-9} \\text{ N·m}^2/\\text{C}$$`,
+            `$$\\Phi = 0$$`,
+          ],
+          correctIndex: 0,
+          explanation: `The enclosed charge is $Q_{\\text{enc}} = \\lambda L = 4.0 \\times 10^{-8} \\times 0.25 = 1.0 \\times 10^{-8}$ C. By Gauss's law, $\\Phi = Q_{\\text{enc}}/\\varepsilon_0 \\approx 1.13 \\times 10^3$ N·m²/C.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -1000,6 +1312,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $U = \\frac{kq_1q_2}{r} = \\frac{(8.99 \\times 10^9)(3.0 \\times 10^{-6})(4.0 \\times 10^{-6})}{0.50} = 0.216$ J.`,
+      variations: [
+        {
+          id: "q6",
+          question: `Two charges of +2.0 μC and +6.0 μC are separated by 0.30 m. Calculate the electric potential energy. (Use $k = 8.99 \\times 10^9$ N·m²/C²)`,
+          options: [
+            `0.36 J`,
+            `0.18 J`,
+            `0.72 J`,
+            `0.054 J`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $U = \\frac{kq_1q_2}{r} = \\frac{(8.99 \\times 10^9)(2.0 \\times 10^{-6})(6.0 \\times 10^{-6})}{0.30} \\approx 0.36$ J.`,
+        },
+        {
+          id: "q6",
+          question: `Two charges of +5.0 μC and +4.0 μC are separated by 0.40 m. Calculate the electric potential energy. (Use $k = 8.99 \\times 10^9$ N·m²/C²)`,
+          options: [
+            `0.45 J`,
+            `0.225 J`,
+            `0.90 J`,
+            `0.050 J`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $U = \\frac{kq_1q_2}{r} = \\frac{(8.99 \\times 10^9)(5.0 \\times 10^{-6})(4.0 \\times 10^{-6})}{0.40} \\approx 0.45$ J.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -1012,6 +1350,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The work done by an external agent equals the change in potential energy: $W_{\\text{ext}} = U_f - U_i = \\frac{kq_1q_2}{r} - 0 = \\frac{(8.99 \\times 10^9)(2.0 \\times 10^{-6})(5.0 \\times 10^{-6})}{0.20} = 0.45$ J.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A +3.0 μC charge is brought from infinity to a distance of 0.30 m from a fixed +6.0 μC charge. How much work must an external agent do?`,
+          options: [
+            `0.54 J`,
+            `0.27 J`,
+            `1.08 J`,
+            `0.18 J`,
+          ],
+          correctIndex: 0,
+          explanation: `$W_{\\text{ext}} = \\frac{kq_1q_2}{r} = \\frac{(8.99 \\times 10^9)(3.0 \\times 10^{-6})(6.0 \\times 10^{-6})}{0.30} \\approx 0.54$ J.`,
+        },
+        {
+          id: "q7",
+          question: `A +4.0 μC charge is brought from infinity to a distance of 0.50 m from a fixed +5.0 μC charge. How much work must an external agent do?`,
+          options: [
+            `0.36 J`,
+            `0.18 J`,
+            `0.72 J`,
+            `0.90 J`,
+          ],
+          correctIndex: 0,
+          explanation: `$W_{\\text{ext}} = \\frac{kq_1q_2}{r} = \\frac{(8.99 \\times 10^9)(4.0 \\times 10^{-6})(5.0 \\times 10^{-6})}{0.50} \\approx 0.36$ J.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -1108,6 +1472,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The work done by the electric field is related to potential energy by $W_{\\text{field}} = -\\Delta U$. If $W_{\\text{field}} = 0.30$ J, then $\\Delta U = -0.30$ J, so $U_{\\text{new}} = 0.80 - 0.30 = 0.50$ J.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A charge configuration has total potential energy U = 1.20 J. If the electric field does 0.45 J of work on the charges as they rearrange, what is the new potential energy?`,
+          options: [
+            `0.75 J`,
+            `1.65 J`,
+            `0.45 J`,
+            `1.20 J`,
+          ],
+          correctIndex: 0,
+          explanation: `$W_{\\text{field}} = -\\Delta U$. If $W_{\\text{field}} = 0.45$ J, then $\\Delta U = -0.45$ J, so $U_{\\text{new}} = 1.20 - 0.45 = 0.75$ J.`,
+        },
+        {
+          id: "q15",
+          question: `A charge configuration has total potential energy U = 2.00 J. If the electric field does 0.80 J of work on the charges as they rearrange, what is the new potential energy?`,
+          options: [
+            `1.20 J`,
+            `2.80 J`,
+            `0.80 J`,
+            `2.00 J`,
+          ],
+          correctIndex: 0,
+          explanation: `$W_{\\text{field}} = -\\Delta U$. If $W_{\\text{field}} = 0.80$ J, then $\\Delta U = -0.80$ J, so $U_{\\text{new}} = 2.00 - 0.80 = 1.20$ J.`,
+        },
+      ],
     },
     ],
   },
@@ -1185,6 +1575,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $V = kQ/r = (8.99 \\times 10^9)(2.0 \\times 10^{-9})/0.50 = 35.96 \\approx 36$ V.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A point charge of $+3.0$ nC is located 0.30 m away. Using $k = 8.99 \\times 10^9$ N·m²/C², what is the electric potential at this location?`,
+          options: [
+            `90 V`,
+            `45 V`,
+            `180 V`,
+            `9.0 V`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $V = kQ/r = (8.99 \\times 10^9)(3.0 \\times 10^{-9})/0.30 \\approx 90$ V.`,
+        },
+        {
+          id: "q6",
+          question: `A point charge of $+4.0$ nC is located 0.20 m away. Using $k = 8.99 \\times 10^9$ N·m²/C², what is the electric potential at this location?`,
+          options: [
+            `180 V`,
+            `90 V`,
+            `36 V`,
+            `18 V`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $V = kQ/r = (8.99 \\times 10^9)(4.0 \\times 10^{-9})/0.20 \\approx 180$ V.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -1197,6 +1613,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Since $V = kQ/r$, potential is inversely proportional to distance. Doubling the distance halves the potential: $-50/2 = -25$ V.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A negative point charge creates an electric potential of $-80$ V at a distance of 0.20 m. If the distance is increased to 0.80 m, what is the new potential at this location?`,
+          options: [
+            `$-320$ V`,
+            `$-20$ V`,
+            `$-80$ V`,
+            `$-10$ V`,
+          ],
+          correctIndex: 1,
+          explanation: `Since $V = kQ/r$, potential is inversely proportional to distance. Increasing the distance by a factor of 4 divides the potential by 4: $-80/4 = -20$ V.`,
+        },
+        {
+          id: "q7",
+          question: `A negative point charge creates an electric potential of $-120$ V at a distance of 0.30 m. If the distance is increased to 0.90 m, what is the new potential at this location?`,
+          options: [
+            `$-360$ V`,
+            `$-40$ V`,
+            `$-120$ V`,
+            `$-13.3$ V`,
+          ],
+          correctIndex: 1,
+          explanation: `Since $V = kQ/r$, potential is inversely proportional to distance. Tripling the distance divides the potential by 3: $-120/3 = -40$ V.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -1245,6 +1687,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `For a uniform field, $E = -dV/dx$, so $dV = -E \\, dx = -(100)(0.20) = -20$ V. Thus $V(0.20) = 50 - 20 = 30$ V.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A uniform electric field points in the positive $x$-direction with magnitude 150 V/m. If the electric potential at $x = 0$ is 80 V, what is the potential at $x = 0.20$ m?`,
+          options: [
+            `110 V`,
+            `50 V`,
+            `80 V`,
+            `30 V`,
+          ],
+          correctIndex: 1,
+          explanation: `For a uniform field, $dV = -E \, dx = -(150)(0.20) = -30$ V. Thus $V(0.20) = 80 - 30 = 50$ V.`,
+        },
+        {
+          id: "q11",
+          question: `A uniform electric field points in the positive $x$-direction with magnitude 200 V/m. If the electric potential at $x = 0$ is 120 V, what is the potential at $x = 0.30$ m?`,
+          options: [
+            `180 V`,
+            `60 V`,
+            `120 V`,
+            `90 V`,
+          ],
+          correctIndex: 1,
+          explanation: `For a uniform field, $dV = -E \, dx = -(200)(0.30) = -60$ V. Thus $V(0.30) = 120 - 60 = 60$ V.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -1269,6 +1737,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The change in potential energy is $\\Delta U = q \\Delta V = (-2.0)(20 - 100) = (-2.0)(-80) = +160$ J.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A charged particle moves from point X (potential 150 V) to point Y (potential 30 V) in an electric field. If the particle has charge $q = -3.0$ C, what is the change in its electric potential energy?`,
+          options: [
+            `$-360$ J`,
+            `$+360$ J`,
+            `$-120$ J`,
+            `$+120$ J`,
+          ],
+          correctIndex: 1,
+          explanation: `$\\Delta U = q \\Delta V = (-3.0)(30 - 150) = (-3.0)(-120) = +360$ J.`,
+        },
+        {
+          id: "q13",
+          question: `A charged particle moves from point X (potential 80 V) to point Y (potential 20 V) in an electric field. If the particle has charge $q = -4.0$ C, what is the change in its electric potential energy?`,
+          options: [
+            `$-240$ J`,
+            `$+240$ J`,
+            `$-60$ J`,
+            `$+60$ J`,
+          ],
+          correctIndex: 1,
+          explanation: `$\\Delta U = q \\Delta V = (-4.0)(20 - 80) = (-4.0)(-60) = +240$ J.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -1281,6 +1775,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The electric field is $E = -dV/dx = -(-50) = 50$ V/m. The field is uniform and does not depend on position, so it is 50 V/m at $x = 0.5$ m.`,
+      variations: [
+        {
+          id: "q14",
+          question: `The electric potential varies with position according to $V(x) = 120 - 30x$ (in volts, with $x$ in meters). What is the magnitude of the electric field at $x = 0.5$ m?`,
+          options: [
+            `15 V/m`,
+            `30 V/m`,
+            `60 V/m`,
+            `120 V/m`,
+          ],
+          correctIndex: 1,
+          explanation: `The electric field is $E = -dV/dx = -(-30) = 30$ V/m. The field is uniform and does not depend on position.`,
+        },
+        {
+          id: "q14",
+          question: `The electric potential varies with position according to $V(x) = 200 - 80x$ (in volts, with $x$ in meters). What is the magnitude of the electric field at $x = 1.0$ m?`,
+          options: [
+            `40 V/m`,
+            `80 V/m`,
+            `120 V/m`,
+            `200 V/m`,
+          ],
+          correctIndex: 1,
+          explanation: `The electric field is $E = -dV/dx = -(-80) = 80$ V/m. The field is uniform and does not depend on position.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -1555,6 +2075,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $Q = CV$, the charge is $Q = (3 \\times 10^{-6}\\text{ F})(8\\text{ V}) = 24 \\times 10^{-6}\\text{ C} = 24\\text{ μC}$.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A 5 μF capacitor is charged to 12 V. How much charge is stored?`,
+          options: [
+            `60 μC`,
+            `17 μC`,
+            `0.42 μC`,
+            `60 C`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $Q = CV$, the charge is $Q = (5 \\times 10^{-6}\\text{ F})(12\\text{ V}) = 60 \\times 10^{-6}\\text{ C} = 60\\text{ μC}$.`,
+        },
+        {
+          id: "q6",
+          question: `A 4 μF capacitor is charged to 9 V. How much charge is stored?`,
+          options: [
+            `36 μC`,
+            `13 μC`,
+            `0.44 μC`,
+            `36 C`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $Q = CV$, the charge is $Q = (4 \\times 10^{-6}\\text{ F})(9\\text{ V}) = 36 \\times 10^{-6}\\text{ C} = 36\\text{ μC}$.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -1567,6 +2113,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $C = Q/V$, the capacitance is $C = (48 \\times 10^{-6}\\text{ C})/(6\\text{ V}) = 8 \\times 10^{-6}\\text{ F} = 8\\text{ μF}$.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A capacitor stores 72 μC of charge when 12 V is applied. What is its capacitance?`,
+          options: [
+            `6 μF`,
+            `648 μF`,
+            `0.125 μF`,
+            `81 μF`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $C = Q/V$, the capacitance is $C = (72 \\times 10^{-6}\\text{ C})/(12\\text{ V}) = 6 \\times 10^{-6}\\text{ F} = 6\\text{ μF}$.`,
+        },
+        {
+          id: "q7",
+          question: `A capacitor stores 90 μC of charge when 15 V is applied. What is its capacitance?`,
+          options: [
+            `6 μF`,
+            `1350 μF`,
+            `0.167 μF`,
+            `105 μF`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $C = Q/V$, the capacitance is $C = (90 \\times 10^{-6}\\text{ C})/(15\\text{ V}) = 6 \\times 10^{-6}\\text{ F} = 6\\text{ μF}$.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -1591,6 +2163,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Using $C = \\kappa\\varepsilon_0 A/d = (5)(8.85 \\times 10^{-12})(0.1)/(0.01) = 4.425 \\times 10^{-9}$ F.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A parallel-plate capacitor with plate area 0.2 m² and separation 0.02 m is filled with a dielectric of constant 4. If $\\varepsilon_0 = 8.85 \\times 10^{-12}$ F/m, what is the capacitance?`,
+          options: [
+            `$3.54 \\times 10^{-10}$ F`,
+            `$3.54 \\times 10^{-11}$ F`,
+            `$3.54 \\times 10^{-9}$ F`,
+            `$3.54 \\times 10^{-12}$ F`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $C = \\kappa\\varepsilon_0 A/d = (4)(8.85 \\times 10^{-12})(0.2)/(0.02) = 3.54 \\times 10^{-10}$ F.`,
+        },
+        {
+          id: "q9",
+          question: `A parallel-plate capacitor with plate area 0.3 m² and separation 0.01 m is filled with a dielectric of constant 2. If $\\varepsilon_0 = 8.85 \\times 10^{-12}$ F/m, what is the capacitance?`,
+          options: [
+            `$5.31 \\times 10^{-10}$ F`,
+            `$5.31 \\times 10^{-11}$ F`,
+            `$5.31 \\times 10^{-9}$ F`,
+            `$5.31 \\times 10^{-12}$ F`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $C = \\kappa\\varepsilon_0 A/d = (2)(8.85 \\times 10^{-12})(0.3)/(0.01) = 5.31 \\times 10^{-10}$ F.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -1615,6 +2213,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `The capacitance remains constant at $C = Q/V = (100 \\times 10^{-6})/(10) = 10\\text{ μF}$. At 20 V, $Q = CV = (10 \\times 10^{-6})(20) = 200\\text{ μC}$.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A capacitor is charged to 12 V and stores 60 μC. If the voltage is increased to 24 V, how much charge is now stored?`,
+          options: [
+            `30 μC`,
+            `60 μC`,
+            `120 μC`,
+            `240 μC`,
+          ],
+          correctIndex: 2,
+          explanation: `The capacitance remains constant at $C = Q/V = 60/12 = 5\\text{ μF}$. At 24 V, $Q = CV = 5 \\times 24 = 120\\text{ μC}$.`,
+        },
+        {
+          id: "q11",
+          question: `A capacitor is charged to 5 V and stores 40 μC. If the voltage is increased to 15 V, how much charge is now stored?`,
+          options: [
+            `40 μC`,
+            `80 μC`,
+            `120 μC`,
+            `200 μC`,
+          ],
+          correctIndex: 2,
+          explanation: `The capacitance remains constant at $C = Q/V = 40/5 = 8\\text{ μF}$. At 15 V, $Q = CV = 8 \\times 15 = 120\\text{ μC}$.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -1639,6 +2263,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `In series, capacitors have the same charge. The equivalent capacitance is $C_{\\text{eq}} = (10 \\times 5)/(10 + 5) = 10/3$ μF. The charge is $Q = C_{\\text{eq}} \\times V = (10/3 \\times 10^{-6})(30) = 100\\text{ μC}$.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A 12 μF capacitor and a 6 μF capacitor are connected in series and charged to a total voltage of 36 V. What is the charge on the 12 μF capacitor?`,
+          options: [
+            `144 μC`,
+            `216 μC`,
+            `432 μC`,
+            `648 μC`,
+          ],
+          correctIndex: 0,
+          explanation: `In series, capacitors have the same charge. The equivalent capacitance is $C_{\\text{eq}} = (12 \\times 6)/(12 + 6) = 4$ μF. The charge is $Q = C_{\\text{eq}}V = (4\\text{ μF})(36\\text{ V}) = 144\\text{ μC}$.`,
+        },
+        {
+          id: "q13",
+          question: `An 8 μF capacitor and a 4 μF capacitor are connected in series and charged to a total voltage of 24 V. What is the charge on the 8 μF capacitor?`,
+          options: [
+            `64 μC`,
+            `96 μC`,
+            `192 μC`,
+            `288 μC`,
+          ],
+          correctIndex: 0,
+          explanation: `In series, capacitors have the same charge. The equivalent capacitance is $C_{\\text{eq}} = (8 \\times 4)/(8 + 4) = 8/3$ μF. The charge is $Q = C_{\\text{eq}}V = (8/3\\text{ μF})(24\\text{ V}) = 64\\text{ μC}$.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -1740,6 +2390,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `The new capacitance is $C_{\\text{new}} = \\kappa \\cdot C_{\\text{old}} = 4 \\times 20 \\text{ pF} = 80 \\text{ pF}$.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A 30 pF air-filled capacitor is filled with a dielectric material having $\\kappa = 3$. What is the new capacitance?`,
+          options: [
+            `10 pF`,
+            `33 pF`,
+            `90 pF`,
+            `270 pF`,
+          ],
+          correctIndex: 2,
+          explanation: `$C_{\\text{new}} = \\kappa C_{\\text{old}} = 3 \\times 30 \\text{ pF} = 90 \\text{ pF}$.`,
+        },
+        {
+          id: "q6",
+          question: `A 15 pF air-filled capacitor is filled with a dielectric material having $\\kappa = 5$. What is the new capacitance?`,
+          options: [
+            `3 pF`,
+            `20 pF`,
+            `75 pF`,
+            `150 pF`,
+          ],
+          correctIndex: 2,
+          explanation: `$C_{\\text{new}} = \\kappa C_{\\text{old}} = 5 \\times 15 \\text{ pF} = 75 \\text{ pF}$.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -1776,6 +2452,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `At constant voltage, $Q = CV$, so the ratio of charges equals the ratio of capacitances: $Q_2 / Q_1 = C_2 / C_1 = \\kappa_2 / \\kappa_1 = 5/2 = 2.5$.`,
+      variations: [
+        {
+          id: "q9",
+          question: `Two identical parallel-plate capacitors are filled with different dielectrics: one with $kappa_1 = 3$ and the other with $kappa_2 = 6$. Both are connected to the same voltage source. What is the ratio of the charge on the second capacitor to the charge on the first?`,
+          options: [
+            `$1/2$`,
+            `$2$`,
+            `$3$`,
+            `$6$`,
+          ],
+          correctIndex: 1,
+          explanation: `At constant voltage, $Q = CV$, so $Q_2/Q_1 = C_2/C_1 = kappa_2/kappa_1 = 6/3 = 2$.`,
+        },
+        {
+          id: "q9",
+          question: `Two identical parallel-plate capacitors are filled with different dielectrics: one with $kappa_1 = 4$ and the other with $kappa_2 = 10$. Both are connected to the same voltage source. What is the ratio of the charge on the second capacitor to the charge on the first?`,
+          options: [
+            `$2/5$`,
+            `$5/2$`,
+            `$4$`,
+            `$10$`,
+          ],
+          correctIndex: 1,
+          explanation: `At constant voltage, $Q = CV$, so $Q_2/Q_1 = C_2/C_1 = kappa_2/kappa_1 = 10/4 = 5/2$.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -1788,6 +2490,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The electric field is $E = V/d = 300 \\text{ V} / 0.002 \\text{ m} = 150,000 \\text{ V/m}$. The dielectric constant does not affect the field calculation from voltage and distance.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A parallel-plate capacitor has plate separation 4 mm and is filled with a dielectric of $\\kappa = 5$. If the voltage across the capacitor is 200 V, what is the electric field between the plates?`,
+          options: [
+            `50,000 V/m`,
+            `50 V/m`,
+            `1,000 V/m`,
+            `250,000 V/m`,
+          ],
+          correctIndex: 0,
+          explanation: `$E = V/d = 200 \\text{ V} / 0.004 \\text{ m} = 50,000 \\text{ V/m}$. The dielectric constant does not affect this calculation from voltage and distance.`,
+        },
+        {
+          id: "q10",
+          question: `A parallel-plate capacitor has plate separation 5 mm and is filled with a dielectric of $\\kappa = 4$. If the voltage across the capacitor is 500 V, what is the electric field between the plates?`,
+          options: [
+            `100,000 V/m`,
+            `100 V/m`,
+            `2,000 V/m`,
+            `400,000 V/m`,
+          ],
+          correctIndex: 0,
+          explanation: `$E = V/d = 500 \\text{ V} / 0.005 \\text{ m} = 100,000 \\text{ V/m}$. The dielectric constant does not affect this calculation from voltage and distance.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -1913,6 +2641,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $U = \\frac{1}{2}CV^2 = \\frac{1}{2}(100 \\times 10^{-6})(50)^2 = \\frac{1}{2}(100 \\times 10^{-6})(2500) = 0.125$ J.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A 200 μF capacitor is charged to 30 V. How much energy is stored in it?`,
+          options: [
+            `0.045 J`,
+            `0.090 J`,
+            `0.18 J`,
+            `0.36 J`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $U = \\frac{1}{2}CV^2 = \\frac{1}{2}(200 \\times 10^{-6})(30)^2 = 0.090$ J.`,
+        },
+        {
+          id: "q6",
+          question: `A 50 μF capacitor is charged to 40 V. How much energy is stored in it?`,
+          options: [
+            `0.020 J`,
+            `0.040 J`,
+            `0.080 J`,
+            `0.160 J`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $U = \\frac{1}{2}CV^2 = \\frac{1}{2}(50 \\times 10^{-6})(40)^2 = 0.040$ J.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -1937,6 +2691,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $U = \\frac{1}{2}\\frac{Q^2}{C} = \\frac{1}{2}\\frac{(2 \\times 10^{-3})^2}{50 \\times 10^{-6}} = \\frac{1}{2}\\frac{4 \\times 10^{-6}}{50 \\times 10^{-6}} = \\frac{1}{2}(0.08) = 0.04$ J.`,
+      variations: [
+        {
+          id: "q8",
+          question: `A capacitor with capacitance 25 μF holds a charge of 1 mC. What is the energy stored?`,
+          options: [
+            `0.01 J`,
+            `0.02 J`,
+            `0.04 J`,
+            `0.08 J`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $U = \\frac{1}{2}\\frac{Q^2}{C} = \\frac{1}{2}\\frac{(1 \\times 10^{-3})^2}{25 \\times 10^{-6}} = 0.02$ J.`,
+        },
+        {
+          id: "q8",
+          question: `A capacitor with capacitance 100 μF holds a charge of 4 mC. What is the energy stored?`,
+          options: [
+            `0.04 J`,
+            `0.08 J`,
+            `0.16 J`,
+            `0.32 J`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $U = \\frac{1}{2}\\frac{Q^2}{C} = \\frac{1}{2}\\frac{(4 \\times 10^{-3})^2}{100 \\times 10^{-6}} = 0.08$ J.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -1949,6 +2729,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Since $U = \\frac{1}{2}CV^2$ and the capacitors are identical, $\\frac{U_1}{U_2} = \\frac{V_1^2}{V_2^2} = \\frac{(100)^2}{(200)^2} = \\frac{1}{4}$.`,
+      variations: [
+        {
+          id: "q9",
+          question: `Two identical capacitors are charged to different voltages: one to 50 V and the other to 150 V. The ratio of their stored energies is:`,
+          options: [
+            `1:3`,
+            `1:9`,
+            `3:1`,
+            `9:1`,
+          ],
+          correctIndex: 1,
+          explanation: `For identical capacitors, $U propto V^2$, so $U_1/U_2 = 50^2/150^2 = 1/9$.`,
+        },
+        {
+          id: "q9",
+          question: `Two identical capacitors are charged to different voltages: one to 80 V and the other to 160 V. The ratio of their stored energies is:`,
+          options: [
+            `1:2`,
+            `1:4`,
+            `2:1`,
+            `4:1`,
+          ],
+          correctIndex: 1,
+          explanation: `For identical capacitors, $U propto V^2$, so $U_1/U_2 = 80^2/160^2 = 1/4$.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -1961,6 +2767,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $u = \\frac{1}{2}\\epsilon_0 E^2 = \\frac{1}{2}(8.85 \\times 10^{-12})(1000)^2 = \\frac{1}{2}(8.85 \\times 10^{-12})(10^6) = 4.425 \\times 10^{-6}$ J/m³.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A parallel-plate capacitor has an electric field of magnitude 2000 V/m between its plates. If $\\epsilon_0 = 8.85 \\times 10^{-12}$ F/m, what is the energy density in the field?`,
+          options: [
+            `$1.77 \\times 10^{-5}$ J/m³`,
+            `$1.77 \\times 10^{-3}$ J/m³`,
+            `$3.54 \\times 10^{-5}$ J/m³`,
+            `$7.08 \\times 10^{-2}$ J/m³`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $u = \\frac{1}{2}\\epsilon_0 E^2 = \\frac{1}{2}(8.85 \\times 10^{-12})(2000)^2 = 1.77 \\times 10^{-5}$ J/m³.`,
+        },
+        {
+          id: "q10",
+          question: `A parallel-plate capacitor has an electric field of magnitude 3000 V/m between its plates. If $\\epsilon_0 = 8.85 \\times 10^{-12}$ F/m, what is the energy density in the field?`,
+          options: [
+            `$3.98 \\times 10^{-5}$ J/m³`,
+            `$3.98 \\times 10^{-3}$ J/m³`,
+            `$7.97 \\times 10^{-5}$ J/m³`,
+            `$1.59 \\times 10^{-2}$ J/m³`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $u = \\frac{1}{2}\\epsilon_0 E^2 = \\frac{1}{2}(8.85 \\times 10^{-12})(3000)^2 \\approx 3.98 \\times 10^{-5}$ J/m³.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -1973,6 +2805,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `From $U = \\frac{1}{2}CV^2$, we get $V = \\sqrt{\\frac{2U}{C}} = \\sqrt{\\frac{2(0.5)}{10 \\times 10^{-6}}} = \\sqrt{\\frac{1}{10 \\times 10^{-6}}} = \\sqrt{10^5} = 100$ V.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A 20 μF capacitor stores 0.4 J of energy. What is the voltage across it?`,
+          options: [
+            `100 V`,
+            `200 V`,
+            `300 V`,
+            `400 V`,
+          ],
+          correctIndex: 1,
+          explanation: `From $U = \\frac{1}{2}CV^2$, $V = \\sqrt{2U/C} = \\sqrt{0.8/(20 \\times 10^{-6})} = 200$ V.`,
+        },
+        {
+          id: "q11",
+          question: `A 40 μF capacitor stores 0.8 J of energy. What is the voltage across it?`,
+          options: [
+            `100 V`,
+            `200 V`,
+            `300 V`,
+            `400 V`,
+          ],
+          correctIndex: 1,
+          explanation: `From $U = \\frac{1}{2}CV^2$, $V = \\sqrt{2U/C} = \\sqrt{1.6/(40 \\times 10^{-6})} = 200$ V.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -2009,6 +2867,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Since both are charged to the same voltage, $\\frac{U_1}{U_2} = \\frac{\\frac{1}{2}C_1V^2}{\\frac{1}{2}C_2V^2} = \\frac{C_1}{C_2} = \\frac{20}{30} = \\frac{2}{3}$.`,
+      variations: [
+        {
+          id: "q14",
+          question: `Two capacitors with capacitances $C_1 = 10$ μF and $C_2 = 40$ μF are charged to the same voltage of 50 V. The ratio of their stored energies is:`,
+          options: [
+            `1:4`,
+            `4:1`,
+            `1:16`,
+            `16:1`,
+          ],
+          correctIndex: 0,
+          explanation: `At the same voltage, $U propto C$, so $U_1/U_2 = C_1/C_2 = 10/40 = 1/4$.`,
+        },
+        {
+          id: "q14",
+          question: `Two capacitors with capacitances $C_1 = 15$ μF and $C_2 = 45$ μF are charged to the same voltage of 80 V. The ratio of their stored energies is:`,
+          options: [
+            `1:3`,
+            `3:1`,
+            `1:9`,
+            `9:1`,
+          ],
+          correctIndex: 0,
+          explanation: `At the same voltage, $U propto C$, so $U_1/U_2 = C_1/C_2 = 15/45 = 1/3$.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -2098,6 +2982,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using the series formula: $\\frac{1}{C_{eq}} = \\frac{1}{3} + \\frac{1}{6} = \\frac{3}{6} = \\frac{1}{2}$, so $C_{eq} = 2$ μF.`,
+      variations: [
+        {
+          id: "q6",
+          question: `Two capacitors of 4 μF and 12 μF are connected in series. What is their equivalent capacitance?`,
+          options: [
+            `3 μF`,
+            `8 μF`,
+            `16 μF`,
+            `48 μF`,
+          ],
+          correctIndex: 0,
+          explanation: `$\\frac{1}{C_{eq}} = \\frac{1}{4} + \\frac{1}{12} = \\frac{4}{12} = \\frac{1}{3}$, so $C_{eq} = 3$ μF.`,
+        },
+        {
+          id: "q6",
+          question: `Two capacitors of 5 μF and 20 μF are connected in series. What is their equivalent capacitance?`,
+          options: [
+            `4 μF`,
+            `12.5 μF`,
+            `25 μF`,
+            `100 μF`,
+          ],
+          correctIndex: 0,
+          explanation: `$\\frac{1}{C_{eq}} = \\frac{1}{5} + \\frac{1}{20} = \\frac{5}{20} = \\frac{1}{4}$, so $C_{eq} = 4$ μF.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -2110,6 +3020,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Using the parallel formula: $C_{eq} = 3 + 6 = 9$ μF. Capacitances add directly in parallel.`,
+      variations: [
+        {
+          id: "q7",
+          question: `Two capacitors of 4 μF and 12 μF are connected in parallel. What is their equivalent capacitance?`,
+          options: [
+            `3 μF`,
+            `8 μF`,
+            `16 μF`,
+            `48 μF`,
+          ],
+          correctIndex: 2,
+          explanation: `$C_{eq} = 4 + 12 = 16$ μF. Capacitances add directly in parallel.`,
+        },
+        {
+          id: "q7",
+          question: `Two capacitors of 5 μF and 20 μF are connected in parallel. What is their equivalent capacitance?`,
+          options: [
+            `4 μF`,
+            `12.5 μF`,
+            `25 μF`,
+            `100 μF`,
+          ],
+          correctIndex: 2,
+          explanation: `$C_{eq} = 5 + 20 = 25$ μF. Capacitances add directly in parallel.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -2134,6 +3070,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 3,
       explanation: `In parallel, capacitances add: $C_{eq} = 6 + 6 + 6 = 18$ μF.`,
+      variations: [
+        {
+          id: "q9",
+          question: `Three identical 8 μF capacitors are connected in parallel. What is the equivalent capacitance?`,
+          options: [
+            `2.67 μF`,
+            `8 μF`,
+            `16 μF`,
+            `24 μF`,
+          ],
+          correctIndex: 3,
+          explanation: `In parallel, capacitances add: $C_{eq} = 8 + 8 + 8 = 24$ μF.`,
+        },
+        {
+          id: "q9",
+          question: `Three identical 4 μF capacitors are connected in parallel. What is the equivalent capacitance?`,
+          options: [
+            `1.33 μF`,
+            `4 μF`,
+            `8 μF`,
+            `12 μF`,
+          ],
+          correctIndex: 3,
+          explanation: `In parallel, capacitances add: $C_{eq} = 4 + 4 + 4 = 12$ μF.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -2146,6 +3108,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `In series with identical capacitors: $\\frac{1}{C_{eq}} = \\frac{1}{6} + \\frac{1}{6} + \\frac{1}{6} = \\frac{3}{6} = \\frac{1}{2}$, so $C_{eq} = 2$ μF.`,
+      variations: [
+        {
+          id: "q10",
+          question: `Three identical 9 μF capacitors are connected in series. What is the equivalent capacitance?`,
+          options: [
+            `3 μF`,
+            `9 μF`,
+            `18 μF`,
+            `27 μF`,
+          ],
+          correctIndex: 0,
+          explanation: `For three identical capacitors in series, $C_{eq} = C/3 = 9/3 = 3$ μF.`,
+        },
+        {
+          id: "q10",
+          question: `Three identical 12 μF capacitors are connected in series. What is the equivalent capacitance?`,
+          options: [
+            `4 μF`,
+            `12 μF`,
+            `24 μF`,
+            `36 μF`,
+          ],
+          correctIndex: 0,
+          explanation: `For three identical capacitors in series, $C_{eq} = C/3 = 12/3 = 4$ μF.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -2182,6 +3170,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $\\frac{1}{2} = \\frac{1}{5} + \\frac{1}{C_x}$, we get $\\frac{1}{C_x} = \\frac{1}{2} - \\frac{1}{5} = \\frac{5-2}{10} = \\frac{3}{10}$, so $C_x = \\frac{10}{3} \\approx 3.33$ μF.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A 6 μF capacitor in series with an unknown capacitor produces an equivalent capacitance of 2 μF. What is the unknown capacitance?`,
+          options: [
+            `3 μF`,
+            `4 μF`,
+            `6 μF`,
+            `8 μF`,
+          ],
+          correctIndex: 0,
+          explanation: `$\\frac{1}{2} = \\frac{1}{6} + \\frac{1}{C_x}$, so $\\frac{1}{C_x} = \\frac{1}{3}$ and $C_x = 3$ μF.`,
+        },
+        {
+          id: "q13",
+          question: `An 8 μF capacitor in series with an unknown capacitor produces an equivalent capacitance of 4 μF. What is the unknown capacitance?`,
+          options: [
+            `4 μF`,
+            `8 μF`,
+            `12 μF`,
+            `16 μF`,
+          ],
+          correctIndex: 1,
+          explanation: `$\\frac{1}{4} = \\frac{1}{8} + \\frac{1}{C_x}$, so $\\frac{1}{C_x} = \\frac{1}{8}$ and $C_x = 8$ μF.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -2194,6 +3208,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $10 = 4 + C_x$, we get $C_x = 10 - 4 = 6$ μF.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A 7 μF capacitor in parallel with an unknown capacitor produces an equivalent capacitance of 20 μF. What is the unknown capacitance?`,
+          options: [
+            `7 μF`,
+            `13 μF`,
+            `20 μF`,
+            `27 μF`,
+          ],
+          correctIndex: 1,
+          explanation: `For parallel capacitors, $20 = 7 + C_x$, so $C_x = 13$ μF.`,
+        },
+        {
+          id: "q14",
+          question: `A 9 μF capacitor in parallel with an unknown capacitor produces an equivalent capacitance of 25 μF. What is the unknown capacitance?`,
+          options: [
+            `9 μF`,
+            `16 μF`,
+            `25 μF`,
+            `34 μF`,
+          ],
+          correctIndex: 1,
+          explanation: `For parallel capacitors, $25 = 9 + C_x$, so $C_x = 16$ μF.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -2206,6 +3246,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `First, find the series equivalent of 12 μF and 8 μF: $\\frac{1}{C_s} = \\frac{1}{12} + \\frac{1}{8} = \\frac{2+3}{24} = \\frac{5}{24}$, so $C_s = 4.8$ μF. Then add in parallel with 20 μF: $C_{total} = 4.8 + 20 = 24.8$ μF.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A student connects a 10 μF and a 15 μF capacitor in series, then connects this combination in parallel with a 12 μF capacitor. What is the total equivalent capacitance?`,
+          options: [
+            `6 μF`,
+            `12 μF`,
+            `18 μF`,
+            `37 μF`,
+          ],
+          correctIndex: 2,
+          explanation: `First, $\\frac{1}{C_s} = \\frac{1}{10} + \\frac{1}{15} = \\frac{5}{30}$, so $C_s = 6$ μF. Then add in parallel with 12 μF: $C_{total} = 6 + 12 = 18$ μF.`,
+        },
+        {
+          id: "q15",
+          question: `A student connects a 6 μF and a 12 μF capacitor in series, then connects this combination in parallel with a 16 μF capacitor. What is the total equivalent capacitance?`,
+          options: [
+            `4 μF`,
+            `16 μF`,
+            `20 μF`,
+            `34 μF`,
+          ],
+          correctIndex: 2,
+          explanation: `First, $\\frac{1}{C_s} = \\frac{1}{6} + \\frac{1}{12} = \\frac{3}{12}$, so $C_s = 4$ μF. Then add in parallel with 16 μF: $C_{total} = 4 + 16 = 20$ μF.`,
+        },
+      ],
     },
     ],
   },
@@ -2283,6 +3349,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using Ohm's law, $R = V/I = 12/2.0 = 6$ Ω.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A 15 V battery drives 3.0 A through a resistor. What is the resistance?`,
+          options: [
+            `5 Ω`,
+            `45 Ω`,
+            `0.20 Ω`,
+            `18 Ω`,
+          ],
+          correctIndex: 0,
+          explanation: `Using Ohm's law, $R = V/I = 15/3.0 = 5$ Ω.`,
+        },
+        {
+          id: "q6",
+          question: `A 24 V battery drives 4.0 A through a resistor. What is the resistance?`,
+          options: [
+            `6 Ω`,
+            `96 Ω`,
+            `0.17 Ω`,
+            `28 Ω`,
+          ],
+          correctIndex: 0,
+          explanation: `Using Ohm's law, $R = V/I = 24/4.0 = 6$ Ω.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -2295,6 +3387,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Power dissipated is $P = IV = (2.0)(12) = 24$ W, or equivalently $P = I^2R = (2.0)^2(6) = 24$ W.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A 15 V battery drives 3.0 A through a resistor. What is the power dissipated?`,
+          options: [
+            `5 W`,
+            `45 W`,
+            `135 W`,
+            `1.7 W`,
+          ],
+          correctIndex: 1,
+          explanation: `Power dissipated is $P = IV = (3.0)(15) = 45$ W.`,
+        },
+        {
+          id: "q7",
+          question: `A 24 V battery drives 4.0 A through a resistor. What is the power dissipated?`,
+          options: [
+            `6 W`,
+            `96 W`,
+            `384 W`,
+            `1.5 W`,
+          ],
+          correctIndex: 1,
+          explanation: `Power dissipated is $P = IV = (4.0)(24) = 96$ W.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -2307,6 +3425,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `From $P = IV$, we get $I = P/V = 50/10 = 5$ A.`,
+      variations: [
+        {
+          id: "q8",
+          question: `A resistor has a voltage of 12 V across it and dissipates 60 W of power. What is the current through the resistor?`,
+          options: [
+            `5 A`,
+            `720 A`,
+            `0.2 A`,
+            `12 A`,
+          ],
+          correctIndex: 0,
+          explanation: `From $P = IV$, we get $I = P/V = 60/12 = 5$ A.`,
+        },
+        {
+          id: "q8",
+          question: `A resistor has a voltage of 20 V across it and dissipates 80 W of power. What is the current through the resistor?`,
+          options: [
+            `4 A`,
+            `1600 A`,
+            `0.25 A`,
+            `20 A`,
+          ],
+          correctIndex: 0,
+          explanation: `From $P = IV$, we get $I = P/V = 80/20 = 4$ A.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -2319,6 +3463,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $P = I^2R = (3)^2(4) = 9 \\times 4 = 36$ W.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A resistor carries 2 A of current and has a resistance of 8 Ω. How much power is dissipated?`,
+          options: [
+            `16 W`,
+            `32 W`,
+            `10 W`,
+            `4 W`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $P = I^2R = (2)^2(8) = 4 \\times 8 = 32$ W.`,
+        },
+        {
+          id: "q9",
+          question: `A resistor carries 5 A of current and has a resistance of 2 Ω. How much power is dissipated?`,
+          options: [
+            `10 W`,
+            `50 W`,
+            `7 W`,
+            `12.5 W`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $P = I^2R = (5)^2(2) = 25 \\times 2 = 50$ W.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -2343,6 +3513,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `From $P = V^2/R$, we get $R = V^2/P = (120)^2/60 = 14400/60 = 240$ Ω.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A light bulb rated at 75 W operates at 150 V. What is its resistance when operating at rated conditions?`,
+          options: [
+            `2 Ω`,
+            `300 Ω`,
+            `0.5 Ω`,
+            `11250 Ω`,
+          ],
+          correctIndex: 1,
+          explanation: `From $P = V^2/R$, $R = V^2/P = 150^2/75 = 22500/75 = 300$ Ω.`,
+        },
+        {
+          id: "q11",
+          question: `A light bulb rated at 40 W operates at 120 V. What is its resistance when operating at rated conditions?`,
+          options: [
+            `3 Ω`,
+            `360 Ω`,
+            `0.33 Ω`,
+            `4800 Ω`,
+          ],
+          correctIndex: 1,
+          explanation: `From $P = V^2/R$, $R = V^2/P = 120^2/40 = 14400/40 = 360$ Ω.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -2367,6 +3563,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `At the same voltage, $P = V^2/R$, so $R$ is inversely proportional to $P$. Thus $R_A/R_B = P_B/P_A = 25/100 = 1/4$.`,
+      variations: [
+        {
+          id: "q13",
+          question: `Two resistors are connected to the same voltage source. Resistor A dissipates 80 W and Resistor B dissipates 20 W. If they are connected to the same voltage, what is the ratio of their resistances $R_A/R_B$?`,
+          options: [
+            `4:1`,
+            `1:4`,
+            `2:1`,
+            `1:2`,
+          ],
+          correctIndex: 1,
+          explanation: `At the same voltage, $P = V^2/R$, so $R_A/R_B = P_B/P_A = 20/80 = 1/4$.`,
+        },
+        {
+          id: "q13",
+          question: `Two resistors are connected to the same voltage source. Resistor A dissipates 90 W and Resistor B dissipates 30 W. If they are connected to the same voltage, what is the ratio of their resistances $R_A/R_B$?`,
+          options: [
+            `3:1`,
+            `1:3`,
+            `9:1`,
+            `1:9`,
+          ],
+          correctIndex: 1,
+          explanation: `At the same voltage, $P = V^2/R$, so $R_A/R_B = P_B/P_A = 30/90 = 1/3$.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -2391,6 +3613,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $P = IV$, the original power is $(10)(240) = 2400$ W and the new power is $(5)(240) = 1200$ W, so power is halved.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A heating element in an electric oven operates at 120 V and draws 8 A. The element is replaced with one that draws only 2 A at the same voltage. How does the power consumption change?`,
+          options: [
+            `Power is one-fourth as large`,
+            `Power is doubled`,
+            `Power remains the same`,
+            `Power is quadrupled`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $P = IV$, the original power is $(8)(120) = 960$ W and the new power is $(2)(120) = 240$ W, so power is one-fourth as large.`,
+        },
+        {
+          id: "q15",
+          question: `A heating element in an electric oven operates at 240 V and draws 12 A. The element is replaced with one that draws only 4 A at the same voltage. How does the power consumption change?`,
+          options: [
+            `Power is one-third as large`,
+            `Power is tripled`,
+            `Power remains the same`,
+            `Power is one-ninth as large`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $P = IV$, the original power is $(12)(240) = 2880$ W and the new power is $(4)(240) = 960$ W, so power is one-third as large.`,
+        },
+      ],
     },
     ],
   },
@@ -2456,6 +3704,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The current is $I = \\frac{\\varepsilon}{R + r} = \\frac{12}{5 + 1} = 2$ A. The terminal voltage is $V = \\varepsilon - Ir = 12 - 2(1) = 10$ V.`,
+      variations: [
+        {
+          id: "q5",
+          question: `A battery has an emf of 18 V and an internal resistance of 2 Ω. When a 7 Ω external resistor is connected, what is the terminal voltage of the battery?`,
+          options: [
+            `18 V`,
+            `14 V`,
+            `4 V`,
+            `9 V`,
+          ],
+          correctIndex: 1,
+          explanation: `The current is $I = \\frac{\\varepsilon}{R + r} = \\frac{18}{7 + 2} = 2$ A. The terminal voltage is $V = \\varepsilon - Ir = 18 - 2(2) = 14$ V.`,
+        },
+        {
+          id: "q5",
+          question: `A battery has an emf of 24 V and an internal resistance of 1 Ω. When an 11 Ω external resistor is connected, what is the terminal voltage of the battery?`,
+          options: [
+            `24 V`,
+            `22 V`,
+            `2 V`,
+            `12 V`,
+          ],
+          correctIndex: 1,
+          explanation: `The current is $I = \\frac{\\varepsilon}{R + r} = \\frac{24}{11 + 1} = 2$ A. The terminal voltage is $V = \\varepsilon - Ir = 24 - 2(1) = 22$ V.`,
+        },
+      ],
     },
     {
       id: "q6",
@@ -2468,6 +3742,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `For two identical resistors in parallel, $\\frac{1}{R_{eq}} = \\frac{1}{20} + \\frac{1}{20} = \\frac{2}{20}$, so $R_{eq} = 10$ Ω.`,
+      variations: [
+        {
+          id: "q6",
+          question: `Two identical 30 Ω resistors are connected in parallel. What is their equivalent resistance?`,
+          options: [
+            `60 Ω`,
+            `30 Ω`,
+            `15 Ω`,
+            `7.5 Ω`,
+          ],
+          correctIndex: 2,
+          explanation: `For two identical resistors in parallel, $R_{eq} = R/2 = 30/2 = 15$ Ω.`,
+        },
+        {
+          id: "q6",
+          question: `Two identical 12 Ω resistors are connected in parallel. What is their equivalent resistance?`,
+          options: [
+            `24 Ω`,
+            `12 Ω`,
+            `6 Ω`,
+            `3 Ω`,
+          ],
+          correctIndex: 2,
+          explanation: `For two identical resistors in parallel, $R_{eq} = R/2 = 12/2 = 6$ Ω.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -2480,6 +3780,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `The parallel pair: $\\frac{1}{R_p} = \\frac{1}{6} + \\frac{1}{6} = \\frac{1}{3}$, so $R_p = 3$ Ω. Total: $R_{eq} = 3 + 3 = 6$ Ω.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A circuit contains a 12 V battery with negligible internal resistance connected to a 4 Ω resistor in series with a parallel combination of two 8 Ω resistors. What is the total equivalent resistance?`,
+          options: [
+            `20 Ω`,
+            `12 Ω`,
+            `8 Ω`,
+            `16 Ω`,
+          ],
+          correctIndex: 2,
+          explanation: `The parallel pair has $R_p = 4$ Ω. Total resistance is $R_{eq} = 4 + 4 = 8$ Ω.`,
+        },
+        {
+          id: "q7",
+          question: `A circuit contains a 9 V battery with negligible internal resistance connected to a 2 Ω resistor in series with a parallel combination of two 4 Ω resistors. What is the total equivalent resistance?`,
+          options: [
+            `10 Ω`,
+            `6 Ω`,
+            `4 Ω`,
+            `8 Ω`,
+          ],
+          correctIndex: 2,
+          explanation: `The parallel pair has $R_p = 2$ Ω. Total resistance is $R_{eq} = 2 + 2 = 4$ Ω.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -2504,6 +3830,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `For parallel resistors: $\\frac{1}{R_{eq}} = \\frac{1}{4} + \\frac{1}{6} + \\frac{1}{12} = \\frac{3 + 2 + 1}{12} = \\frac{6}{12} = \\frac{1}{2}$, so $R_{eq} = 2$ Ω.`,
+      variations: [
+        {
+          id: "q9",
+          question: `Three resistors of 3 Ω, 6 Ω, and 6 Ω are connected in parallel across an 18 V source. What is the equivalent resistance?`,
+          options: [
+            `15 Ω`,
+            `1.5 Ω`,
+            `5 Ω`,
+            `9 Ω`,
+          ],
+          correctIndex: 1,
+          explanation: `$\\frac{1}{R_{eq}} = \\frac{1}{3} + \\frac{1}{6} + \\frac{1}{6} = \\frac{4}{6} = \\frac{2}{3}$, so $R_{eq} = 1.5$ Ω.`,
+        },
+        {
+          id: "q9",
+          question: `Three resistors of 6 Ω, 12 Ω, and 12 Ω are connected in parallel across a 24 V source. What is the equivalent resistance?`,
+          options: [
+            `30 Ω`,
+            `3 Ω`,
+            `10 Ω`,
+            `18 Ω`,
+          ],
+          correctIndex: 1,
+          explanation: `$\\frac{1}{R_{eq}} = \\frac{1}{6} + \\frac{1}{12} + \\frac{1}{12} = \\frac{4}{12} = \\frac{1}{3}$, so $R_{eq} = 3$ Ω.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -2528,6 +3880,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Parallel combination: $\\frac{1}{R_p} = \\frac{1}{3} + \\frac{1}{6} = \\frac{1}{2}$, so $R_p = 2$ Ω. Total resistance: $R_{eq} = 2 + 2 = 4$ Ω. Total current: $I = \\frac{12}{4} = 3$ A. Voltage across parallel section: $V_p = 3 \\times 2 = 6$ V. Current through 3 Ω: $I_3 = \\frac{6}{3} = 2$ A.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A circuit has a 24 V battery connected to a 4 Ω resistor in series with a parallel combination of 6 Ω and 12 Ω resistors. Assuming negligible internal resistance, what is the current through the 6 Ω resistor?`,
+          options: [
+            `1 A`,
+            `2 A`,
+            `3 A`,
+            `4 A`,
+          ],
+          correctIndex: 1,
+          explanation: `Parallel combination: $R_p = 4$ Ω. Total resistance: $R_{eq} = 4 + 4 = 8$ Ω, giving total current $24/8 = 3$ A. Voltage across the parallel section is $(3)(4) = 12$ V, so $I_6 = 12/6 = 2$ A.`,
+        },
+        {
+          id: "q11",
+          question: `A circuit has a 24 V battery connected to a 4 Ω resistor in series with a parallel combination of 8 Ω and 8 Ω resistors. Assuming negligible internal resistance, what is the current through one 8 Ω resistor?`,
+          options: [
+            `1 A`,
+            `1.5 A`,
+            `2 A`,
+            `3 A`,
+          ],
+          correctIndex: 1,
+          explanation: `The parallel combination is $R_p = 4$ Ω. Total resistance is $8$ Ω, so total current is $24/8 = 3$ A. The current splits equally between identical 8 Ω branches, giving $1.5$ A through each branch.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -2540,6 +3918,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `By KCL, the sum of currents entering equals the sum leaving. If 2 A and 3 A enter, then 5 A must leave through the third wire.`,
+      variations: [
+        {
+          id: "q12",
+          question: `In a complex circuit, a node has three wires connected to it. Two wires carry currents of 4 A and 5 A into the node. According to Kirchhoff's current law, what is the current in the third wire?`,
+          options: [
+            `1 A into the node`,
+            `9 A into the node`,
+            `9 A out of the node`,
+            `1 A out of the node`,
+          ],
+          correctIndex: 2,
+          explanation: `By KCL, current entering equals current leaving. If 4 A and 5 A enter, then 9 A must leave through the third wire.`,
+        },
+        {
+          id: "q12",
+          question: `In a complex circuit, a node has three wires connected to it. Two wires carry currents of 1.5 A and 2.5 A into the node. According to Kirchhoff's current law, what is the current in the third wire?`,
+          options: [
+            `1.0 A into the node`,
+            `4.0 A into the node`,
+            `4.0 A out of the node`,
+            `1.0 A out of the node`,
+          ],
+          correctIndex: 2,
+          explanation: `By KCL, current entering equals current leaving. If 1.5 A and 2.5 A enter, then 4.0 A must leave through the third wire.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -2564,6 +3968,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Parallel combination: $\\frac{1}{R_p} = \\frac{1}{10} + \\frac{1}{10} = \\frac{1}{5}$, so $R_p = 5$ Ω. Total resistance: $R_{eq} = 5 + 5 = 10$ Ω. Total current: $I = \\frac{20}{10} = 2$ A. Voltage drop across 5 Ω: $V = 2 \\times 5 = 10$ V.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A circuit consists of a 30 V source connected to a network where a 6 Ω resistor is in series with a parallel combination of two 12 Ω resistors. The source has negligible internal resistance. What is the voltage drop across the 6 Ω resistor?`,
+          options: [
+            `6 V`,
+            `15 V`,
+            `24 V`,
+            `30 V`,
+          ],
+          correctIndex: 1,
+          explanation: `The parallel pair has $R_p = 6$ Ω. Total resistance is 12 Ω, so total current is $30/12 = 2.5$ A. The drop across 6 Ω is $(2.5)(6) = 15$ V.`,
+        },
+        {
+          id: "q14",
+          question: `A circuit consists of a 16 V source connected to a network where a 4 Ω resistor is in series with a parallel combination of two 8 Ω resistors. The source has negligible internal resistance. What is the voltage drop across the 4 Ω resistor?`,
+          options: [
+            `4 V`,
+            `8 V`,
+            `12 V`,
+            `16 V`,
+          ],
+          correctIndex: 1,
+          explanation: `The parallel pair has $R_p = 4$ Ω. Total resistance is 8 Ω, so total current is $16/8 = 2$ A. The drop across 4 Ω is $(2)(4) = 8$ V.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -2576,6 +4006,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `By KVL, the sum of voltages around the loop is zero. The battery provides 12 V, and the 4 Ω resistor dissipates $V = IR = 3 \\times 4 = 12$ V. Therefore, the unknown resistor must have a voltage drop of $12 - 12 = 0$ V, meaning it has zero resistance or is short-circuited.`,
+      variations: [
+        {
+          id: "q15",
+          question: `Using Kirchhoff's voltage law, if a circuit loop contains an 18 V battery, a 5 Ω resistor with 2 A flowing through it, and an unknown resistor, what must be the voltage drop across the unknown resistor?`,
+          options: [
+            `0 V`,
+            `8 V`,
+            `10 V`,
+            `18 V`,
+          ],
+          correctIndex: 1,
+          explanation: `The 5 Ω resistor drops $V = IR = 2 \\times 5 = 10$ V. The unknown resistor must drop $18 - 10 = 8$ V.`,
+        },
+        {
+          id: "q15",
+          question: `Using Kirchhoff's voltage law, if a circuit loop contains a 24 V battery, a 6 Ω resistor with 3 A flowing through it, and an unknown resistor, what must be the voltage drop across the unknown resistor?`,
+          options: [
+            `0 V`,
+            `6 V`,
+            `18 V`,
+            `24 V`,
+          ],
+          correctIndex: 1,
+          explanation: `The 6 Ω resistor drops $V = IR = 3 \\times 6 = 18$ V. The unknown resistor must drop $24 - 18 = 6$ V.`,
+        },
+      ],
     },
     ],
   },
@@ -2641,6 +4097,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $Q = CV_{\\text{across}}$: $Q = 5 \\text{ μF} \\times 20 \\text{ V} = 100 \\text{ μC}$.`,
+      variations: [
+        {
+          id: "q5",
+          question: `A capacitor with capacitance 8 μF is charged to a voltage of 15 V. How much charge is stored on the capacitor?`,
+          options: [
+            `0.53 μC`,
+            `120 μC`,
+            `7 μC`,
+            `23 μC`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $Q = CV_{\\text{across}}$: $Q = 8 \\text{ μF} \\times 15 \\text{ V} = 120 \\text{ μC}$.`,
+        },
+        {
+          id: "q5",
+          question: `A capacitor with capacitance 12 μF is charged to a voltage of 15 V. How much charge is stored on the capacitor?`,
+          options: [
+            `1.2 μC`,
+            `180 μC`,
+            `22 μC`,
+            `12 μC`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $Q = CV_{\\text{across}}$: $Q = 12 \\text{ μF} \\times 15 \\text{ V} = 180 \\text{ μC}$.`,
+        },
+      ],
     },
     {
       id: "q6",
@@ -2665,6 +4147,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `At steady state, the capacitor is fully charged and acts as an open circuit. By Kirchhoff's voltage law, the entire source voltage appears across the capacitor: $V_{\\text{capacitor}} = 24 \\text{ V}$.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A 30 V battery is connected in series with a 10 Ω resistor and a capacitor. At steady state, what is the voltage across the capacitor?`,
+          options: [
+            `0 V`,
+            `3 V`,
+            `30 V`,
+            `15 V`,
+          ],
+          correctIndex: 2,
+          explanation: `At steady state, the capacitor is fully charged and acts as an open circuit. The entire source voltage appears across the capacitor: 30 V.`,
+        },
+        {
+          id: "q7",
+          question: `A 9 V battery is connected in series with a 2 Ω resistor and a capacitor. At steady state, what is the voltage across the capacitor?`,
+          options: [
+            `0 V`,
+            `4.5 V`,
+            `9 V`,
+            `2 V`,
+          ],
+          correctIndex: 2,
+          explanation: `At steady state, the capacitor is fully charged and acts as an open circuit. The entire source voltage appears across the capacitor: 9 V.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -2677,6 +4185,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $Q = CV_{\\text{across}}$: $Q = 10 \\text{ μF} \\times 8 \\text{ V} = 80 \\text{ μC}$.`,
+      variations: [
+        {
+          id: "q8",
+          question: `In a circuit with a battery, resistor, and capacitor in series, at steady state the capacitor has charged to 12 V. If the capacitance is 5 μF, what is the stored charge?`,
+          options: [
+            `0.42 μC`,
+            `60 μC`,
+            `17 μC`,
+            `24 μC`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $Q = CV_{\\text{across}}$: $Q = 5 \\text{ μF} \\times 12 \\text{ V} = 60 \\text{ μC}$.`,
+        },
+        {
+          id: "q8",
+          question: `In a circuit with a battery, resistor, and capacitor in series, at steady state the capacitor has charged to 15 V. If the capacitance is 8 μF, what is the stored charge?`,
+          options: [
+            `0.53 μC`,
+            `120 μC`,
+            `23 μC`,
+            `60 μC`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $Q = CV_{\\text{across}}$: $Q = 8 \\text{ μF} \\times 15 \\text{ V} = 120 \\text{ μC}$.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -2689,6 +4223,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Since the current is zero at steady state, no voltage drops across the resistor. By Kirchhoff's voltage law, the full source voltage appears across the capacitor.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A circuit contains a 20 V source, a 10 Ω resistor, and a capacitor in series. At steady state, the current through the resistor is 0 A. What is the voltage across the capacitor?`,
+          options: [
+            `0 V`,
+            `2 V`,
+            `20 V`,
+            `10 V`,
+          ],
+          correctIndex: 2,
+          explanation: `Since the current is zero at steady state, no voltage drops across the resistor. The full source voltage appears across the capacitor.`,
+        },
+        {
+          id: "q9",
+          question: `A circuit contains a 6 V source, a 3 Ω resistor, and a capacitor in series. At steady state, the current through the resistor is 0 A. What is the voltage across the capacitor?`,
+          options: [
+            `0 V`,
+            `2 V`,
+            `6 V`,
+            `3 V`,
+          ],
+          correctIndex: 2,
+          explanation: `Since the current is zero at steady state, no voltage drops across the resistor. The full source voltage appears across the capacitor.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -2713,6 +4273,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `At steady state, the capacitor blocks DC current flow. Since the capacitor is in series with the resistors, no current flows through any part of the circuit, including the 5 Ω resistor.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A circuit has a 30 V battery in series with a 15 Ω resistor, a 10 Ω resistor, and a capacitor. At steady state, what is the current flowing through the 10 Ω resistor?`,
+          options: [
+            `2 A`,
+            `1 A`,
+            `0 A`,
+            `3 A`,
+          ],
+          correctIndex: 2,
+          explanation: `At steady state, the capacitor blocks DC current flow. Since it is in series with the resistors, no current flows through any part of the circuit.`,
+        },
+        {
+          id: "q11",
+          question: `A circuit has a 9 V battery in series with a 3 Ω resistor, a 6 Ω resistor, and a capacitor. At steady state, what is the current flowing through the 6 Ω resistor?`,
+          options: [
+            `3 A`,
+            `1 A`,
+            `0 A`,
+            `1.5 A`,
+          ],
+          correctIndex: 2,
+          explanation: `At steady state, the capacitor blocks DC current flow. Since it is in series with the resistors, no current flows through any part of the circuit.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -2725,6 +4311,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `In a parallel circuit, all branches have the same voltage across them. At steady state, the capacitor is connected directly across the source, so the voltage across it equals the source voltage.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A 15 V source is connected to a parallel combination of a 5 Ω resistor and a capacitor. At steady state, what is the voltage across the capacitor?`,
+          options: [
+            `0 V`,
+            `5 V`,
+            `15 V`,
+            `3 V`,
+          ],
+          correctIndex: 2,
+          explanation: `In parallel, each branch has the same voltage as the source. At steady state, the capacitor is connected directly across the source, so it has 15 V across it.`,
+        },
+        {
+          id: "q12",
+          question: `A 24 V source is connected to a parallel combination of a 6 Ω resistor and a capacitor. At steady state, what is the voltage across the capacitor?`,
+          options: [
+            `0 V`,
+            `6 V`,
+            `24 V`,
+            `4 V`,
+          ],
+          correctIndex: 2,
+          explanation: `In parallel, each branch has the same voltage as the source. At steady state, the capacitor is connected directly across the source, so it has 24 V across it.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -2749,6 +4361,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Since $Q = CV_{\\text{across}}$ and the capacitance remains constant, doubling the voltage across the capacitor doubles the stored charge from $24 \\text{ μC}$ to $48 \\text{ μC}$.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A 10 V battery is connected in series with a 5 Ω resistor and a 3 μF capacitor. At steady state, the capacitor charges to 10 V. If the source voltage were doubled to 20 V, how would the charge on the capacitor change?`,
+          options: [
+            `It would remain the same`,
+            `It would double`,
+            `It would quadruple`,
+            `It would decrease`,
+          ],
+          correctIndex: 1,
+          explanation: `Since $Q = CV$ and capacitance remains constant, doubling the voltage doubles the stored charge.`,
+        },
+        {
+          id: "q14",
+          question: `A 9 V battery is connected in series with a 2 Ω resistor and a 4 μF capacitor. At steady state, the capacitor charges to 9 V. If the source voltage were tripled to 27 V, how would the charge on the capacitor change?`,
+          options: [
+            `It would remain the same`,
+            `It would triple`,
+            `It would increase by a factor of 9`,
+            `It would decrease`,
+          ],
+          correctIndex: 1,
+          explanation: `Since $Q = CV$ and capacitance remains constant, tripling the voltage triples the stored charge.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -2838,6 +4476,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `$\\tau = RC = (5 \\times 10^3 \\text{ Ω})(20 \\times 10^{-6} \\text{ F}) = 0.1 \\text{ s}$.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A resistor of $8 \\text{ k}\\Omega$ is connected in series with a capacitor of $25 \\text{ μF}$. What is the time constant of this circuit?`,
+          options: [
+            `$0.2 \\text{ s}$`,
+            `$0.5 \\text{ s}$`,
+            `$1.0 \\text{ s}$`,
+            `$2.0 \\text{ s}$`,
+          ],
+          correctIndex: 0,
+          explanation: `$\\tau = RC = (8 \\times 10^3 \\text{ Ω})(25 \\times 10^{-6} \\text{ F}) = 0.2 \\text{ s}$.`,
+        },
+        {
+          id: "q6",
+          question: `A resistor of $10 \\text{ k}\\Omega$ is connected in series with a capacitor of $50 \\text{ μF}$. What is the time constant of this circuit?`,
+          options: [
+            `$0.05 \\text{ s}$`,
+            `$0.5 \\text{ s}$`,
+            `$5.0 \\text{ s}$`,
+            `$20 \\text{ s}$`,
+          ],
+          correctIndex: 1,
+          explanation: `$\\tau = RC = (10 \\times 10^3 \\text{ Ω})(50 \\times 10^{-6} \\text{ F}) = 0.5 \\text{ s}$.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -2934,6 +4598,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The voltage across the capacitor follows $V_C(t) = V(1 - e^{-t/\\tau})$. At $t = 3 \\text{ s}$ with $\\tau = 1 \\text{ s}$, $V_C = 12(1 - e^{-3}) \\approx 11.9 \\text{ V}$.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A capacitor charges through a resistor with time constant $\\tau = 2 \\text{ s}$ to a final voltage of $20 \\text{ V}$. What is the voltage across the capacitor at $t = 4 \\text{ s}$?`,
+          options: [
+            `$V_C = 20(1 - e^{-2}) \\approx 17.3 \\text{ V}$`,
+            `$V_C = 20e^{-2} \\approx 2.7 \\text{ V}$`,
+            `$V_C = 20(1 - e^{-1}) \\approx 12.6 \\text{ V}$`,
+            `$V_C = 20e^{-1} \\approx 7.4 \\text{ V}$`,
+          ],
+          correctIndex: 0,
+          explanation: `$V_C(t) = V(1 - e^{-t/\\tau})$. At $t = 4 \\text{ s}$ and $\\tau = 2 \\text{ s}$, $V_C = 20(1 - e^{-2}) \\approx 17.3 \\text{ V}$.`,
+        },
+        {
+          id: "q14",
+          question: `A capacitor charges through a resistor with time constant $\\tau = 3 \\text{ s}$ to a final voltage of $18 \\text{ V}$. What is the voltage across the capacitor at $t = 6 \\text{ s}$?`,
+          options: [
+            `$V_C = 18(1 - e^{-2}) \\approx 15.6 \\text{ V}$`,
+            `$V_C = 18e^{-2} \\approx 2.4 \\text{ V}$`,
+            `$V_C = 18(1 - e^{-1}) \\approx 11.4 \\text{ V}$`,
+            `$V_C = 18e^{-1} \\approx 6.6 \\text{ V}$`,
+          ],
+          correctIndex: 0,
+          explanation: `$V_C(t) = V(1 - e^{-t/\\tau})$. At $t = 6 \\text{ s}$ and $\\tau = 3 \\text{ s}$, $V_C = 18(1 - e^{-2}) \\approx 15.6 \\text{ V}$.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -2946,6 +4636,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `At 99% charge, $0.99 = 1 - e^{-t/\\tau}$, so $e^{-t/\\tau} = 0.01$ and $t/\\tau \\approx 4.605$. With $t = 5 \\text{ s}$, $\\tau \\approx 1.086 \\text{ s}$. Thus $R = \\tau/C = 1.086/(50 \\times 10^{-6}) \\approx 21.7 \\text{ kΩ}$.`,
+      variations: [
+        {
+          id: "q15",
+          question: `An RC circuit is designed so that a capacitor charges to 99% of its final value in exactly $10 \\text{ s}$. If the capacitance is $50 \\text{ μF}$, what must the resistance be?`,
+          options: [
+            `$R \\approx 2.17 \\text{ kΩ}$`,
+            `$R \\approx 21.7 \\text{ kΩ}$`,
+            `$R \\approx 43.4 \\text{ kΩ}$`,
+            `$R \\approx 434 \\text{ kΩ}$`,
+          ],
+          correctIndex: 2,
+          explanation: `At 99% charge, $t/\\tau \\approx 4.605$. With $t = 10 \\text{ s}$, $\\tau \\approx 2.17 \\text{ s}$. Thus $R = \\tau/C = 2.17/(50 \\times 10^{-6}) \\approx 43.4 \\text{ kΩ}$.`,
+        },
+        {
+          id: "q15",
+          question: `An RC circuit is designed so that a capacitor charges to 99% of its final value in exactly $2.5 \\text{ s}$. If the capacitance is $50 \\text{ μF}$, what must the resistance be?`,
+          options: [
+            `$R \\approx 2.17 \\text{ kΩ}$`,
+            `$R \\approx 10.9 \\text{ kΩ}$`,
+            `$R \\approx 21.7 \\text{ kΩ}$`,
+            `$R \\approx 109 \\text{ kΩ}$`,
+          ],
+          correctIndex: 1,
+          explanation: `At 99% charge, $t/\\tau \\approx 4.605$. With $t = 2.5 \\text{ s}$, $\\tau \\approx 0.543 \\text{ s}$. Thus $R = \\tau/C = 0.543/(50 \\times 10^{-6}) \\approx 10.9 \\text{ kΩ}$.`,
+        },
+      ],
     },
     ],
   },
@@ -3023,6 +4739,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $r = \\frac{mv}{qB} = \\frac{(9.11 \\times 10^{-31})(3 \\times 10^6)}{(1.6 \\times 10^{-19})(0.40)} \\approx 0.043$ m.`,
+      variations: [
+        {
+          id: "q6",
+          question: `An electron moves at $4 \\times 10^6$ m/s perpendicular to a $0.50$ T magnetic field. What is the radius of its circular path? (Use $m_e = 9.11 \\times 10^{-31}$ kg and $e = 1.6 \\times 10^{-19}$ C)`,
+          options: [
+            `0.046 m`,
+            `0.091 m`,
+            `0.18 m`,
+            `0.36 m`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $r = \\frac{mv}{qB} = \\frac{(9.11 \\times 10^{-31})(4 \\times 10^6)}{(1.6 \\times 10^{-19})(0.50)} \\approx 0.046$ m.`,
+        },
+        {
+          id: "q6",
+          question: `An electron moves at $4 \\times 10^6$ m/s perpendicular to a $0.25$ T magnetic field. What is the radius of its circular path? (Use $m_e = 9.11 \\times 10^{-31}$ kg and $e = 1.6 \\times 10^{-19}$ C)`,
+          options: [
+            `0.046 m`,
+            `0.091 m`,
+            `0.18 m`,
+            `0.36 m`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $r = \\frac{mv}{qB} = \\frac{(9.11 \\times 10^{-31})(4 \\times 10^6)}{(1.6 \\times 10^{-19})(0.25)} \\approx 0.091$ m.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -3208,6 +4950,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $F = ILB$ with perpendicular orientation: $F = (2.0)(0.30)(0.50) = 0.30$ N.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A 0.50 m wire carries a current of 3.0 A in a magnetic field of 0.40 T. The wire is oriented perpendicular to the field. What is the magnitude of the magnetic force on the wire?`,
+          options: [
+            `0.30 N`,
+            `0.60 N`,
+            `0.90 N`,
+            `1.20 N`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $F = ILB$ with perpendicular orientation: $F = (3.0)(0.50)(0.40) = 0.60$ N.`,
+        },
+        {
+          id: "q6",
+          question: `A 0.20 m wire carries a current of 5.0 A in a magnetic field of 0.30 T. The wire is oriented perpendicular to the field. What is the magnitude of the magnetic force on the wire?`,
+          options: [
+            `0.15 N`,
+            `0.30 N`,
+            `0.45 N`,
+            `0.60 N`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $F = ILB$ with perpendicular orientation: $F = (5.0)(0.20)(0.30) = 0.30$ N.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -3268,6 +5036,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Rearranging $F = ILB$ to solve for $B$: $B = \\frac{F}{IL} = \\frac{0.20}{(2.5)(0.40)} = \\frac{0.20}{1.0} = 0.20$ T.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A wire of length 0.50 m carrying 4.0 A is placed in a magnetic field. The force on the wire is measured to be 0.60 N. What is the magnitude of the magnetic field if the wire is perpendicular to the field?`,
+          options: [
+            `0.20 T`,
+            `0.30 T`,
+            `0.50 T`,
+            `2.00 T`,
+          ],
+          correctIndex: 1,
+          explanation: `$B = \\frac{F}{IL} = \\frac{0.60}{(4.0)(0.50)} = 0.30$ T.`,
+        },
+        {
+          id: "q11",
+          question: `A wire of length 0.25 m carrying 3.0 A is placed in a magnetic field. The force on the wire is measured to be 0.30 N. What is the magnitude of the magnetic field if the wire is perpendicular to the field?`,
+          options: [
+            `0.20 T`,
+            `0.25 T`,
+            `0.40 T`,
+            `1.20 T`,
+          ],
+          correctIndex: 2,
+          explanation: `$B = \\frac{F}{IL} = \\frac{0.30}{(3.0)(0.25)} = 0.40$ T.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -3280,6 +5074,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `$\\frac{F}{L} = \\frac{(4\\pi \\times 10^{-7})(2.0)(2.0)}{2\\pi(0.20)} = \\frac{16\\pi \\times 10^{-7}}{0.40\\pi} = 4.0 \\times 10^{-6}$ N/m.`,
+      variations: [
+        {
+          id: "q12",
+          question: `Two parallel wires each carry 3.0 A in the same direction and are separated by 0.30 m. Using $\\frac{F}{L} = \\frac{\\mu_0 I_1 I_2}{2\\pi d}$ with $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A, what is the force per unit length?`,
+          options: [
+            `$6.0 \\times 10^{-6}$ N/m`,
+            `$3.0 \\times 10^{-6}$ N/m`,
+            `$1.2 \\times 10^{-5}$ N/m`,
+            `$9.0 \\times 10^{-6}$ N/m`,
+          ],
+          correctIndex: 0,
+          explanation: `$\\frac{F}{L} = \\frac{(4\\pi \\times 10^{-7})(3.0)(3.0)}{2\\pi(0.30)} = 6.0 \\times 10^{-6}$ N/m.`,
+        },
+        {
+          id: "q12",
+          question: `Two parallel wires each carry 4.0 A in the same direction and are separated by 0.40 m. Using $\\frac{F}{L} = \\frac{\\mu_0 I_1 I_2}{2\\pi d}$ with $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A, what is the force per unit length?`,
+          options: [
+            `$8.0 \\times 10^{-6}$ N/m`,
+            `$4.0 \\times 10^{-6}$ N/m`,
+            `$1.6 \\times 10^{-5}$ N/m`,
+            `$2.0 \\times 10^{-5}$ N/m`,
+          ],
+          correctIndex: 0,
+          explanation: `$\\frac{F}{L} = \\frac{(4\\pi \\times 10^{-7})(4.0)(4.0)}{2\\pi(0.40)} = 8.0 \\times 10^{-6}$ N/m.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -3381,6 +5201,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $B = \\mu_0 n I = (4\\pi \\times 10^{-7})(500)(4) = 2000\\pi \\times 10^{-7} \\approx 2.0 \\times 10^{-3}$ T.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A solenoid has 800 turns per meter and carries a current of 5 A. Using $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A, what is the magnetic field inside the solenoid?`,
+          options: [
+            `$5.0 \\times 10^{-3}$ T`,
+            `$2.0 \\times 10^{-3}$ T`,
+            `$1.0 \\times 10^{-2}$ T`,
+            `$8.0 \\times 10^{-3}$ T`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $B = \\mu_0 n I = (4\\pi \\times 10^{-7})(800)(5) = 4000\\pi \\times 10^{-7} \\approx 5.0 \\times 10^{-3}$ T.`,
+        },
+        {
+          id: "q6",
+          question: `A solenoid has 1000 turns per meter and carries a current of 2 A. Using $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A, what is the magnetic field inside the solenoid?`,
+          options: [
+            `$2.5 \\times 10^{-3}$ T`,
+            `$1.0 \\times 10^{-3}$ T`,
+            `$4.0 \\times 10^{-3}$ T`,
+            `$8.0 \\times 10^{-3}$ T`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $B = \\mu_0 n I = (4\\pi \\times 10^{-7})(1000)(2) = 2000\\pi \\times 10^{-7} \\approx 2.5 \\times 10^{-3}$ T.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -3405,6 +5251,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $B = \\frac{\\mu_0 I}{2R} = \\frac{(4\\pi \\times 10^{-7})(5)}{2(0.1)} = \\frac{20\\pi \\times 10^{-7}}{0.2} = 100\\pi \\times 10^{-7} \\approx 3.14 \\times 10^{-5}$ T.`,
+      variations: [
+        {
+          id: "q8",
+          question: `A circular loop of radius 0.2 m carries a current of 4 A. What is the magnetic field at the center of the loop? (Use $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A)`,
+          options: [
+            `$1.26 \\times 10^{-5}$ T`,
+            `$2.51 \\times 10^{-5}$ T`,
+            `$5.03 \\times 10^{-5}$ T`,
+            `$6.28 \\times 10^{-6}$ T`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $B = \\frac{\\mu_0 I}{2R} = \\frac{(4\\pi \\times 10^{-7})(4)}{2(0.2)} \\approx 1.26 \\times 10^{-5}$ T.`,
+        },
+        {
+          id: "q8",
+          question: `A circular loop of radius 0.05 m carries a current of 3 A. What is the magnetic field at the center of the loop? (Use $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A)`,
+          options: [
+            `$1.88 \\times 10^{-5}$ T`,
+            `$3.77 \\times 10^{-5}$ T`,
+            `$7.54 \\times 10^{-5}$ T`,
+            `$1.20 \\times 10^{-6}$ T`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $B = \\frac{\\mu_0 I}{2R} = \\frac{(4\\pi \\times 10^{-7})(3)}{2(0.05)} \\approx 3.77 \\times 10^{-5}$ T.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -3429,6 +5301,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Rearranging $B = \\mu_0 n I$ gives $I = \\frac{B}{\\mu_0 n} = \\frac{5.0 \\times 10^{-3}}{(4\\pi \\times 10^{-7})(2000)} \\approx 2.0$ A.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A solenoid is designed to produce a magnetic field of $4.0 \\times 10^{-3}$ T. If the solenoid has 1000 turns per meter, what current is required? (Use $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A)`,
+          options: [
+            `3.2 A`,
+            `1.6 A`,
+            `6.4 A`,
+            `8.0 A`,
+          ],
+          correctIndex: 0,
+          explanation: `$I = \\frac{B}{\\mu_0 n} = \\frac{4.0 \\times 10^{-3}}{(4\\pi \\times 10^{-7})(1000)} \\approx 3.2$ A.`,
+        },
+        {
+          id: "q10",
+          question: `A solenoid is designed to produce a magnetic field of $2.5 \\times 10^{-3}$ T. If the solenoid has 2000 turns per meter, what current is required? (Use $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A)`,
+          options: [
+            `1.0 A`,
+            `2.0 A`,
+            `4.0 A`,
+            `8.0 A`,
+          ],
+          correctIndex: 0,
+          explanation: `$I = \\frac{B}{\\mu_0 n} = \\frac{2.5 \\times 10^{-3}}{(4\\pi \\times 10^{-7})(2000)} \\approx 1.0$ A.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -3465,6 +5363,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Rearranging $B = \\frac{\\mu_0 I}{2\\pi r}$ gives $I = \\frac{2\\pi r B}{\\mu_0} = \\frac{2\\pi (0.05)(2.0 \\times 10^{-5})}{4\\pi \\times 10^{-7}} = 5.0$ A.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A long straight wire produces a magnetic field of $4.0 \\times 10^{-5}$ T at a distance of 0.10 m. What is the current in the wire? (Use $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A)`,
+          options: [
+            `20 A`,
+            `10 A`,
+            `5.0 A`,
+            `2.5 A`,
+          ],
+          correctIndex: 0,
+          explanation: `$I = \\frac{2\\pi rB}{\\mu_0} = \\frac{2\\pi(0.10)(4.0 \\times 10^{-5})}{4\\pi \\times 10^{-7}} = 20$ A.`,
+        },
+        {
+          id: "q13",
+          question: `A long straight wire produces a magnetic field of $1.0 \\times 10^{-5}$ T at a distance of 0.20 m. What is the current in the wire? (Use $\\mu_0 = 4\\pi \\times 10^{-7}$ T·m/A)`,
+          options: [
+            `10 A`,
+            `5.0 A`,
+            `2.5 A`,
+            `1.0 A`,
+          ],
+          correctIndex: 0,
+          explanation: `$I = \\frac{2\\pi rB}{\\mu_0} = \\frac{2\\pi(0.20)(1.0 \\times 10^{-5})}{4\\pi \\times 10^{-7}} = 10$ A.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -3566,6 +5490,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `By Ampère's law, the line integral equals $\\mu_0$ times the enclosed current. The enclosed current is 10 A regardless of the loop radius, so $\\oint \\vec{B} \\cdot d\\vec{L} = \\mu_0 \\times 10 \\text{ A}$.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A circular Amperian loop of radius 0.8 m is drawn around a long straight wire carrying 15 A of current. What is the line integral $\\oint \\vec{B} \\cdot d\\vec{L}$ around this loop?`,
+          options: [
+            `$\\mu_0 \\times 15 \\text{ A}$`,
+            `$\\mu_0 \\times 12 \\text{ A}$`,
+            `$\\mu_0 \\times 30 \\text{ A}$`,
+            `$\\mu_0 \\times 0.8 \\text{ A}$`,
+          ],
+          correctIndex: 0,
+          explanation: `By Ampère's law, the line integral equals $\\mu_0$ times the enclosed current. The enclosed current is 15 A regardless of loop radius.`,
+        },
+        {
+          id: "q6",
+          question: `A circular Amperian loop of radius 0.25 m is drawn around a long straight wire carrying 6 A of current. What is the line integral $\\oint \\vec{B} \\cdot d\\vec{L}$ around this loop?`,
+          options: [
+            `$\\mu_0 \\times 6 \\text{ A}$`,
+            `$\\mu_0 \\times 1.5 \\text{ A}$`,
+            `$\\mu_0 \\times 12 \\text{ A}$`,
+            `$\\mu_0 \\times 0.25 \\text{ A}$`,
+          ],
+          correctIndex: 0,
+          explanation: `By Ampère's law, the line integral equals $\\mu_0$ times the enclosed current. The enclosed current is 6 A regardless of loop radius.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -3763,6 +5713,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $|\\text{EMF}| = \\frac{\\Delta\\Phi_B}{\\Delta t} = \\frac{\\Delta B \\cdot A}{\\Delta t} = \\frac{(0.80 - 0.20) \\times 0.15}{3.0} = \\frac{0.09}{3.0} = 0.030$ V.`,
+      variations: [
+        {
+          id: "q6-corrected",
+          question: `A rectangular loop of area 0.20 m² is placed in a uniform magnetic field perpendicular to the loop. If the field increases from 0.10 T to 0.70 T in 2.0 seconds, what is the magnitude of the induced EMF?`,
+          options: [
+            `0.12 V`,
+            `0.060 V`,
+            `0.030 V`,
+            `0.60 V`,
+          ],
+          correctIndex: 1,
+          explanation: `$|\\text{EMF}| = \\frac{\\Delta B \\cdot A}{\\Delta t} = \\frac{(0.70 - 0.10) \\times 0.20}{2.0} = 0.060$ V.`,
+        },
+        {
+          id: "q6-corrected",
+          question: `A rectangular loop of area 0.25 m² is placed in a uniform magnetic field perpendicular to the loop. If the field increases from 0.30 T to 0.90 T in 3.0 seconds, what is the magnitude of the induced EMF?`,
+          options: [
+            `0.050 V`,
+            `0.10 V`,
+            `0.20 V`,
+            `0.60 V`,
+          ],
+          correctIndex: 0,
+          explanation: `$|\\text{EMF}| = \\frac{\\Delta B \\cdot A}{\\Delta t} = \\frac{(0.90 - 0.30) \\times 0.25}{3.0} = 0.050$ V.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -3811,6 +5787,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The area of the square loop is $(0.50)^2 = 0.25$ m². Using $|\\text{EMF}| = A \\frac{dB}{dt} = 0.25 \\times 0.40 = 0.10$ V.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A square loop of side length 0.40 m sits in a perpendicular magnetic field. If the field changes at a rate of 0.50 T/s, what is the magnitude of the induced EMF?`,
+          options: [
+            `0.08 V`,
+            `0.16 V`,
+            `0.20 V`,
+            `0.40 V`,
+          ],
+          correctIndex: 0,
+          explanation: `The area of the square loop is $(0.40)^2 = 0.16$ m². Using $|\\text{EMF}| = A \\frac{dB}{dt} = 0.16 \\times 0.50 = 0.08$ V.`,
+        },
+        {
+          id: "q10",
+          question: `A square loop of side length 0.20 m sits in a perpendicular magnetic field. If the field changes at a rate of 2.0 T/s, what is the magnitude of the induced EMF?`,
+          options: [
+            `0.04 V`,
+            `0.08 V`,
+            `0.20 V`,
+            `0.40 V`,
+          ],
+          correctIndex: 1,
+          explanation: `The area of the square loop is $(0.20)^2 = 0.04$ m². Using $|\\text{EMF}| = A \\frac{dB}{dt} = 0.04 \\times 2.0 = 0.08$ V.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -3823,6 +5825,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The motional EMF is $\\varepsilon = BLv = 0.50 \\times 0.80 \\times 5.0 = 2.0$ V. The current is $I = \\varepsilon/R = 2.0/2.0 = 1.0$ A.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A metal rod of length 0.60 m moves at 4.0 m/s perpendicular to a magnetic field of 0.50 T. If the rod is part of a circuit with total resistance 3.0 Ω, what current flows through the circuit?`,
+          options: [
+            `0.20 A`,
+            `0.40 A`,
+            `0.80 A`,
+            `1.20 A`,
+          ],
+          correctIndex: 1,
+          explanation: `The motional EMF is $\\varepsilon = BLv = 0.50 \\times 0.60 \\times 4.0 = 1.2$ V. The current is $I = \\varepsilon/R = 1.2/3.0 = 0.40$ A.`,
+        },
+        {
+          id: "q11",
+          question: `A metal rod of length 1.0 m moves at 3.0 m/s perpendicular to a magnetic field of 0.40 T. If the rod is part of a circuit with total resistance 2.0 Ω, what current flows through the circuit?`,
+          options: [
+            `0.30 A`,
+            `0.60 A`,
+            `1.20 A`,
+            `2.40 A`,
+          ],
+          correctIndex: 1,
+          explanation: `The motional EMF is $\\varepsilon = BLv = 0.40 \\times 1.0 \\times 3.0 = 1.2$ V. The current is $I = \\varepsilon/R = 1.2/2.0 = 0.60$ A.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -3847,6 +5875,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The loop area is $A = \\pi r^2 = \\pi (0.20)^2 \\approx 0.126$ m². The induced EMF is $|\\text{EMF}| = \\frac{\\Delta B \\cdot A}{\\Delta t} = \\frac{0.40 \\times 0.126}{2.0} \\approx 0.025$ V.`,
+      variations: [
+        {
+          id: "q12-revised",
+          question: `A circular loop of radius 0.10 m is in a magnetic field perpendicular to the loop. The field decreases uniformly from 0.80 T to 0.20 T over 3.0 seconds. What is the magnitude of the induced EMF?`,
+          options: [
+            `0.0031 V`,
+            `0.0063 V`,
+            `0.019 V`,
+            `0.063 V`,
+          ],
+          correctIndex: 1,
+          explanation: `$A = \\pi r^2 = \\pi(0.10)^2 \\approx 0.0314$ m². The induced EMF is $|\\text{EMF}| = \\Delta B A/\\Delta t = 0.60(0.0314)/3.0 \\approx 0.0063$ V.`,
+        },
+        {
+          id: "q12-revised",
+          question: `A circular loop of radius 0.40 m is in a magnetic field perpendicular to the loop. The field decreases uniformly from 0.50 T to 0.10 T over 4.0 seconds. What is the magnitude of the induced EMF?`,
+          options: [
+            `0.025 V`,
+            `0.050 V`,
+            `0.075 V`,
+            `0.10 V`,
+          ],
+          correctIndex: 1,
+          explanation: `$A = \\pi r^2 = \\pi(0.40)^2 \\approx 0.503$ m². The induced EMF is $|\\text{EMF}| = \\Delta B A/\\Delta t = 0.40(0.503)/4.0 \\approx 0.050$ V.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -3948,6 +6002,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $\\omega = \\frac{1}{\\sqrt{LC}} = \\frac{1}{\\sqrt{0.020 \\times 50 \\times 10^{-6}}} = \\frac{1}{\\sqrt{10^{-6}}} = \\frac{1}{10^{-3}} = 1000$ rad/s.`,
+      variations: [
+        {
+          id: "q7",
+          question: `An LC circuit has L = 10 mH and C = 40 μF. What is the resonant angular frequency?`,
+          options: [
+            `500 rad/s`,
+            `1000 rad/s`,
+            `1580 rad/s`,
+            `5000 rad/s`,
+          ],
+          correctIndex: 2,
+          explanation: `Using $\\omega = \\frac{1}{\\sqrt{LC}} = \\frac{1}{\\sqrt{0.010 \\times 40 \\times 10^{-6}}} \\approx 1580$ rad/s.`,
+        },
+        {
+          id: "q7",
+          question: `An LC circuit has L = 25 mH and C = 100 μF. What is the resonant angular frequency?`,
+          options: [
+            `400 rad/s`,
+            `632 rad/s`,
+            `1000 rad/s`,
+            `2000 rad/s`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $\\omega = \\frac{1}{\\sqrt{LC}} = \\frac{1}{\\sqrt{0.025 \\times 100 \\times 10^{-6}}} \\approx 632$ rad/s.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -3984,6 +6064,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $L = \\mu_0 n^2 \\text{Vol}$ where $n = 1000/0.5 = 2000$ turns/m, Vol = $0.01 \\times 0.5 = 0.005$ m³: $L = 4\\pi \\times 10^{-7} \\times (2000)^2 \\times 0.005 \\approx 0.25$ H.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A solenoid with 800 turns, length 0.4 m, and cross-sectional area 0.02 m² is wound with wire. Approximately what is its inductance? (Use $\\mu_0 \\approx 4\\pi \\times 10^{-7}$ H/m)`,
+          options: [
+            `0.10 H`,
+            `0.20 H`,
+            `2.0 H`,
+            `20 H`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $L = \\mu_0 n^2 \\text{Vol}$ where $n = 800/0.4 = 2000$ turns/m and Vol = $0.02 \\times 0.4 = 0.008$ m³ gives $L \\approx 0.20$ H.`,
+        },
+        {
+          id: "q10",
+          question: `A solenoid with 1200 turns, length 0.6 m, and cross-sectional area 0.015 m² is wound with wire. Approximately what is its inductance? (Use $\\mu_0 \\approx 4\\pi \\times 10^{-7}$ H/m)`,
+          options: [
+            `0.045 H`,
+            `0.30 H`,
+            `3.0 H`,
+            `30 H`,
+          ],
+          correctIndex: 0,
+          explanation: `Using $L = \\mu_0 n^2 \\text{Vol}$ where $n = 1200/0.6 = 2000$ turns/m and Vol = $0.015 \\times 0.6 = 0.009$ m³ gives $L \\approx 0.045$ H.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -4008,6 +6114,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Using $U = \\frac{1}{2}LI^2 = \\frac{1}{2} \\times 5 \\times (2)^2 = \\frac{1}{2} \\times 5 \\times 4 = 10$ J. Wait, that gives 10 J. Let me recalculate: $U = \\frac{1}{2} \\times 5 \\times 4 = 10$ J. The correct answer should be 10 J, but checking the options, 10 J is option 1. Let me verify once more: $\\frac{1}{2} \\times 5 \\times 4 = 10$ J. The answer is 10 J.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A 6 H inductor carries a steady current of 3 A. How much energy is stored in the inductor's magnetic field?`,
+          options: [
+            `9 J`,
+            `18 J`,
+            `27 J`,
+            `54 J`,
+          ],
+          correctIndex: 2,
+          explanation: `Using $U = \\frac{1}{2}LI^2 = \\frac{1}{2}(6)(3)^2 = 27$ J.`,
+        },
+        {
+          id: "q12",
+          question: `A 4 H inductor carries a steady current of 5 A. How much energy is stored in the inductor's magnetic field?`,
+          options: [
+            `20 J`,
+            `50 J`,
+            `100 J`,
+            `200 J`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $U = \\frac{1}{2}LI^2 = \\frac{1}{2}(4)(5)^2 = 50$ J.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -4044,6 +6176,32 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Since $\\omega = \\frac{1}{\\sqrt{LC}}$ and frequency $f = \\frac{\\omega}{2\\pi}$, the ratio is $\\frac{f_A}{f_B} = \\sqrt{\\frac{C_B}{C_A}} = \\sqrt{\\frac{4}{1}} = 2$. Smaller capacitance leads to higher resonant frequency.`,
+      variations: [
+        {
+          id: "q15",
+          question: `Two LC circuits have the same inductance but different capacitances: Circuit A has $C_A = 2$ μF and Circuit B has $C_B = 18$ μF. What is the ratio of their resonant frequencies $f_A / f_B$?`,
+          options: [
+            `0.5`,
+            `1`,
+            `2`,
+            `3`,
+          ],
+          correctIndex: 3,
+          explanation: `Since $f \\propto 1/\\sqrt{C}$ for fixed L, $f_A/f_B = \\sqrt{C_B/C_A} = \\sqrt{18/2} = 3$.`,
+        },
+        {
+          id: "q15",
+          question: `Two LC circuits have the same inductance but different capacitances: Circuit A has $C_A = 4$ μF and Circuit B has $C_B = 36$ μF. What is the ratio of their resonant frequencies $f_A / f_B$?`,
+          options: [
+            `0.5`,
+            `1`,
+            `2`,
+            `3`,
+          ],
+          correctIndex: 3,
+          explanation: `Since $f \\propto 1/\\sqrt{C}$ for fixed L, $f_A/f_B = \\sqrt{C_B/C_A} = \\sqrt{36/4} = 3$.`,
+        },
+      ],
     },
     ],
   },
