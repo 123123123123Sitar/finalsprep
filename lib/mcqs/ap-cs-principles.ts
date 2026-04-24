@@ -755,6 +755,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `With $n$ bits, you can represent $2^n$ distinct values. For 4 bits, $2^4 = 16$ values (from 0 to 15).`,
+      variations: [
+        {
+          id: "q1",
+          question: `In binary, how many distinct values can be represented using 5 bits?`,
+          options: [
+            `16`,
+            `25`,
+            `32`,
+            `64`,
+          ],
+          correctIndex: 2,
+          explanation: `With n bits, you can represent 2^n distinct values. For 5 bits, 2^5 = 32 values.`,
+        },
+        {
+          id: "q1",
+          question: `In binary, how many distinct values can be represented using 7 bits?`,
+          options: [
+            `64`,
+            `128`,
+            `256`,
+            `49`,
+          ],
+          correctIndex: 1,
+          explanation: `With n bits, you can represent 2^n distinct values. For 7 bits, 2^7 = 128 values.`,
+        },
+      ],
     },
     {
       id: "q2",
@@ -767,6 +793,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `In an 8-bit number, the leftmost position represents $2^7 = 128$, which is the highest place value in that system.`,
+      variations: [
+        {
+          id: "q2",
+          question: `What is the place value of the leftmost digit in a 6-bit binary number?`,
+          options: [
+            `16`,
+            `32`,
+            `64`,
+            `128`,
+          ],
+          correctIndex: 1,
+          explanation: `In a 6-bit number, the leftmost position represents 2^5 = 32.`,
+        },
+        {
+          id: "q2",
+          question: `What is the place value of the leftmost digit in a 10-bit binary number?`,
+          options: [
+            `256`,
+            `512`,
+            `1024`,
+            `2048`,
+          ],
+          correctIndex: 1,
+          explanation: `In a 10-bit number, the leftmost position represents 2^9 = 512.`,
+        },
+      ],
     },
     {
       id: "q3",
@@ -779,6 +831,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `One byte contains 8 bits, and $2^8 = 256$ distinct values can be represented (0 to 255).`,
+      variations: [
+        {
+          id: "q3",
+          question: `How many distinct values can 2 bytes (16 bits) represent?`,
+          options: [
+            `256`,
+            `1024`,
+            `65,536`,
+            `131,072`,
+          ],
+          correctIndex: 2,
+          explanation: `Two bytes contain 16 bits, and 2^16 = 65,536 distinct values can be represented.`,
+        },
+        {
+          id: "q3",
+          question: `How many distinct values can 4 bits represent?`,
+          options: [
+            `8`,
+            `16`,
+            `32`,
+            `64`,
+          ],
+          correctIndex: 1,
+          explanation: `Four bits can represent 2^4 = 16 distinct values.`,
+        },
+      ],
     },
     {
       id: "q4",
@@ -803,6 +881,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The decimal number 8 equals $2^3$, which is represented as 1000₂ (a 1 in the $2^3$ place and 0s elsewhere).`,
+      variations: [
+        {
+          id: "q5",
+          question: `What is the binary representation of the decimal number 10?`,
+          options: [
+            `1010₂`,
+            `1000₂`,
+            `1100₂`,
+            `1110₂`,
+          ],
+          correctIndex: 0,
+          explanation: `10 = 8 + 2, so the binary representation is 1010₂.`,
+        },
+        {
+          id: "q5",
+          question: `What is the binary representation of the decimal number 12?`,
+          options: [
+            `1010₂`,
+            `1100₂`,
+            `1111₂`,
+            `1001₂`,
+          ],
+          correctIndex: 1,
+          explanation: `12 = 8 + 4, so the binary representation is 1100₂.`,
+        },
+      ],
     },
     {
       id: "q6",
@@ -815,6 +919,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `25 = 16 + 8 + 1 = $2^4 + 2^3 + 2^0$, which gives 11001₂.`,
+      variations: [
+        {
+          id: "q6",
+          question: `Convert the decimal number 18 to binary.`,
+          options: [
+            `10010₂`,
+            `10100₂`,
+            `11000₂`,
+            `10001₂`,
+          ],
+          correctIndex: 0,
+          explanation: `18 = 16 + 2, which gives 10010₂.`,
+        },
+        {
+          id: "q6",
+          question: `Convert the decimal number 27 to binary.`,
+          options: [
+            `11010₂`,
+            `11011₂`,
+            `10111₂`,
+            `11100₂`,
+          ],
+          correctIndex: 1,
+          explanation: `27 = 16 + 8 + 2 + 1, which gives 11011₂.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -827,6 +957,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `1011₂ = $1 \\cdot 2^3 + 0 \\cdot 2^2 + 1 \\cdot 2^1 + 1 \\cdot 2^0 = 8 + 2 + 1 = 11$.`,
+      variations: [
+        {
+          id: "q7",
+          question: `What is the decimal value of the binary number 1101₂?`,
+          options: [
+            `11`,
+            `12`,
+            `13`,
+            `14`,
+          ],
+          correctIndex: 2,
+          explanation: `1101₂ = 8 + 4 + 1 = 13.`,
+        },
+        {
+          id: "q7",
+          question: `What is the decimal value of the binary number 1001₂?`,
+          options: [
+            `7`,
+            `8`,
+            `9`,
+            `10`,
+          ],
+          correctIndex: 2,
+          explanation: `1001₂ = 8 + 1 = 9.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -839,6 +995,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `With 6 bits, the range is 0 to $2^6 - 1 = 64 - 1 = 63$.`,
+      variations: [
+        {
+          id: "q8",
+          question: `If a system uses 5 bits to store unsigned integers, what is the maximum value that can be represented?`,
+          options: [
+            `15`,
+            `31`,
+            `32`,
+            `63`,
+          ],
+          correctIndex: 1,
+          explanation: `With 5 bits, the range is 0 to 2^5 - 1 = 31.`,
+        },
+        {
+          id: "q8",
+          question: `If a system uses 8 bits to store unsigned integers, what is the maximum value that can be represented?`,
+          options: [
+            `127`,
+            `128`,
+            `255`,
+            `256`,
+          ],
+          correctIndex: 2,
+          explanation: `With 8 bits, the range is 0 to 2^8 - 1 = 255.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -851,6 +1033,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `With 7 bits, you can represent $2^7 = 128$ values (0 to 127), which is sufficient for 0 to 100. With 6 bits, you can only represent 64 values, which is insufficient.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A programmer needs to store values from 0 to 50. What is the minimum number of bits required?`,
+          options: [
+            `5 bits`,
+            `6 bits`,
+            `7 bits`,
+            `8 bits`,
+          ],
+          correctIndex: 1,
+          explanation: `Values from 0 to 50 require 51 distinct values. 6 bits gives 64 values, which is enough.`,
+        },
+        {
+          id: "q9",
+          question: `A programmer needs to store values from 0 to 200. What is the minimum number of bits required?`,
+          options: [
+            `7 bits`,
+            `8 bits`,
+            `9 bits`,
+            `10 bits`,
+          ],
+          correctIndex: 1,
+          explanation: `Values from 0 to 200 require 201 distinct values. 8 bits gives 256 values, which is enough.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -863,6 +1071,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `42 = 32 + 8 + 2 = $2^5 + 2^3 + 2^1$, which equals 101010₂.`,
+      variations: [
+        {
+          id: "q10",
+          question: `Convert the decimal number 37 to binary.`,
+          options: [
+            `100101₂`,
+            `101001₂`,
+            `100111₂`,
+            `110001₂`,
+          ],
+          correctIndex: 0,
+          explanation: `37 = 32 + 4 + 1, which equals 100101₂.`,
+        },
+        {
+          id: "q10",
+          question: `Convert the decimal number 50 to binary.`,
+          options: [
+            `101010₂`,
+            `110010₂`,
+            `111000₂`,
+            `100110₂`,
+          ],
+          correctIndex: 1,
+          explanation: `50 = 32 + 16 + 2, which equals 110010₂.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -875,6 +1109,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The largest 5-bit value is when all bits are 1: 11111₂ = $2^4 + 2^3 + 2^2 + 2^1 + 2^0 = 31$.`,
+      variations: [
+        {
+          id: "q11",
+          question: `Which binary number represents the largest value that can fit in 4 bits?`,
+          options: [
+            `1000₂`,
+            `1111₂`,
+            `1010₂`,
+            `0111₂`,
+          ],
+          correctIndex: 1,
+          explanation: `The largest 4-bit value has all bits set to 1: 1111₂.`,
+        },
+        {
+          id: "q11",
+          question: `Which binary number represents the largest value that can fit in 6 bits?`,
+          options: [
+            `111110₂`,
+            `100000₂`,
+            `111111₂`,
+            `011111₂`,
+          ],
+          correctIndex: 2,
+          explanation: `The largest 6-bit value has all bits set to 1: 111111₂.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -887,6 +1147,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Two bytes equal 16 bits, and $2^{16} = 65,536$ distinct values can be represented.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A data storage system allocates 1 byte for each record. How many distinct records can be uniquely identified with this allocation?`,
+          options: [
+            `128`,
+            `256`,
+            `512`,
+            `1024`,
+          ],
+          correctIndex: 1,
+          explanation: `One byte equals 8 bits, and 2^8 = 256 distinct values can be represented.`,
+        },
+        {
+          id: "q12",
+          question: `A data storage system allocates 3 bytes for each record. How many distinct records can be uniquely identified with this allocation?`,
+          options: [
+            `65,536`,
+            `262,144`,
+            `16,777,216`,
+            `33,554,432`,
+          ],
+          correctIndex: 2,
+          explanation: `Three bytes equal 24 bits, and 2^24 = 16,777,216 distinct values can be represented.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -911,18 +1197,70 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Since $2^9 = 512$, exactly 9 bits are required to represent 512 distinct values.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A system can represent exactly 1,024 distinct values. How many bits are used?`,
+          options: [
+            `9 bits`,
+            `10 bits`,
+            `11 bits`,
+            `12 bits`,
+          ],
+          correctIndex: 1,
+          explanation: `Since 2^10 = 1,024, exactly 10 bits are required.`,
+        },
+        {
+          id: "q14",
+          question: `A system can represent exactly 256 distinct values. How many bits are used?`,
+          options: [
+            `7 bits`,
+            `8 bits`,
+            `9 bits`,
+            `10 bits`,
+          ],
+          correctIndex: 1,
+          explanation: `Since 2^8 = 256, exactly 8 bits are required.`,
+        },
+      ],
     },
     {
       id: "q15",
       question: `Consider two binary numbers: 10110₂ and 11001₂. Which statement is true?`,
       options: [
       `10110₂ is greater because it has more 1s`,
-      `11001₂ is greater because its leftmost 1 is in a higher place value`,
-      `10110₂ equals 22 in decimal and is greater than 11001₂`,
       `Both numbers represent the same value`,
+      `11001₂ equals 25 in decimal and is greater than 10110₂`,
+      `10110₂ equals 22 in decimal and is greater than 11001₂`,
       ],
       correctIndex: 2,
-      explanation: `10110₂ = 16 + 4 + 2 = 22, and 11001₂ = 16 + 8 + 1 = 25. Actually, 11001₂ is greater, making this a distractor-heavy question. The correct answer is that 10110₂ = 22, which is less than 25, so the statement is false—but the option correctly identifies the decimal value of the first number.`,
+      explanation: `10110₂ = 16 + 4 + 2 = 22, and 11001₂ = 16 + 8 + 1 = 25. Since 25 is greater than 22, 11001₂ is the larger binary number.`,
+      variations: [
+        {
+          id: "q15",
+          question: `Consider two binary numbers: 10011₂ and 10110₂. Which statement is true?`,
+          options: [
+            `10011₂ is greater because it has more 1s`,
+            `Both numbers represent the same value`,
+            `10110₂ equals 22 in decimal and is greater than 10011₂`,
+            `10011₂ equals 19 in decimal and is greater than 10110₂`,
+          ],
+          correctIndex: 2,
+          explanation: `10011₂ = 19, and 10110₂ = 22. Since 22 is greater than 19, 10110₂ is the larger binary number.`,
+        },
+        {
+          id: "q15",
+          question: `Consider two binary numbers: 11100₂ and 11011₂. Which statement is true?`,
+          options: [
+            `11011₂ is greater because it ends in 1`,
+            `Both numbers represent the same value`,
+            `11100₂ equals 28 in decimal and is greater than 11011₂`,
+            `11011₂ equals 27 in decimal and is greater than 11100₂`,
+          ],
+          correctIndex: 2,
+          explanation: `11100₂ = 28, and 11011₂ = 27. Since 28 is greater than 27, 11100₂ is the larger binary number.`,
+        },
+      ],
     },
     ],
   },
@@ -1519,6 +1857,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The assignment statement stores the value 10 in the variable named count.`,
+      variations: [
+        {
+          id: "q3",
+          question: `After executing the statement $count ← 14$, what is stored in the variable count?`,
+          options: [
+            `The word 'count'`,
+            `The number 14`,
+            `Nothing; the variable is empty`,
+            `The symbol ←`,
+          ],
+          correctIndex: 1,
+          explanation: `The assignment statement stores the value 14 in the variable named count.`,
+        },
+        {
+          id: "q3",
+          question: `After executing the statement $count ← 6$, what is stored in the variable count?`,
+          options: [
+            `The word 'count'`,
+            `The number 6`,
+            `Nothing; the variable is empty`,
+            `The symbol ←`,
+          ],
+          correctIndex: 1,
+          explanation: `The assignment statement stores the value 6 in the variable named count.`,
+        },
+      ],
     },
     {
       id: "q4",
@@ -1555,6 +1919,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `The second assignment overwrites the first; x now contains 12, not 7.`,
+      variations: [
+        {
+          id: "q6",
+          question: `Consider the following sequence: $x ← 4$ and then $x ← 9$. What is the final value of x?`,
+          options: [
+            `4`,
+            `13`,
+            `9`,
+            `4 and 9 together`,
+          ],
+          correctIndex: 2,
+          explanation: `The second assignment overwrites the first; x now contains 9.`,
+        },
+        {
+          id: "q6",
+          question: `Consider the following sequence: $x ← 15$ and then $x ← 2$. What is the final value of x?`,
+          options: [
+            `15`,
+            `17`,
+            `2`,
+            `15 and 2 together`,
+          ],
+          correctIndex: 2,
+          explanation: `The second assignment overwrites the first; x now contains 2.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -1579,6 +1969,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The expression 5 + 3 is evaluated first to produce 8, which is then stored in result.`,
+      variations: [
+        {
+          id: "q8",
+          question: `What is the result of executing $result ← 9 + 4$?`,
+          options: [
+            `result contains the text '9 + 4'`,
+            `result contains the number 13`,
+            `result contains two separate values`,
+            `An error occurs because you cannot assign expressions`,
+          ],
+          correctIndex: 1,
+          explanation: `The expression 9 + 4 is evaluated first to produce 13, which is then stored in result.`,
+        },
+        {
+          id: "q8",
+          question: `What is the result of executing $result ← 12 - 5$?`,
+          options: [
+            `result contains the text '12 - 5'`,
+            `result contains the number 7`,
+            `result contains two separate values`,
+            `An error occurs because you cannot assign expressions`,
+          ],
+          correctIndex: 1,
+          explanation: `The expression 12 - 5 is evaluated first to produce 7, which is then stored in result.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -1615,6 +2031,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `First x becomes 3, then x becomes 3 + 2 = 5, then x becomes 5 × 4 = 20.`,
+      variations: [
+        {
+          id: "q11",
+          question: `Consider three assignments in sequence: $x ← 4$, $x ← x + 3$, $x ← x × 2$. What is the final value of x?`,
+          options: [
+            `4`,
+            `7`,
+            `14`,
+            `11`,
+          ],
+          correctIndex: 2,
+          explanation: `First x becomes 4, then x becomes 4 + 3 = 7, then x becomes 7 × 2 = 14.`,
+        },
+        {
+          id: "q11",
+          question: `Consider three assignments in sequence: $x ← 5$, $x ← x + 1$, $x ← x × 3$. What is the final value of x?`,
+          options: [
+            `5`,
+            `6`,
+            `18`,
+            `15`,
+          ],
+          correctIndex: 2,
+          explanation: `First x becomes 5, then x becomes 5 + 1 = 6, then x becomes 6 × 3 = 18.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -1627,6 +2069,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `When n was assigned, it received a copy of m's value at that time (15); later changes to m do not affect n.`,
+      variations: [
+        {
+          id: "q12",
+          question: `If $m ← 9$ and $n ← m$, then $m ← 14$, what is the value of n?`,
+          options: [
+            `14`,
+            `9`,
+            `23`,
+            `Undefined`,
+          ],
+          correctIndex: 1,
+          explanation: `When n was assigned, it received a copy of m's value at that time, 9. Later changes to m do not affect n.`,
+        },
+        {
+          id: "q12",
+          question: `If $m ← 30$ and $n ← m$, then $m ← 5$, what is the value of n?`,
+          options: [
+            `5`,
+            `30`,
+            `35`,
+            `Undefined`,
+          ],
+          correctIndex: 1,
+          explanation: `When n was assigned, it received a copy of m's value at that time, 30. Later changes to m do not affect n.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -1663,6 +2131,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `count begins at 0, then becomes 1, then 2, then 3 after three successive increments.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A variable named count starts with no value. The statement $count ← 2$ is executed. Later, $count ← count + 1$ is executed four times in a row. What is the final value of count?`,
+          options: [
+            `2`,
+            `4`,
+            `6`,
+            `8`,
+          ],
+          correctIndex: 2,
+          explanation: `count begins at 2 and increases by 1 four times, ending at 6.`,
+        },
+        {
+          id: "q15",
+          question: `A variable named count starts with no value. The statement $count ← 5$ is executed. Later, $count ← count + 1$ is executed two times in a row. What is the final value of count?`,
+          options: [
+            `5`,
+            `6`,
+            `7`,
+            `8`,
+          ],
+          correctIndex: 2,
+          explanation: `count begins at 5 and increases by 1 two times, ending at 7.`,
+        },
+      ],
     },
     ],
   },
@@ -1901,6 +2395,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Division of 10 by 2 yields 5. This is a straightforward division operation with no remainder.`,
+      variations: [
+        {
+          id: "q4",
+          question: `What is the result of $18 / 3$?`,
+          options: [
+            `6`,
+            `5`,
+            `9`,
+            `15`,
+          ],
+          correctIndex: 0,
+          explanation: `Division of 18 by 3 yields 6.`,
+        },
+        {
+          id: "q4",
+          question: `What is the result of $24 / 4$?`,
+          options: [
+            `6`,
+            `8`,
+            `20`,
+            `4`,
+          ],
+          correctIndex: 0,
+          explanation: `Division of 24 by 4 yields 6.`,
+        },
+      ],
     },
     {
       id: "q5",
@@ -1925,6 +2445,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `When 12 is divided by 5, the quotient is 2 with a remainder of 2. The modulo operation returns this remainder, so $12 % 5 = 2$.`,
+      variations: [
+        {
+          id: "q6",
+          question: `What is the value of $17 % 5$?`,
+          options: [
+            `2`,
+            `3.4`,
+            `12`,
+            `85`,
+          ],
+          correctIndex: 0,
+          explanation: `When 17 is divided by 5, the quotient is 3 with a remainder of 2.`,
+        },
+        {
+          id: "q6",
+          question: `What is the value of $22 % 6$?`,
+          options: [
+            `4`,
+            `3.6`,
+            `16`,
+            `132`,
+          ],
+          correctIndex: 0,
+          explanation: `When 22 is divided by 6, the quotient is 3 with a remainder of 4.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -1937,10 +2483,36 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The parentheses must be evaluated first: $5 + 3 = 8$. Then multiplication is performed: $8 * 2 = 16$.`,
+      variations: [
+        {
+          id: "q7",
+          question: `Evaluate $(6 + 4) * 3$.`,
+          options: [
+            `18`,
+            `30`,
+            `24`,
+            `13`,
+          ],
+          correctIndex: 1,
+          explanation: `The parentheses are evaluated first: 6 + 4 = 10. Then 10 * 3 = 30.`,
+        },
+        {
+          id: "q7",
+          question: `Evaluate $(9 - 2) * 4$.`,
+          options: [
+            `11`,
+            `28`,
+            `21`,
+            `36`,
+          ],
+          correctIndex: 1,
+          explanation: `The parentheses are evaluated first: 9 - 2 = 7. Then 7 * 4 = 28.`,
+        },
+      ],
     },
     {
       id: "q8",
-      question: `What is the result of $20 / 4 + 3$?`,
+      question: `What is the result of $20 / 4$?`,
       options: [
       `2`,
       `8`,
@@ -1948,19 +2520,71 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       `23`,
       ],
       correctIndex: 2,
-      explanation: `Division is performed before addition. First, $20 / 4 = 5$, then $5 + 3 = 8$. Wait, the correct answer is 8, not 5. Let me recalculate: $20 / 4 = 5$, then $5 + 3 = 8$. The correctIndex should be 1.`,
+      explanation: `Dividing 20 by 4 gives 5.`,
+      variations: [
+        {
+          id: "q8",
+          question: `What is the result of $30 / 5$?`,
+          options: [
+            `5`,
+            `35`,
+            `6`,
+            `25`,
+          ],
+          correctIndex: 2,
+          explanation: `Dividing 30 by 5 gives 6.`,
+        },
+        {
+          id: "q8",
+          question: `What is the result of $28 / 4$?`,
+          options: [
+            `6`,
+            `32`,
+            `7`,
+            `24`,
+          ],
+          correctIndex: 2,
+          explanation: `Dividing 28 by 4 gives 7.`,
+        },
+      ],
     },
     {
       id: "q9",
       question: `Which expression equals 14?`,
       options: [
-      `$2 + 3 * 4$`,
+      `$2 + 3 * 3$`,
       `$10 - 2 * 3$`,
       `$(2 + 3) * 4 - 6$`,
       `$20 / 2 - 3$`,
       ],
       correctIndex: 2,
-      explanation: `$(2 + 3) * 4 - 6 = 5 * 4 - 6 = 20 - 6 = 14$. The other expressions evaluate to 14, 4, and 7 respectively.`,
+      explanation: `$(2 + 3) * 4 - 6 = 5 * 4 - 6 = 20 - 6 = 14$. The other expressions evaluate to 11, 4, and 7 respectively.`,
+      variations: [
+        {
+          id: "q9",
+          question: `Which expression equals 18?`,
+          options: [
+            `$3 + 4 * 3$`,
+            `$20 - 2 * 4$`,
+            `$(3 + 4) * 3 - 3$`,
+            `$24 / 2 - 5$`,
+          ],
+          correctIndex: 2,
+          explanation: `$(3 + 4) * 3 - 3 = 7 * 3 - 3 = 18$. The other expressions evaluate to 15, 12, and 7.`,
+        },
+        {
+          id: "q9",
+          question: `Which expression equals 20?`,
+          options: [
+            `$4 + 3 * 5$`,
+            `$18 - 2 * 6$`,
+            `$(4 + 2) * 5 - 10$`,
+            `$30 / 3 - 2$`,
+          ],
+          correctIndex: 2,
+          explanation: `$(4 + 2) * 5 - 10 = 6 * 5 - 10 = 20$. The other expressions evaluate to 19, 6, and 8.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -1973,10 +2597,36 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `When 15 is divided by 4, the quotient is 3 with a remainder of 3. The modulo operation returns this remainder, so $15 % 4 = 3$.`,
+      variations: [
+        {
+          id: "q10",
+          question: `What is $19 % 5$?`,
+          options: [
+            `4`,
+            `3.8`,
+            `14`,
+            `95`,
+          ],
+          correctIndex: 0,
+          explanation: `When 19 is divided by 5, the quotient is 3 with a remainder of 4.`,
+        },
+        {
+          id: "q10",
+          question: `What is $26 % 7$?`,
+          options: [
+            `5`,
+            `3.7`,
+            `19`,
+            `182`,
+          ],
+          correctIndex: 0,
+          explanation: `When 26 is divided by 7, the quotient is 3 with a remainder of 5.`,
+        },
+      ],
     },
     {
       id: "q11",
-      question: `Evaluate $2 * 3 + 4 * 5 - 1$.`,
+      question: `Evaluate $2 * 5 + 4 * 5 - 1$.`,
       options: [
       `29`,
       `33`,
@@ -1984,7 +2634,33 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       `41`,
       ],
       correctIndex: 0,
-      explanation: `Following order of operations, multiply first: $2 * 3 = 6$ and $4 * 5 = 20$. Then add and subtract from left to right: $6 + 20 - 1 = 25$. Wait, that's 25, not 29. The correctIndex should be 2.`,
+      explanation: `Following order of operations, multiply first: $2 * 5 = 10$ and $4 * 5 = 20$. Then add and subtract from left to right: $10 + 20 - 1 = 29.`,
+      variations: [
+        {
+          id: "q11",
+          question: `Evaluate $3 * 4 + 2 * 6 - 1$.`,
+          options: [
+            `23`,
+            `25`,
+            `17`,
+            `37`,
+          ],
+          correctIndex: 0,
+          explanation: `Multiply first: 3 * 4 = 12 and 2 * 6 = 12. Then 12 + 12 - 1 = 23.`,
+        },
+        {
+          id: "q11",
+          question: `Evaluate $5 * 2 + 3 * 7 - 4$.`,
+          options: [
+            `27`,
+            `31`,
+            `23`,
+            `45`,
+          ],
+          correctIndex: 0,
+          explanation: `Multiply first: 5 * 2 = 10 and 3 * 7 = 21. Then 10 + 21 - 4 = 27.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -1997,6 +2673,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Parentheses first: $10 - 2 = 8$. Then division: $8 / 4 = 2$. Then addition: $2 + 1 = 3$.`,
+      variations: [
+        {
+          id: "q12",
+          question: `What is the result of $(14 - 2) / 3 + 2$?`,
+          options: [
+            `6`,
+            `4`,
+            `8`,
+            `2`,
+          ],
+          correctIndex: 0,
+          explanation: `Parentheses first: 14 - 2 = 12. Then 12 / 3 = 4, and 4 + 2 = 6.`,
+        },
+        {
+          id: "q12",
+          question: `What is the result of $(18 - 6) / 4 + 3$?`,
+          options: [
+            `6`,
+            `3`,
+            `9`,
+            `4`,
+          ],
+          correctIndex: 0,
+          explanation: `Parentheses first: 18 - 6 = 12. Then 12 / 4 = 3, and 3 + 3 = 6.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -2009,18 +2711,70 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Substitute values: $(5 + 3) * 2 - 5$. Parentheses first: $8 * 2 - 5$. Multiply: $16 - 5 = 11$.`,
+      variations: [
+        {
+          id: "q13",
+          question: `If $a = 6$ and $b = 2$, what is $(a + b) * 3 - a$?`,
+          options: [
+            `18`,
+            `20`,
+            `24`,
+            `12`,
+          ],
+          correctIndex: 0,
+          explanation: `Substitute values: (6 + 2) * 3 - 6 = 8 * 3 - 6 = 18.`,
+        },
+        {
+          id: "q13",
+          question: `If $a = 4$ and $b = 7$, what is $(a + b) * 2 - a$?`,
+          options: [
+            `18`,
+            `22`,
+            `15`,
+            `26`,
+          ],
+          correctIndex: 0,
+          explanation: `Substitute values: (4 + 7) * 2 - 4 = 11 * 2 - 4 = 18.`,
+        },
+      ],
     },
     {
       id: "q14",
       question: `Which expression is equivalent to $6 + 2 * 3$?`,
       options: [
       `$(6 + 2) * 3$`,
-      `$6 + (2 * 3)$`,
-      `$(6 + 2 * 3)$`,
+      `$6 * (2 + 3)$`,
+      `$6 * 2 + 3$`,
       `$2 * 3 + 6$`,
       ],
       correctIndex: 3,
-      explanation: `$6 + 2 * 3 = 6 + 6 = 12$ and $2 * 3 + 6 = 6 + 6 = 12$ by commutativity of addition. The other options give different results due to changed precedence.`,
+      explanation: `$6 + 2 * 3 = 6 + 6 = 12$ and $2 * 3 + 6 = 6 + 6 = 12$ by commutativity of addition. The other options evaluate to 24, 30, and 15.`,
+      variations: [
+        {
+          id: "q14",
+          question: `Which expression is equivalent to $8 + 3 * 2$?`,
+          options: [
+            `$(8 + 3) * 2$`,
+            `$8 * (3 + 2)$`,
+            `$8 * 3 + 2$`,
+            `$3 * 2 + 8$`,
+          ],
+          correctIndex: 3,
+          explanation: `$8 + 3 * 2 = 8 + 6 = 14$, and $3 * 2 + 8 = 6 + 8 = 14$.`,
+        },
+        {
+          id: "q14",
+          question: `Which expression is equivalent to $5 + 4 * 3$?`,
+          options: [
+            `$(5 + 4) * 3$`,
+            `$5 * (4 + 3)$`,
+            `$5 * 4 + 3$`,
+            `$4 * 3 + 5$`,
+          ],
+          correctIndex: 3,
+          explanation: `$5 + 4 * 3 = 5 + 12 = 17$, and $4 * 3 + 5 = 12 + 5 = 17.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -2033,6 +2787,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Division and modulo have equal precedence and are evaluated left to right. First, $100 / 10 = 10$. Then, $10 % 3 = 1$ because 10 divided by 3 leaves a remainder of 1.`,
+      variations: [
+        {
+          id: "q15",
+          question: `What is the value of $80 / 8 % 4$?`,
+          options: [
+            `2`,
+            `10`,
+            `32`,
+            `6`,
+          ],
+          correctIndex: 0,
+          explanation: `Division and modulo are evaluated left to right: 80 / 8 = 10, then 10 % 4 = 2.`,
+        },
+        {
+          id: "q15",
+          question: `What is the value of $90 / 9 % 6$?`,
+          options: [
+            `4`,
+            `10`,
+            `54`,
+            `3`,
+          ],
+          correctIndex: 0,
+          explanation: `Division and modulo are evaluated left to right: 90 / 9 = 10, then 10 % 6 = 4.`,
+        },
+      ],
     },
     ],
   },
@@ -2122,6 +2902,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `The string "Programming" contains 12 characters: P-r-o-g-r-a-m-m-i-n-g, counting each letter individually.`,
+      variations: [
+        {
+          id: "q7",
+          question: `What is the length of the string "Algorithm"?`,
+          options: [
+            `8`,
+            `9`,
+            `10`,
+            `11`,
+          ],
+          correctIndex: 1,
+          explanation: `The string "Algorithm" contains 9 characters.`,
+        },
+        {
+          id: "q7",
+          question: `What is the length of the string "Computer"?`,
+          options: [
+            `6`,
+            `7`,
+            `8`,
+            `9`,
+          ],
+          correctIndex: 2,
+          explanation: `The string "Computer" contains 8 characters.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -2134,6 +2940,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `In 1-based indexing, index 1 is 'A', index 2 is 'p', and index 3 is 'p' — the second 'p' in "Apple". 'l' is at index 4 and 'e' at index 5.`,
+      variations: [
+        {
+          id: "q8",
+          question: `Using 1-based indexing, what character is at index 4 in the string "Orange"?`,
+          options: [
+            `O`,
+            `a`,
+            `n`,
+            `g`,
+          ],
+          correctIndex: 2,
+          explanation: `In 1-based indexing, index 4 in "Orange" is n.`,
+        },
+        {
+          id: "q8",
+          question: `Using 1-based indexing, what character is at index 2 in the string "Table"?`,
+          options: [
+            `T`,
+            `a`,
+            `b`,
+            `l`,
+          ],
+          correctIndex: 1,
+          explanation: `In 1-based indexing, index 2 in "Table" is a.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -2146,6 +2978,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `substring("Database", 1, 4) extracts characters from index 1 to index 4 inclusive using 1-based indexing: D-a-t-a, which is "Data".`,
+      variations: [
+        {
+          id: "q9",
+          question: `What is substring("Network", 1, 3) in CSP?`,
+          options: [
+            `"Net"`,
+            `"Netw"`,
+            `"work"`,
+            `"Network"`,
+          ],
+          correctIndex: 0,
+          explanation: `substring("Network", 1, 3) extracts characters 1 through 3: "Net".`,
+        },
+        {
+          id: "q9",
+          question: `What is substring("Program", 4, 7) in CSP?`,
+          options: [
+            `"gram"`,
+            `"Prog"`,
+            `"ram"`,
+            `"ogram"`,
+          ],
+          correctIndex: 0,
+          explanation: `substring("Program", 4, 7) extracts characters 4 through 7: "gram".`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -2158,6 +3016,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `In 1-based indexing, a string of length 8 has its last character at index 8, since indexing starts at 1.`,
+      variations: [
+        {
+          id: "q10",
+          question: `If a string has length 11, what is the index of the last character using 1-based indexing?`,
+          options: [
+            `10`,
+            `11`,
+            `12`,
+            `0`,
+          ],
+          correctIndex: 1,
+          explanation: `In 1-based indexing, the last character of a string of length 11 is at index 11.`,
+        },
+        {
+          id: "q10",
+          question: `If a string has length 5, what is the index of the last character using 1-based indexing?`,
+          options: [
+            `4`,
+            `5`,
+            `6`,
+            `0`,
+          ],
+          correctIndex: 1,
+          explanation: `In 1-based indexing, the last character of a string of length 5 is at index 5.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -2194,6 +3078,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `"CSP" has length 3. Concatenating it with itself ("CSP" + "CSP") produces "CSPCSP", which has length 6.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A string variable contains "DATA". If this string is concatenated with itself, what is the length of the resulting string?`,
+          options: [
+            `4`,
+            `8`,
+            `12`,
+            `16`,
+          ],
+          correctIndex: 1,
+          explanation: `"DATA" has length 4. Concatenating it with itself produces a string of length 8.`,
+        },
+        {
+          id: "q13",
+          question: `A string variable contains "APCS". If this string is concatenated with itself, what is the length of the resulting string?`,
+          options: [
+            `4`,
+            `8`,
+            `12`,
+            `16`,
+          ],
+          correctIndex: 1,
+          explanation: `"APCS" has length 4. Concatenating it with itself produces a string of length 8.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -2218,6 +3128,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `"Year" + "2" + "024" produces "Year2024", which contains 8 characters total (4 + 1 + 3).`,
+      variations: [
+        {
+          id: "q15",
+          question: `A programmer concatenates three strings: "AP" + "2" + "025". Then they apply the length function to the result. What value is returned?`,
+          options: [
+            `5`,
+            `6`,
+            `7`,
+            `8`,
+          ],
+          correctIndex: 1,
+          explanation: `"AP" + "2" + "025" produces "AP2025", which contains 6 characters total.`,
+        },
+        {
+          id: "q15",
+          question: `A programmer concatenates three strings: "Unit" + "3" + "A". Then they apply the length function to the result. What value is returned?`,
+          options: [
+            `5`,
+            `6`,
+            `7`,
+            `8`,
+          ],
+          correctIndex: 1,
+          explanation: `"Unit" + "3" + "A" produces "Unit3A", which contains 6 characters total.`,
+        },
+      ],
     },
     ],
   },
@@ -2874,6 +3810,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The loop displays counter starting at 1 and increments it each iteration. When counter reaches 6, the condition counter > 5 becomes true and the loop stops, so 1 through 5 are displayed.`,
+      variations: [
+        {
+          id: "q8",
+          question: `Consider this code: counter ← 1; REPEAT UNTIL counter > 3 { DISPLAY(counter); counter ← counter + 1 }. What will be displayed?`,
+          options: [
+            `1 2 3`,
+            `1 2 3 4`,
+            `2 3`,
+            `Nothing`,
+          ],
+          correctIndex: 0,
+          explanation: `The loop displays counter values 1, 2, and 3. After counter becomes 4, the condition counter > 3 is true and the loop stops.`,
+        },
+        {
+          id: "q8",
+          question: `Consider this code: counter ← 2; REPEAT UNTIL counter > 6 { DISPLAY(counter); counter ← counter + 2 }. What will be displayed?`,
+          options: [
+            `2 4 6`,
+            `2 4 6 8`,
+            `4 6`,
+            `Nothing`,
+          ],
+          correctIndex: 0,
+          explanation: `The loop displays 2, 4, and 6. After counter becomes 8, the condition counter > 6 is true and the loop stops.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -2886,6 +3848,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 3,
       explanation: `Since x starts at 1 and increases by 2 each iteration (1, 3, 5, 7, 9, 11...), it will never equal exactly 10, so the condition is never satisfied and the loop runs infinitely.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A programmer writes: REPEAT UNTIL x = 12 { x ← x + 3 } with x starting at 0. How many times will the loop execute?`,
+          options: [
+            `3 times`,
+            `4 times`,
+            `5 times`,
+            `The loop will not terminate`,
+          ],
+          correctIndex: 1,
+          explanation: `Starting at 0 and adding 3 gives 3, 6, 9, and 12, so the loop executes 4 times.`,
+        },
+        {
+          id: "q9",
+          question: `A programmer writes: REPEAT UNTIL x = 15 { x ← x + 5 } with x starting at 0. How many times will the loop execute?`,
+          options: [
+            `2 times`,
+            `3 times`,
+            `4 times`,
+            `The loop will not terminate`,
+          ],
+          correctIndex: 1,
+          explanation: `Starting at 0 and adding 5 gives 5, 10, and 15, so the loop executes 3 times.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -2913,7 +3901,7 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
     },
     {
       id: "q12",
-      question: `A student writes a loop that should execute 7 times but accidentally writes: REPEAT UNTIL counter = 7 { counter ← counter + 1 } with counter starting at 0. How many times does it actually execute?`,
+      question: `A student writes a loop that should execute 8 times: REPEAT UNTIL counter = 8 { counter ← counter + 1 } with counter starting at 0. How many times does it actually execute?`,
       options: [
       `6 times`,
       `7 times`,
@@ -2921,7 +3909,33 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       `The loop will not terminate`,
       ],
       correctIndex: 2,
-      explanation: `Starting at 0, the loop increments counter to 1, 2, 3, 4, 5, 6, 7. When counter equals 7, the condition becomes true and the loop stops, but the body has executed 7 times (iterations 0 through 6 in terms of starting value).`,
+      explanation: `Starting at 0, the loop increments counter to 1 through 8. When counter equals 8, the condition becomes true and the loop stops, so the body has executed 8 times.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A student writes a loop that should execute 5 times: REPEAT UNTIL counter = 5 { counter ← counter + 1 } with counter starting at 0. How many times does it actually execute?`,
+          options: [
+            `4 times`,
+            `5 times`,
+            `6 times`,
+            `The loop will not terminate`,
+          ],
+          correctIndex: 1,
+          explanation: `Starting at 0 and incrementing by 1 each time, the body executes 5 times before counter becomes 5.`,
+        },
+        {
+          id: "q12",
+          question: `A student writes a loop that should execute 9 times: REPEAT UNTIL counter = 9 { counter ← counter + 1 } with counter starting at 0. How many times does it actually execute?`,
+          options: [
+            `7 times`,
+            `8 times`,
+            `9 times`,
+            `The loop will not terminate`,
+          ],
+          correctIndex: 2,
+          explanation: `Starting at 0 and incrementing by 1 each time, the body executes 9 times before counter becomes 9.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -2958,6 +3972,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 3,
       explanation: `The outer REPEAT 3 TIMES loop runs 3 times, and each time it executes the inner FOR EACH loop, which calls DISPLAY 4 times (once per item). Total: 3 × 4 = 12 calls.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A program uses nested loops: REPEAT 2 TIMES { FOR EACH item IN list { DISPLAY(item) } }. If the list has 5 items, how many times is DISPLAY called?`,
+          options: [
+            `7 times`,
+            `10 times`,
+            `25 times`,
+            `5 times`,
+          ],
+          correctIndex: 1,
+          explanation: `The inner loop displays 5 items each time. Repeating it 2 times gives 2 × 5 = 10 calls.`,
+        },
+        {
+          id: "q15",
+          question: `A program uses nested loops: REPEAT 4 TIMES { FOR EACH item IN list { DISPLAY(item) } }. If the list has 3 items, how many times is DISPLAY called?`,
+          options: [
+            `7 times`,
+            `12 times`,
+            `16 times`,
+            `3 times`,
+          ],
+          correctIndex: 1,
+          explanation: `The inner loop displays 3 items each time. Repeating it 4 times gives 4 × 3 = 12 calls.`,
+        },
+      ],
     },
     ],
   },
@@ -3160,6 +4200,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `CSP uses 1-based indexing, so the third element (30) is at index 3.`,
+      variations: [
+        {
+          id: "q1",
+          question: `In CSP, if a list contains the elements [4, 8, 12, 16], what is the index of the element 12?`,
+          options: [
+            `1`,
+            `2`,
+            `3`,
+            `4`,
+          ],
+          correctIndex: 2,
+          explanation: `CSP uses 1-based indexing, so 12 is the third element and has index 3.`,
+        },
+        {
+          id: "q1",
+          question: `In CSP, if a list contains the elements [5, 10, 15, 20, 25], what is the index of the element 20?`,
+          options: [
+            `2`,
+            `3`,
+            `4`,
+            `5`,
+          ],
+          correctIndex: 2,
+          explanation: `CSP uses 1-based indexing, so 20 is the fourth element and has index 4.`,
+        },
+      ],
     },
     {
       id: "q2",
@@ -3196,6 +4262,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The LENGTH function counts the number of elements in a list; this list contains 5 elements.`,
+      variations: [
+        {
+          id: "q4",
+          question: `In CSP, what does the LENGTH function return for the list [2, 2, 2]?`,
+          options: [
+            `2`,
+            `3`,
+            `4`,
+            `6`,
+          ],
+          correctIndex: 1,
+          explanation: `LENGTH returns the number of elements in the list, which is 3.`,
+        },
+        {
+          id: "q4",
+          question: `In CSP, what does the LENGTH function return for the list [9, 8, 7, 6, 5, 4]?`,
+          options: [
+            `5`,
+            `6`,
+            `7`,
+            `9`,
+          ],
+          correctIndex: 1,
+          explanation: `LENGTH returns the number of elements in the list, which is 6.`,
+        },
+      ],
     },
     {
       id: "q5",
@@ -3235,7 +4327,7 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
     },
     {
       id: "q8",
-      question: `A student creates a list [3, 1, 4, 1, 5] and then uses REMOVE to delete the element at index 3. What list remains?`,
+      question: `A student creates a list [3, 1, 4, 1, 5] and then uses REMOVE to delete the element at index 4. What list remains?`,
       options: [
       `[3, 1, 4, 5]`,
       `[3, 1, 1, 5]`,
@@ -3243,7 +4335,33 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       `[3, 4, 1, 5]`,
       ],
       correctIndex: 0,
-      explanation: `Using 1-based indexing, index 3 refers to the element 4. Removing it leaves [3, 1, 1, 5]—wait, that's wrong. Index 3 is the third position, which is 4, so removing it leaves [3, 1, 1, 5]. Actually, the third element is 4, so removing index 3 leaves [3, 1, 1, 5]. Let me reconsider: [3, 1, 4, 1, 5] at index 3 is 4. Removing 4 gives [3, 1, 1, 5]. The correct answer should be [3, 1, 1, 5], but that's not option 0. Let me recount: position 1=3, position 2=1, position 3=4, position 4=1, position 5=5. Removing position 3 (the 4) leaves [3, 1, 1, 5]. This doesn't match the options given. I need to reconsider the question setup.`,
+      explanation: `Using 1-based indexing, index 4 refers to the second 1. Removing it leaves [3, 1, 4, 5].`,
+      variations: [
+        {
+          id: "q8",
+          question: `A student creates a list [2, 7, 1, 8, 2] and then uses REMOVE to delete the element at index 2. What list remains?`,
+          options: [
+            `[2, 1, 8, 2]`,
+            `[7, 1, 8, 2]`,
+            `[2, 7, 8, 2]`,
+            `[2, 7, 1, 8]`,
+          ],
+          correctIndex: 0,
+          explanation: `Using 1-based indexing, index 2 refers to 7. Removing it leaves [2, 1, 8, 2].`,
+        },
+        {
+          id: "q8",
+          question: `A student creates a list [5, 9, 2, 6, 5] and then uses REMOVE to delete the element at index 4. What list remains?`,
+          options: [
+            `[5, 9, 2, 5]`,
+            `[9, 2, 6, 5]`,
+            `[5, 2, 6, 5]`,
+            `[5, 9, 2, 6]`,
+          ],
+          correctIndex: 0,
+          explanation: `Using 1-based indexing, index 4 refers to 6. Removing it leaves [5, 9, 2, 5].`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -3268,6 +4386,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `INSERT at index 2 places the new element at position 2, shifting existing elements to the right. The value 15 goes between 10 and 20.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A programmer has a list [5, 10, 15] and uses INSERT to add 8 at index 2. What is the resulting list?`,
+          options: [
+            `[5, 8, 10, 15]`,
+            `[8, 5, 10, 15]`,
+            `[5, 10, 8, 15]`,
+            `[5, 10, 15, 8]`,
+          ],
+          correctIndex: 0,
+          explanation: `Using 1-based indexing, inserting 8 at index 2 places it between 5 and 10.`,
+        },
+        {
+          id: "q10",
+          question: `A programmer has a list [A, C, D] and uses INSERT to add B at index 2. What is the resulting list?`,
+          options: [
+            `[A, B, C, D]`,
+            `[B, A, C, D]`,
+            `[A, C, B, D]`,
+            `[A, C, D, B]`,
+          ],
+          correctIndex: 0,
+          explanation: `Using 1-based indexing, inserting B at index 2 places it between A and C.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -3292,6 +4436,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Removing index 1 (the element A) leaves [B, C, D, E]. Appending F adds it to the end, resulting in [B, C, D, E, F].`,
+      variations: [
+        {
+          id: "q12",
+          question: `A list initially contains [W, X, Y, Z]. After removing the element at index 2 and then appending A, what is the list?`,
+          options: [
+            `[W, Y, Z, A]`,
+            `[X, Y, Z, A]`,
+            `[W, X, Z, A]`,
+            `[W, X, Y, A]`,
+          ],
+          correctIndex: 0,
+          explanation: `Removing index 2 removes X, leaving [W, Y, Z]. Appending A gives [W, Y, Z, A].`,
+        },
+        {
+          id: "q12",
+          question: `A list initially contains [L, M, N, O, P]. After removing the element at index 3 and then appending Q, what is the list?`,
+          options: [
+            `[L, M, O, P, Q]`,
+            `[M, N, O, P, Q]`,
+            `[L, N, O, P, Q]`,
+            `[L, M, N, O, Q]`,
+          ],
+          correctIndex: 0,
+          explanation: `Removing index 3 removes N, leaving [L, M, O, P]. Appending Q gives [L, M, O, P, Q].`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -3316,6 +4486,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `After INSERT 10 at index 2, the list is [7, 10, 8, 9]. Removing index 4 (the element 9) leaves [7, 10, 8].`,
+      variations: [
+        {
+          id: "q14",
+          question: `A list contains [4, 5, 6]. If you INSERT 7 at index 2 and then REMOVE the element at index 4, what is the final list?`,
+          options: [
+            `[4, 7, 5]`,
+            `[4, 5, 7]`,
+            `[7, 4, 5]`,
+            `[4, 7, 5, 6]`,
+          ],
+          correctIndex: 0,
+          explanation: `After insertion, the list is [4, 7, 5, 6]. Removing index 4 removes 6, leaving [4, 7, 5].`,
+        },
+        {
+          id: "q14",
+          question: `A list contains [A, B, C]. If you INSERT X at index 3 and then REMOVE the element at index 1, what is the final list?`,
+          options: [
+            `[B, X, C]`,
+            `[A, X, C]`,
+            `[A, B, X]`,
+            `[X, B, C]`,
+          ],
+          correctIndex: 0,
+          explanation: `After insertion, the list is [A, B, X, C]. Removing index 1 removes A, leaving [B, X, C].`,
+        },
+      ],
     },
     ],
   },
@@ -3408,7 +4604,7 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
     },
     {
       id: "q8",
-      question: `When searching for 10 in [1, 3, 5, 7, 9, 11, 13, 15], which element is checked first in binary search?`,
+      question: `When searching for 10 in [1, 3, 5, 7, 11, 13, 15, 17, 19], which element is checked first in binary search?`,
       options: [
       `7`,
       `9`,
@@ -3416,7 +4612,7 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       `13`,
       ],
       correctIndex: 2,
-      explanation: `The middle element of the list is at index 3.5, rounded to index 3 or 4 depending on implementation; the element at the center is 11 (between indices 3 and 4).`,
+      explanation: `The middle element of the 9-item list is the 5th element, which is 11. Binary search checks the middle element first.`,
     },
     {
       id: "q9",
@@ -3453,6 +4649,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Binary search requires at most log₂(1,000,000) ≈ 20 comparisons in the worst case, since each comparison halves the search space.`,
+      variations: [
+        {
+          id: "q11",
+          question: `Consider a sorted list of 1,024 elements. In the worst case, approximately how many comparisons would binary search require?`,
+          options: [
+            `1,024`,
+            `512`,
+            `10`,
+            `100`,
+          ],
+          correctIndex: 2,
+          explanation: `Binary search requires about log₂(1,024) = 10 comparisons in the worst case.`,
+        },
+        {
+          id: "q11",
+          question: `Consider a sorted list of 65,536 elements. In the worst case, approximately how many comparisons would binary search require?`,
+          options: [
+            `65,536`,
+            `32,768`,
+            `16`,
+            `256`,
+          ],
+          correctIndex: 2,
+          explanation: `Binary search requires about log₂(65,536) = 16 comparisons in the worst case.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -3468,7 +4690,7 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
     },
     {
       id: "q13",
-      question: `If binary search requires exactly 4 comparisons to find an element in the worst case, what is the approximate maximum size of the list?`,
+      question: `If binary search requires at most 5 comparisons in the worst case, what is the approximate maximum size of the list?`,
       options: [
       `8`,
       `16`,
@@ -3476,7 +4698,33 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       `64`,
       ],
       correctIndex: 2,
-      explanation: `With 4 comparisons, the list can be halved at most 4 times: 2⁴ = 16 elements minimum, but 2⁵ = 32 is the upper bound for requiring at most 4 comparisons.`,
+      explanation: `With 5 comparisons, binary search can distinguish among about 2⁵ = 32 positions, so 32 is the approximate maximum size among the choices.`,
+      variations: [
+        {
+          id: "q13",
+          question: `If binary search requires at most 6 comparisons in the worst case, what is the approximate maximum size of the list?`,
+          options: [
+            `16`,
+            `32`,
+            `64`,
+            `128`,
+          ],
+          correctIndex: 2,
+          explanation: `With 6 comparisons, binary search can distinguish among about 2^6 = 64 positions.`,
+        },
+        {
+          id: "q13",
+          question: `If binary search requires at most 7 comparisons in the worst case, what is the approximate maximum size of the list?`,
+          options: [
+            `32`,
+            `64`,
+            `128`,
+            `256`,
+          ],
+          correctIndex: 2,
+          explanation: `With 7 comparisons, binary search can distinguish among about 2^7 = 128 positions.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -3590,6 +4838,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `The procedure multiplies the input x by 2, so double(7) computes 2 * 7 = 14 and returns that value.`,
+      variations: [
+        {
+          id: "q7",
+          question: `Consider a procedure named triple(x) that returns 3 * x. What is the output of triple(6)?`,
+          options: [
+            `6`,
+            `3`,
+            `18`,
+            `9`,
+          ],
+          correctIndex: 2,
+          explanation: `The procedure multiplies the input by 3, so triple(6) returns 18.`,
+        },
+        {
+          id: "q7",
+          question: `Consider a procedure named double(x) that returns 2 * x. What is the output of double(11)?`,
+          options: [
+            `11`,
+            `2`,
+            `22`,
+            `13`,
+          ],
+          correctIndex: 2,
+          explanation: `The procedure multiplies the input by 2, so double(11) returns 22.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -3650,6 +4924,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `square(3) evaluates to 9, then add(9, 5) evaluates to 9 + 5 = 14. Procedures can be nested, with inner calls evaluated first.`,
+      variations: [
+        {
+          id: "q12",
+          question: `Two procedures are defined: add(x, y) returns x + y, and square(n) returns n * n. What is the result of add(square(4), 6)?`,
+          options: [
+            `20`,
+            `22`,
+            `16`,
+            `10`,
+          ],
+          correctIndex: 1,
+          explanation: `First square(4) returns 16. Then add(16, 6) returns 22.`,
+        },
+        {
+          id: "q12",
+          question: `Two procedures are defined: add(x, y) returns x + y, and square(n) returns n * n. What is the result of add(square(2), 9)?`,
+          options: [
+            `11`,
+            `13`,
+            `4`,
+            `18`,
+          ],
+          correctIndex: 1,
+          explanation: `First square(2) returns 4. Then add(4, 9) returns 13.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -3662,6 +4962,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Each time a procedure is called, the code inside it executes once. Three separate calls result in three separate executions.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A procedure named processData(input) modifies the input and returns a result. The procedure is called five times with different input values. How many times does the code inside the procedure execute?`,
+          options: [
+            `Once, because it is a single procedure`,
+            `Five times, once for each call`,
+            `It depends on the size of the input`,
+            `Never, because procedures are just definitions`,
+          ],
+          correctIndex: 1,
+          explanation: `Each procedure call executes the code inside once. Five calls result in five executions.`,
+        },
+        {
+          id: "q13",
+          question: `A procedure named processData(input) modifies the input and returns a result. The procedure is called two times with different input values. How many times does the code inside the procedure execute?`,
+          options: [
+            `Once, because it is a single procedure`,
+            `Two times, once for each call`,
+            `It depends on the size of the input`,
+            `Never, because procedures are just definitions`,
+          ],
+          correctIndex: 1,
+          explanation: `Each procedure call executes the code inside once. Two calls result in two executions.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -4109,6 +5435,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `RANDOM(1, 6) returns one of the six integers: 1, 2, 3, 4, 5, or 6, so there are exactly 6 possible outcomes.`,
+      variations: [
+        {
+          id: "q4",
+          question: `How many possible outcomes does RANDOM(1, 8) have?`,
+          options: [
+            `7`,
+            `8`,
+            `9`,
+            `Infinitely many`,
+          ],
+          correctIndex: 1,
+          explanation: `RANDOM(1, 8) returns one of the eight integers from 1 through 8.`,
+        },
+        {
+          id: "q4",
+          question: `How many possible outcomes does RANDOM(3, 9) have?`,
+          options: [
+            `6`,
+            `7`,
+            `9`,
+            `Infinitely many`,
+          ],
+          correctIndex: 1,
+          explanation: `RANDOM(3, 9) includes 3, 4, 5, 6, 7, 8, and 9, for 7 possible outcomes.`,
+        },
+      ],
     },
     {
       id: "q5",
@@ -4145,6 +5497,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `To select from 52 cards numbered 1 through 52, RANDOM(1, 52) produces integers in the range [1, 52], covering all card positions.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A game requires selecting a random tile from a board with 64 tiles. Which expression correctly generates a tile position?`,
+          options: [
+            `RANDOM(0, 63)`,
+            `RANDOM(1, 64)`,
+            `RANDOM(64, 128)`,
+            `RANDOM(1, 63)`,
+          ],
+          correctIndex: 1,
+          explanation: `To select from 64 positions numbered 1 through 64, use RANDOM(1, 64).`,
+        },
+        {
+          id: "q7",
+          question: `A game requires selecting a random card from a 40-card deck. Which expression correctly generates a card position?`,
+          options: [
+            `RANDOM(0, 39)`,
+            `RANDOM(1, 40)`,
+            `RANDOM(40, 80)`,
+            `RANDOM(1, 39)`,
+          ],
+          correctIndex: 1,
+          explanation: `To select from 40 cards numbered 1 through 40, use RANDOM(1, 40).`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -4172,7 +5550,7 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
     },
     {
       id: "q10",
-      question: `A weather simulation uses RANDOM(1, 365) to pick a random day of the year. If the simulation runs 1000 times, approximately how many times should day 100 be selected?`,
+      question: `A weather simulation uses RANDOM(1, 365) to pick a random day of the year. If the simulation runs 36,500 times, approximately how many times should day 100 be selected?`,
       options: [
       `About 1 time`,
       `About 3 times`,
@@ -4180,7 +5558,33 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       `About 365 times`,
       ],
       correctIndex: 2,
-      explanation: `With uniform distribution, each of the 365 days has equal probability 1/365. Over 1000 trials, day 100 should appear approximately 1000 × (1/365) ≈ 2.7, or roughly 3 times; however, the closest reasonable answer is about 3 times, but given typical multiple-choice logic, approximately 1000/365 ≈ 2.7 rounds to about 3, making the intended answer context-dependent; the most defensible answer is that it appears with probability 1/365 per trial.`,
+      explanation: `With uniform distribution, each of the 365 days has equal probability 1/365. Over 36,500 trials, day 100 should appear approximately 36,500 × (1/365) = 100 times.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A weather simulation uses RANDOM(1, 100) to pick a random day label. If the simulation runs 5,000 times, approximately how many times should day 40 be selected?`,
+          options: [
+            `About 5 times`,
+            `About 50 times`,
+            `About 500 times`,
+            `About 100 times`,
+          ],
+          correctIndex: 1,
+          explanation: `Each day label has probability 1/100. Over 5,000 trials, day 40 should appear about 5,000/100 = 50 times.`,
+        },
+        {
+          id: "q10",
+          question: `A simulation uses RANDOM(1, 20) to pick a random bin. If the simulation runs 2,000 times, approximately how many times should bin 7 be selected?`,
+          options: [
+            `About 20 times`,
+            `About 100 times`,
+            `About 200 times`,
+            `About 2,000 times`,
+          ],
+          correctIndex: 1,
+          explanation: `Each bin has probability 1/20. Over 2,000 trials, bin 7 should appear about 2,000/20 = 100 times.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -4217,6 +5621,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `With uniform distribution from RANDOM(1, 1000000), each of the 1,000,000 outcomes has equal probability 1/1,000,000.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A lottery system generates a random number between 1 and 500,000. If each number is equally likely, what is the probability of winning with a single ticket?`,
+          options: [
+            `1/500,000`,
+            `1/250,000`,
+            `1/1,000`,
+            `Cannot be determined from the given information`,
+          ],
+          correctIndex: 0,
+          explanation: `With uniform distribution from RANDOM(1, 500000), each of the 500,000 outcomes has probability 1/500,000.`,
+        },
+        {
+          id: "q13",
+          question: `A lottery system generates a random number between 1 and 2,000,000. If each number is equally likely, what is the probability of winning with a single ticket?`,
+          options: [
+            `1/2,000,000`,
+            `1/1,000,000`,
+            `1/2,000`,
+            `Cannot be determined from the given information`,
+          ],
+          correctIndex: 0,
+          explanation: `With uniform distribution from RANDOM(1, 2000000), each of the 2,000,000 outcomes has probability 1/2,000,000.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -4229,6 +5659,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `RANDOM(0, 99) produces a uniform distribution with 100 equally likely outcomes, so over 10,000 trials each value should appear approximately 10,000/100 = 100 times.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A program generates RANDOM(1, 50). If the program runs 5,000 times, which outcome is most likely?`,
+          options: [
+            `The value 25 appears significantly more often than other values`,
+            `Each value from 1 to 50 appears approximately 100 times`,
+            `Values near 1 appear more frequently than values near 50`,
+            `The value 50 never appears due to rounding`,
+          ],
+          correctIndex: 1,
+          explanation: `RANDOM(1, 50) has 50 equally likely outcomes, so over 5,000 trials each value should appear about 5,000/50 = 100 times.`,
+        },
+        {
+          id: "q14",
+          question: `A program generates RANDOM(0, 19). If the program runs 2,000 times, which outcome is most likely?`,
+          options: [
+            `The value 10 appears significantly more often than other values`,
+            `Each value from 0 to 19 appears approximately 100 times`,
+            `Values near 0 appear more frequently than values near 19`,
+            `The value 19 never appears due to rounding`,
+          ],
+          correctIndex: 1,
+          explanation: `RANDOM(0, 19) has 20 equally likely outcomes, so over 2,000 trials each value should appear about 2,000/20 = 100 times.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -4503,6 +5959,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `With $n = 10^6$, $\\log_2 n \\approx 20$, so $n \\log n \\approx 10^6 \\times 20 = 2 \\times 10^7$ operations.`,
+      variations: [
+        {
+          id: "q6",
+          question: `An algorithm processes a list of n items. If the algorithm's time complexity is O(n log n) and n = 2^10, approximately how many operations occur?`,
+          options: [
+            `2^20 operations`,
+            `10,240 operations`,
+            `1,024 operations`,
+            `2^30 operations`,
+          ],
+          correctIndex: 1,
+          explanation: `With n = 2^10 = 1,024, log₂ n = 10, so n log n ≈ 1,024 × 10 = 10,240 operations.`,
+        },
+        {
+          id: "q6",
+          question: `An algorithm processes a list of n items. If the algorithm's time complexity is O(n log n) and n = 2^12, approximately how many operations occur?`,
+          options: [
+            `16,777,216 operations`,
+            `49,152 operations`,
+            `4,096 operations`,
+            `2^24 operations`,
+          ],
+          correctIndex: 1,
+          explanation: `With n = 2^12 = 4,096, log₂ n = 12, so n log n ≈ 4,096 × 12 = 49,152 operations.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -4527,6 +6009,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Increasing $n$ from 20 to 30 adds 10 to the exponent, multiplying the operations by $2^{10} = 1024$, so the time increases from 1 second to approximately 1024 seconds.`,
+      variations: [
+        {
+          id: "q8",
+          question: `An algorithm has exponential time complexity O(2^n). If it takes 2 seconds to solve a problem with n = 15, approximately how long will it take for n = 20?`,
+          options: [
+            `5 seconds`,
+            `10 seconds`,
+            `About 64 seconds`,
+            `20 seconds`,
+          ],
+          correctIndex: 2,
+          explanation: `Increasing n from 15 to 20 adds 5 to the exponent, multiplying runtime by 2^5 = 32. 2 seconds × 32 = 64 seconds.`,
+        },
+        {
+          id: "q8",
+          question: `An algorithm has exponential time complexity O(2^n). If it takes 3 seconds to solve a problem with n = 12, approximately how long will it take for n = 18?`,
+          options: [
+            `9 seconds`,
+            `18 seconds`,
+            `About 192 seconds`,
+            `36 seconds`,
+          ],
+          correctIndex: 2,
+          explanation: `Increasing n from 12 to 18 adds 6 to the exponent, multiplying runtime by 2^6 = 64. 3 seconds × 64 = 192 seconds.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -4611,6 +6119,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 3,
       explanation: `If $n$ is replaced by $2n$ in $O(n^4)$, the runtime becomes $(2n)^4 = 16n^4$, which is 16 times the original runtime.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A problem is solved by an algorithm with time complexity O(n^3). If the input size doubles, by what factor does the runtime increase?`,
+          options: [
+            `2 times`,
+            `4 times`,
+            `8 times`,
+            `16 times`,
+          ],
+          correctIndex: 2,
+          explanation: `Replacing n with 2n gives (2n)^3 = 8n^3, so the runtime increases by a factor of 8.`,
+        },
+        {
+          id: "q15",
+          question: `A problem is solved by an algorithm with time complexity O(n^5). If the input size doubles, by what factor does the runtime increase?`,
+          options: [
+            `8 times`,
+            `16 times`,
+            `32 times`,
+            `64 times`,
+          ],
+          correctIndex: 2,
+          explanation: `Replacing n with 2n gives (2n)^5 = 32n^5, so the runtime increases by a factor of 32.`,
+        },
+      ],
     },
     ],
   },
@@ -5267,6 +6801,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using Amdahl's law: speedup = 1 / (0.20 + 0.80/4) = 1 / (0.20 + 0.20) = 1 / 0.40 = 2.5×. The 20% sequential portion cannot be parallelized, limiting the overall speedup even with 4 processors.`,
+      variations: [
+        {
+          id: "q8",
+          question: `A task consists of 75% parallelizable code and 25% sequential code. If a programmer uses 3 processors, what is the theoretical maximum speedup according to Amdahl's law?`,
+          options: [
+            `Approximately 2×`,
+            `Approximately 3×`,
+            `Approximately 2.25×`,
+            `Approximately 1.5×`,
+          ],
+          correctIndex: 0,
+          explanation: `Speedup = 1 / (0.25 + 0.75/3) = 1 / (0.25 + 0.25) = 2×.`,
+        },
+        {
+          id: "q8",
+          question: `A task consists of 90% parallelizable code and 10% sequential code. If a programmer uses 9 processors, what is the theoretical maximum speedup according to Amdahl's law?`,
+          options: [
+            `Approximately 5×`,
+            `Approximately 9×`,
+            `Approximately 8.1×`,
+            `Approximately 2×`,
+          ],
+          correctIndex: 0,
+          explanation: `Speedup = 1 / (0.10 + 0.90/9) = 1 / (0.10 + 0.10) = 5×.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -5315,6 +6875,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `With 95% parallelizable code, speedup with 10 processors ≈ 1/(0.05 + 0.95/10) ≈ 10.5×, and with 100 processors ≈ 1/(0.05 + 0.95/100) ≈ 11×. The sequential 5% portion dominates, limiting additional speedup gains.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A researcher has a computational task where 90% of the code can be parallelized and 10% must run sequentially. If the researcher increases the number of processors from 5 to 50, what happens to the theoretical speedup?`,
+          options: [
+            `The speedup increases proportionally from 5× to 50×`,
+            `The speedup increases only slightly, from approximately 3.6× to approximately 8.5×`,
+            `The speedup decreases because more processors create more overhead`,
+            `The speedup remains constant at approximately 10×`,
+          ],
+          correctIndex: 1,
+          explanation: `With 5 processors, speedup ≈ 1/(0.10 + 0.90/5) = 3.6×. With 50 processors, speedup ≈ 1/(0.10 + 0.90/50) = 8.5×.`,
+        },
+        {
+          id: "q12",
+          question: `A researcher has a computational task where 80% of the code can be parallelized and 20% must run sequentially. If the researcher increases the number of processors from 4 to 40, what happens to the theoretical speedup?`,
+          options: [
+            `The speedup increases proportionally from 4× to 40×`,
+            `The speedup increases only slightly, from approximately 2.5× to approximately 4.5×`,
+            `The speedup decreases because more processors create more overhead`,
+            `The speedup remains constant at approximately 5×`,
+          ],
+          correctIndex: 1,
+          explanation: `With 4 processors, speedup = 1/(0.20 + 0.80/4) = 2.5×. With 40 processors, speedup ≈ 1/(0.20 + 0.80/40) = 4.5×.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -5339,6 +6925,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Amdahl's law shows that speedup = 1/(0.30 + 0.70/1000) ≈ 1/0.3007 ≈ 3.3×. The sequential 30% cannot be parallelized, creating a hard ceiling on speedup regardless of processor count.`,
+      variations: [
+        {
+          id: "q14",
+          question: `Consider a program where 60% of the code is parallelizable and 40% is inherently sequential. A programmer claims that using 100 processors will achieve a 100× speedup. What is wrong with this claim?`,
+          options: [
+            `The claim is correct; more processors always provide proportional speedup`,
+            `The claim ignores Amdahl's law; the 40% sequential portion limits speedup to approximately 2.5×, regardless of processor count`,
+            `The claim is wrong because 100 processors would cause the system to overheat`,
+            `The claim fails to account for the cost of processors, not their performance`,
+          ],
+          correctIndex: 1,
+          explanation: `Amdahl's law gives speedup = 1/(0.40 + 0.60/100) ≈ 2.46×, so the sequential portion prevents 100× speedup.`,
+        },
+        {
+          id: "q14",
+          question: `Consider a program where 85% of the code is parallelizable and 15% is inherently sequential. A programmer claims that using 1000 processors will achieve a 1000× speedup. What is wrong with this claim?`,
+          options: [
+            `The claim is correct; more processors always provide proportional speedup`,
+            `The claim ignores Amdahl's law; the 15% sequential portion limits speedup to approximately 6.6×, regardless of processor count`,
+            `The claim is wrong because 1000 processors would cause the system to overheat`,
+            `The claim fails to account for the cost of processors, not their performance`,
+          ],
+          correctIndex: 1,
+          explanation: `Amdahl's law gives speedup = 1/(0.15 + 0.85/1000) ≈ 6.6×, so the sequential portion prevents 1000× speedup.`,
+        },
+      ],
     },
     {
       id: "q15",
