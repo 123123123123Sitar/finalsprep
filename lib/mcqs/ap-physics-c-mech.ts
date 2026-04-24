@@ -1137,7 +1137,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `Cannot be determined without more information`,
       ],
       correctIndex: 1,
-      explanation: `Using $v_{AB} = v_{A,ground} - v_{B,ground} = 5 - 3 = 2$ m/s east; object A moves 2 m/s faster eastward than object B.`,
+      explanation: `Using $v_{AB} = v_{A,ground} - v_{B,ground} = 5 - 3 = 2$ m/s east.`,
+      variations: [
+        {
+          id: "q5",
+          question: `If object A moves at 9 m/s east relative to the ground, and object B moves at 3 m/s east relative to the ground, what is the velocity of A relative to B?`,
+          options: [
+          `12 m/s east`,
+          `6 m/s east`,
+          `6 m/s west`,
+          `Cannot be determined without more information`,
+          ],
+          correctIndex: 1,
+          explanation: `$v_{AB} = v_{A,ground} - v_{B,ground} = 9 - 3 = 6$ m/s east.`,
+        },
+        {
+          id: "q5",
+          question: `If object A moves at 4 m/s east relative to the ground, and object B moves at 10 m/s east relative to the ground, what is the velocity of A relative to B?`,
+          options: [
+          `14 m/s east`,
+          `6 m/s east`,
+          `6 m/s west`,
+          `Cannot be determined without more information`,
+          ],
+          correctIndex: 2,
+          explanation: `$v_{AB} = v_{A,ground} - v_{B,ground} = 4 - 10 = -6$ m/s east, i.e., 6 m/s west — B is moving away to the east.`,
+        },
+      ],
     },
     {
       id: "q6",
@@ -1149,7 +1175,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `2.5 m/s`,
       ],
       correctIndex: 3,
-      explanation: `The velocity components are perpendicular, so use the Pythagorean theorem: $v = \\sqrt{2^2 + 1.5^2} = \\sqrt{6.25} = 2.5$ m/s. Adding the speeds (3.5 m/s) or subtracting (0.5 m/s) ignores that the components are perpendicular.`,
+      explanation: `The velocity components are perpendicular, so use the Pythagorean theorem: $v = \\sqrt{2^2 + 1.5^2} = \\sqrt{6.25} = 2.5$ m/s.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A swimmer swims at 3 m/s north relative to the water. The current flows at 4 m/s east. What is the magnitude of the swimmer's velocity relative to the ground?`,
+          options: [
+          `1 m/s`,
+          `7 m/s`,
+          `2.65 m/s`,
+          `5 m/s`,
+          ],
+          correctIndex: 3,
+          explanation: `$v = \\sqrt{3^2 + 4^2} = \\sqrt{25} = 5$ m/s.`,
+        },
+        {
+          id: "q6",
+          question: `A swimmer swims at 6 m/s north relative to the water. The current flows at 8 m/s east. What is the magnitude of the swimmer's velocity relative to the ground?`,
+          options: [
+          `2 m/s`,
+          `14 m/s`,
+          `5.29 m/s`,
+          `10 m/s`,
+          ],
+          correctIndex: 3,
+          explanation: `$v = \\sqrt{6^2 + 8^2} = \\sqrt{100} = 10$ m/s.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -1173,7 +1225,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `40 m/s in the direction of motion`,
       ],
       correctIndex: 2,
-      explanation: `The observer in Car B (the reference frame) measures the relative velocity: $v_{A,B} = 25 - 15 = 10$ m/s in the direction of motion.`,
+      explanation: `$v_{A,B} = v_{A,G} - v_{B,G} = 25 - 15 = 10$ m/s in the direction of motion.`,
+      variations: [
+        {
+          id: "q8",
+          question: `Two cars travel on the same straight road. Car A moves at 30 m/s and Car B at 22 m/s, both in the same direction. An observer in Car B measures the velocity of Car A. What does this observer measure?`,
+          options: [
+          `30 m/s in the direction of motion`,
+          `22 m/s in the direction of motion`,
+          `8 m/s in the direction of motion`,
+          `52 m/s in the direction of motion`,
+          ],
+          correctIndex: 2,
+          explanation: `$v_{A,B} = 30 - 22 = 8$ m/s in the direction of motion.`,
+        },
+        {
+          id: "q8",
+          question: `Two cars travel on the same straight road. Car A moves at 40 m/s and Car B at 25 m/s, both in the same direction. An observer in Car B measures the velocity of Car A. What does this observer measure?`,
+          options: [
+          `40 m/s in the direction of motion`,
+          `25 m/s in the direction of motion`,
+          `15 m/s in the direction of motion`,
+          `65 m/s in the direction of motion`,
+          ],
+          correctIndex: 2,
+          explanation: `$v_{A,B} = 40 - 25 = 15$ m/s in the direction of motion.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -1221,7 +1299,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `2 m/s`,
       ],
       correctIndex: 1,
-      explanation: `Using $v_{P,G} = v_{P,T} + v_{T,G} = 2 + 10 = 12$ m/s; the person's velocity relative to the ground is the sum of their velocity relative to the train and the train's velocity relative to the ground.`,
+      explanation: `$v_{P,G} = v_{P,T} + v_{T,G} = 2 + 10 = 12$ m/s.`,
+      variations: [
+        {
+          id: "q12",
+          question: `The train moves at 20 m/s relative to the ground, and the person walks at 3 m/s forward relative to the train. Using Galilean velocity addition, what is the person's velocity relative to the ground?`,
+          options: [
+          `17 m/s`,
+          `23 m/s`,
+          `20 m/s`,
+          `3 m/s`,
+          ],
+          correctIndex: 1,
+          explanation: `$v_{P,G} = 3 + 20 = 23$ m/s.`,
+        },
+        {
+          id: "q12",
+          question: `The train moves at 15 m/s relative to the ground, and the person walks at 4 m/s backward (opposite to the train's motion) relative to the train. What is the person's velocity relative to the ground?`,
+          options: [
+          `11 m/s forward`,
+          `19 m/s forward`,
+          `15 m/s forward`,
+          `4 m/s backward`,
+          ],
+          correctIndex: 0,
+          explanation: `$v_{P,G} = v_{P,T} + v_{T,G} = -4 + 15 = 11$ m/s forward.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -1233,7 +1337,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `2 m/s`,
       ],
       correctIndex: 2,
-      explanation: `The ball's horizontal velocity relative to the ground is the vector sum of its velocity relative to the truck (6 m/s) and the truck's velocity relative to the ground (8 m/s), giving 14 m/s in the direction of the truck's motion.`,
+      explanation: `$v_{ball,ground} = v_{ball,truck} + v_{truck,ground} = 6 + 8 = 14$ m/s in the direction of the truck's motion.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A ball is thrown horizontally at 5 m/s in the same direction as a truck traveling at 12 m/s. An observer on the ground sees the ball's horizontal velocity as:`,
+          options: [
+          `5 m/s`,
+          `12 m/s`,
+          `17 m/s`,
+          `7 m/s`,
+          ],
+          correctIndex: 2,
+          explanation: `$v_{ball,ground} = 5 + 12 = 17$ m/s in the truck's direction.`,
+        },
+        {
+          id: "q13",
+          question: `A ball is thrown horizontally at 4 m/s in the opposite direction to a truck traveling at 10 m/s. An observer on the ground sees the ball's horizontal velocity as:`,
+          options: [
+          `4 m/s (truck's direction)`,
+          `10 m/s (truck's direction)`,
+          `14 m/s (truck's direction)`,
+          `6 m/s (truck's direction)`,
+          ],
+          correctIndex: 3,
+          explanation: `$v_{ball,ground} = -4 + 10 = 6$ m/s in the truck's direction.`,
+        },
+      ],
     },
     {
       id: "q14",
