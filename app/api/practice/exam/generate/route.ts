@@ -8,7 +8,7 @@ import { getTokenBank } from "@/lib/tokenBank";
 import { COURSES, LESSONS, type CourseSlug } from "@/lib/topics";
 import { AP_EXAM_SPECS } from "@/lib/apExamSpec";
 import { getCurriculum } from "@/lib/curriculum";
-import { loadMcqsFor } from "@/lib/mcqs";
+import { loadMcqsFor, selectVariant } from "@/lib/mcqs";
 import { frqsForCourse, type PastFrq } from "@/lib/pastFrqs";
 
 export const runtime = "nodejs";
@@ -119,7 +119,13 @@ async function sampleMcqsFromBank(
     );
     const mcqs: GeneratedMcq[] = [];
     for (const list of lessonMcqsLists) {
-      for (const m of list) {
+      for (const bankMcq of list) {
+        // Pick a random variant each time so two students taking the same
+        // exam — or the same student taking it twice — see different
+        // numbers on parametric questions.
+        const totalVariants = 1 + (bankMcq.variations?.length ?? 0);
+        const variantIdx = Math.floor(Math.random() * totalVariants);
+        const m = selectVariant(bankMcq, variantIdx);
         if (m.options.length < 2) continue;
         const choices: McqChoice[] = [];
         for (let i = 0; i < Math.min(4, m.options.length); i++) {

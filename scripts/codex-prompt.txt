@@ -1,36 +1,171 @@
 Working directory: /Users/sitareswar/finalsprep
 
 BACKGROUND
-The repo has an MCQ question bank under lib/mcqs/ap-*.ts. Each MCQ has:
-  { id, question, options: [4 strings], correctIndex: 0..3, explanation }
+==========
 
-An audit script at scripts/audit-mcqs.ts flagged 18 MCQs where two of the
-four options are the same string, leaving a student with only 3 real
-choices. Your job is to fix them.
+The repo ships an MCQ bank under lib/mcqs/ap-*.ts. Each MCQ has:
 
-TASK
-1. Run: npx tsx scripts/audit-mcqs.ts
-   It prints the 18 "duplicate-option" findings (course file, lessonSlug,
-   question id, duplicated value).
+  {
+    id: string,
+    question: string,
+    options: [o0, o1, o2, o3],
+    correctIndex: 0..3,
+    explanation: string,
+    variations?: McqVariant[],
+  }
 
-2. For each of the 18 questions, open the per-course file
-   (lib/mcqs/ap-<course>.ts), locate the entry by lessonSlug + id, and
-   rewrite ONE of the two duplicated options into a plausible wrong
-   distractor that:
-     (a) is factually incorrect — the existing correctIndex stays valid,
-     (b) is consistent in magnitude / type / phrasing with the other
-         options (e.g. if options are "200 N", "400 N", "800 N", "800 N",
-         replace one with "1600 N"),
-     (c) is different from all other options in the same question.
+where McqVariant has the same shape minus the `variations` field (see
+lib/mcqs/types.ts).
 
-   Do NOT change the question text.
-   Do NOT change correctIndex.
-   Do NOT change the explanation unless it literally cites the replaced
-   distractor by its exact value (it usually does not).
+The `variations` array is NEW and currently empty on every question.
+Your job is to populate it for every PARAMETRIC question — a question
+that has concrete numbers in its stem where you could swap different
+numbers in and recompute the correct answer.
 
-3. After all edits, re-run: npx tsx scripts/audit-mcqs.ts
-   The output must show 0 findings. Keep iterating until clean.
+Conceptual / factual / definition / vocab questions must stay as-is
+(leave `variations` absent). Examples of conceptual questions you
+should SKIP:
 
-4. Do NOT commit or push. Leave the changes unstaged for human review.
-   At the end, print a short summary: "Fixed N of 18 broken MCQs. Audit
-   now reports X findings."
+  - "Which organelle is primarily responsible for photosynthesis?"
+  - "Which of the following is an advantage of binary search?"
+  - "During which period did the Ming Dynasty fall?"
+
+Examples of parametric questions you MUST add variations for:
+
+  - "A 4.0 kg block accelerates at 3.0 m/s². What is the net force?"
+  - "Given P(A) = 0.6 and P(B|A) = 0.3, find P(A ∩ B)."
+  - "How many moles are in 18 g of H₂O?"
+  - "A rectangle has length 12 and width 5. What is its area?"
+
+HOW TO PICK SENSIBLE VARIATION NUMBERS
+======================================
+
+For each parametric question, write 2 variations. Each variation:
+
+1. Keeps the SAME conceptual structure / solution steps as the original.
+   If the original tests F = ma, the variation also tests F = ma.
+2. Changes every free parameter in the stem to a different value. Pick
+   values that:
+   (a) keep the arithmetic clean for a student doing it by hand
+       (avoid ugly fractions or decimals the original didn't have),
+   (b) still fit the physical / real-world context (don't give a
+       0.00001 kg "truck" or a 3000 m/s bicycle),
+   (c) produce a DIFFERENT correct answer from the original.
+3. Regenerates all four options as fresh plausible distractors tied to
+   the new numbers. Do NOT reuse numeric options verbatim from the
+   original unless they happen to match the new answer.
+4. Rewrites the explanation with the new numbers.
+5. Reuses the original `id` — variations share the parent's id.
+
+For multi-step problems, change the primary input(s) and recompute
+every number downstream. Do not just flip a sign or swap units —
+produce a substantively different instance.
+
+When the distractors are letter-labeled (like "A", "B", "C", "D" for
+genetics alleles) or sign choices ("attractive / repulsive"), skip the
+question — there is no meaningful numeric variation.
+
+TASK (per course, one at a time)
+================================
+
+Pick ONE course file at a time from lib/mcqs/ap-*.ts. Good order,
+lightest → heaviest:
+
+  ap-physics-c-em.ts
+  ap-cs-principles.ts
+  ap-physics-c-mech.ts
+  ap-cs-a.ts
+  ap-biology.ts
+  ap-world-history.ts   (mostly conceptual — expect few variations)
+  ap-statistics.ts
+  ap-euro-history.ts    (mostly conceptual)
+  ap-chemistry.ts
+  ap-environmental.ts
+  ap-us-history.ts      (mostly conceptual)
+
+For each course file:
+
+1. Open it. Walk every MCQ in order.
+2. For each MCQ, decide: parametric or conceptual?
+3. If parametric: append a `variations: [{ … }, { … }]` field at the
+   end of the MCQ object (before the closing `}`). Each variation is
+   an object with question / options / correctIndex / explanation.
+4. If conceptual: leave the MCQ unchanged.
+5. After you finish the whole file, run:
+     npx tsc --noEmit <file path>   (or just: npx tsc --noEmit)
+   and
+     npx tsx scripts/audit-mcqs.ts
+   to confirm you haven't introduced type errors or broken-MCQ
+   regressions.
+6. Do NOT commit or push. The human will review each course file's
+   diff before committing.
+7. Print a one-line summary per course:
+     "<course>: added variations to X of Y MCQs (Z skipped as
+     conceptual)"
+
+FORMATTING RULES
+================
+
+- Match the existing file's formatting (2-space indent, backtick
+  strings for question/option/explanation, trailing commas).
+- Options array stays length 4. correctIndex stays 0..3.
+- No markdown, no LaTeX wrappers the original doesn't use. Keep math
+  in the same notation as the original (dollar-sign LaTeX, unicode
+  symbols, etc.).
+- Do NOT touch any existing field on the original MCQ (question,
+  options, correctIndex, explanation, id). Only ADD the `variations`
+  field.
+
+SAFETY
+======
+
+- Work course-by-course. Do not batch edit across files in one patch.
+- If you're unsure whether a question is parametric, LEAVE IT ALONE.
+  A skipped question is better than a silently-wrong variation.
+- Every variation's correctIndex must point to an option that is
+  genuinely correct for that variation's numbers. Double-check the
+  arithmetic before writing.
+
+EXAMPLE (illustrative only — do not copy verbatim)
+==================================================
+
+Before:
+
+  {
+    id: "q3",
+    question: `A 5.0 kg block on a frictionless surface is pushed with a 15 N horizontal force. What is its acceleration?`,
+    options: [ `1.5 m/s²`, `3.0 m/s²`, `5.0 m/s²`, `15 m/s²` ],
+    correctIndex: 1,
+    explanation: `F = ma, so a = F/m = 15/5 = 3.0 m/s².`,
+  },
+
+After:
+
+  {
+    id: "q3",
+    question: `A 5.0 kg block on a frictionless surface is pushed with a 15 N horizontal force. What is its acceleration?`,
+    options: [ `1.5 m/s²`, `3.0 m/s²`, `5.0 m/s²`, `15 m/s²` ],
+    correctIndex: 1,
+    explanation: `F = ma, so a = F/m = 15/5 = 3.0 m/s².`,
+    variations: [
+      {
+        id: "q3",
+        question: `An 8.0 kg block on a frictionless surface is pushed with a 24 N horizontal force. What is its acceleration?`,
+        options: [ `2.0 m/s²`, `3.0 m/s²`, `8.0 m/s²`, `24 m/s²` ],
+        correctIndex: 1,
+        explanation: `F = ma, so a = F/m = 24/8 = 3.0 m/s². Wait — that matches the original. Pick different numbers.`,
+      },
+      // ... another variation
+    ],
+  },
+
+(That example's variation came out with the same answer as the
+original; that's exactly what you must avoid. Pick numbers so the
+answer genuinely changes.)
+
+START
+=====
+
+Begin with ap-physics-c-em.ts. After you finish a course and print its
+summary, move on to the next course. Stop after each course so the
+human can review the diff.
