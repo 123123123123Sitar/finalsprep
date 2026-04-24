@@ -2068,7 +2068,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$16 \\text{ m/s}^2$`,
       ],
       correctIndex: 1,
-      explanation: `Using $\\Sigma F = ma$: $8 = 2a$, so $a = 4 \\text{ m/s}^2$.`,
+      explanation: `$\\Sigma F = ma$: $8 = 2a \\Rightarrow a = 4 \\text{ m/s}^2$.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A 5 kg block rests on a horizontal frictionless table. A horizontal force of 15 N is applied to it. What is the acceleration of the block?`,
+          options: [
+          `$1 \\text{ m/s}^2$`,
+          `$3 \\text{ m/s}^2$`,
+          `$5 \\text{ m/s}^2$`,
+          `$15 \\text{ m/s}^2$`,
+          ],
+          correctIndex: 1,
+          explanation: `$a = F/m = 15/5 = 3 \\text{ m/s}^2$.`,
+        },
+        {
+          id: "q6",
+          question: `A 4 kg block rests on a horizontal frictionless table. A horizontal force of 10 N is applied to it. What is the acceleration of the block?`,
+          options: [
+          `$1.25 \\text{ m/s}^2$`,
+          `$2.5 \\text{ m/s}^2$`,
+          `$4 \\text{ m/s}^2$`,
+          `$10 \\text{ m/s}^2$`,
+          ],
+          correctIndex: 1,
+          explanation: `$a = F/m = 10/4 = 2.5 \\text{ m/s}^2$.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -2092,7 +2118,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `Net force = 12 N; acceleration = 8 m/s²`,
       ],
       correctIndex: 0,
-      explanation: `Net force is $\\Sigma F = 12 - 3 = 9 \\text{ N}$. Acceleration is $a = F/m = 9/1.5 = 6 \\text{ m/s}^2$.`,
+      explanation: `$F_{net} = 12 - 3 = 9$ N. $a = F_{net}/m = 9/1.5 = 6$ m/s².`,
+      variations: [
+        {
+          id: "q8",
+          question: `A book of mass 2 kg is pushed horizontally with an applied force of 14 N. The friction force is 4 N. What is the net force and acceleration?`,
+          options: [
+          `Net force = 10 N; acceleration = 5 m/s²`,
+          `Net force = 18 N; acceleration = 9 m/s²`,
+          `Net force = 4 N; acceleration = 2 m/s²`,
+          `Net force = 14 N; acceleration = 7 m/s²`,
+          ],
+          correctIndex: 0,
+          explanation: `$F_{net} = 14 - 4 = 10$ N. $a = 10/2 = 5$ m/s².`,
+        },
+        {
+          id: "q8",
+          question: `A book of mass 3 kg is pushed horizontally with an applied force of 20 N. The friction force is 5 N. What is the net force and acceleration?`,
+          options: [
+          `Net force = 15 N; acceleration = 5 m/s²`,
+          `Net force = 25 N; acceleration ≈ 8.3 m/s²`,
+          `Net force = 5 N; acceleration ≈ 1.67 m/s²`,
+          `Net force = 20 N; acceleration ≈ 6.7 m/s²`,
+          ],
+          correctIndex: 0,
+          explanation: `$F_{net} = 20 - 5 = 15$ N. $a = 15/3 = 5$ m/s².`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -2128,7 +2180,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$36 \\text{ N}$`,
       ],
       correctIndex: 0,
-      explanation: `The normal force is perpendicular to the incline and equals the component of weight perpendicular to the surface: $N = mg\\cos\\theta = 3 \\times 10 \\times 0.8 = 24 \\text{ N}$.`,
+      explanation: `$N = mg\\cos\\theta = 3(10)(0.8) = 24$ N.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A 5 kg block is on a frictionless incline at angle 30°. The normal force on the block is: (Use $g = 10 \\text{ m/s}^2$, $\\cos 30° \\approx 0.866$)`,
+          options: [
+          `$43.3 \\text{ N}$`,
+          `$25 \\text{ N}$`,
+          `$50 \\text{ N}$`,
+          `$17.3 \\text{ N}$`,
+          ],
+          correctIndex: 0,
+          explanation: `$N = mg\\cos\\theta = 5(10)(0.866) = 43.3$ N.`,
+        },
+        {
+          id: "q11",
+          question: `A 4 kg block is on a frictionless incline at angle 60°. The normal force on the block is: (Use $g = 10 \\text{ m/s}^2$, $\\cos 60° = 0.5$)`,
+          options: [
+          `$20 \\text{ N}$`,
+          `$40 \\text{ N}$`,
+          `$34.6 \\text{ N}$`,
+          `$80 \\text{ N}$`,
+          ],
+          correctIndex: 0,
+          explanation: `$N = mg\\cos\\theta = 4(10)(0.5) = 20$ N.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -2140,7 +2218,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$3 \\text{ m/s}^2$ to the left`,
       ],
       correctIndex: 0,
-      explanation: `Net force is $10 - 6 = 4 \\text{ N}$ to the right. Acceleration is $a = 4/2 = 2 \\text{ m/s}^2$ to the right.`,
+      explanation: `Net force $= 10 - 6 = 4$ N right. $a = 4/2 = 2$ m/s² right.`,
+      variations: [
+        {
+          id: "q12",
+          question: `Two forces act on a 4 kg object: one of 18 N to the right and one of 6 N to the left. What is the acceleration?`,
+          options: [
+          `$3 \\text{ m/s}^2$ to the right`,
+          `$3 \\text{ m/s}^2$ to the left`,
+          `$12 \\text{ m/s}^2$ to the right`,
+          `$6 \\text{ m/s}^2$ to the left`,
+          ],
+          correctIndex: 0,
+          explanation: `$F_{net} = 18 - 6 = 12$ N right. $a = 12/4 = 3$ m/s² right.`,
+        },
+        {
+          id: "q12",
+          question: `Two forces act on a 5 kg object: one of 7 N to the right and one of 17 N to the left. What is the acceleration?`,
+          options: [
+          `$2 \\text{ m/s}^2$ to the left`,
+          `$2 \\text{ m/s}^2$ to the right`,
+          `$5 \\text{ m/s}^2$ to the left`,
+          `$10 \\text{ m/s}^2$ to the left`,
+          ],
+          correctIndex: 0,
+          explanation: `$F_{net} = 17 - 7 = 10$ N left. $a = 10/5 = 2$ m/s² left.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -2152,7 +2256,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `$10 \\text{ m/s}^2$ down the incline`,
       ],
       correctIndex: 0,
-      explanation: `Along the incline: $T - mg\\sin\\theta = ma$, so $60 - 6(10)(0.8) = 6a$, giving $60 - 48 = 6a$, thus $a = 2 \\text{ m/s}^2$ up the incline.`,
+      explanation: `$T - mg\\sin\\theta = ma$: $60 - 6(10)(0.8) = 6a \\Rightarrow a = 12/6 = 2$ m/s² up.`,
+      variations: [
+        {
+          id: "q13",
+          question: `A 4 kg block is pulled up a frictionless incline at 37° by a rope parallel to the incline. If the tension is 30 N, what is the acceleration along the incline? (Use $g = 10 \\text{ m/s}^2$, $\\sin 37° \\approx 0.6$)`,
+          options: [
+          `$1.5 \\text{ m/s}^2$ up the incline`,
+          `$3 \\text{ m/s}^2$ up the incline`,
+          `$6 \\text{ m/s}^2$ up the incline`,
+          `$7.5 \\text{ m/s}^2$ down the incline`,
+          ],
+          correctIndex: 0,
+          explanation: `$T - mg\\sin\\theta = ma$: $30 - 4(10)(0.6) = 4a \\Rightarrow a = 6/4 = 1.5$ m/s² up.`,
+        },
+        {
+          id: "q13",
+          question: `A 5 kg block is pulled up a frictionless incline at 30° by a rope parallel to the incline. If the tension is 40 N, what is the acceleration along the incline? (Use $g = 10 \\text{ m/s}^2$, $\\sin 30° = 0.5$)`,
+          options: [
+          `$3 \\text{ m/s}^2$ up the incline`,
+          `$2 \\text{ m/s}^2$ up the incline`,
+          `$5 \\text{ m/s}^2$ up the incline`,
+          `$8 \\text{ m/s}^2$ down the incline`,
+          ],
+          correctIndex: 0,
+          explanation: `$T - mg\\sin\\theta = ma$: $40 - 5(10)(0.5) = 5a \\Rightarrow a = 15/5 = 3$ m/s² up.`,
+        },
+      ],
     },
     {
       id: "q14",
