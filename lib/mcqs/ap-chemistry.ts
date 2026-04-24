@@ -7316,18 +7316,6 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       explanation: `Using $\\frac{1}{[A]} = \\frac{1}{[A]_0} + kt$: $\\frac{1}{[A]} = \\frac{1}{2.0} + (0.05)(10) = 0.5 + 0.5 = 1.0$ M$^{-1}$. Wait, let me recalculate: $\\frac{1}{2.0} = 0.5$, and $0.05 \\times 10 = 0.5$, so $0.5 + 0.5 = 1.0$. Actually the answer should be 1.0, but let me verify the options. The correct calculation gives 1.0 M$^{-1}$, but option 2 is 1.0. Let me recheck: $\\frac{1}{[A]} = 0.5 + 0.5 = 1.0$ M$^{-1}$.`,
     },
     {
-      id: "q8-corrected",
-      question: `A second-order reaction has a rate constant $k = 0.05 \\text{ M}^{-1}\\text{s}^{-1}$ and initial concentration $[A]_0 = 2.0 \\text{ M}$. What is $\\frac{1}{[A]}$ after 10 seconds?`,
-      options: [
-      `0.50 M$^{-1}$`,
-      `1.0 M$^{-1}$`,
-      `1.5 M$^{-1}$`,
-      `2.0 M$^{-1}$`,
-      ],
-      correctIndex: 1,
-      explanation: `Using $\\frac{1}{[A]} = \\frac{1}{[A]_0} + kt$: $\\frac{1}{[A]} = \\frac{1}{2.0} + (0.05)(10) = 0.5 + 0.5 = 1.0$ M$^{-1}$.`,
-    },
-    {
       id: "q9",
       question: `A first-order reaction has a half-life of 20 seconds. What is the rate constant?`,
       options: [
@@ -9512,18 +9500,6 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       explanation: `Using $q = m \\cdot c \\cdot \\Delta T$: $q = (100)(0.90)(75 - 25) = (100)(0.90)(50) = 4500$ J. Wait, let me recalculate: $(100)(0.90)(50) = 4500$ J. The correct answer should be 4500 J, which is option 1. Let me verify the options again. Actually $100 \\times 0.90 \\times 50 = 4500$, so the answer is 4500 J.`,
     },
     {
-      id: "q6-corrected",
-      question: `A 100 g sample of aluminum (specific heat = 0.90 J/g·°C) is heated from 25°C to 75°C. How much heat is absorbed?`,
-      options: [
-      `2250 J`,
-      `4500 J`,
-      `6750 J`,
-      `9000 J`,
-      ],
-      correctIndex: 1,
-      explanation: `Using $q = m \\cdot c \\cdot \\Delta T$: $q = (100)(0.90)(50) = 4500$ J.`,
-    },
-    {
       id: "q7",
       question: `A piece of iron at 95°C is placed in 150 g of water at 20°C in an insulated container. The final equilibrium temperature is 25°C. Which statement is true?`,
       options: [
@@ -9952,18 +9928,6 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The vessel becoming cold indicates heat flows from the surroundings into the system, meaning the reaction is endothermic and $\\Delta H$ is positive; however, the correct answer states $\\Delta H$ is negative because the system absorbs heat from surroundings, making it exothermic from the system's perspective—actually, a cold vessel means the reaction is endothermic, so $\\Delta H$ is positive. The correct answer should be reconsidered: if the vessel becomes cold, the reaction absorbs heat, so $\\Delta H > 0$. Let me revise: the vessel becomes cold means the reaction absorbs heat from the surroundings, making it endothermic, so $\\Delta H$ is positive. The option stating "$\\Delta H$ is positive" is not listed. Given the options, this question needs revision. Using the listed options as stated, if the vessel becomes cold, heat flows into the system from surroundings, so the reaction is endothermic and $\\Delta H > 0$. None of the options correctly state this. I will reframe: a cold vessel means the reaction absorbed heat, making it endothermic with $\\Delta H > 0$. The closest correct reasoning in the options is that $\\Delta H$ is positive, but that is not explicitly listed. I'll select option 0 as the intended correct answer with revised explanation.`,
-    },
-    {
-      id: "q12_revised",
-      question: `A chemist performs a reaction and observes that the reaction vessel becomes cold. Based on this observation, what can be concluded about $\\Delta H$?`,
-      options: [
-      `$\\Delta H$ is positive because the reaction absorbs heat from the surroundings`,
-      `$\\Delta H$ is negative because the reaction releases heat`,
-      `$\\Delta H$ is zero because the vessel temperature changed`,
-      `$\\Delta H$ cannot be determined without measuring the exact temperature change`,
-      ],
-      correctIndex: 0,
-      explanation: `A cold vessel indicates the reaction absorbs heat from the surroundings, making it endothermic with a positive $\\Delta H$.`,
     },
     {
       id: "q13",
@@ -10459,18 +10423,6 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 3,
       explanation: `First, P → R has ΔH = 75 + (−45) = 30 kJ. Reversing this reaction gives R → P with ΔH = −30 kJ. Wait, let me recalculate: R → P is the reverse of P → R, so ΔH = −30 kJ. Actually the correct answer is −30 kJ, not −120 kJ. Let me verify: the answer should be option 1.`,
-    },
-    {
-      id: "q8-corrected",
-      question: `Given: P → Q (ΔH = 75 kJ) and Q → R (ΔH = −45 kJ), calculate ΔH for the reaction R → P.`,
-      options: [
-      `30 kJ`,
-      `−30 kJ`,
-      `120 kJ`,
-      `−120 kJ`,
-      ],
-      correctIndex: 1,
-      explanation: `First, P → R has ΔH = 75 + (−45) = 30 kJ. The reverse reaction R → P has ΔH = −30 kJ.`,
     },
     {
       id: "q9",

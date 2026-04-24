@@ -3246,18 +3246,6 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       explanation: `Using 1-based indexing, index 3 refers to the element 4. Removing it leaves [3, 1, 1, 5]—wait, that's wrong. Index 3 is the third position, which is 4, so removing it leaves [3, 1, 1, 5]. Actually, the third element is 4, so removing index 3 leaves [3, 1, 1, 5]. Let me reconsider: [3, 1, 4, 1, 5] at index 3 is 4. Removing 4 gives [3, 1, 1, 5]. The correct answer should be [3, 1, 1, 5], but that's not option 0. Let me recount: position 1=3, position 2=1, position 3=4, position 4=1, position 5=5. Removing position 3 (the 4) leaves [3, 1, 1, 5]. This doesn't match the options given. I need to reconsider the question setup.`,
     },
     {
-      id: "q8-revised",
-      question: `A student creates a list [3, 1, 4, 1, 5] and then uses REMOVE to delete the element at index 3. What list remains?`,
-      options: [
-      `[3, 1, 1, 5]`,
-      `[3, 4, 1, 5]`,
-      `[1, 4, 1, 5]`,
-      `[3, 1, 4, 5]`,
-      ],
-      correctIndex: 0,
-      explanation: `Using 1-based indexing, index 3 refers to the third element, which is 4. Removing it leaves [3, 1, 1, 5].`,
-    },
-    {
       id: "q9",
       question: `If a list is empty and you use APPEND to add the value 42, what is the length of the list after this operation?`,
       options: [

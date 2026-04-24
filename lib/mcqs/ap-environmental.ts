@@ -1802,18 +1802,6 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       explanation: `Ecosystem A: 80,000 × 0.1 × 0.1 × 0.1 = 8 kcal. Ecosystem B: 40,000 × 0.1 × 0.1 × 0.1 = 4 kcal. Difference: 8 − 4 = 4 kcal. Wait, that's option 0. Let me recalculate: 8 kcal − 4 kcal = 4 kcal. The correct answer should be option 0, not 1. Correcting: Ecosystem A has 8 kcal and Ecosystem B has 4 kcal, so A has 4 kcal more.`,
     },
     {
-      id: "q11-corrected",
-      question: `Two ecosystems are compared: Ecosystem A has 80,000 kcal in producers and Ecosystem B has 40,000 kcal in producers. How much more energy is available to tertiary consumers in Ecosystem A compared to Ecosystem B?`,
-      options: [
-      `4 kcal more`,
-      `8 kcal more`,
-      `40 kcal more`,
-      `400 kcal more`,
-      ],
-      correctIndex: 0,
-      explanation: `Ecosystem A: 80,000 × 0.1 × 0.1 × 0.1 = 8 kcal. Ecosystem B: 40,000 × 0.1 × 0.1 × 0.1 = 4 kcal. Ecosystem A has 8 − 4 = 4 kcal more energy available to tertiary consumers.`,
-    },
-    {
       id: "q12",
       question: `A researcher finds that 90% of the energy at the primary consumer level is unaccounted for in secondary consumers. Which explanation is most consistent with energy flow principles?`,
       options: [
@@ -1836,18 +1824,6 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Primary consumers: 1,000 kcal; secondary consumers: 100 kcal; tertiary consumers: 10 kcal. Total: 1,000 + 100 + 10 = 1,110 kcal. (Note: rechecking—1,000 + 100 + 10 = 1,110, not 1,111. Correcting to option 1.)`,
-    },
-    {
-      id: "q13-corrected",
-      question: `An energy pyramid shows that producers contain 10,000 kcal. If the pyramid has four trophic levels (producers, primary consumers, secondary consumers, and tertiary consumers), what is the total energy available to all consumer levels combined?`,
-      options: [
-      `111 kcal`,
-      `1,110 kcal`,
-      `1,111 kcal`,
-      `11,100 kcal`,
-      ],
-      correctIndex: 1,
-      explanation: `Primary consumers: 10,000 × 0.1 = 1,000 kcal; secondary consumers: 1,000 × 0.1 = 100 kcal; tertiary consumers: 100 × 0.1 = 10 kcal. Total: 1,000 + 100 + 10 = 1,110 kcal.`,
     },
     ],
   },

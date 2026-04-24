@@ -423,18 +423,6 @@ export const AP_CS_A_MCQS: LessonMcqs[] = [
       explanation: `The modulus operator returns the remainder: $10 = 3 \\times 3 + 1$, so $10 \\% 3 = 1$. Wait, $3 \\times 3 = 9$, and $10 - 9 = 1$. So the answer is 1. But I said correctIndex is 3, which is the 4th option (index 2 is '1'). Let me reconsider: options are [3, 3.33, 1, 2]. Index 0 = 3, index 1 = 3.33, index 2 = 1, index 3 = 2. So correctIndex should be 2, not 3.`,
     },
     {
-      id: "q3-corrected",
-      question: `In Java, what is the result of $10 % 3$?`,
-      options: [
-      `3`,
-      `3.33`,
-      `1`,
-      `2`,
-      ],
-      correctIndex: 2,
-      explanation: `The modulus operator returns the remainder: $10 = 3 \\times 3 + 1$, so $10 \\% 3 = 1$.`,
-    },
-    {
       id: "q4",
       question: `Which operator has higher precedence in Java: addition or multiplication?`,
       options: [
@@ -911,18 +899,6 @@ export const AP_CS_A_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The addition 7.2 + 3.8 equals 11.0, and casting to int truncates to 11; wait, 7.2 + 3.8 = 11.0, so (int) 11.0 = 11. Actually, the correct answer is 11, but let me recalculate: 7.2 + 3.8 = 11.0, (int) 11.0 = 11. The answer should be index 1, not 0. Let me correct: 7.2 + 3.8 = 11.0, (int) 11.0 = 11.`,
-    },
-    {
-      id: "q14-corrected",
-      question: `What is the result of the expression (int) (7.2 + 3.8)?`,
-      options: [
-      `10`,
-      `11`,
-      `10.0`,
-      `11.0`,
-      ],
-      correctIndex: 1,
-      explanation: `The addition 7.2 + 3.8 equals 11.0, and casting to int truncates the decimal to produce 11.`,
     },
     ],
   },

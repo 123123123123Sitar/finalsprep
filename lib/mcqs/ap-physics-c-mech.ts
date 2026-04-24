@@ -1766,18 +1766,6 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       explanation: `The net force is $12 - 5.0 = 7.0$ N pointing north. The acceleration is $a = \\frac{7.0}{4.0} = 1.75$ m/s². Wait, that's option 1. Let me recalculate: $\\frac{7.0}{4.0} = 1.75$ m/s², so the correct answer should be option 1, not 0. Correction: The net force is 7.0 N, and $a = \\frac{7.0}{4.0} = 1.75$ m/s².`,
     },
     {
-      id: "q8-corrected",
-      question: `Two forces act on a 4.0 kg object: one of 12 N pointing north and one of 5.0 N pointing south. What is the magnitude of the object's acceleration?`,
-      options: [
-      `0.75 m/s²`,
-      `1.75 m/s²`,
-      `4.25 m/s²`,
-      `17 m/s²`,
-      ],
-      correctIndex: 1,
-      explanation: `The net force is $12 - 5.0 = 7.0$ N pointing north. The acceleration is $a = \\frac{7.0}{4.0} = 1.75$ m/s².`,
-    },
-    {
       id: "q9",
       question: `A 3.0 kg object is subject to three horizontal forces: 10 N to the right, 4.0 N to the left, and 2.0 N to the left. What is the acceleration of the object?`,
       options: [
@@ -1963,18 +1951,6 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       explanation: `Since $F = \\frac{Gm_1m_2}{r^2}$, doubling both masses gives $F = \\frac{G(2m_1)(2m_2)}{r^2} = 4 \\times \\frac{Gm_1m_2}{r^2}$, so the force increases by a factor of 4, not 8. Wait—let me recalculate: if $m_1 \\to 2m_1$ and $m_2 \\to 2m_2$, then $F_{new} = \\frac{G(2m_1)(2m_2)}{r^2} = 4F_{old}$. The force quadruples.`,
     },
     {
-      id: "q9-corrected",
-      question: `How does the gravitational force between two objects change if both masses are doubled?`,
-      options: [
-      `It doubles`,
-      `It quadruples`,
-      `It increases by a factor of 8`,
-      `It remains the same`,
-      ],
-      correctIndex: 1,
-      explanation: `Since $F = \\frac{Gm_1m_2}{r^2}$, doubling both masses gives $F = \\frac{G(2m_1)(2m_2)}{r^2} = 4 \\times \\frac{Gm_1m_2}{r^2}$, so the force quadruples.`,
-    },
-    {
       id: "q10",
       question: `A satellite orbits Earth at a distance where the gravitational acceleration is 4.9 m/s². How does this compare to the gravitational acceleration at Earth's surface?`,
       options: [
@@ -2021,18 +1997,6 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The gravitational field strength is $g = \\frac{GM}{r^2}$. Solving for $r$: $r = \\sqrt{\\frac{GM}{g}} = \\sqrt{\\frac{(6.67 \\times 10^{-11})(1000)}{6.67 \\times 10^{-14}}} = \\sqrt{10^7} \\approx 100$ m. Actually, let me recalculate: $r^2 = \\frac{(6.67 \\times 10^{-11})(1000)}{6.67 \\times 10^{-14}} = \\frac{6.67 \\times 10^{-8}}{6.67 \\times 10^{-14}} = 10^6$, so $r = 1000$ m. Wait: $r^2 = \\frac{6.67 \\times 10^{-8}}{6.67 \\times 10^{-14}} = 10^{6}$, so $r = 10^3 = 1000$ m. Hmm, let me verify once more: if $r = 100$, then $g = \\frac{(6.67 \\times 10^{-11})(1000)}{100^2} = \\frac{6.67 \\times 10^{-8}}{10^4} = 6.67 \\times 10^{-12}$ N/kg. If $r = 1000$, then $g = \\frac{6.67 \\times 10^{-8}}{10^6} = 6.67 \\times 10^{-14}$ N/kg. So the answer is 1000 m.`,
-    },
-    {
-      id: "q13-corrected",
-      question: `At what distance from a 1000 kg point mass would the gravitational field strength be $6.67 \\times 10^{-14}$ N/kg?`,
-      options: [
-      `$1$ m`,
-      `$10$ m`,
-      `$100$ m`,
-      `$1000$ m`,
-      ],
-      correctIndex: 3,
-      explanation: `Using $g = \\frac{GM}{r^2}$, we solve for $r$: $r^2 = \\frac{GM}{g} = \\frac{(6.67 \\times 10^{-11})(1000)}{6.67 \\times 10^{-14}} = 10^6$, so $r = 1000$ m.`,
     },
     ],
   },
@@ -2737,18 +2701,6 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Tangential speed is distance divided by time: $v = 400 \\text{ m} / 80 \\text{ s} = 5$ m/s. Wait, recalculating: $400/80 = 5$ m/s. The correct answer should be 5.0 m/s, but let me verify the options. Actually $400/80 = 5$ m/s is correct, so option 1 is right, but the question states option 2 is correct. Let me reconsider: if the track circumference is 400 m and time is 80 s, then $v = 400/80 = 5$ m/s. The correctIndex should be 1, not 2.`,
-    },
-    {
-      id: "q12-revised",
-      question: `A runner completes one lap around a 400 m circular track in 80 seconds. What is the runner's tangential speed?`,
-      options: [
-      `3.2 m/s`,
-      `5.0 m/s`,
-      `6.4 m/s`,
-      `8.0 m/s`,
-      ],
-      correctIndex: 1,
-      explanation: `Tangential speed is distance divided by time: $v = 400 \\text{ m} / 80 \\text{ s} = 5.0$ m/s.`,
     },
     {
       id: "q13",
@@ -3962,18 +3914,6 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       explanation: `Taking the initial direction as positive, $\\Delta v = -20 - 20 = -40$ m/s. The impulse magnitude is $|J| = m|\\Delta v| = 0.5 \\times 40 = 20$ kg·m/s. Wait, recalculating: $J = 0.5 \\times 40 = 20$. Actually the magnitude is 20. Let me verify: incoming is +20, outgoing is -20, so $\\Delta v = -20 - (+20) = -40$, and $|J| = 0.5 \\times 40 = 20$. The correct answer should be 20, not 30. Let me reconsider the options. If the answer is 20, that's option 1. Let me recompute: $\\Delta v = v_f - v_i = (-20) - (+20) = -40$ m/s. $|\\Delta p| = 0.5 \\times 40 = 20$ kg·m/s. So the correct index should be 1, not 2. I need to fix this.`,
     },
     {
-      id: "q6-fixed",
-      question: `A 0.5 kg ball is thrown at a wall and bounces back elastically. If the incoming speed is 20 m/s and the outgoing speed is 20 m/s in the opposite direction, what is the impulse magnitude?`,
-      options: [
-      `10 kg·m/s`,
-      `20 kg·m/s`,
-      `30 kg·m/s`,
-      `40 kg·m/s`,
-      ],
-      correctIndex: 1,
-      explanation: `Taking the initial direction as positive, $v_i = 20$ m/s and $v_f = -20$ m/s, so $\\Delta v = -40$ m/s. The impulse magnitude is $|J| = m|\\Delta v| = 0.5 \\times 40 = 20$ kg·m/s.`,
-    },
-    {
       id: "q7",
       question: `A 1500 kg car traveling at 25 m/s brakes and comes to a stop in 5 seconds. What is the average braking force?`,
       options: [
@@ -4551,18 +4491,6 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $\\omega^2 = \\omega_0^2 + 2\\alpha\\Delta\\theta$ gives $(12)^2 = (8)^2 + 2\\alpha(40)$, so $144 = 64 + 80\\alpha$, yielding $\\alpha = 1$ rad/s². Wait, let me recalculate: $80 = 80\\alpha$, so $\\alpha = 1$ rad/s². Actually: $144 - 64 = 80\\alpha$ gives $80 = 80\\alpha$, so $\\alpha = 1$ rad/s². Let me verify the correct answer: $(12)^2 = 144$, $(8)^2 = 64$, $2(40) = 80$. So $144 = 64 + 80\\alpha$ means $80\\alpha = 80$, thus $\\alpha = 1$ rad/s². The correct index should be 1, not 0.`,
-    },
-    {
-      id: "q9-corrected",
-      question: `A turbine blade rotates with an initial angular velocity of 8 rad/s and experiences constant angular acceleration. After rotating through 40 radians, its angular velocity is 12 rad/s. What is the angular acceleration?`,
-      options: [
-      `0.5 rad/s²`,
-      `1.0 rad/s²`,
-      `2.0 rad/s²`,
-      `4.0 rad/s²`,
-      ],
-      correctIndex: 1,
-      explanation: `Using $\\omega^2 = \\omega_0^2 + 2\\alpha\\Delta\\theta$ gives $(12)^2 = (8)^2 + 2\\alpha(40)$, so $144 = 64 + 80\\alpha$, yielding $\\alpha = 1.0$ rad/s².`,
     },
     {
       id: "q10",
@@ -6021,18 +5949,6 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       explanation: `Using $\\tau \\Delta t = \\Delta L$, we have $2 \\cdot \\Delta t = 8$, so $\\Delta t = 4$ seconds. Wait, let me recalculate: $\\tau \\Delta t = |\\Delta L|$ gives $2 \\cdot \\Delta t = 8$, so $\\Delta t = 4$ seconds. Actually the correct answer should be 4. Let me verify the options again—if $\\Delta L = 8$ and $\\tau = 2$, then $t = 8/2 = 4$. The correctIndex should be 1, not 2.`,
     },
     {
-      id: "q8-corrected",
-      question: `A spinning wheel has angular momentum $L = 8$ kg·m²/s. If a constant torque of 2 N·m opposes its rotation, how long does it take for the wheel to stop?`,
-      options: [
-      `2 seconds`,
-      `4 seconds`,
-      `8 seconds`,
-      `16 seconds`,
-      ],
-      correctIndex: 1,
-      explanation: `Using $\\tau \\Delta t = \\Delta L$, we have $(2)(\\Delta t) = 8$, so $\\Delta t = 4$ seconds.`,
-    },
-    {
       id: "q9",
       question: `A particle of mass 2 kg moves with velocity 5 m/s at a perpendicular distance of 3 m from a fixed point. What is the magnitude of its angular momentum about that point?`,
       options: [
@@ -6920,18 +6836,6 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $T = 2\\pi\\sqrt{m/k} = 2\\pi\\sqrt{4/100} = 2\\pi\\sqrt{0.04} = 2\\pi(0.2) = 0.4\\pi$ s. Wait, let me recalculate: $\\sqrt{4/100} = 2/10 = 0.2$, so $T = 2\\pi(0.2) = 0.4\\pi$ s. Actually the correct answer is $0.4\\pi$ s, but that's option 0. Let me verify: $T = 2\\pi\\sqrt{4/100} = 2\\pi \\cdot 0.2 = 0.4\\pi$. The answer should be option 0, not 1. Correcting: the correct index should be 0.`,
-    },
-    {
-      id: "q6-corrected",
-      question: `A 4 kg mass is attached to a spring with spring constant $k = 100$ N/m. What is the period of oscillation?`,
-      options: [
-      `$0.4\\pi$ s`,
-      `$0.2\\pi$ s`,
-      `$2\\pi$ s`,
-      `$4\\pi$ s`,
-      ],
-      correctIndex: 0,
-      explanation: `Using $T = 2\\pi\\sqrt{m/k} = 2\\pi\\sqrt{4/100} = 2\\pi(0.2) = 0.4\\pi$ s.`,
     },
     {
       id: "q7",

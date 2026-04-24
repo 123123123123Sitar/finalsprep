@@ -1814,18 +1814,6 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       explanation: `Capacitance is proportional to $\\kappa/d$. Doubling the separation divides capacitance by 2, while inserting $\\kappa = 4$ multiplies it by 4, giving net factor of $4/2 = 2$. Wait—recalculating: $C_{\\text{new}} = \\kappa C_0 / 2 = 4C_0/2 = 2C_0$. The correct answer is $2C_0$, so correctIndex should be 1.`,
     },
     {
-      id: "q12-corrected",
-      question: `A parallel-plate capacitor with air between the plates has capacitance $C_0$. The plate separation is doubled while a dielectric with $\\kappa = 4$ is inserted. What is the new capacitance?`,
-      options: [
-      `$C_0 / 2$`,
-      `$2C_0$`,
-      `$4C_0$`,
-      `$C_0$`,
-      ],
-      correctIndex: 1,
-      explanation: `Capacitance scales as $\\kappa/d$. Doubling the separation divides capacitance by 2, while inserting $\\kappa = 4$ multiplies it by 4, giving a net factor of $4/2 = 2$, so $C_{\\text{new}} = 2C_0$.`,
-    },
-    {
       id: "q13",
       question: `An air-filled capacitor and a dielectric-filled capacitor (with $\\kappa = 3$) have the same plate area and separation. Both are charged to the same voltage. What is the ratio of the electric field in the air-filled capacitor to the electric field in the dielectric-filled capacitor?`,
       options: [
@@ -3232,18 +3220,6 @@ export const AP_PHYSICS_C_EM_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using $F = ILB\\sin\\theta$: $F = (4.0)(0.25)(0.80)\\sin(30°) = (4.0)(0.25)(0.80)(0.5) = 0.40$ N. Wait, let me recalculate: $(4.0)(0.25)(0.80)(0.5) = 0.40$ N. The correct answer should be 0.40 N, so correctIndex should be 1.`,
-    },
-    {
-      id: "q7-corrected",
-      question: `A wire carrying 4.0 A is placed at an angle of 30° to a 0.80 T magnetic field. The wire is 0.25 m long. What is the magnitude of the force on the wire?`,
-      options: [
-      `0.40 N`,
-      `0.80 N`,
-      `1.60 N`,
-      `3.20 N`,
-      ],
-      correctIndex: 0,
-      explanation: `Using $F = ILB\\sin\\theta$: $F = (4.0)(0.25)(0.80)\\sin(30°) = (4.0)(0.25)(0.80)(0.5) = 0.40$ N.`,
     },
     {
       id: "q8",
