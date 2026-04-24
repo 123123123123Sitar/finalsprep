@@ -5,6 +5,7 @@
  */
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import type { PlanTier } from "@/lib/plans";
+import { captureException } from "@/lib/observability";
 
 export type EventKind =
   | "chat.send"
@@ -36,6 +37,6 @@ export async function logEvent(event: Omit<AppEvent, "at">): Promise<void> {
     });
   } catch (e) {
     // Never block the main request on logging.
-    console.error("[events] log failed", e);
+    captureException(e, { area: "events.log", kind: event.kind });
   }
 }

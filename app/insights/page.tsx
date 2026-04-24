@@ -14,11 +14,13 @@ import {
   getHeatmapDays,
   computeDifficultyMastery,
   computeWeakTopics,
+  computeCourseUnitMastery,
   predictApScore,
   computeNextActions,
   type HistoryEntry,
   type WeakTopic,
   type NextAction,
+  type CourseMasteryMap,
 } from "@/lib/insights";
 import PageLoader from "@/app/components/PageLoader";
 import ReviewPanel from "@/app/components/ReviewPanel";
@@ -161,6 +163,10 @@ export default function InsightsPage() {
     [selectedCourses, loaded]
   );
   const weakTopics = useMemo(() => computeWeakTopics(wrongBank), [wrongBank]);
+  const courseMastery = useMemo(
+    () => computeCourseUnitMastery(selectedCourses, wrongBank, examResults),
+    [selectedCourses, wrongBank, examResults, loaded]
+  );
   const actions = useMemo(
     () =>
       computeNextActions({
@@ -251,6 +257,7 @@ export default function InsightsPage() {
             examResults={examResults}
             mastery={mastery}
             weakTopics={weakTopics}
+            courseMastery={courseMastery}
             activityMap={activityMap}
             onGoToReview={() => switchTab("review")}
           />
@@ -345,6 +352,7 @@ function InsightsBody({
   examResults,
   mastery,
   weakTopics,
+  courseMastery,
   activityMap,
   onGoToReview,
 }: {
@@ -359,6 +367,7 @@ function InsightsBody({
   examResults: ExamResult[];
   mastery: ReturnType<typeof computeDifficultyMastery>;
   weakTopics: WeakTopic[];
+  courseMastery: CourseMasteryMap[];
   activityMap: Map<string, number>;
   onGoToReview: () => void;
 }) {
@@ -412,6 +421,8 @@ function InsightsBody({
         />
 
         <ExamHistorySection examResults={examResults} />
+
+        <CourseMasterySection courseMastery={courseMastery} />
 
         <DifficultyMasterySection mastery={mastery} />
 
@@ -619,6 +630,129 @@ function ExamHistorySection({ examResults }: { examResults: ExamResult[] }) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function CourseMasterySection({
+  courseMastery,
+}: {
+  courseMastery: CourseMasteryMap[];
+}) {
+  if (courseMastery.length === 0) return null;
+  return (
+    <div className="mt-8 rounded-lg border border-hair bg-paper p-5">
+      <div className="flex items-baseline justify-between">
+        <div className="label">Strengths & weaknesses</div>
+        <div className="text-[11px] text-muted">By course × unit</div>
+      </div>
+      <p className="mt-2 text-[12.5px] text-muted">
+        Each cell blends practice accuracy, mock-exam scores, and review-bank
+        misses. Gray = not enough data.
+      </p>
+      <div className="mt-4 space-y-5">
+        {courseMastery.map((cm) => (
+          <CourseMasteryRow key={cm.courseSlug} cm={cm} />
+        ))}
+      </div>
+      <MasteryLegend />
+    </div>
+  );
+}
+
+function CourseMasteryRow({ cm }: { cm: CourseMasteryMap }) {
+  if (cm.units.length === 0) return null;
+  return (
+    <div>
+      <div className="mb-2 flex items-center gap-2">
+        <CourseIcon
+          slug={cm.courseSlug}
+          category={cm.category as any}
+          size="sm"
+        />
+        <div className="text-[13.5px] font-medium text-ink">
+          {cm.courseShortTitle}
+        </div>
+      </div>
+      <div className="grid gap-[4px] sm:gap-[5px] grid-cols-[repeat(auto-fill,minmax(60px,1fr))]">
+        {cm.units.map((u) => (
+          <MasteryCell key={u.unitNumber} u={u} courseSlug={cm.courseSlug} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MasteryCell({
+  u,
+  courseSlug,
+}: {
+  u: import("@/lib/insights").UnitMastery;
+  courseSlug: string;
+}) {
+  // Color ramp: red (weak) → yellow → green (strong). When confidence is
+  // low, drop opacity so the grid communicates uncertainty visually.
+  function colorFor(score: number, confidence: number): string {
+    if (confidence < 0.05) return "rgb(var(--hair))";
+    const alpha = Math.max(0.35, Math.min(1, 0.35 + confidence * 0.8));
+    if (score >= 0.8) return `rgb(34 197 94 / ${alpha})`;
+    if (score >= 0.6) return `rgb(132 204 22 / ${alpha})`;
+    if (score >= 0.45) return `rgb(234 179 8 / ${alpha})`;
+    if (score >= 0.3) return `rgb(249 115 22 / ${alpha})`;
+    return `rgb(239 68 68 / ${alpha})`;
+  }
+  const pct = Math.round(u.score * 100);
+  const title =
+    u.practiceTotal === 0 && u.wrongCount === 0
+      ? `Unit ${u.unitNumber}: ${u.unitTitle}\n(no practice data yet)`
+      : `Unit ${u.unitNumber}: ${u.unitTitle}\nPractice: ${u.practiceCorrect}/${u.practiceTotal}${
+          u.wrongCount > 0 ? ` · ${u.wrongCount} in review` : ""
+        }\nScore: ${pct}%`;
+  return (
+    <a
+      href={`/study?course=${courseSlug}&unit=${u.unitNumber}`}
+      title={title}
+      className="group flex aspect-[5/3] min-w-[56px] flex-col items-center justify-center rounded-md border border-hair p-1 text-center transition hover:border-orange hover:shadow-sm"
+      style={{ backgroundColor: colorFor(u.score, u.confidence) }}
+    >
+      <div className="text-[10px] font-semibold text-ink/80">
+        U{u.unitNumber}
+      </div>
+      {u.confidence >= 0.05 && (
+        <div className="mt-0.5 text-[10px] font-medium text-ink">{pct}%</div>
+      )}
+    </a>
+  );
+}
+
+function MasteryLegend() {
+  const stops: { label: string; color: string }[] = [
+    { label: "Weak", color: "rgb(239 68 68 / 0.85)" },
+    { label: " ", color: "rgb(249 115 22 / 0.85)" },
+    { label: " ", color: "rgb(234 179 8 / 0.85)" },
+    { label: " ", color: "rgb(132 204 22 / 0.85)" },
+    { label: "Strong", color: "rgb(34 197 94 / 0.85)" },
+  ];
+  return (
+    <div className="mt-5 flex items-center gap-2 text-[11px] text-muted">
+      <span>Weak</span>
+      <div className="flex gap-[2px]">
+        {stops.map((s, i) => (
+          <span
+            key={i}
+            className="h-3 w-4 rounded-sm"
+            style={{ backgroundColor: s.color }}
+          />
+        ))}
+      </div>
+      <span>Strong</span>
+      <span className="ml-3 flex items-center gap-1.5">
+        <span
+          className="h-3 w-4 rounded-sm"
+          style={{ backgroundColor: "rgb(var(--hair))" }}
+        />
+        <span>No data</span>
+      </span>
     </div>
   );
 }

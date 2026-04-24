@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/app/components/ThemeProvider";
 import { BookModeProvider } from "@/app/components/BookMode";
 import StudyTimeBanner from "@/app/components/StudyTimeBanner";
 import OnboardingFlow from "@/app/components/OnboardingFlow";
+import SentryClientInit from "@/sentry.client.config";
 
 // Runs before React hydrates so we don't flash the wrong theme or a
 // full SiteNav on pages that are embedded in a chat-extension overlay
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="min-h-screen bg-paper text-body antialiased">
+        <SentryClientInit />
         <AuthProvider>
           <ThemeProvider>
             <BookModeProvider>

@@ -62,6 +62,11 @@ export default function AccountPage() {
   const [bonusBalance, setBonusBalance] = useState<number | null>(null);
   const [profileView, setProfileView] = useState<SelfProfileView | null>(null);
   const [masteryUnlock, setMasteryUnlock] = useState(false);
+  const [referral, setReferral] = useState<{
+    code: string;
+    referredCount: number;
+    totalEarnedTokens: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -178,6 +183,33 @@ export default function AccountPage() {
     );
     return () => unsub();
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const token = await getIdToken();
+        if (!token) return;
+        const res = await fetch("/api/referral/code", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (cancelled || !data?.code) return;
+        setReferral({
+          code: data.code,
+          referredCount: data.referredCount ?? 0,
+          totalEarnedTokens: data.totalEarnedTokens ?? 0,
+        });
+      } catch {
+        /* referral panel stays hidden on error */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user, getIdToken]);
 
   async function save() {
     if (!user) return;
@@ -565,6 +597,8 @@ export default function AccountPage() {
             </a>
           </div>
 
+          <ReferralPanel referral={referral} />
+
           <div className="rounded-xl border border-hair bg-offwhite p-5">
             <div className="label mb-2">AI tutor behavior</div>
             <p className="text-[15px] text-body">
@@ -664,6 +698,91 @@ export default function AccountPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+function ReferralPanel({
+  referral,
+}: {
+  referral: {
+    code: string;
+    referredCount: number;
+    totalEarnedTokens: number;
+  } | null;
+}) {
+  const [copied, setCopied] = useState(false);
+  const shareUrl = useMemo(() => {
+    if (!referral?.code) return "";
+    if (typeof window === "undefined") return `/signin?mode=signup&ref=${referral.code}`;
+    return `${window.location.origin}/signin?mode=signup&ref=${referral.code}`;
+  }, [referral?.code]);
+
+  async function copyLink() {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // Clipboard denied — fall back to selection so the user can copy manually.
+      const el = document.getElementById("fp-referral-link") as HTMLInputElement | null;
+      el?.select();
+    }
+  }
+
+  return (
+    <div className="rounded-xl border border-hair bg-offwhite p-5">
+      <div className="label mb-2">Invite a friend</div>
+      <p className="text-[15px] text-body">
+        Share your link. When a friend signs up and verifies their email,
+        you both get <span className="font-semibold text-ink">5,000 bonus
+        tokens</span> added to your bank — enough for a long tutoring
+        session on us.
+      </p>
+      {referral?.code ? (
+        <>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <input
+              id="fp-referral-link"
+              readOnly
+              value={shareUrl}
+              onFocus={(e) => e.currentTarget.select()}
+              className="flex-1 rounded-md border border-hair bg-paper px-3 py-2 font-mono text-[13px] text-ink outline-none focus:border-orange"
+            />
+            <button
+              type="button"
+              onClick={copyLink}
+              className="btn-primary whitespace-nowrap text-sm"
+            >
+              {copied ? "Copied!" : "Copy link"}
+            </button>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-4 text-[13px]">
+            <div>
+              <div className="font-semibold text-ink">
+                {referral.referredCount.toLocaleString()}
+              </div>
+              <div className="text-[11px] uppercase tracking-wider text-muted">
+                Friends joined
+              </div>
+            </div>
+            <div>
+              <div className="font-semibold text-ink">
+                {referral.totalEarnedTokens.toLocaleString()}
+              </div>
+              <div className="text-[11px] uppercase tracking-wider text-muted">
+                Bonus tokens earned
+              </div>
+            </div>
+          </div>
+          <p className="mt-4 text-[12px] text-muted">
+            Your code: <span className="font-mono text-ink">{referral.code}</span>
+          </p>
+        </>
+      ) : (
+        <p className="mt-4 text-[13px] text-muted">Setting up your code…</p>
+      )}
+    </div>
   );
 }
 

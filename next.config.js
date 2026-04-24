@@ -5,6 +5,9 @@ const nextConfig = {
   // Keep it out of the server bundle so Next doesn't try to resolve
   // its native deps.
   experimental: {
+    // Enables the top-level instrumentation.ts hook; required for Sentry
+    // server/edge init. Harmless when DSN is unset (registerSentry is a no-op).
+    instrumentationHook: true,
     serverComponentsExternalPackages: [
       "@huggingface/transformers",
       "onnxruntime-node",

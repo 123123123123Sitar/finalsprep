@@ -8,6 +8,7 @@
  * period ends, getPlan auto-returns the learner tier.
  */
 import { getAdminDb } from "@/lib/firebaseAdmin";
+import { captureException } from "@/lib/observability";
 import {
   isPaidPlan,
   normalizeBillingInterval,
@@ -57,7 +58,7 @@ export async function getPlan(uid: string): Promise<UserPlan> {
     }
     return data;
   } catch (e) {
-    console.error("[userPlan] getPlan failed", e);
+    captureException(e, { area: "userPlan.get", uid });
     return { plan: "learner", updatedAt: Date.now() };
   }
 }
@@ -74,7 +75,7 @@ export async function setPlan(
       { merge: true }
     );
   } catch (e) {
-    console.error("[userPlan] setPlan failed", e);
+    captureException(e, { area: "userPlan.set", uid });
   }
 }
 

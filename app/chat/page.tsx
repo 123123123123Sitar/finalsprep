@@ -81,7 +81,10 @@ const STARTERS = [
 
 export default function ChatPage() {
   return (
-    <main className="flex h-screen flex-col bg-paper text-body">
+    // h-[100dvh] instead of h-screen so the iOS keyboard doesn't push the
+    // composer off-screen. The dynamic viewport unit recalculates as the
+    // keyboard shows/hides; h-screen stays frozen at the full viewport height.
+    <main className="flex h-[100dvh] flex-col bg-paper text-body">
       <SiteNav maxWidth="max-w-none" sticky={false} />
       <AuthGate>
         <ChatInner />
@@ -116,7 +119,13 @@ function ChatInner() {
   const [tokensCap, setTokensCap] = useState<number | null>(null);
   const [bonusBalance, setBonusBalance] = useState<number | null>(null);
   const [resetMinutes, setResetMinutes] = useState<number | null>(null);
-  const [historyOpen, setHistoryOpen] = useState(true);
+  // Sidebar open by default on desktop, collapsed on mobile so the chat
+  // column gets the full width on phones. The <640px check matches Tailwind's
+  // `sm:` breakpoint. Lives in state so users can still toggle either way.
+  const [historyOpen, setHistoryOpen] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia("(min-width: 640px)").matches;
+  });
   const [conversations, setConversations] = useState<StoredConversation[]>([]);
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
   // Per-empty-state seed: changes whenever the user opens a new chat or
@@ -1296,8 +1305,16 @@ function ChatInner() {
         </div>
 
         {/* COMPOSER */}
-        <div className="bg-paper pb-6 pt-4">
-          <div className="mx-auto max-w-3xl px-6">
+        <div
+          className="bg-paper pt-4"
+          style={{
+            // iOS home-indicator clearance on notched devices. Falls back
+            // cleanly to 1.5rem on browsers that don't support safe-area-inset.
+            paddingBottom:
+              "calc(env(safe-area-inset-bottom, 0px) + 1.5rem)",
+          }}
+        >
+          <div className="mx-auto max-w-3xl px-4 sm:px-6">
             {pendingImages.length > 0 && (
               <div className="mb-2 flex flex-wrap gap-2 rounded-lg border border-hair bg-offwhite p-2">
                 {pendingImages.map((img, i) => (
@@ -1357,9 +1374,15 @@ function ChatInner() {
                 onPaste={handlePaste}
                 rows={1}
                 placeholder="Ask anything…"
-                className="flex-1 resize-none self-center overflow-y-auto bg-transparent px-2 py-2.5 font-sans text-[15.5px] leading-6 text-white placeholder-white/40 outline-none"
+                // 16px on mobile (sm:text-[15.5px] on ≥640px). Anything
+                // under 16px triggers iOS Safari auto-zoom on focus, which
+                // then leaves the whole app offset until the user pinches back.
+                className="flex-1 resize-none self-center overflow-y-auto bg-transparent px-2 py-2.5 font-sans text-[16px] leading-6 text-white placeholder-white/40 outline-none sm:text-[15.5px]"
                 disabled={loading || streaming}
                 style={{ minHeight: 40, maxHeight: 180 }}
+                autoCapitalize="sentences"
+                autoCorrect="on"
+                enterKeyHint="send"
               />
 
               <button
@@ -2985,15 +3008,22 @@ function ChatExtensionOverlay({
   }, [onClose]);
 
   return (
+    // On mobile this renders as a full-viewport sheet that slides up from
+    // the bottom (no padding, no rounded top-edge gap); on desktop it
+    // collapses back into the centered dialog. The responsive classes
+    // avoid a second code path for the small-screen experience.
     <div
-      className="animate-fadeIn fixed inset-0 z-50 flex items-center justify-center bg-black/55 px-4 backdrop-blur-sm"
+      className="animate-fadeIn fixed inset-0 z-50 flex items-stretch justify-center bg-black/55 backdrop-blur-sm sm:items-center sm:px-4"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label={meta.title}
     >
       <div
-        className="animate-scaleIn relative flex h-[min(90vh,820px)] w-full max-w-6xl flex-col overflow-hidden rounded-2xl border border-hair bg-paper shadow-[0_40px_120px_-20px_rgba(0,0,0,0.5)]"
+        className="animate-scaleIn relative flex h-[100dvh] w-full flex-col overflow-hidden border-hair bg-paper shadow-[0_40px_120px_-20px_rgba(0,0,0,0.5)] sm:h-[min(90vh,820px)] sm:max-w-6xl sm:rounded-2xl sm:border"
+        style={{
+          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-hair px-5 py-3">

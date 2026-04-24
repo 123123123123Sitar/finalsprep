@@ -139,6 +139,129 @@ function emptyMastery(): DifficultyMastery {
   };
 }
 
+export type UnitMastery = {
+  courseSlug: string;
+  unitNumber: number;
+  unitTitle: string;
+  /** 0–1: blended mastery signal from practice accuracy, wrongs, and exams. */
+  score: number;
+  /** 0–1: how much data we have. Low confidence = gray cell. */
+  confidence: number;
+  practiceCorrect: number;
+  practiceTotal: number;
+  wrongCount: number;
+};
+
+export type CourseMasteryMap = {
+  courseSlug: string;
+  courseTitle: string;
+  courseShortTitle: string;
+  category: string;
+  units: UnitMastery[];
+};
+
+/**
+ * Per-course, per-unit mastery grid. Combines three signals so a user
+ * with only localStorage practice still sees useful color, and a user
+ * with both practice + wrongs sees more informed color:
+ *
+ *   - practice accuracy (correct / submitted, if any)    weight 0.7
+ *   - exam percentage for that course                    weight 0.2 (shared)
+ *   - wrong-bank density in that unit (negative)         weight -0.15
+ *
+ * Confidence = min(1, (practiceTotal * 0.08 + examCount * 0.3)).
+ * Units with no signals return score 0.5, confidence 0 (renders gray).
+ */
+export function computeCourseUnitMastery(
+  selectedCourses: string[],
+  wrongBank: WrongBankEntry[],
+  examResults: ExamResult[]
+): CourseMasteryMap[] {
+  const out: CourseMasteryMap[] = [];
+  for (const slug of selectedCourses) {
+    const course = COURSES.find((c) => c.slug === slug);
+    if (!course) continue;
+    let units;
+    try {
+      units = unitsForCourse(slug as CourseSlug);
+    } catch {
+      continue;
+    }
+    const courseExams = examResults.filter((e) => e.courseSlug === slug);
+    const avgExamPct =
+      courseExams.length > 0
+        ? courseExams.reduce((s, e) => s + e.percentage, 0) /
+          courseExams.length /
+          100
+        : null;
+    const unitMasteries: UnitMastery[] = [];
+    for (const unit of units) {
+      let practiceCorrect = 0;
+      let practiceTotal = 0;
+      if (typeof window !== "undefined") {
+        try {
+          const raw = window.localStorage.getItem(
+            `fp-practice-progress:${slug}:${unit.number}`
+          );
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            practiceTotal = Array.isArray(parsed?.submitted)
+              ? parsed.submitted.length
+              : 0;
+            practiceCorrect = Array.isArray(parsed?.correct)
+              ? parsed.correct.length
+              : 0;
+          }
+        } catch {
+          /* ignore bad cache */
+        }
+      }
+      const wrongCount = wrongBank.filter(
+        (w) => w.courseSlug === slug && w.unitNumber === unit.number
+      ).length;
+      const practiceAccuracy =
+        practiceTotal > 0 ? practiceCorrect / practiceTotal : null;
+
+      let weighted = 0;
+      let weight = 0;
+      if (practiceAccuracy !== null) {
+        weighted += practiceAccuracy * 0.7;
+        weight += 0.7;
+      }
+      if (avgExamPct !== null) {
+        weighted += avgExamPct * 0.2;
+        weight += 0.2;
+      }
+      const wrongPenalty = Math.min(wrongCount / 8, 0.15);
+      const base = weight > 0 ? weighted / weight : 0.5;
+      const score = Math.max(0, Math.min(1, base - wrongPenalty));
+      const confidence = Math.min(
+        1,
+        practiceTotal * 0.08 + courseExams.length * 0.3
+      );
+
+      unitMasteries.push({
+        courseSlug: slug,
+        unitNumber: unit.number,
+        unitTitle: unit.title,
+        score,
+        confidence,
+        practiceCorrect,
+        practiceTotal,
+        wrongCount,
+      });
+    }
+    out.push({
+      courseSlug: slug,
+      courseTitle: course.title,
+      courseShortTitle: course.shortTitle,
+      category: course.category,
+      units: unitMasteries,
+    });
+  }
+  return out;
+}
+
 export function computeWeakTopics(
   wrongBank: WrongBankEntry[],
   limit = 5

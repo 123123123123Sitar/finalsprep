@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAdminAuth, getAdminDb } from "@/lib/firebaseAdmin";
 import { grantForKofi } from "@/lib/kofiGrant";
 import { resolveKofiCode } from "@/lib/kofiSkus";
+import { captureException, captureMessage } from "@/lib/observability";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -68,7 +69,10 @@ export async function POST(req: Request) {
 
   const expected = (process.env.KOFI_VERIFICATION_TOKEN || "").trim();
   if (!expected) {
-    console.warn("[kofi-webhook] KOFI_VERIFICATION_TOKEN not set; ignoring");
+    captureMessage("KOFI_VERIFICATION_TOKEN not set; ignoring webhook", {
+      level: "warning",
+      area: "kofiWebhook",
+    });
     return NextResponse.json({ ok: true, ignored: "no-token-configured" });
   }
   if (payload.verification_token !== expected) {
@@ -155,6 +159,6 @@ async function stashUnmatchedOrder(payload: KofiPayload): Promise<void> {
         _receivedAt: Date.now(),
       });
   } catch (e) {
-    console.error("[kofi-webhook] stash failed", e);
+    captureException(e, { area: "kofiWebhook.stash", messageId: payload.message_id });
   }
 }

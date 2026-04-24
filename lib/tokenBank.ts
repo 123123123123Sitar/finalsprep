@@ -8,6 +8,7 @@
  */
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { FieldValue } from "firebase-admin/firestore";
+import { captureException } from "@/lib/observability";
 
 export type TokenBank = { balance: number; updatedAt: number };
 
@@ -51,7 +52,7 @@ export async function addToTokenBank(
       { merge: true }
     );
   } catch (e) {
-    console.error("[tokenBank] add failed", e);
+    captureException(e, { area: "tokenBank.add", uid, amount, source });
   }
 }
 
@@ -82,7 +83,7 @@ export async function deductFromTokenBank(
     });
     return deducted;
   } catch (e) {
-    console.error("[tokenBank] deduct failed", e);
+    captureException(e, { area: "tokenBank.deduct", uid, amount });
     return 0;
   }
 }

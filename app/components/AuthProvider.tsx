@@ -25,6 +25,11 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { getDb, getFirebaseAuth, isFirebaseConfigured } from "@/lib/firebase";
 import { normalizePlanTier, type PlanTier } from "@/lib/plans";
 import type { StreakDoc } from "@/lib/streaks";
+import {
+  clearStashedReferralCode,
+  readStashedReferralCode,
+  stashReferralCodeFromUrl,
+} from "@/lib/referralClient";
 
 export type ClientPlan = PlanTier;
 
@@ -110,6 +115,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const configured = isFirebaseConfigured();
 
   useEffect(() => {
+    // Capture `?ref=CODE` before anything else so a new visitor who
+    // clicks a share link and bounces to signup still carries credit.
+    stashReferralCodeFromUrl();
     const auth = getFirebaseAuth();
     if (!auth) {
       setLoading(false);
@@ -125,6 +133,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     return () => unsub();
   }, []);
+
+  // Fire referral attribution once the account is real (email verified).
+  // Best-effort: a server error just leaves the stash for the next load.
+  useEffect(() => {
+    if (!user || !user.emailVerified) return;
+    const code = readStashedReferralCode();
+    if (!code) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch("/api/referral/attribute", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ code }),
+        });
+        if (cancelled) return;
+        // Clear on any definitive response (success or a permanent 4xx
+        // like invalid-code / self-referral). Network failures leave
+        // the stash so the next visit retries.
+        if (res.ok || res.status === 404 || res.status === 400) {
+          clearStashedReferralCode();
+        }
+      } catch {
+        /* leave the stash for the next page load */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   // Subscribe to the streak doc so the nav badge updates live.
   useEffect(() => {

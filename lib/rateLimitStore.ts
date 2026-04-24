@@ -1,18 +1,27 @@
 /**
- * Firestore-backed rate-limit tracker for authenticated users.
+ * Persistent rate-limit tracker for authenticated users.
  *
- * The in-memory tracker in `rateLimit.ts` still handles anonymous/IP-based
- * callers (and local dev when the admin SDK isn't wired up), but a Vercel
- * cold start wipes that Map, which is why users would see "tokens remaining"
- * stay flat across requests. For signed-in users we persist the 24h sliding
- * window of token usage to `users/{uid}/profile/rateLimit`.
+ * Backend selection (fastest → slowest):
+ *   1. Upstash Redis (if UPSTASH_REDIS_REST_URL + _TOKEN are set) — preferred
+ *      for production: sub-10ms reads, survives cold starts.
+ *   2. Firestore — fallback when Redis isn't configured. Works everywhere
+ *      the admin SDK does, but every turn costs a transaction.
+ *   3. In-memory (rateLimit.ts) — used only for anonymous/IP callers and
+ *      local dev when neither of the above is wired up.
  *
- * One doc per user; `entries` is a small list (≤ the tier's daily message
- * cap, ≤ a few hundred), trimmed to the 24h window on every read/write so
- * it stays bounded.
+ * For signed-in users we persist the 24h + 7d sliding windows. The
+ * Firestore fallback stores one doc per user at
+ * `users/{uid}/profile/rateLimit`; `entries` is trimmed on every read/write
+ * so it stays bounded.
  */
 import { getAdminDb } from "@/lib/firebaseAdmin";
 import { LIMITS, type Tier } from "./rateLimit";
+import {
+  isRedisEnabled,
+  redisPeek,
+  redisRecord,
+} from "./rateLimitRedis";
+import { captureException } from "./observability";
 
 type Entry = { t: number; tokens: number };
 type RateLimitDoc = {
@@ -83,6 +92,15 @@ export async function peekUsage(
   uid: string,
   tier: Tier
 ): Promise<PersistedUsage> {
+  if (isRedisEnabled()) {
+    try {
+      return await redisPeek(uid, tier);
+    } catch (e) {
+      // Fall through to Firestore on Redis failure. Never block chat on a
+      // rate-limiter outage.
+      captureException(e, { area: "rateLimit.redisPeek", uid });
+    }
+  }
   const ref = docRef(uid);
   if (!ref) return emptyUsage(tier);
   try {
@@ -122,6 +140,15 @@ export async function peekUsage(
 /** Append an entry atomically, trimming the window on the same transaction. */
 export async function recordUsage(uid: string, tokens: number): Promise<void> {
   if (tokens <= 0) return;
+  if (isRedisEnabled()) {
+    try {
+      await redisRecord(uid, tokens);
+      return;
+    } catch (e) {
+      captureException(e, { area: "rateLimit.redisRecord", uid, tokens });
+      // Fall through to Firestore.
+    }
+  }
   const ref = docRef(uid);
   if (!ref) return;
   const db = getAdminDb();
@@ -149,7 +176,7 @@ export async function recordUsage(uid: string, tokens: number): Promise<void> {
       );
     });
   } catch (e) {
-    console.error("[rateLimitStore] record failed", e);
+    captureException(e, { area: "rateLimit.firestoreRecord", uid, tokens });
   }
 }
 
