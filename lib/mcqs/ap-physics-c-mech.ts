@@ -3933,7 +3933,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `5 m/s`,
       ],
       correctIndex: 2,
-      explanation: `Using $v_t = \\frac{mg}{b} = \\frac{2 \\times 10}{0.5} = \\frac{20}{0.5} = 40$ m/s.`,
+      explanation: `$v_t = mg/b = (2)(10)/0.5 = 40$ m/s.`,
+      variations: [
+        {
+          id: "q11",
+          question: `An object of mass $m = 3$ kg falls under linear drag with $b = 0.6$ N·s/m and $g = 10$ m/s². What is the terminal velocity?`,
+          options: [
+          `30 m/s`,
+          `25 m/s`,
+          `50 m/s`,
+          `18 m/s`,
+          ],
+          correctIndex: 2,
+          explanation: `$v_t = mg/b = (3)(10)/0.6 = 50$ m/s.`,
+        },
+        {
+          id: "q11",
+          question: `An object of mass $m = 5$ kg falls under linear drag with $b = 2$ N·s/m and $g = 10$ m/s². What is the terminal velocity?`,
+          options: [
+          `10 m/s`,
+          `25 m/s`,
+          `50 m/s`,
+          `100 m/s`,
+          ],
+          correctIndex: 1,
+          explanation: `$v_t = mg/b = (5)(10)/2 = 25$ m/s.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -3957,7 +3983,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `0.1 N·s/m`,
       ],
       correctIndex: 0,
-      explanation: `From $F = bv$, we have $b = \\frac{F}{v} = \\frac{50}{5} = 10$ N·s/m.`,
+      explanation: `$b = F/v = 50/5 = 10$ N·s/m.`,
+      variations: [
+        {
+          id: "q13",
+          question: `An object falling under linear drag experiences a drag force of 24 N when moving at 3 m/s. What is the drag coefficient $b$?`,
+          options: [
+          `8 N·s/m`,
+          `72 N·s/m`,
+          `21 N·s/m`,
+          `0.125 N·s/m`,
+          ],
+          correctIndex: 0,
+          explanation: `$b = F/v = 24/3 = 8$ N·s/m.`,
+        },
+        {
+          id: "q13",
+          question: `An object falling under linear drag experiences a drag force of 36 N when moving at 12 m/s. What is the drag coefficient $b$?`,
+          options: [
+          `3 N·s/m`,
+          `432 N·s/m`,
+          `24 N·s/m`,
+          `0.33 N·s/m`,
+          ],
+          correctIndex: 0,
+          explanation: `$b = F/v = 36/12 = 3$ N·s/m.`,
+        },
+      ],
     },
     {
       id: "q14",
@@ -4058,7 +4110,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `16 m/s²`,
       ],
       correctIndex: 2,
-      explanation: `Using $a_c = v^2/r = (20)^2/50 = 400/50 = 8.0$ m/s², the centripetal acceleration is 8.0 m/s².`,
+      explanation: `$a_c = v^2/r = 400/50 = 8.0$ m/s².`,
+      variations: [
+        {
+          id: "q6",
+          question: `A car travels at 15 m/s around a circular track with radius 25 m. What is the magnitude of its centripetal acceleration?`,
+          options: [
+          `0.6 m/s²`,
+          `1.7 m/s²`,
+          `9.0 m/s²`,
+          `375 m/s²`,
+          ],
+          correctIndex: 2,
+          explanation: `$a_c = v^2/r = 225/25 = 9.0$ m/s².`,
+        },
+        {
+          id: "q6",
+          question: `A car travels at 30 m/s around a circular track with radius 100 m. What is its centripetal acceleration?`,
+          options: [
+          `0.3 m/s²`,
+          `3.3 m/s²`,
+          `9.0 m/s²`,
+          `90 m/s²`,
+          ],
+          correctIndex: 2,
+          explanation: `$a_c = v^2/r = 900/100 = 9.0$ m/s².`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -4070,7 +4148,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `22,500 N`,
       ],
       correctIndex: 2,
-      explanation: `Using $F_c = mv^2/r = 1500 \\times (15)^2/75 = 1500 \\times 225/75 = 4500$ N, the required centripetal force is 4500 N.`,
+      explanation: `$F_c = mv^2/r = 1500(225)/75 = 4500$ N.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A 1000 kg car rounds a circular curve of radius 50 m at a constant speed of 10 m/s. What centripetal force is required?`,
+          options: [
+          `200 N`,
+          `1000 N`,
+          `2000 N`,
+          `5000 N`,
+          ],
+          correctIndex: 2,
+          explanation: `$F_c = mv^2/r = 1000(100)/50 = 2000$ N.`,
+        },
+        {
+          id: "q7",
+          question: `A 1200 kg car rounds a circular curve of radius 60 m at a constant speed of 12 m/s. What centripetal force is required?`,
+          options: [
+          `240 N`,
+          `1200 N`,
+          `2880 N`,
+          `14,400 N`,
+          ],
+          correctIndex: 2,
+          explanation: `$F_c = mv^2/r = 1200(144)/60 = 2880$ N.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -4094,7 +4198,33 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       `28 m/s`,
       ],
       correctIndex: 2,
-      explanation: `Setting $F_c = mv^2/r$ equal to the breaking tension: $100 = 0.5 \\times v^2/2$, so $v^2 = 400$ and $v = 20$ m/s.`,
+      explanation: `$T = mv^2/r$: $100 = 0.5 v^2/2$, so $v^2 = 400 \\Rightarrow v = 20$ m/s.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A ball on a string moves in a horizontal circle. The string breaks when tension exceeds 200 N. The ball has mass 1 kg and the string length is 2 m. What is the maximum speed?`,
+          options: [
+          `10 m/s`,
+          `14 m/s`,
+          `20 m/s`,
+          `28 m/s`,
+          ],
+          correctIndex: 2,
+          explanation: `$T = mv^2/r$: $200 = 1 \\cdot v^2/2 \\Rightarrow v^2 = 400 \\Rightarrow v = 20$ m/s.`,
+        },
+        {
+          id: "q9",
+          question: `A ball on a string moves in a horizontal circle. The string breaks when tension exceeds 150 N. The ball has mass 0.75 kg and the string length is 3 m. What is the maximum speed?`,
+          options: [
+          `10 m/s`,
+          `14 m/s`,
+          `18 m/s`,
+          `24.5 m/s`,
+          ],
+          correctIndex: 3,
+          explanation: `$T = mv^2/r$: $150 = 0.75 v^2/3 = 0.25 v^2 \\Rightarrow v^2 = 600 \\Rightarrow v \\approx 24.5$ m/s.`,
+        },
+      ],
     },
     {
       id: "q10",
