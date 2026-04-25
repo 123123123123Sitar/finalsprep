@@ -243,9 +243,9 @@ function MarketingHome() {
       <div className="animate-slideDown relative border-b border-hair bg-orange-tint">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-2 px-6 py-2 text-xs text-orange-ink">
           <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-orange" />
-          <span className="font-semibold">AP sale:</span>
+          <span className="font-semibold">AP Cram Time discount:</span>
           <span>
-            $5 off your first month. Code{" "}
+            $5 off the first month of Pro or Hacker. Code{" "}
             <code className="rounded bg-paper/60 px-1 font-mono text-[11px]">SCORE5</code>{" "}
             at checkout.
           </span>
@@ -277,12 +277,19 @@ function MarketingHome() {
             </p>
             <div className="animate-fadeUp delay-500 mt-8 flex flex-wrap items-center gap-3">
               <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary animate-glowPulse text-base">
-                {loading ? "Opening checkout…" : "Start Pro - $11 first month"}
+                {loading ? "Opening checkout…" : "Start Pro - $16/mo"}
               </button>
               <a href="#features" className="btn-ghost text-base">
                 See what's inside ↓
               </a>
             </div>
+            <p className="animate-fadeUp delay-500 mt-3 inline-flex flex-wrap items-center gap-x-1.5 gap-y-1 rounded-md border border-orange/40 bg-orange-tint px-2.5 py-1 text-[12px] font-medium text-orange-ink">
+              <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-orange" />
+              <span>AP Cram Time discount: $5 off your first month with</span>
+              <code className="rounded bg-paper/70 px-1 font-mono text-[11px]">
+                SCORE5
+              </code>
+            </p>
             <p className="animate-fadeUp delay-700 mt-4 max-w-xl text-sm text-muted">
               Free tier is real:{" "}
               <strong className="text-ink">10,000 AI tokens per day</strong>,
@@ -705,13 +712,19 @@ function MarketingHome() {
             </span>
             <div className="label">Pro</div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-serif text-6xl font-normal text-ink">$11</span>
-              <span className="text-sm text-muted">first month</span>
+              <span className="font-serif text-6xl font-normal text-ink">$16</span>
+              <span className="text-sm text-muted">/ month</span>
+            </div>
+            <div className="mt-3 inline-flex flex-wrap items-center gap-x-1.5 gap-y-1 rounded-md border border-orange/40 bg-orange-tint px-2.5 py-1 text-[12px] font-medium text-orange-ink">
+              <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-orange" />
+              <span>AP Cram Time discount: $5 off first month with</span>
+              <code className="rounded bg-paper/70 px-1 font-mono text-[11px]">
+                SCORE5
+              </code>
             </div>
             <p className="mt-2 text-sm text-muted">
-              <span className="text-dim line-through">$16</span>{" "}
-              with <code className="font-mono text-[11px] text-ink">SCORE5</code>,
-              then $16/mo. Or <strong className="text-ink">$90</strong>{" "}
+              First month <strong className="text-ink">$11</strong> with the
+              code, then $16/mo. Or <strong className="text-ink">$90</strong>{" "}
               for 6 months.
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
@@ -728,7 +741,7 @@ function MarketingHome() {
               disabled={loading}
               className="btn-primary mt-7 w-full justify-center text-base disabled:opacity-50"
             >
-              {loading ? "Opening checkout…" : "Start Pro - $11 first month"}
+              {loading ? "Opening checkout…" : "Start Pro - $16/mo"}
             </button>
             <button
               onClick={() => buy("pro-sixmonth")}
@@ -755,13 +768,19 @@ function MarketingHome() {
             </span>
             <div className="label">Hacker</div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-serif text-6xl font-normal text-ink">$24</span>
-              <span className="text-sm text-muted">first month</span>
+              <span className="font-serif text-6xl font-normal text-ink">$29</span>
+              <span className="text-sm text-muted">/ month</span>
+            </div>
+            <div className="mt-3 inline-flex flex-wrap items-center gap-x-1.5 gap-y-1 rounded-md border border-amber-400/50 bg-amber-100/70 px-2.5 py-1 text-[12px] font-medium text-amber-900">
+              <span className="h-1.5 w-1.5 animate-pulseSoft rounded-full bg-amber-500" />
+              <span>AP Cram Time discount: $5 off first month with</span>
+              <code className="rounded bg-paper/80 px-1 font-mono text-[11px]">
+                SCORE5
+              </code>
             </div>
             <p className="mt-2 text-sm text-muted">
-              <span className="text-dim line-through">$29</span>{" "}
-              with <code className="font-mono text-[11px] text-ink">SCORE5</code>,
-              then $29/mo. Or <strong className="text-ink">$160</strong>{" "}
+              First month <strong className="text-ink">$24</strong> with the
+              code, then $29/mo. Or <strong className="text-ink">$160</strong>{" "}
               for 6 months.
             </p>
             <ul className="mt-6 space-y-2 text-[15px] text-body">
@@ -777,7 +796,7 @@ function MarketingHome() {
               disabled={loading}
               className="mt-7 w-full rounded-md bg-amber-500 px-4 py-3 text-center text-base font-medium text-white transition hover:bg-amber-600 disabled:opacity-50"
             >
-              {loading ? "Opening checkout…" : "Go Hacker - $24 first month"}
+              {loading ? "Opening checkout…" : "Go Hacker - $29/mo"}
             </button>
             <button
               onClick={() => buy("hacker-sixmonth")}
@@ -983,8 +1002,14 @@ function MarketingHome() {
           </h2>
           <p className="mx-auto mt-7 max-w-xl text-[18px] leading-relaxed text-body">
             It takes less time to paste a problem in than to read the rest
-            of this page. Try the free tier first. If it helps,{" "}
-            <strong className="text-ink">$16/month</strong> is one click away.
+            of this page. Try the free tier first. If it helps, Pro is{" "}
+            <strong className="text-ink">$16/month</strong> — and right now
+            the AP Cram Time discount knocks <strong className="text-ink">$5 off</strong>{" "}
+            your first month with code{" "}
+            <code className="rounded bg-orange-tint px-1 font-mono text-[14px] text-orange-ink">
+              SCORE5
+            </code>
+            .
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <a href="/study" className="btn-primary animate-glowPulse text-base">

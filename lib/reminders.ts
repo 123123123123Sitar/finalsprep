@@ -2,6 +2,7 @@ import type { AdminDb } from "@/lib/socialAdmin";
 import { writeNotification } from "@/lib/socialAdmin";
 import { ymdLocal } from "@/lib/schedule";
 import { STREAK_MIN_MINUTES } from "@/lib/activity";
+import { getPlan } from "@/lib/userPlan";
 
 /**
  * Reminders live in the same `notifications` collection as follow / DM
@@ -22,6 +23,8 @@ import { STREAK_MIN_MINUTES } from "@/lib/activity";
  *                        the review surface in 3+ days.
  *   - come_back        : user has logged at least one prior active day and
  *                        has zero active minutes in the last 48 hours.
+ *   - ap_discount      : learner-plan users get a daily nudge about the
+ *                        active SCORE5 AP discount on Pro / Hacker.
  */
 
 const REMINDER_AFTER_HOUR_LOCAL = 15;
@@ -157,6 +160,18 @@ export async function evaluateReminders(
         link: "/study",
       });
       await markSent(db, uid, "come_back", today);
+    }
+  }
+
+  const userPlan = await getPlan(uid);
+  if (userPlan.plan === "learner") {
+    if (!(await alreadySentToday(db, uid, "ap_discount", today))) {
+      await writeNotification(db, uid, {
+        kind: "system",
+        text: "AP Cram Time discount: $5 off your first month of Pro or Hacker with code SCORE5.",
+        link: "/#price",
+      });
+      await markSent(db, uid, "ap_discount", today);
     }
   }
 
