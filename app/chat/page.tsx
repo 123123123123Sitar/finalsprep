@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import MathRender from "@/app/components/Math";
 import Markdown from "@/app/components/Markdown";
@@ -70,6 +70,193 @@ function formatMinutes(mins: number): string {
   const h = Math.floor(mins / 60);
   const m = mins % 60;
   return m === 0 ? `${h}h` : `${h}h ${m}m`;
+}
+
+// Curated voice whitelist — anything not in this list is hidden from the
+// picker. Trusting the OS list is a UX bomb on macOS, where the system
+// exposes Samantha alongside ~25 novelty voices like "Bahh" and "Zarvox".
+//
+// Each entry has:
+//   - `key`: a stable identifier used to dedupe variants (e.g. plain
+//     "Samantha" vs. "Samantha (Enhanced)" — we keep one row per key)
+//   - `match`: predicate against the platform's `SpeechSynthesisVoice.name`
+//   - `label`: ≤5-word description shown in the dropdown
+//
+// Order in this array IS the display order. We cap the visible list at 10
+// to keep the dropdown scannable across all platforms.
+type CuratedVoice = {
+  key: string;
+  match: (name: string) => boolean;
+  label: string;
+};
+
+// Helper: most macOS voice names come either as a bare first name ("Tom")
+// or with the locale appended ("Reed (English (United States))"). Match
+// either form by checking the first word against `key`.
+function appleNameMatch(n: string, first: string): boolean {
+  return n === first || n.startsWith(`${first} (`);
+}
+
+const CURATED_VOICES: CuratedVoice[] = [
+  // ---- Female ----
+  {
+    key: "samantha",
+    match: (n) => appleNameMatch(n, "Samantha"),
+    label: "Samantha — warm, expressive",
+  },
+  {
+    key: "ava",
+    match: (n) => appleNameMatch(n, "Ava"),
+    label: "Ava — clear, modern",
+  },
+  {
+    key: "allison",
+    match: (n) => appleNameMatch(n, "Allison"),
+    label: "Allison — calm, narrative",
+  },
+  {
+    key: "susan",
+    match: (n) => appleNameMatch(n, "Susan"),
+    label: "Susan — friendly female",
+  },
+  {
+    key: "nicky",
+    match: (n) => appleNameMatch(n, "Nicky"),
+    label: "Nicky — bright female",
+  },
+  // macOS Sonoma neural set
+  {
+    key: "sandy",
+    match: (n) => appleNameMatch(n, "Sandy"),
+    label: "Sandy — playful female",
+  },
+  {
+    key: "shelley",
+    match: (n) => appleNameMatch(n, "Shelley"),
+    label: "Shelley — thoughtful female",
+  },
+  {
+    key: "flo",
+    match: (n) => appleNameMatch(n, "Flo"),
+    label: "Flo — gentle female",
+  },
+  {
+    key: "grandma",
+    match: (n) => appleNameMatch(n, "Grandma"),
+    label: "Grandma — warm older female",
+  },
+  {
+    key: "kathy",
+    match: (n) => appleNameMatch(n, "Kathy"),
+    label: "Kathy — classic female",
+  },
+  // Microsoft neural female
+  {
+    key: "ms-aria",
+    match: (n) => /^Microsoft Aria\b/.test(n),
+    label: "Aria — natural female",
+  },
+  {
+    key: "ms-jenny",
+    match: (n) => /^Microsoft Jenny\b/.test(n),
+    label: "Jenny — friendly female",
+  },
+  {
+    key: "ms-sara",
+    match: (n) => /^Microsoft Sara\b/.test(n),
+    label: "Sara — natural female",
+  },
+  // ---- Male ----
+  {
+    key: "tom",
+    match: (n) => appleNameMatch(n, "Tom"),
+    label: "Tom — neutral male",
+  },
+  {
+    key: "alex",
+    match: (n) => appleNameMatch(n, "Alex"),
+    label: "Alex — deep, classic",
+  },
+  {
+    key: "aaron",
+    match: (n) => appleNameMatch(n, "Aaron"),
+    label: "Aaron — neutral male",
+  },
+  {
+    key: "fred",
+    match: (n) => appleNameMatch(n, "Fred"),
+    label: "Fred — older male",
+  },
+  // macOS Sonoma neural male
+  {
+    key: "reed",
+    match: (n) => appleNameMatch(n, "Reed"),
+    label: "Reed — narrative male",
+  },
+  {
+    key: "eddy",
+    match: (n) => appleNameMatch(n, "Eddy"),
+    label: "Eddy — friendly male",
+  },
+  {
+    key: "rocko",
+    match: (n) => appleNameMatch(n, "Rocko"),
+    label: "Rocko — energetic male",
+  },
+  {
+    key: "grandpa",
+    match: (n) => appleNameMatch(n, "Grandpa"),
+    label: "Grandpa — warm older male",
+  },
+  // Microsoft neural male
+  {
+    key: "ms-guy",
+    match: (n) => /^Microsoft Guy\b/.test(n),
+    label: "Guy — natural male",
+  },
+  {
+    key: "ms-davis",
+    match: (n) => /^Microsoft Davis\b/.test(n),
+    label: "Davis — natural male",
+  },
+  {
+    key: "ms-tony",
+    match: (n) => /^Microsoft Tony\b/.test(n),
+    label: "Tony — confident male",
+  },
+  // Chrome
+  {
+    key: "google-us",
+    match: (n) => n === "Google US English",
+    label: "Google US — clear",
+  },
+];
+
+const MAX_VOICES_SHOWN = 10;
+
+function curatedEntryFor(v: SpeechSynthesisVoice): CuratedVoice | null {
+  for (const c of CURATED_VOICES) {
+    if (c.match(v.name)) return c;
+  }
+  return null;
+}
+
+// Prefer Premium > Enhanced > Natural > base when multiple variants of the
+// same canonical voice exist (macOS surfaces both the legacy "Samantha" and
+// the high-quality "Samantha (Enhanced)" / "(Premium)" if downloaded).
+function voiceVariantScore(v: SpeechSynthesisVoice): number {
+  const n = v.name.toLowerCase();
+  if (/premium/.test(n)) return 4;
+  if (/enhanced/.test(n)) return 3;
+  if (/natural/.test(n)) return 3;
+  return 1;
+}
+
+function friendlyVoiceLabel(v: SpeechSynthesisVoice): string {
+  const entry = curatedEntryFor(v);
+  if (entry) return entry.label;
+  // Should never hit this for filtered lists, but stay safe.
+  return v.name.replace(/\s*\([^)]*\)\s*$/, "").trim();
 }
 
 const STARTERS = [
@@ -190,6 +377,14 @@ function ChatInner() {
   const [voiceRate, setVoiceRate] = useState<number>(1);
   const [voicePitch, setVoicePitch] = useState<number>(1);
   const [voiceList, setVoiceList] = useState<SpeechSynthesisVoice[]>([]);
+  // Resolved voice + URI in a ref so every utterance picks up the latest
+  // selection without depending on closure state. Without this, when the
+  // platform re-fires `onvoiceschanged` mid-reply (Chrome and macOS both
+  // do this on long streams), the in-flight utterance closure holds a
+  // stale array, the URI lookup silently misses, and the synth falls
+  // back to the OS default for that one utterance — producing the
+  // "voice changed halfway" symptom.
+  const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
   const [voiceSettingsOpen, setVoiceSettingsOpen] = useState(false);
   const spokenUpToRef = useRef<number>(0);
   // Paced transcript reveal: in voice mode the on-screen text grows only as
@@ -522,7 +717,7 @@ function ChatInner() {
             next[next.length - 1] = { ...last, content: acc, streaming: true };
             return next;
           });
-          if (voiceMode && plan !== "learner") speakNewFrom(acc);
+          if (voiceMode) speakNewFrom(acc);
         }
       } catch (streamErr: any) {
         if (streamErr?.name === "AbortError" || controller.signal.aborted) {
@@ -544,7 +739,7 @@ function ChatInner() {
         setMessages(withUser);
       } else {
         setMessages(finalMessages);
-        if (voiceMode && plan !== "learner" && acc.length > 0) {
+        if (voiceMode && acc.length > 0) {
           if (!aborted) {
             flushRemainingSpeech(acc);
           } else {
@@ -769,13 +964,25 @@ function ChatInner() {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
     function loadVoices() {
       const all = window.speechSynthesis.getVoices();
-      const english = all.filter((v) => /^en[-_]?/i.test(v.lang));
-      const ordered = english.sort((a, b) => {
-        const aq = voiceQualityScore(a);
-        const bq = voiceQualityScore(b);
-        if (aq !== bq) return bq - aq;
-        return a.name.localeCompare(b.name);
-      });
+      // US English only.
+      const usOnly = all.filter((v) => /^en[-_]US$/i.test(v.lang));
+      // Whitelist + dedupe by canonical key. If the platform exposes both
+      // "Samantha" and "Samantha (Enhanced)" we keep only the higher-quality
+      // variant. Anything not in the whitelist is hidden.
+      const byKey = new Map<string, SpeechSynthesisVoice>();
+      for (const v of usOnly) {
+        const entry = curatedEntryFor(v);
+        if (!entry) continue;
+        const existing = byKey.get(entry.key);
+        if (!existing || voiceVariantScore(v) > voiceVariantScore(existing)) {
+          byKey.set(entry.key, v);
+        }
+      }
+      // Order matches CURATED_VOICES, then cap at 10.
+      const ordered = CURATED_VOICES
+        .map((c) => byKey.get(c.key))
+        .filter((v): v is SpeechSynthesisVoice => !!v)
+        .slice(0, MAX_VOICES_SHOWN);
       setVoiceList(ordered);
       setVoiceURI((current) => {
         if (current && ordered.some((v) => v.voiceURI === current)) return current;
@@ -808,24 +1015,52 @@ function ChatInner() {
     } catch {}
   }, [voiceURI, voiceRate, voicePitch]);
 
-  function voiceQualityScore(v: SpeechSynthesisVoice): number {
-    // Prefer premium / neural voices shipped on macOS, iOS, and modern
-    // Chrome. These three signals cover the common high-quality engines.
-    const n = v.name.toLowerCase();
-    const uri = (v.voiceURI || "").toLowerCase();
-    let score = 0;
-    if (/premium|enhanced|neural|natural|wavenet/.test(n + " " + uri)) score += 100;
-    if (v.localService) score += 10;
-    // macOS / iOS favorites.
-    if (/(samantha|ava|zoe|serena|karen|daniel|moira|tessa|allison)/i.test(n)) {
-      score += 40;
+  // Free tier sees the top 3 voices only; Pro/Hacker get the full list.
+  // We slice the FULL `voiceList` (which always loads everything) so playback
+  // resolution still works even if the saved URI was set on a prior tier.
+  const FREE_VOICE_LIMIT = 3;
+  const pickerVoiceList = useMemo(
+    () => (plan === "learner" ? voiceList.slice(0, FREE_VOICE_LIMIT) : voiceList),
+    [voiceList, plan]
+  );
+
+  // If a learner's saved voice isn't in their gated picker (e.g. they used
+  // to be Pro and downgraded), reset to the first allowed voice so the
+  // dropdown and the synth agree.
+  useEffect(() => {
+    if (plan !== "learner") return;
+    if (pickerVoiceList.length === 0) return;
+    if (pickerVoiceList.some((v) => v.voiceURI === voiceURI)) return;
+    setVoiceURI(pickerVoiceList[0].voiceURI);
+  }, [plan, pickerVoiceList, voiceURI]);
+
+  // Keep `voiceRef` pointing at the live SpeechSynthesisVoice for the
+  // current selection. Re-resolving on every list refresh ensures we hand
+  // the synth a fresh object after `onvoiceschanged`, so utterances queued
+  // mid-reply don't silently fall back to the OS default.
+  useEffect(() => {
+    if (!voiceURI || voiceList.length === 0) {
+      voiceRef.current = null;
+      return;
     }
-    // Chrome's "Google US English" is decent.
-    if (/google us english|google uk english female/i.test(n)) score += 30;
-    // Penalize default robotic voices.
-    if (/microsoft.+desktop|espeak|robo/i.test(n)) score -= 50;
-    return score;
-  }
+    const direct = voiceList.find((v) => v.voiceURI === voiceURI);
+    if (direct) {
+      voiceRef.current = direct;
+      return;
+    }
+    // Voice URIs occasionally rotate across `onvoiceschanged` events on
+    // Chrome — fall back to the same display name in the new list so the
+    // user keeps the voice they picked.
+    const stale = voiceRef.current;
+    if (stale) {
+      const byName = voiceList.find((v) => v.name === stale.name);
+      if (byName) {
+        voiceRef.current = byName;
+        return;
+      }
+    }
+    voiceRef.current = voiceList[0] || null;
+  }, [voiceURI, voiceList]);
 
   function stripForSpeech(text: string): string {
     // Strip markdown fences, unwrap math delimiters, then translate LaTeX
@@ -848,11 +1083,12 @@ function ChatInner() {
   function applyVoiceTo(utter: SpeechSynthesisUtterance) {
     utter.rate = voiceRate;
     utter.pitch = voicePitch;
-    const chosen = voiceList.find((v) => v.voiceURI === voiceURI);
-    if (chosen) {
-      utter.voice = chosen;
-      utter.lang = chosen.lang;
-    }
+    // Pin lang to en-US first. If `voice` is missing or its object goes
+    // stale during a long reply, the synth still uses an en-US voice
+    // instead of jumping to a different locale's default.
+    utter.lang = "en-US";
+    const chosen = voiceRef.current;
+    if (chosen) utter.voice = chosen;
   }
 
   function speakText(text: string) {
@@ -1432,25 +1668,27 @@ function ChatInner() {
                 </button>
               )}
             </div>
-            {!planLoading && plan !== "learner" && (
+            {!planLoading && (
               <div className="mt-2 flex items-center justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setThinking((v) => !v)}
-                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] transition ${
-                    thinking
-                      ? "bg-amber-500 text-white"
-                      : "border border-hair bg-paper text-muted hover:text-ink"
-                  }`}
-                  title={
-                    thinking
-                      ? "Thinking mode on: uses a stronger model, counts extra tokens"
-                      : "Turn on Thinking mode for hard problems"
-                  }
-                >
-                  <span aria-hidden="true">{thinking ? "✨" : "○"}</span>
-                  Thinking {thinking ? "on" : "off"}
-                </button>
+                {plan !== "learner" && (
+                  <button
+                    type="button"
+                    onClick={() => setThinking((v) => !v)}
+                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] transition ${
+                      thinking
+                        ? "bg-amber-500 text-white"
+                        : "border border-hair bg-paper text-muted hover:text-ink"
+                    }`}
+                    title={
+                      thinking
+                        ? "Thinking mode on: uses a stronger model, counts extra tokens"
+                        : "Turn on Thinking mode for hard problems"
+                    }
+                  >
+                    <span aria-hidden="true">{thinking ? "✨" : "○"}</span>
+                    Thinking {thinking ? "on" : "off"}
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => {
@@ -1458,7 +1696,11 @@ function ChatInner() {
                     setVoiceMode(true);
                   }}
                   className="inline-flex items-center gap-1 rounded-full border border-hair bg-paper px-2 py-0.5 text-[11px] text-muted transition hover:text-ink"
-                  title="Open Voice mode (1.5× tokens). Talk to the tutor and hear replies."
+                  title={
+                    plan === "learner"
+                      ? "Open Voice mode. Mic input is Pro-only; replies still play aloud."
+                      : "Open Voice mode (1.5× tokens). Talk to the tutor and hear replies."
+                  }
                 >
                   <span aria-hidden="true">🔊</span>
                   Voice mode
@@ -1508,7 +1750,7 @@ function ChatInner() {
         />
       )}
 
-      {voiceMode && plan !== "learner" && (
+      {voiceMode && (
         <VoiceModeOverlay
           listening={listening}
           speaking={speaking}
@@ -1543,25 +1785,45 @@ function ChatInner() {
             stopSpeaking();
             setVoiceMode(false);
           }}
-          voiceList={voiceList}
+          voiceList={pickerVoiceList}
           voiceURI={voiceURI}
           setVoiceURI={setVoiceURI}
           voiceRate={voiceRate}
           setVoiceRate={setVoiceRate}
           voicePitch={voicePitch}
           setVoicePitch={setVoicePitch}
+          isLearner={plan === "learner"}
           previewVoice={() => {
             try {
               if (typeof window === "undefined") return;
               const s = window.speechSynthesis;
               if (!s) return;
-              s.cancel();
               const u = new SpeechSynthesisUtterance(
                 "This is how I'll sound while we study together."
               );
               applyVoiceTo(u);
-              s.speak(u);
-            } catch {}
+              u.onerror = (ev: any) => {
+                console.warn("[voice preview] utterance error", ev?.error);
+              };
+              const wasBusy = s.speaking || s.pending;
+              if (wasBusy) {
+                // Chrome (and macOS Safari) drop a `speak()` if it lands in
+                // the same task as a `cancel()` — the synth is in a brief
+                // transitional state. A small delay reliably clears it.
+                s.cancel();
+                setTimeout(() => {
+                  try {
+                    s.speak(u);
+                  } catch (e) {
+                    console.warn("[voice preview] speak failed", e);
+                  }
+                }, 120);
+              } else {
+                s.speak(u);
+              }
+            } catch (e) {
+              console.warn("[voice preview] failed", e);
+            }
           }}
           settingsOpen={voiceSettingsOpen}
           setSettingsOpen={setVoiceSettingsOpen}
@@ -1598,6 +1860,7 @@ function VoiceModeOverlay({
   setVoiceRate,
   voicePitch,
   setVoicePitch,
+  isLearner,
   previewVoice,
   settingsOpen,
   setSettingsOpen,
@@ -1624,6 +1887,7 @@ function VoiceModeOverlay({
   setVoiceRate: (v: number) => void;
   voicePitch: number;
   setVoicePitch: (v: number) => void;
+  isLearner: boolean;
   previewVoice: () => void;
   settingsOpen: boolean;
   setSettingsOpen: (v: boolean) => void;
@@ -1925,14 +2189,18 @@ function VoiceModeOverlay({
                       value={v.voiceURI}
                       className="bg-[#0f1525]"
                     >
-                      {v.name} {v.lang ? `(${v.lang})` : ""}
+                      {friendlyVoiceLabel(v)}
                     </option>
                   ))}
                 </select>
-                <div className="mt-1 text-[11px] text-white/40">
-                  Voice quality varies by browser and OS. Premium/neural voices
-                  sound most natural.
-                </div>
+                {isLearner && (
+                  <a
+                    href="/#price"
+                    className="mt-2 block text-[12px] text-sky-300 underline-offset-2 hover:underline"
+                  >
+                    Upgrade for more voice options →
+                  </a>
+                )}
               </label>
               <label className="block">
                 <div className="mb-1 flex items-center justify-between text-[12px] uppercase tracking-wide text-white/50">

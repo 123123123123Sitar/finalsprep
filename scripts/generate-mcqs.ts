@@ -245,7 +245,7 @@ function makeGeminiGenerator(): Generator | null {
   if (!key) return null;
   const client = new GoogleGenerativeAI(key);
   const model = client.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.5-flash",
     generationConfig: {
       temperature: 0.35,
       maxOutputTokens: 4096,
