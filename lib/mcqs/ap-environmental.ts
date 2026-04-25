@@ -16478,32 +16478,6 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
           ],
           correctIndex: 1,
           explanation: `At 50 mg/kg exposure: Pesticide X (LD50 = 25) is exceeded (50 > 25, predicting lethality), while Pesticide Y (LD50 = 500) is not exceeded (50 < 500, predicting no acute lethality).`,
-      variations: [
-        {
-          id: "q15",
-          question: `Pesticide X: LD50 = 25 mg/kg. Pesticide Y: LD50 = 500 mg/kg. A farmer is exposed to 50 mg/kg of each. What outcome is predicted?`,
-          options: [
-            `Both cause equal harm`,
-            `X likely causes lethal toxicity; Y unlikely to cause acute lethality`,
-            `Y is more dangerous`,
-            `Neither causes harm`,
-          ],
-          correctIndex: 1,
-          explanation: `At 50 mg/kg exposure: Pesticide X (LD50 = 25) is exceeded (50 > 25, predicting lethality), while Pesticide Y (LD50 = 500) is not exceeded (50 < 500, predicting no acute lethality).`,
-        },
-        {
-          id: "q15",
-          question: `Substance M: LD50 = 8 mg/kg. Substance N: LD50 = 200 mg/kg. An accident releases 15 mg/kg exposure of each. What is predicted?`,
-          options: [
-            `Both cause identical effects`,
-            `M causes severe/lethal toxicity; N causes minimal acute toxicity`,
-            `N is more dangerous`,
-            `Neither causes toxicity`,
-          ],
-          correctIndex: 1,
-          explanation: `Substance M (15 mg/kg exposure vs 8 mg/kg LD50): exceeds LD50, predicting severe acute toxicity or death. Substance N (15 mg/kg vs 200 mg/kg LD50): well below LD50, predicting minimal acute toxicity.`,
-        },
-      ],
         },
         {
           id: "q15",
@@ -16607,32 +16581,6 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
           ],
           correctIndex: 1,
           explanation: `The threshold dose is 20 mg/kg, the lowest dose at which a measurable toxic effect is observed.`,
-      variations: [
-        {
-          id: "q6",
-          question: `A chemical shows no toxic effects at doses up to 20 mg/kg, but clear toxicity appears at 20 mg/kg and higher. What is the threshold dose?`,
-          options: [
-            `10 mg/kg`,
-            `20 mg/kg`,
-            `30 mg/kg`,
-            `Undefined`,
-          ],
-          correctIndex: 1,
-          explanation: `The threshold dose is 20 mg/kg, the lowest dose at which a measurable toxic effect is observed.`,
-        },
-        {
-          id: "q6",
-          question: `Exposure data: no effects below 0.5 mg/kg; effects present at 0.5 mg/kg and above. What is the threshold?`,
-          options: [
-            `0.1 mg/kg`,
-            `0.5 mg/kg`,
-            `1 mg/kg`,
-            `Cannot determine`,
-          ],
-          correctIndex: 1,
-          explanation: `The threshold dose is 0.5 mg/kg, the first dose level showing detectable effects.`,
-        },
-      ],
         },
         {
           id: "q6",
@@ -16671,32 +16619,6 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
           ],
           correctIndex: 1,
           explanation: `LD50 corresponds to 50% response/mortality, which occurs at 25 mg according to the data.`,
-      variations: [
-        {
-          id: "q7",
-          question: `Dose-response data: 0% at 5 mg, 10% at 10 mg, 50% at 25 mg, 90% at 40 mg. What is the LD50?`,
-          options: [
-            `15 mg`,
-            `25 mg`,
-            `35 mg`,
-            `45 mg`,
-          ],
-          correctIndex: 1,
-          explanation: `LD50 corresponds to 50% response/mortality, which occurs at 25 mg according to the data.`,
-        },
-        {
-          id: "q7",
-          question: `Dose-response curve shows: 0% at 2 mg, 25% at 4 mg, 50% at 6 mg, 75% at 8 mg. The LD50 is:`,
-          options: [
-            `4 mg`,
-            `6 mg`,
-            `8 mg`,
-            `10 mg`,
-          ],
-          correctIndex: 1,
-          explanation: `The LD50 (50% mortality/response) occurs at 6 mg based on the curve data.`,
-        },
-      ],
         },
         {
           id: "q7",
