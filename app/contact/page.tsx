@@ -220,11 +220,7 @@ function ContactPageInner() {
             </h2>
             <p className="mt-2 text-[15px] text-body">
               We'll reply to <strong className="text-ink">{email}</strong>{" "}
-              within one business day. Your message is stored against{" "}
-              <code className="rounded bg-hair/30 px-1 py-0.5 text-xs">
-                {result.id || "your ticket id"}
-              </code>{" "}
-              so we can follow up.
+              within one business day.
             </p>
             <button
               onClick={() => setResult(null)}

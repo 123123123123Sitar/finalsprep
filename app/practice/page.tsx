@@ -940,19 +940,33 @@ type GradeResult = {
 };
 
 function FrqsTab() {
-  const { getIdToken, plan, planLoading } = useAuth();
+  const { user, getIdToken, plan, planLoading } = useAuth();
   const isHacker = plan === "hacker";
-  const [filterCourse, setFilterCourse] = useState<CourseSlug | "all">("all");
+  const [enrolled, setEnrolled] = useState<string[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<CourseSlug | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [response, setResponse] = useState("");
   const [grading, setGrading] = useState(false);
   const [result, setResult] = useState<GradeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const visible = useMemo(() => {
-    if (filterCourse === "all") return PAST_FRQS;
-    return frqsForCourse(filterCourse);
-  }, [filterCourse]);
+  useEffect(() => {
+    if (!user) return;
+    const db = getDb();
+    if (!db) return;
+    const unsub = subscribeSelectedCourses(db, user.uid, setEnrolled);
+    return () => unsub();
+  }, [user]);
+
+  const enrolledCourses = useMemo(
+    () => COURSES.filter((c) => enrolled.includes(c.slug)),
+    [enrolled]
+  );
+
+  const visible = useMemo(
+    () => (selectedCourse ? frqsForCourse(selectedCourse) : []),
+    [selectedCourse]
+  );
 
   const active: PastFrq | null = activeId ? getFrqById(activeId) : null;
 
@@ -1093,24 +1107,58 @@ function FrqsTab() {
     );
   }
 
+  if (!selectedCourse) {
+    if (enrolledCourses.length === 0) {
+      return (
+        <div className="mt-8 rounded-md border border-dashed border-hair bg-offwhite p-6 text-sm text-muted">
+          You haven't enrolled in any courses yet.{" "}
+          <a href="/study" className="text-orange hover:underline">
+            Pick your AP courses →
+          </a>
+        </div>
+      );
+    }
+    return (
+      <div className="mt-8 space-y-4">
+        <div className="text-sm text-muted">Pick a course to see its past FRQs.</div>
+        <ul className="divide-y divide-hair overflow-hidden rounded-xl border border-hair bg-paper">
+          {enrolledCourses.map((c) => {
+            const count = frqsForCourse(c.slug).length;
+            return (
+              <li key={c.slug}>
+                <button
+                  onClick={() => setSelectedCourse(c.slug)}
+                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left hover:bg-offwhite"
+                >
+                  <div className="min-w-0">
+                    <div className="truncate text-[15px] text-ink">{c.title}</div>
+                  </div>
+                  <div className="shrink-0 text-xs text-muted">
+                    {count} FRQ{count === 1 ? "" : "s"} →
+                  </div>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-8 space-y-4">
-      <div className="flex items-center gap-3">
-        <label className="text-sm text-muted">Course:</label>
-        <select
-          value={filterCourse}
-          onChange={(e) =>
-            setFilterCourse(e.target.value === "all" ? "all" : (e.target.value as CourseSlug))
-          }
-          className="rounded-md border border-hair bg-paper px-3 py-1.5 text-sm text-ink focus:border-orange focus:outline-none"
-        >
-          <option value="all">All courses</option>
-          {Array.from(new Set(PAST_FRQS.map((f) => f.courseSlug))).map((slug) => (
-            <option key={slug} value={slug}>
-              {courseLabel(slug)}
-            </option>
-          ))}
-        </select>
+      <button
+        onClick={() => setSelectedCourse(null)}
+        className="text-xs text-muted hover:text-ink"
+      >
+        ← Back to courses
+      </button>
+
+      <div>
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+          {courseLabel(selectedCourse)}
+        </div>
+        <h3 className="mt-1 font-serif text-2xl text-ink">Past FRQs</h3>
       </div>
 
       {visible.length === 0 ? (
@@ -1127,7 +1175,7 @@ function FrqsTab() {
               >
                 <div className="min-w-0">
                   <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-                    {courseLabel(f.courseSlug)} · {f.year} · FRQ #{f.number}
+                    {f.year} · FRQ #{f.number}
                   </div>
                   <div className="mt-0.5 truncate text-[15px] text-ink">{f.topic}</div>
                 </div>
