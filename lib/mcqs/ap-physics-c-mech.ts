@@ -4326,6 +4326,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `$KE = \\frac{1}{2}mv^2 = \\frac{1}{2}(2)(5^2) = (1)(25) = 25$ J.`,
+      variations: [
+        {
+          id: "q3",
+          question: `A 4 kg object moves at 3 m/s. What is its translational kinetic energy?`,
+          options: [
+          `12 J`,
+          `18 J`,
+          `36 J`,
+          `72 J`,
+          ],
+          correctIndex: 1,
+          explanation: `$KE = \\frac{1}{2}mv^2 = \\frac{1}{2}(4)(3^2) = (2)(9) = 18$ J.`,
+        },
+        {
+          id: "q3",
+          question: `A 5 kg object moves at 6 m/s. What is its translational kinetic energy?`,
+          options: [
+          `30 J`,
+          `60 J`,
+          `90 J`,
+          `180 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$KE = \\frac{1}{2}mv^2 = \\frac{1}{2}(5)(6^2) = (2.5)(36) = 90$ J.`,
+        },
+      ],
     },
     {
       id: "q4",
@@ -4350,6 +4376,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Using $KE = \\frac{1}{2}mv^2$: $KE = \\frac{1}{2}(0.145)(40)^2 = \\frac{1}{2}(0.145)(1600) = 116$ J.`,
+      variations: [
+        {
+          id: "q5",
+          question: `A softball with mass 0.20 kg travels at 30 m/s. How much kinetic energy does it have?`,
+          options: [
+          `45 J`,
+          `60 J`,
+          `90 J`,
+          `180 J`,
+          ],
+          correctIndex: 2,
+          explanation: `Using $KE = \\frac{1}{2}mv^2$: $KE = \\frac{1}{2}(0.20)(30)^2 = \\frac{1}{2}(0.20)(900) = 90$ J.`,
+        },
+        {
+          id: "q5",
+          question: `A tennis ball with mass 0.060 kg travels at 50 m/s. How much kinetic energy does it have?`,
+          options: [
+          `37.5 J`,
+          `75 J`,
+          `150 J`,
+          `300 J`,
+          ],
+          correctIndex: 1,
+          explanation: `Using $KE = \\frac{1}{2}mv^2$: $KE = \\frac{1}{2}(0.060)(50)^2 = \\frac{1}{2}(0.060)(2500) = 75$ J.`,
+        },
+      ],
     },
     {
       id: "q6",
@@ -4362,6 +4414,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `By the work–energy theorem, the net work done on an object equals its change in kinetic energy: $W_{net} = \\Delta KE = 50 - 0 = 50$ J.`,
+      variations: [
+        {
+          id: "q6",
+          question: `An object at rest has a kinetic energy of 0 J. If a net force does 75 J of work on the object, what is its final kinetic energy?`,
+          options: [
+          `0 J`,
+          `37.5 J`,
+          `75 J`,
+          `150 J`,
+          ],
+          correctIndex: 2,
+          explanation: `By the work–energy theorem, $W_{net} = \\Delta KE = 75 - 0 = 75$ J.`,
+        },
+        {
+          id: "q6",
+          question: `An object at rest has a kinetic energy of 0 J. If a net force does 120 J of work on the object, what is its final kinetic energy?`,
+          options: [
+          `0 J`,
+          `60 J`,
+          `120 J`,
+          `240 J`,
+          ],
+          correctIndex: 2,
+          explanation: `By the work–energy theorem, $W_{net} = \\Delta KE = 120 - 0 = 120$ J.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -4374,6 +4452,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `$KE_i = \\frac{1}{2}(1500)(20)^2 = 300,000$ J. Work–energy theorem: $KE_f = KE_i + W_{net} = 300,000 - 100,000 = 200,000$ J.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A 1000 kg car moving at 30 m/s experiences a net force that does −150,000 J of work on it. What is the car's kinetic energy after this work is done?`,
+          options: [
+          `150,000 J`,
+          `300,000 J`,
+          `450,000 J`,
+          `600,000 J`,
+          ],
+          correctIndex: 1,
+          explanation: `$KE_i = \\frac{1}{2}(1000)(30)^2 = 450,000$ J. Work–energy theorem: $KE_f = 450,000 - 150,000 = 300,000$ J.`,
+        },
+        {
+          id: "q7",
+          question: `A 2000 kg car moving at 10 m/s experiences a net force that does −60,000 J of work on it. What is the car's kinetic energy after this work is done?`,
+          options: [
+          `0 J`,
+          `40,000 J`,
+          `80,000 J`,
+          `100,000 J`,
+          ],
+          correctIndex: 1,
+          explanation: `$KE_i = \\frac{1}{2}(2000)(10)^2 = 100,000$ J. Work–energy theorem: $KE_f = 100,000 - 60,000 = 40,000$ J.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -4398,6 +4502,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Using $KE = \\frac{1}{2}mv^2$: $KE = \\frac{1}{2}(0.5)(10)^2 = \\frac{1}{2}(0.5)(100) = 25$ J.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A 0.8 kg ball is thrown upward at 5 m/s. What is its kinetic energy at the moment it is released?`,
+          options: [
+          `2 J`,
+          `4 J`,
+          `10 J`,
+          `20 J`,
+          ],
+          correctIndex: 2,
+          explanation: `Using $KE = \\frac{1}{2}mv^2$: $KE = \\frac{1}{2}(0.8)(5)^2 = \\frac{1}{2}(0.8)(25) = 10$ J.`,
+        },
+        {
+          id: "q9",
+          question: `A 0.25 kg ball is thrown upward at 8 m/s. What is its kinetic energy at the moment it is released?`,
+          options: [
+          `1 J`,
+          `2 J`,
+          `4 J`,
+          `8 J`,
+          ],
+          correctIndex: 3,
+          explanation: `Using $KE = \\frac{1}{2}mv^2$: $KE = \\frac{1}{2}(0.25)(8)^2 = \\frac{1}{2}(0.25)(64) = 8$ J.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -4410,6 +4540,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Rearranging $KE = \\frac{1}{2}mv^2$ to solve for mass: $m = \\frac{2 \\cdot KE}{v^2} = \\frac{2(80)}{(4)^2} = \\frac{160}{16} = 10$ kg.`,
+      variations: [
+        {
+          id: "q10",
+          question: `An object's kinetic energy is 90 J when it is moving at 6 m/s. What is its mass?`,
+          options: [
+          `2.5 kg`,
+          `5 kg`,
+          `10 kg`,
+          `15 kg`,
+          ],
+          correctIndex: 1,
+          explanation: `$m = \\frac{2 \\cdot KE}{v^2} = \\frac{2(90)}{36} = \\frac{180}{36} = 5$ kg.`,
+        },
+        {
+          id: "q10",
+          question: `An object's kinetic energy is 200 J when it is moving at 5 m/s. What is its mass?`,
+          options: [
+          `4 kg`,
+          `8 kg`,
+          `16 kg`,
+          `40 kg`,
+          ],
+          correctIndex: 2,
+          explanation: `$m = \\frac{2 \\cdot KE}{v^2} = \\frac{2(200)}{25} = \\frac{400}{25} = 16$ kg.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -4422,6 +4578,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 3,
       explanation: `The work–energy theorem states $W_{net} = \\Delta KE = KE_f - KE_i = \\frac{1}{2}(3)(6)^2 - 0 = \\frac{1}{2}(3)(36) = 54$ J.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A 5 kg object accelerates from rest to 4 m/s. How much net work was done on the object?`,
+          options: [
+          `20 J`,
+          `30 J`,
+          `40 J`,
+          `80 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$W_{net} = \\Delta KE = \\frac{1}{2}(5)(4)^2 - 0 = \\frac{1}{2}(5)(16) = 40$ J.`,
+        },
+        {
+          id: "q11",
+          question: `A 2 kg object accelerates from rest to 10 m/s. How much net work was done on the object?`,
+          options: [
+          `20 J`,
+          `50 J`,
+          `100 J`,
+          `200 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$W_{net} = \\Delta KE = \\frac{1}{2}(2)(10)^2 - 0 = \\frac{1}{2}(2)(100) = 100$ J.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -4434,6 +4616,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Initial kinetic energy: $KE_i = \\frac{1}{2}(2)(3)^2 = 9$ J. Final kinetic energy: $KE_f = 0$ J. By the work–energy theorem, $W = \\Delta KE = 0 - 9 = -9$ J, so the magnitude is 9 J.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A 4 kg object moving at 5 m/s collides with a wall and comes to rest. What is the magnitude of the work done by the wall on the object?`,
+          options: [
+          `10 J`,
+          `20 J`,
+          `40 J`,
+          `50 J`,
+          ],
+          correctIndex: 3,
+          explanation: `$KE_i = \\frac{1}{2}(4)(5)^2 = 50$ J. $W = \\Delta KE = 0 - 50 = -50$ J, magnitude 50 J.`,
+        },
+        {
+          id: "q12",
+          question: `A 3 kg object moving at 4 m/s collides with a wall and comes to rest. What is the magnitude of the work done by the wall on the object?`,
+          options: [
+          `12 J`,
+          `18 J`,
+          `24 J`,
+          `48 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$KE_i = \\frac{1}{2}(3)(4)^2 = 24$ J. $W = \\Delta KE = 0 - 24 = -24$ J, magnitude 24 J.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -4458,6 +4666,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Initial kinetic energy: $KE_i = \\frac{1}{2}(4)(5)^2 = 50$ J. By the work–energy theorem: $KE_f = KE_i + W_{net} = 50 + 100 = 150$ J.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A 2 kg object is moving at 6 m/s when a constant net force does 50 J of work on it in the direction of motion. What is the object's kinetic energy after this work is done?`,
+          options: [
+          `36 J`,
+          `50 J`,
+          `86 J`,
+          `100 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$KE_i = \\frac{1}{2}(2)(6)^2 = 36$ J. $KE_f = 36 + 50 = 86$ J.`,
+        },
+        {
+          id: "q14",
+          question: `A 5 kg object is moving at 4 m/s when a constant net force does 60 J of work on it in the direction of motion. What is the object's kinetic energy after this work is done?`,
+          options: [
+          `40 J`,
+          `60 J`,
+          `100 J`,
+          `160 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$KE_i = \\frac{1}{2}(5)(4)^2 = 40$ J. $KE_f = 40 + 60 = 100$ J.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -4470,6 +4704,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Rearranging $KE = \\frac{1}{2}mv^2$ to solve for speed: $v = \\sqrt{\\frac{2 \\cdot KE}{m}} = \\sqrt{\\frac{2(192)}{6}} = \\sqrt{\\frac{384}{6}} = \\sqrt{64} = 8$ m/s.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A 4 kg object has a kinetic energy of 50 J. What is its speed?`,
+          options: [
+          `2.5 m/s`,
+          `5 m/s`,
+          `10 m/s`,
+          `25 m/s`,
+          ],
+          correctIndex: 1,
+          explanation: `$v = \\sqrt{\\frac{2 \\cdot KE}{m}} = \\sqrt{\\frac{2(50)}{4}} = \\sqrt{25} = 5$ m/s.`,
+        },
+        {
+          id: "q15",
+          question: `A 2 kg object has a kinetic energy of 49 J. What is its speed?`,
+          options: [
+          `3.5 m/s`,
+          `7 m/s`,
+          `14 m/s`,
+          `49 m/s`,
+          ],
+          correctIndex: 1,
+          explanation: `$v = \\sqrt{\\frac{2 \\cdot KE}{m}} = \\sqrt{\\frac{2(49)}{2}} = \\sqrt{49} = 7$ m/s.`,
+        },
+      ],
     },
     ],
   },
@@ -4499,6 +4759,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `When force and displacement are aligned ($\\theta = 0°$), $W = Fd\\cos(0°) = 20 \\times 4 \\times 1 = 80$ J.`,
+      variations: [
+        {
+          id: "q2",
+          question: `A constant force of magnitude 15 N is applied to an object, and the object moves 6 m in the direction of the force. How much work is done?`,
+          options: [
+          `2.5 J`,
+          `21 J`,
+          `45 J`,
+          `90 J`,
+          ],
+          correctIndex: 3,
+          explanation: `$W = Fd\\cos(0°) = 15 \\times 6 \\times 1 = 90$ J.`,
+        },
+        {
+          id: "q2",
+          question: `A constant force of magnitude 25 N is applied to an object, and the object moves 8 m in the direction of the force. How much work is done?`,
+          options: [
+          `33 J`,
+          `100 J`,
+          `200 J`,
+          `400 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$W = Fd\\cos(0°) = 25 \\times 8 \\times 1 = 200$ J.`,
+        },
+      ],
     },
     {
       id: "q3",
@@ -4547,6 +4833,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `$W = Fd\\cos\\theta = 50 \\times 10 \\times \\cos(30°) = 500 \\times 0.866 \\approx 433$ J.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A 40 N force pulls a crate 5 m at an angle of 60° above the horizontal. What is the work done by this force?`,
+          options: [
+          `100 J`,
+          `173 J`,
+          `200 J`,
+          `346 J`,
+          ],
+          correctIndex: 0,
+          explanation: `$W = Fd\\cos\\theta = 40 \\times 5 \\times \\cos(60°) = 200 \\times 0.5 = 100$ J.`,
+        },
+        {
+          id: "q6",
+          question: `A 60 N force pulls a crate 8 m at an angle of 45° above the horizontal. What is the work done by this force?`,
+          options: [
+          `240 J`,
+          `339 J`,
+          `425 J`,
+          `480 J`,
+          ],
+          correctIndex: 1,
+          explanation: `$W = Fd\\cos\\theta = 60 \\times 8 \\times \\cos(45°) = 480 \\times 0.707 \\approx 339$ J.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -4559,6 +4871,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Net force is $40 - 15 = 25$ N in the direction of motion, so net work is $W = 25 \\times 6 = 150$ J.`,
+      variations: [
+        {
+          id: "q7",
+          question: `A box is pushed horizontally across a floor with a constant force of 50 N. Friction opposes the motion with a force of 20 N. The box moves 5 m. What is the net work done on the box?`,
+          options: [
+          `100 J`,
+          `150 J`,
+          `250 J`,
+          `350 J`,
+          ],
+          correctIndex: 1,
+          explanation: `Net force is $50 - 20 = 30$ N, so net work is $30 \\times 5 = 150$ J.`,
+        },
+        {
+          id: "q7",
+          question: `A box is pushed horizontally across a floor with a constant force of 35 N. Friction opposes the motion with a force of 10 N. The box moves 8 m. What is the net work done on the box?`,
+          options: [
+          `80 J`,
+          `200 J`,
+          `280 J`,
+          `360 J`,
+          ],
+          correctIndex: 1,
+          explanation: `Net force is $35 - 10 = 25$ N, so net work is $25 \\times 8 = 200$ J.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -4571,6 +4909,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `The gravitational force is $F = mg = 10 \\times 10 = 100$ N downward; lifting upward means the applied force is opposite to gravity, so $W = 100 \\times 1.5 = 150$ J.`,
+      variations: [
+        {
+          id: "q8",
+          question: `A student lifts a 5 kg book vertically upward a distance of 2 m at constant velocity. How much work does the student do against gravity? (Use $g \\approx 10$ m/s²)`,
+          options: [
+          `25 J`,
+          `50 J`,
+          `100 J`,
+          `200 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$F = mg = 5 \\times 10 = 50$ N. $W = 50 \\times 2 = 100$ J.`,
+        },
+        {
+          id: "q8",
+          question: `A student lifts an 8 kg book vertically upward a distance of 2.5 m at constant velocity. How much work does the student do against gravity? (Use $g \\approx 10$ m/s²)`,
+          options: [
+          `100 J`,
+          `160 J`,
+          `200 J`,
+          `400 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$F = mg = 8 \\times 10 = 80$ N. $W = 80 \\times 2.5 = 200$ J.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -4583,6 +4947,32 @@ export const AP_PHYSICS_C_MECH_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The angle between the force and the horizontal displacement is 60°, so $W = 25 \\times 8 \\times \\cos(60°) = 200 \\times 0.5 = 100$ J.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A force of 30 N is applied to an object at an angle of 30° below the horizontal, and the object slides 10 m horizontally. How much work is done by this force?`,
+          options: [
+          `150 J`,
+          `212 J`,
+          `260 J`,
+          `300 J`,
+          ],
+          correctIndex: 2,
+          explanation: `$W = Fd\\cos(30°) = 30 \\times 10 \\times 0.866 \\approx 260$ J.`,
+        },
+        {
+          id: "q9",
+          question: `A force of 20 N is applied to an object at an angle of 45° below the horizontal, and the object slides 6 m horizontally. How much work is done by this force?`,
+          options: [
+          `60 J`,
+          `85 J`,
+          `120 J`,
+          `170 J`,
+          ],
+          correctIndex: 1,
+          explanation: `$W = Fd\\cos(45°) = 20 \\times 6 \\times 0.707 \\approx 85$ J.`,
+        },
+      ],
     },
     {
       id: "q10",
