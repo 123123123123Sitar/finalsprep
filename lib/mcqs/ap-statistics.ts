@@ -10721,6 +10721,10 @@ export const AP_STATISTICS_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The standard error is $SE = \\frac{s}{\\sqrt{n}} = \\frac{10}{\\sqrt{25}} = \\frac{10}{5} = 2$.`,
+      variations: [
+        { id: "q6", question: `A researcher collects a sample of size $n = 36$ with sample mean $\\bar{x} = 55$ and sample standard deviation $s = 12$. What is the standard error?`, options: [`$SE = 2$`, `$SE = 3$`, `$SE = 4$`, `$SE = 6$`], correctIndex: 0, explanation: `$SE = \\frac{12}{\\sqrt{36}} = \\frac{12}{6} = 2$.` },
+        { id: "q6", question: `A researcher collects a sample of size $n = 49$ with sample mean $\\bar{x} = 100$ and sample standard deviation $s = 14$. What is the standard error?`, options: [`$SE = 1$`, `$SE = 2$`, `$SE = 3$`, `$SE = 4$`], correctIndex: 1, explanation: `$SE = \\frac{14}{\\sqrt{49}} = \\frac{14}{7} = 2$.` },
+      ],
     },
     {
       id: "q7",
@@ -10733,6 +10737,10 @@ export const AP_STATISTICS_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The degrees of freedom is $df = n - 1 = 30 - 1 = 29$, which is used to look up the critical t-value.`,
+      variations: [
+        { id: "q7", question: `A 90% confidence interval is constructed for a population mean using a sample of size $n = 50$. What is the degrees of freedom used to find $t^*$?`, options: [`48`, `49`, `50`, `51`], correctIndex: 1, explanation: `$df = 50 - 1 = 49$.` },
+        { id: "q7", question: `A 99% confidence interval is constructed for a population mean using a sample of size $n = 25$. What is the degrees of freedom used to find $t^*$?`, options: [`23`, `24`, `25`, `26`], correctIndex: 1, explanation: `$df = 25 - 1 = 24$.` },
+      ],
     },
     {
       id: "q8",
@@ -10745,6 +10753,10 @@ export const AP_STATISTICS_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The margin of error is $103.42 - 100 = 3.42$. With $SE = \\frac{8}{\\sqrt{16}} = 2$, we have $t^* = \\frac{3.42}{2} = 1.71 \\approx 1.753$ for $df = 15$.`,
+      variations: [
+        { id: "q8", question: `A sample of 25 observations yields $\\bar{x} = 50$, $s = 10$, and a 95% confidence interval of $(45.88, 54.12)$. Which value of $t^*$ was used?`, options: [`1.645`, `1.960`, `2.064`, `2.365`], correctIndex: 2, explanation: `$ME = 54.12 - 50 = 4.12$. $SE = \\frac{10}{\\sqrt{25}} = 2$, so $t^* = \\frac{4.12}{2} = 2.06 \\approx 2.064$ for $df = 24` },
+        { id: "q8", question: `A sample of 9 observations yields $\\bar{x} = 75$, $s = 6$, and a 90% confidence interval of $(71.04, 78.96)$. Which value of $t^*$ was used?`, options: [`1.397`, `1.860`, `2.132`, `2.306`], correctIndex: 1, explanation: `$ME = 78.96 - 75 = 3.96$. $SE = \\frac{6}{\\sqrt{9}} = 2$, so $t^* = \\frac{3.96}{2} = 1.98 \\approx 1.860$ for $df = 8$.` },
+      ],
     },
     {
       id: "q9",
@@ -10805,6 +10817,10 @@ export const AP_STATISTICS_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The margin of error is $t^* \\cdot SE = 2.03 \\cdot \\frac{12}{\\sqrt{36}} = 2.03 \\cdot 2 = 4.06$.`,
+      variations: [
+        { id: "q13", question: `A researcher collects data from a random sample of 25 students and computes $\\bar{x} = 80$, $s = 10$. For a 95% confidence interval, $t^* \\approx 2.06$. What is the margin of error?`, options: [`2.06`, `4.12`, `0.41`, `20.6`], correctIndex: 1, explanation: `$ME = 2.06 \\cdot \\frac{10}{\\sqrt{25}} = 2.06 \\cdot 2 = 4.12$.` },
+        { id: "q13", question: `A researcher collects data from a random sample of 49 students and computes $\\bar{x} = 60$, $s = 14$. For a 99% confidence interval, $t^* \\approx 2.68$. What is the margin of error?`, options: [`2.68`, `5.36`, `0.38`, `37.52`], correctIndex: 1, explanation: `$ME = 2.68 \\cdot \\frac{14}{\\sqrt{49}} = 2.68 \\cdot 2 = 5.36` },
+      ],
     },
     {
       id: "q14",
@@ -12547,6 +12563,10 @@ export const AP_STATISTICS_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Under the null hypothesis that the die is fair, each face has probability $\\frac{1}{6}$. The expected count is $120 \\times \\frac{1}{6} = 20$ for each face.`,
+      variations: [
+        { id: "q6", question: `Fair die rolled 180 times. Expected count per face?`, options: [`25`, `30`, `36`, `45`], correctIndex: 1, explanation: `180 ÷ 6 = 30.` },
+        { id: "q6", question: `Fair die rolled 90 times. Expected count per face?`, options: [`12`, `15`, `18`, `20`], correctIndex: 1, explanation: `90 ÷ 6 = 15.` },
+      ],
     },
     {
       id: "q7",
