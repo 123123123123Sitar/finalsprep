@@ -380,8 +380,55 @@ function AccountMenu({
       {open && (
         <div className="absolute right-0 top-full z-40 mt-2 w-72 rounded-xl border border-hair bg-paper p-4 shadow-[0_28px_80px_-28px_rgba(0,0,0,0.4)]">
           <div className="mb-3">
-            <div className="truncate text-sm font-medium text-ink">
-              {primaryLabel}
+            <div className="flex items-center gap-2">
+              <a
+                href={`/users/${uid}`}
+                className="min-w-0 flex-1 truncate text-sm font-medium text-ink hover:underline"
+                title="Open your profile"
+              >
+                {primaryLabel}
+              </a>
+              <a
+                href="/messages"
+                aria-label="Messages"
+                title="Messages"
+                className="grid h-7 w-7 place-items-center rounded-md text-muted hover:bg-offwhite hover:text-ink"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5v-11Z"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                  <path
+                    d="m4 7 8 6 8-6"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+              <a
+                href="/account"
+                aria-label="Account settings"
+                title="Account settings"
+                className="grid h-7 w-7 place-items-center rounded-md text-muted hover:bg-offwhite hover:text-ink"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                  />
+                  <path
+                    d="M19.4 13.5a7.7 7.7 0 0 0 0-3l2-1.5-2-3.5-2.4.8a7.7 7.7 0 0 0-2.6-1.5L14 2h-4l-.4 2.8a7.7 7.7 0 0 0-2.6 1.5l-2.4-.8-2 3.5 2 1.5a7.7 7.7 0 0 0 0 3l-2 1.5 2 3.5 2.4-.8a7.7 7.7 0 0 0 2.6 1.5L10 22h4l.4-2.8a7.7 7.7 0 0 0 2.6-1.5l2.4.8 2-3.5-2-1.5Z"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
             </div>
             {displayName && email && (
               <div className="mt-0.5 truncate text-[11px] text-muted">
@@ -440,28 +487,10 @@ function AccountMenu({
 
           <div className="flex flex-col">
             <a
-              href={`/users/${uid}`}
+              href="/shop"
               className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
             >
-              <span>Your profile</span>
-              <span aria-hidden="true" className="text-dim">
-                ›
-              </span>
-            </a>
-            <a
-              href="/messages"
-              className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
-            >
-              <span>Messages</span>
-              <span aria-hidden="true" className="text-dim">
-                ›
-              </span>
-            </a>
-            <a
-              href="/account"
-              className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
-            >
-              <span>Account settings</span>
+              <span>Shop tokens</span>
               <span aria-hidden="true" className="text-dim">
                 ›
               </span>
@@ -483,15 +512,6 @@ function AccountMenu({
               className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
             >
               <span>Blog</span>
-              <span aria-hidden="true" className="text-dim">
-                ›
-              </span>
-            </a>
-            <a
-              href="/shop"
-              className="flex items-center justify-between rounded-md px-2 py-1.5 text-[13px] text-muted hover:bg-offwhite hover:text-ink"
-            >
-              <span>Shop tokens</span>
               <span aria-hidden="true" className="text-dim">
                 ›
               </span>

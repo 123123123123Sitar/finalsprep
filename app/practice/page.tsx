@@ -14,6 +14,18 @@ import {
 } from "@/lib/pastFrqs";
 import { AP_EXAM_SPECS, scaledTimerMinutes } from "@/lib/apExamSpec";
 import Markdown from "@/app/components/Markdown";
+import CodeSandbox from "@/app/components/CodeSandbox";
+
+const CSA_PLACEHOLDER = `// Label each part with a comment, e.g.
+// (a)
+public static int example(int[] arr) {
+    // your code
+    return 0;
+}
+
+// (b)
+// ...
+`;
 
 type Tab = "exams" | "frqs";
 
@@ -599,6 +611,7 @@ function ExamsTab() {
             n={frqIdx(idx) + 1}
             totalFrq={frqs.length}
             q={frqs[frqIdx(idx)]}
+            courseSlug={courseSlug as CourseSlug}
             value={frqResponses[frqIdx(idx)] || ""}
             onChange={(text) => {
               setFrqResponses((prev) => {
@@ -862,15 +875,18 @@ function FrqQuestionCard({
   n,
   totalFrq,
   q,
+  courseSlug,
   value,
   onChange,
 }: {
   n: number;
   totalFrq: number;
   q: GenFrq;
+  courseSlug: CourseSlug;
   value: string;
   onChange: (text: string) => void;
 }) {
+  const isCsa = courseSlug === "ap-cs-a";
   return (
     <>
       <div className="rounded-xl border border-hair bg-paper p-6">
@@ -910,18 +926,28 @@ function FrqQuestionCard({
         </div>
       </div>
 
-      <div className="rounded-md border border-hair bg-offwhite p-3">
-        <label className="mb-2 block text-xs font-medium text-muted">
-          Your response (label each part, e.g. "(a) ...")
-        </label>
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={`(a) ...\n(b) ...\n(c) ...`}
-          rows={10}
-          className="w-full rounded-md border border-hair bg-paper px-3 py-2 font-mono text-[13px] text-ink focus:border-orange focus:outline-none"
+      {isCsa ? (
+        <CodeSandbox
+          mode="java-trace"
+          initialCode={CSA_PLACEHOLDER}
+          value={value || CSA_PLACEHOLDER}
+          onChange={onChange}
+          height={320}
         />
-      </div>
+      ) : (
+        <div className="rounded-md border border-hair bg-offwhite p-3">
+          <label className="mb-2 block text-xs font-medium text-muted">
+            Your response (label each part, e.g. "(a) ...")
+          </label>
+          <textarea
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={`(a) ...\n(b) ...\n(c) ...`}
+            rows={10}
+            className="w-full rounded-md border border-hair bg-paper px-3 py-2 font-mono text-[13px] text-ink focus:border-orange focus:outline-none"
+          />
+        </div>
+      )}
     </>
   );
 }
@@ -1075,18 +1101,28 @@ function FrqsTab() {
           )}
         </div>
 
-        <div className="rounded-md border border-hair bg-offwhite p-3">
-          <label className="mb-2 block text-xs font-medium text-muted">
-            Your response (label each part, e.g. "(a) ...")
-          </label>
-          <textarea
-            value={response}
-            onChange={(e) => setResponse(e.target.value)}
-            placeholder={`(a) Set up the integral as ...\n(b) Using the average value formula ...\n(c) ...`}
-            rows={12}
-            className="w-full rounded-md border border-hair bg-paper px-3 py-2 font-mono text-[13px] text-ink focus:border-orange focus:outline-none"
+        {active.courseSlug === "ap-cs-a" ? (
+          <CodeSandbox
+            mode="java-trace"
+            initialCode={CSA_PLACEHOLDER}
+            value={response || CSA_PLACEHOLDER}
+            onChange={setResponse}
+            height={360}
           />
-        </div>
+        ) : (
+          <div className="rounded-md border border-hair bg-offwhite p-3">
+            <label className="mb-2 block text-xs font-medium text-muted">
+              Your response (label each part, e.g. "(a) ...")
+            </label>
+            <textarea
+              value={response}
+              onChange={(e) => setResponse(e.target.value)}
+              placeholder={`(a) Set up the integral as ...\n(b) Using the average value formula ...\n(c) ...`}
+              rows={12}
+              className="w-full rounded-md border border-hair bg-paper px-3 py-2 font-mono text-[13px] text-ink focus:border-orange focus:outline-none"
+            />
+          </div>
+        )}
 
         {error && (
           <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">

@@ -1,5 +1,34 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { java } from "@codemirror/lang-java";
+import { EditorView } from "@codemirror/view";
+
+// CodeMirror touches `window` on init, so render it client-side only.
+const CodeMirror = dynamic(() => import("@uiw/react-codemirror"), {
+  ssr: false,
+  loading: () => (
+    <div className="grid h-full min-h-[200px] place-items-center rounded-md border border-hair bg-[#0a0e1a] text-[11px] text-dim">
+      Loading editor…
+    </div>
+  ),
+});
+
+// Override the dark theme's selection styling so highlighted code stays
+// legible. The default selection bg is so close to the foreground colors
+// that selected text disappears against it.
+const READABLE_SELECTION = EditorView.theme({
+  ".cm-selectionBackground, ::selection": {
+    backgroundColor: "#3b5b91 !important",
+  },
+  "&.cm-focused .cm-selectionBackground": {
+    backgroundColor: "#3b5b91 !important",
+  },
+  ".cm-content ::selection": {
+    backgroundColor: "#3b5b91 !important",
+    color: "#ffffff !important",
+  },
+});
 
 /**
  * CodeSandbox: a minimal in-browser code runner.
@@ -30,16 +59,98 @@ type Props = {
   initialCode: string;
   expectedOutput?: string;
   height?: number;
+  /**
+   * Optional controlled-mode props. When `value` is provided the component
+   * mirrors it into the editor and reports edits via `onChange`, so the
+   * parent can use the sandbox as a grading input. Without these the
+   * component manages its own state (the original demo behavior).
+   */
+  value?: string;
+  onChange?: (next: string) => void;
 };
+
+// Find the matching `}` for the `{` at the given index. Returns -1 if
+// the source is unbalanced. Skips braces inside line/block comments and
+// string literals so things like `"}"` don't throw the count off.
+function matchBrace(src: string, openIdx: number): number {
+  let depth = 1;
+  let i = openIdx + 1;
+  while (i < src.length) {
+    const ch = src[i];
+    // Line comment
+    if (ch === "/" && src[i + 1] === "/") {
+      const nl = src.indexOf("\n", i + 2);
+      i = nl === -1 ? src.length : nl + 1;
+      continue;
+    }
+    // Block comment
+    if (ch === "/" && src[i + 1] === "*") {
+      const end = src.indexOf("*/", i + 2);
+      i = end === -1 ? src.length : end + 2;
+      continue;
+    }
+    // String / char literal
+    if (ch === '"' || ch === "'") {
+      i++;
+      while (i < src.length && src[i] !== ch) {
+        if (src[i] === "\\") i += 2;
+        else i++;
+      }
+      i++;
+      continue;
+    }
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) return i;
+    }
+    i++;
+  }
+  return -1;
+}
+
+// Unwrap the outer `class X { ... }` if present, returning just the body.
+function stripClassWrapper(src: string): string {
+  const m = src.match(/(?:public\s+|private\s+)?class\s+\w+\s*\{/);
+  if (!m || m.index === undefined) return src;
+  const open = m.index + m[0].length - 1;
+  const close = matchBrace(src, open);
+  if (close === -1) return src;
+  return src.slice(0, m.index) + src.slice(open + 1, close) + src.slice(close + 1);
+}
+
+// Convert any Java method signature into a JS function declaration. Strips
+// modifiers (public/private/static) and parameter types, so
+//   `public static int foo(int a, String[] b) {`
+// becomes
+//   ` function foo(a, b) {`
+function rewriteMethodSignatures(src: string): string {
+  return src.replace(
+    /(^|[;{}\n])\s*(?:public|private|protected)?\s*(?:static\s+)?(?:final\s+)?(?:int|long|short|byte|float|double|char|boolean|String|Object|void)(?:\s*\[\s*\])?\s+(\w+)\s*\(([^)]*)\)\s*\{/g,
+    (_match, lead, name, params) => {
+      const cleaned = params
+        .split(",")
+        .map((p: string) => p.trim())
+        .filter(Boolean)
+        .map((p: string) => {
+          // Drop the type tokens, keep the last identifier.
+          const parts = p.split(/\s+/);
+          return parts[parts.length - 1].replace(/\[\s*\]/g, "");
+        })
+        .join(", ");
+      return `${lead} function ${name}(${cleaned}) {`;
+    }
+  );
+}
 
 // ---- Java → JS transpiler (pragmatic subset) ----------------------------
 // Handles the AP CSA subset only, not the full JDK. Does NOT use eval;
 // the transpiled JS is run in a sandboxed Web Worker.
 function javaToJs(src: string): string {
   let s = src;
-  // Strip Java class / main wrapper: common boilerplate we can ignore.
-  s = s.replace(/public\s+class\s+\w+\s*\{/g, "");
-  s = s.replace(/public\s+static\s+void\s+main\s*\([^)]*\)\s*\{/g, "");
+  // Unwrap `class Main { ... }` and turn every method into a JS function.
+  s = stripClassWrapper(s);
+  s = rewriteMethodSignatures(s);
   // Strip Java casts: (int), (double), (String), etc. → nothing.
   // Matches (typeName) with optional whitespace, only when followed by an
   // identifier/number/paren/minus; avoids stripping grouping parens.
@@ -81,6 +192,10 @@ function javaToJs(src: string): string {
   // trivial to transpile with regex so we leave them and rely on JS
   // arrays having .push and indexing works.
   s = s.replace(/\.add\s*\(/g, ".push(");
+  // Auto-invoke a `main` entry point if the student defined one — without
+  // this the function would just be declared and never run.
+  const mainMatch = s.match(/\bfunction\s+(main|Main)\s*\(/);
+  if (mainMatch) s += `\n${mainMatch[1]}();\n`;
   return s;
 }
 
@@ -179,12 +294,54 @@ export default function CodeSandbox({
   initialCode,
   expectedOutput,
   height = 240,
+  value,
+  onChange,
 }: Props) {
-  const [code, setCode] = useState(initialCode);
+  const controlled = typeof value === "string" && typeof onChange === "function";
+  const [internalCode, setInternalCode] = useState(initialCode);
+  const code = controlled ? (value as string) : internalCode;
+  const setCode = (next: string) => {
+    if (controlled) onChange!(next);
+    else setInternalCode(next);
+  };
   const [output, setOutput] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [running, setRunning] = useState(false);
   const [workerUrl, setWorkerUrl] = useState<string>("");
+  // Editor's share of the row, in percent. The splitter handle drags this.
+  const [editorPct, setEditorPct] = useState(50);
+  const [isWide, setIsWide] = useState(false);
+  const splitRef = useRef<HTMLDivElement>(null);
+  const draggingRef = useRef(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsWide(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    function onMove(e: MouseEvent) {
+      if (!draggingRef.current || !splitRef.current) return;
+      const rect = splitRef.current.getBoundingClientRect();
+      const pct = ((e.clientX - rect.left) / rect.width) * 100;
+      setEditorPct(Math.max(20, Math.min(80, pct)));
+    }
+    function onUp() {
+      if (!draggingRef.current) return;
+      draggingRef.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    }
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, []);
 
   useEffect(() => {
     const blob = new Blob([WORKER_SRC], { type: "application/javascript" });
@@ -251,17 +408,58 @@ export default function CodeSandbox({
           {running ? "Running…" : "Run code"}
         </button>
       </div>
-      <div className="mt-3 grid gap-3 md:grid-cols-2">
-        <textarea
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          spellCheck={false}
-          rows={Math.max(8, code.split("\n").length + 1)}
-          style={{ minHeight: `${height}px` }}
-          className="focus-ring w-full rounded-md border border-hair bg-[#0a0e1a] p-3 font-mono text-[12px] leading-5 text-[#e2e8f0] placeholder-dim"
-        />
+      <div
+        ref={splitRef}
+        className="mt-3 flex flex-col gap-3 md:flex-row md:gap-0"
+      >
         <div
-          className="flex flex-col rounded-md border border-hair bg-offwhite p-3 font-mono text-[12px] leading-5 text-ink"
+          className="overflow-hidden rounded-md border border-hair bg-[#0a0e1a]"
+          style={{
+            minHeight: `${height}px`,
+            ...(isWide ? { flexBasis: `${editorPct}%`, flexShrink: 0 } : {}),
+          }}
+        >
+          <CodeMirror
+            value={code}
+            onChange={(next) => setCode(next)}
+            extensions={
+              mode === "java-trace"
+                ? [java(), READABLE_SELECTION]
+                : [READABLE_SELECTION]
+            }
+            theme="dark"
+            height={`${height}px`}
+            basicSetup={{
+              lineNumbers: true,
+              highlightActiveLine: true,
+              highlightActiveLineGutter: true,
+              foldGutter: true,
+              bracketMatching: true,
+              autocompletion: true,
+              indentOnInput: true,
+              tabSize: 4,
+              searchKeymap: true,
+            }}
+            style={{ fontSize: 13 }}
+          />
+        </div>
+        <div
+          onMouseDown={(e) => {
+            e.preventDefault();
+            draggingRef.current = true;
+            document.body.style.cursor = "col-resize";
+            document.body.style.userSelect = "none";
+          }}
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize editor and output columns"
+          title="Drag to resize"
+          className="group hidden cursor-col-resize items-center justify-center md:flex md:w-3"
+        >
+          <div className="h-12 w-1 rounded-full bg-hair transition-colors group-hover:bg-orange/60" />
+        </div>
+        <div
+          className="flex flex-col rounded-md border border-hair bg-offwhite p-3 font-mono text-[12px] leading-5 text-ink md:flex-1"
           style={{ minHeight: `${height}px` }}
         >
           <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted">

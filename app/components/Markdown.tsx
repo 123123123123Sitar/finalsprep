@@ -2,6 +2,10 @@
 import katex from "katex";
 import { useMemo, type ReactNode } from "react";
 import { autoLatex } from "@/lib/autoLatex";
+import SpecRenderer, {
+  isInteractiveSpec,
+  type InteractiveSpec,
+} from "@/app/components/SpecRenderer";
 
 /**
  * Lightweight markdown renderer for assistant chat output. Handles the
@@ -189,12 +193,21 @@ const HEADING_CLASSES: Record<1 | 2 | 3 | 4 | 5 | 6, string> = {
 
 function renderBlock(b: Block, key: number): ReactNode {
   switch (b.type) {
-    case "p":
+    case "p": {
+      // Models often emit bare JSON for an interactive widget instead of
+      // wrapping it in a fenced ```interactive block. If the entire paragraph
+      // parses to a valid spec, render it as a widget instead of plain text.
+      const bareSpec = tryParseSpec(b.text);
+      if (bareSpec) return <InteractiveBlock key={key} spec={bareSpec} />;
+      if (looksLikeSpecStreaming(b.text)) {
+        return <StreamingInteractive key={key} text={b.text} />;
+      }
       return (
         <p key={key} className="text-body">
           {renderInline(b.text)}
         </p>
       );
+    }
     case "h": {
       const Tag = (`h${b.level}` as unknown) as keyof JSX.IntrinsicElements;
       return (
@@ -223,8 +236,19 @@ function renderBlock(b: Block, key: number): ReactNode {
           ))}
         </ol>
       );
-    case "code":
+    case "code": {
+      // Treat any fenced block whose body parses to a valid InteractiveSpec
+      // as a widget — models are unreliable about putting "interactive" in
+      // the info string and will often use ```json or no tag at all.
+      const fencedSpec = tryParseSpec(b.text);
+      if (fencedSpec) return <InteractiveBlock key={key} spec={fencedSpec} />;
+      if (b.lang.toLowerCase() === "interactive") {
+        // The fence claims it's an interactive but the JSON didn't parse —
+        // probably still streaming. Show a placeholder.
+        return <StreamingInteractive key={key} text={b.text} />;
+      }
       return <TerminalCode key={key} lang={b.lang} text={b.text} />;
+    }
     case "quote":
       return (
         <blockquote
@@ -379,6 +403,77 @@ function TerminalCode({ lang, text }: { lang: string; text: string }) {
       <pre className="overflow-x-auto px-4 py-3 text-[13px] leading-relaxed text-zinc-100">
         <code className="font-mono">{highlighted}</code>
       </pre>
+    </div>
+  );
+}
+
+/**
+ * Best-effort JSON parser for interactive specs. Accepts the entire string
+ * (already trimmed by the caller). Returns the spec only if every required
+ * field is present — keeps false positives down when assistant prose happens
+ * to contain a stray `{ ... }`.
+ */
+function tryParseSpec(text: string): InteractiveSpec | null {
+  const trimmed = text.trim();
+  if (!trimmed.startsWith("{") || !trimmed.endsWith("}")) return null;
+  try {
+    const obj = JSON.parse(trimmed);
+    return isInteractiveSpec(obj) ? obj : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Detect a spec JSON that is still streaming (open brace seen, kind field
+ * mentions one of our widget kinds, but the closing brace hasn't arrived).
+ * Used to swap in the "Building interactive…" placeholder so the chat
+ * doesn't flash raw JSON mid-stream.
+ */
+function looksLikeSpecStreaming(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed.startsWith("{")) return false;
+  if (trimmed.endsWith("}")) return false; // would have parsed via tryParseSpec
+  return /"kind"\s*:\s*"(graph2d|graph3d|physics-sim|code-java|code-pseudo)/.test(
+    trimmed
+  );
+}
+
+/**
+ * Renders a parsed interactive spec inside a chrome card so it stands apart
+ * from the surrounding chat prose.
+ */
+function InteractiveBlock({ spec }: { spec: InteractiveSpec }) {
+  return (
+    <div className="overflow-hidden rounded-lg border border-hair bg-paper">
+      <div className="border-b border-hair bg-offwhite px-4 py-2">
+        <div className="text-[10.5px] font-mono uppercase tracking-[0.14em] text-muted">
+          Interactive · {spec.kind}
+        </div>
+        <h4 className="mt-0.5 font-serif text-[17px] font-normal text-ink">
+          {spec.title}
+        </h4>
+        {spec.description && (
+          <p className="mt-1 text-[13px] text-body">{spec.description}</p>
+        )}
+      </div>
+      <div className="p-4">
+        <SpecRenderer spec={spec} />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Placeholder shown when a fence is tagged `interactive` but the JSON inside
+ * is still streaming and hasn't fully arrived yet. Avoids flashing a raw
+ * half-parsed code block.
+ */
+function StreamingInteractive({ text }: { text: string }) {
+  void text;
+  return (
+    <div className="rounded-md border border-dashed border-hair bg-offwhite px-4 py-3 text-[13px] italic text-muted">
+      Building interactive…
     </div>
   );
 }

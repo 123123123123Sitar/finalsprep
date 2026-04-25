@@ -103,7 +103,7 @@ export async function POST(req: Request) {
   // on top of whatever model is picked. Learners silently ignored.
   const voiceMode =
     (plan === "pro" || plan === "hacker") && body?.voiceMode === true;
-  const systemPrompt = buildChatSystemPrompt(aiPrefs, { voiceMode });
+  const systemPrompt = buildChatSystemPrompt(aiPrefs, { voiceMode, plan });
   const geminiBlocked = plan === "learner" ? await isGeminiBlocked() : false;
   const picked = pickModel(plan, thinking, geminiBlocked);
 

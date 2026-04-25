@@ -259,20 +259,21 @@ function MarketingHome() {
       <section className="relative z-10 mx-auto max-w-6xl overflow-visible px-6 pt-20 pb-24 sm:pt-28">
         <div className="grid items-start gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
           <div className="relative">
-            <div className="label animate-fadeUp mb-6">For AP students</div>
+            <div className="label animate-fadeUp mb-6">An AI tutor for every AP</div>
             <h1 className="animate-heroReveal font-serif text-[48px] font-normal leading-[1.05] tracking-tightest text-ink pb-2 sm:text-[64px]">
-              A tutor for <span className="italic gradient-text">every</span>{" "}
-              AP class.<br />
-              Open 24 hours.
+              An <span className="italic gradient-text">AI tutor</span>{" "}
+              for every<br />
+              AP class. Open 24 hours.
             </h1>
             <p className="animate-fadeUp delay-300 mt-7 max-w-xl text-[18px] leading-relaxed text-body">
-              A real AI tutor that walks you through math, physics, chemistry,
-              bio, CS, and history: the concept and reasoning, not just the
-              answer. Curriculum overviews for all 16 AP courses, interactive
-              tools, a Book-Mode reading view, and a chat that remembers what
-              you asked yesterday.{" "}
-              <strong className="text-ink">$16/month</strong>, or free forever
-              with a daily token budget.
+              <strong className="text-ink">A real AI tutor</strong> that walks
+              you through math, physics, chemistry, bio, CS, and history —
+              concept-first, with the reasoning, not just the answer. The AI
+              reads your handwritten work, talks back in voice mode, and now
+              builds <em className="text-ink not-italic font-semibold">live
+              graphs, simulations, and code playgrounds</em> right inside the
+              chat as it explains. Plus curriculum overviews for all 16 APs and
+              a chat that remembers what you asked yesterday.
             </p>
             <div className="animate-fadeUp delay-500 mt-8 flex flex-wrap items-center gap-3">
               <button onClick={() => buy("pro-monthly")} disabled={loading} className="btn-primary animate-glowPulse text-base">
@@ -342,14 +343,16 @@ function MarketingHome() {
       {/* FEATURE PREVIEWS - visual mockups of what's actually in the app */}
       <section id="features" className="relative mx-auto max-w-6xl overflow-hidden px-6 py-20">
         <Reveal from="up">
-          <div className="label mb-3">What's actually inside</div>
+          <div className="label mb-3">Built around the AI tutor</div>
           <h2 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
-            A tutor, a textbook, and a lab bench.<br />
+            An AI tutor, a textbook, and a lab bench.<br />
             In one tab.
           </h2>
           <p className="mt-4 max-w-2xl text-[17px] text-body">
-            Every screen below is a real page in the app. Sign in free and
-            all six are unlocked immediately.
+            The AI is the spine of every feature here — it explains the
+            concept, drafts the lesson, draws the graph, runs the code, and
+            grades your FRQ. Every screen below is a real page in the app.
+            Sign in free and all six are unlocked immediately.
           </p>
         </Reveal>
 
@@ -357,10 +360,10 @@ function MarketingHome() {
           <FeaturePreview
             delay={0}
             from="left"
-            eyebrow="Chat tutor"
-            title="Ask anything. It remembers what you asked yesterday."
-            blurb="Full chat with message history, image uploads for handwritten work, and a settings popup for response length and tone. Math renders cleanly with proper notation automatically."
-            cta={{ href: "/chat", label: "Open the tutor →" }}
+            eyebrow="AI Chat tutor"
+            title="Ask anything. The AI remembers what you asked yesterday."
+            blurb="A real AI tutor — concept-first explanations, full message history, image uploads of handwritten work, voice mode, and a settings popup for response length and tone. Math, code, and live interactive widgets render cleanly inline."
+            cta={{ href: "/chat", label: "Open the AI tutor →" }}
             mock={<ChatMock />}
           />
 
@@ -387,19 +390,19 @@ function MarketingHome() {
           <FeaturePreview
             delay={100}
             from="right"
-            eyebrow="Interactive tools"
-            title="Graphing calc, 3D plots, physics sims, live code."
-            blurb="Drop into any unit and play with the concept: a 2D/3D graphing calculator, nine physics simulations, and a Java / pseudocode sandbox with trace output."
-            cta={{ href: "/study", label: "Try the tools →" }}
+            eyebrow="AI-built interactives"
+            title="Ask in chat. The AI builds the widget."
+            blurb="Type 'graph y = sin(x) and its Taylor approximation' or 'show me a pendulum I can tune' and the AI drops a live, interactive widget into the conversation — a 2D/3D graphing calculator, nine physics sims, or a Java / pseudocode sandbox — preloaded with your problem."
+            cta={{ href: "/interactives", label: "See AI interactives →" }}
             mock={<ToolsMock />}
           />
 
           <FeaturePreview
             delay={0}
             from="left"
-            eyebrow="Review & insights"
-            title="Every problem you got wrong - spaced and re-served."
-            blurb="Miss a practice problem? It lands in your review bank. The Insights dashboard shows your 7-day token usage, streak, and the topics you keep tripping on."
+            eyebrow="AI review & insights"
+            title="Every problem you got wrong - spaced and re-served by AI."
+            blurb="Miss a practice problem? It lands in your review bank and the AI re-asks it the day before you'd forget. The Insights dashboard shows your 7-day AI token usage, streak, and the topics the tutor keeps catching you on."
             cta={{ href: "/insights?tab=review", label: "Open review →" }}
             mock={<ReviewMock />}
           />
@@ -423,28 +426,20 @@ function MarketingHome() {
         <Reveal from="right">
         <div className="grid gap-10 md:grid-cols-[1fr_1.4fr]">
           <div>
-            <div className="label mb-3">From the tutor's notebook</div>
+            <div className="label mb-3">From the AI tutor's notebook</div>
             <h2 className="font-serif text-3xl font-normal leading-tight text-ink sm:text-4xl">
-              Mistakes we watch for.
+              Mistakes the AI watches for.
             </h2>
             <p className="mt-4 text-sm text-muted">
-              Every walkthrough surfaces a "common mistake" callout when the
-              problem type has a well-known trap. Six of the ones we catch
-              most often across the 16 courses:
+              Every AI walkthrough surfaces a "common mistake" callout when
+              the problem type has a well-known trap. Six of the ones the
+              tutor catches most often across the 16 courses:
             </p>
           </div>
           <ol className="space-y-6 border-l border-hair pl-6 text-[16px] leading-relaxed text-body">
+           
             <li>
-              <div className="meta">#01 · Related rates — sign of dy/dt</div>
-              <p className="mt-1">
-                Plugging numeric values in <em>before</em> differentiating
-                collapses dx/dt to zero. Differentiate implicitly first, then
-                substitute — and keep the sign (a ladder sliding <em>down</em>{" "}
-                means dy/dt is negative).
-              </p>
-            </li>
-            <li>
-              <div className="meta">#02 · Chain rule — forgot the inner derivative</div>
+              <div className="meta">#01 · Chain rule: forgot the inner derivative</div>
               <p className="mt-1">
                 d/dx[sin(3x)] isn't cos(3x). It's{" "}
                 <span className="italic">3·cos(3x)</span>. We flag every
@@ -453,14 +448,14 @@ function MarketingHome() {
               </p>
             </li>
             <li>
-              <div className="meta">#03 · Logs — extraneous roots</div>
+              <div className="meta">#02 · Logs: extraneous roots</div>
               <p className="mt-1">
                 log(x) + log(x − 3) = 1 gives x = 5 and x = −2, but x = −2
                 makes log(x) undefined. Domain check at the end, every time.
               </p>
             </li>
             <li>
-              <div className="meta">#04 · Kinematics — units</div>
+              <div className="meta">#03 · Kinematics: units</div>
               <p className="mt-1">
                 Mixing cm and m, or forgetting g = 9.8 m/s² is positive
                 downward. When the final number looks wrong by a factor of
@@ -468,7 +463,7 @@ function MarketingHome() {
               </p>
             </li>
             <li>
-              <div className="meta">#05 · Statistics — hypothesis test direction</div>
+              <div className="meta">#04 · Statistics: hypothesis test direction</div>
               <p className="mt-1">
                 Failing to reject H₀ is <em>not</em> the same as proving H₀.
                 We also flag one-sided vs two-sided setup and remind you to
@@ -476,7 +471,7 @@ function MarketingHome() {
               </p>
             </li>
             <li>
-              <div className="meta">#06 · Free-body on an incline — tilt the axes</div>
+              <div className="meta">#05 · Free-body on an incline: tilt the axes</div>
               <p className="mt-1">
                 Keep x horizontal and you'll spend 15 minutes on trig. Tilt
                 x parallel to the ramp and mg splits cleanly into mg·sinθ
@@ -513,10 +508,12 @@ function MarketingHome() {
             fastest.
           </p>
           <p className="mt-5">
-            <strong className="text-ink">2.</strong>&nbsp;&nbsp;The tutor replies
+            <strong className="text-ink">2.</strong>&nbsp;&nbsp;The AI replies
             concept-first ("This is conservation of momentum"), walks each step
             with a one-line "why" before the algebra, flags a common mistake
-            where one applies, and ends with a takeaway. 
+            where one applies, and ends with a takeaway. When a concept benefits
+            from a graph, simulation, or runnable code, the AI builds the
+            widget right inside the chat so you can play with it.
           </p>
           <p className="mt-5">
             <strong className="text-ink">3.</strong>&nbsp;&nbsp;Follow up by
@@ -539,13 +536,15 @@ function MarketingHome() {
         <Reveal from="up">
           <div className="label mb-4">Every AP covered</div>
           <h2 className="font-serif text-3xl font-normal leading-tight text-ink sm:text-4xl">
-            16 AP courses. One subscription.
+            16 AP courses. One AI tutor.
           </h2>
           <p className="mt-4 max-w-2xl text-[17px] text-body">
             Every AP has a full curriculum overview (units, big ideas,
             essential knowledge, skills, exam weighting) laid out the way
-            the College Board organizes it. The AI tutor and all interactive
-            tools work across every course from day one.
+            the College Board organizes it. The same AI tutor handles every
+            course from day one — math derivations, chem reactions, lab
+            design, DBQ rubrics, Java traces — and pulls up the right
+            interactive widget when the concept needs one.
           </p>
         </Reveal>
 
@@ -1234,7 +1233,7 @@ function ApCountdown() {
           <span className="absolute inset-0 animate-pulseSoft rounded-full bg-orange/60" />
           <span className="relative m-auto h-1 w-1 rounded-full bg-orange" />
         </span>
-        First AP exam · {dateLabel}
+        Days until APs
       </div>
       {passed ? (
         <div className="rounded-xl border border-orange/40 bg-orange-tint px-5 py-4 text-sm text-orange-ink">

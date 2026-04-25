@@ -4,18 +4,10 @@ import SiteNav from "@/app/components/SiteNav";
 import { useAuth } from "@/app/components/AuthProvider";
 import { getDb } from "@/lib/firebase";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
-import DesmosCalculator from "@/app/components/DesmosCalculator";
-import Graph3D from "@/app/components/Graph3D";
-import PhysicsSim, { type SimKind } from "@/app/components/PhysicsSim";
-import CodeSandbox from "@/app/components/CodeSandbox";
+import SpecRenderer, {
+  type InteractiveSpec as Spec,
+} from "@/app/components/SpecRenderer";
 import PageLoader from "@/app/components/PageLoader";
-
-type Spec = {
-  kind: "graph2d" | "graph3d" | "physics-sim" | "code-java" | "code-pseudo";
-  title: string;
-  description: string;
-  config: any;
-};
 
 type SavedInteractive = {
   id: string;
@@ -23,18 +15,6 @@ type SavedInteractive = {
   spec: Spec;
   createdAt: number;
 };
-
-const PHYSICS_KINDS: SimKind[] = [
-  "projectile",
-  "pendulum",
-  "spring",
-  "incline",
-  "circuit",
-  "waves",
-  "orbit",
-  "collision",
-  "fluid",
-];
 
 const EXAMPLES = [
   "Graph y = x^2 - 2x - 3 and let me move the curve around.",
@@ -287,69 +267,3 @@ export default function InteractivesPage() {
   );
 }
 
-function SpecRenderer({ spec }: { spec: Spec }) {
-  if (spec.kind === "graph2d") {
-    const exprs = Array.isArray(spec.config?.expressions)
-      ? spec.config.expressions.slice(0, 4).map((e: any) => String(e))
-      : ["x^2"];
-    return <DesmosCalculator initialExprs={exprs} />;
-  }
-  if (spec.kind === "graph3d") {
-    const expr =
-      typeof spec.config?.expression === "string"
-        ? spec.config.expression
-        : "sin(sqrt(x^2 + y^2))";
-    return <Graph3D initialExpr={expr} />;
-  }
-  if (spec.kind === "physics-sim") {
-    const kind: SimKind = PHYSICS_KINDS.includes(spec.config?.kind)
-      ? (spec.config.kind as SimKind)
-      : "projectile";
-    return <PhysicsSim kind={kind} />;
-  }
-  if (spec.kind === "code-java") {
-    return (
-      <div>
-        {spec.config?.prompt && (
-          <p className="mb-2 text-[13px] text-muted">
-            {String(spec.config.prompt)}
-          </p>
-        )}
-        <CodeSandbox
-          mode="java-trace"
-          initialCode={String(spec.config?.initialCode || "")}
-          expectedOutput={
-            spec.config?.expectedOutput
-              ? String(spec.config.expectedOutput)
-              : undefined
-          }
-        />
-      </div>
-    );
-  }
-  if (spec.kind === "code-pseudo") {
-    return (
-      <div>
-        {spec.config?.prompt && (
-          <p className="mb-2 text-[13px] text-muted">
-            {String(spec.config.prompt)}
-          </p>
-        )}
-        <CodeSandbox
-          mode="pseudo"
-          initialCode={String(spec.config?.initialCode || "")}
-          expectedOutput={
-            spec.config?.expectedOutput
-              ? String(spec.config.expectedOutput)
-              : undefined
-          }
-        />
-      </div>
-    );
-  }
-  return (
-    <div className="rounded-md border border-dashed border-hair bg-offwhite p-4 text-sm text-muted">
-      Unknown widget kind: {spec.kind}
-    </div>
-  );
-}
