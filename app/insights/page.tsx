@@ -191,7 +191,7 @@ export default function InsightsPage() {
     return (
       <main className="bg-paper text-body">
         <SiteNav />
-        <section className="mx-auto max-w-xl px-6 py-20">
+        <section data-tour="insights-learner-upsell" className="mx-auto max-w-xl px-6 py-20">
           <div className="label mb-3">Insights</div>
           <h1 className="font-serif text-4xl font-normal text-ink">
             See how you study.
@@ -231,12 +231,14 @@ export default function InsightsPage() {
             onClick={() => switchTab("insights")}
             label="Insights"
           />
-          <TabButton
-            active={tab === "review"}
-            onClick={() => switchTab("review")}
-            label="Review"
-            badge={wrongBank.length > 0 ? wrongBank.length : undefined}
-          />
+          <span data-tour="insights-review-tab">
+            <TabButton
+              active={tab === "review"}
+              onClick={() => switchTab("review")}
+              label="Review"
+              badge={wrongBank.length > 0 ? wrongBank.length : undefined}
+            />
+          </span>
         </div>
 
         {tab === "review" ? (
@@ -481,7 +483,7 @@ function ScorePredictorSection({
 }) {
   if (selectedCourses.length === 0) return null;
   return (
-    <div className="mt-8 rounded-lg border border-hair bg-paper p-5">
+    <div data-tour="insights-prediction" className="mt-8 rounded-lg border border-hair bg-paper p-5">
       <div className="label mb-3">Predicted AP scores</div>
       <div className="grid gap-3 sm:grid-cols-2">
         {selectedCourses.map((slug) => {
@@ -674,7 +676,7 @@ function CourseMasteryRow({ cm }: { cm: CourseMasteryMap }) {
           {cm.courseShortTitle}
         </div>
       </div>
-      <div className="grid gap-[4px] sm:gap-[5px] grid-cols-[repeat(auto-fill,minmax(60px,1fr))]">
+      <div data-tour="insights-mastery" className="grid gap-[4px] sm:gap-[5px] grid-cols-[repeat(auto-fill,minmax(60px,1fr))]">
         {cm.units.map((u) => (
           <MasteryCell key={u.unitNumber} u={u} courseSlug={cm.courseSlug} />
         ))}
@@ -806,7 +808,7 @@ function DifficultyMasterySection({
 
 function WeakTopicsSection({ weakTopics }: { weakTopics: WeakTopic[] }) {
   return (
-    <div className="mt-8 rounded-lg border border-hair bg-paper p-5">
+    <div data-tour="insights-weak-topics" className="mt-8 rounded-lg border border-hair bg-paper p-5">
       <div className="label mb-3">Weak spots</div>
       {weakTopics.length === 0 ? (
         <p className="text-[13px] text-muted">
@@ -886,7 +888,7 @@ function ActivityHeatmapSection({
   const totalActiveDays = Array.from(activityMap.values()).filter((v) => v > 0).length;
 
   return (
-    <div className="mt-8 rounded-lg border border-hair bg-paper p-5">
+    <div data-tour="insights-heatmap" className="mt-8 rounded-lg border border-hair bg-paper p-5">
       <div className="flex items-baseline justify-between">
         <div className="label">Activity · last 90 days</div>
         <div className="text-[11px] text-muted">

@@ -1591,6 +1591,7 @@ function ChatInner() {
               />
               <button
                 type="button"
+                data-tour="chat-upload"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={streaming || loading}
                 aria-label="Attach image"
@@ -1604,6 +1605,7 @@ function ChatInner() {
 
               <textarea
                 ref={inputRef}
+                data-tour="chat-input"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onKey}
@@ -1623,6 +1625,7 @@ function ChatInner() {
 
               <button
                 type="button"
+                data-tour="chat-mic"
                 onClick={toggleMic}
                 aria-label={listening ? "Stop recording" : "Start voice input"}
                 title={listening ? "Stop recording" : "Speak your problem"}
@@ -2583,7 +2586,7 @@ function ExpandedSidebar({
   currentProjectName: string | null;
 }) {
   return (
-    <div className="flex h-full w-64 flex-col">
+    <div data-tour="chat-sidebar" className="flex h-full w-64 flex-col">
       {/* Logo + collapse */}
       <div className="flex items-center justify-between px-3 py-4">
         <a href="/" className="flex items-center gap-2 px-1 text-sm font-medium text-ink">
@@ -2631,7 +2634,7 @@ function ExpandedSidebar({
         </div>
       </div>
 
-      <nav className="flex flex-col gap-0.5 px-2">
+      <nav data-tour="chat-extensions" className="flex flex-col gap-0.5 px-2">
         <button
           onClick={onOpenProjects}
           className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-[14px] transition-colors ${
@@ -2750,6 +2753,7 @@ function ExpandedSidebar({
             </span>
           </a>
           <button
+            data-tour="chat-settings"
             onClick={onOpenSettings}
             className="shrink-0 rounded-lg p-1.5 text-muted hover:bg-paper/60 hover:text-ink"
             aria-label="AI settings"

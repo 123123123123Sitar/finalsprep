@@ -15,6 +15,7 @@ import {
   type AiPrefs,
 } from "@/lib/aiPrefs";
 import { planLabel } from "@/lib/plans";
+import { ALL_TOURS } from "@/lib/tours/scripts";
 import {
   AVATAR_COLOR_OPTIONS,
   AVATAR_EMOJI_OPTIONS,
@@ -1227,6 +1228,35 @@ function SupportTab({ onSignOut }: { onSignOut: () => void }) {
             Billing & refunds
           </a>
         </div>
+      </Card>
+
+      <Card
+        title="Replay a tutorial"
+        hint="Re-watch any of the in-app First Look walkthroughs. Each opens on the relevant page and starts from step one."
+      >
+        <ul className="space-y-2.5">
+          {ALL_TOURS.map((tour) => (
+            <li
+              key={tour.id}
+              className="flex items-start justify-between gap-3 rounded-md border border-hair bg-offwhite p-3"
+            >
+              <div className="min-w-0">
+                <div className="text-[13.5px] font-medium text-ink">
+                  {tour.label}
+                </div>
+                <p className="mt-0.5 text-[12px] leading-snug text-muted">
+                  {tour.description}
+                </p>
+              </div>
+              <a
+                href={`${tour.route}?fp_tour=${tour.id}`}
+                className="btn-ghost shrink-0 text-[12.5px]"
+              >
+                Replay
+              </a>
+            </li>
+          ))}
+        </ul>
       </Card>
 
       <Card title="Sign out" hint="Signs you out of this device only.">

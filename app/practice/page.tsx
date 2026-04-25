@@ -52,7 +52,7 @@ export default function PracticePage() {
 
         {/* Tabs */}
         <div className="mt-8 border-b border-hair">
-          <div className="flex gap-6">
+          <div data-tour="practice-tabs" className="flex gap-6">
             <TabButton active={tab === "exams"} onClick={() => setTab("exams")}>
               Exams
             </TabButton>
@@ -319,6 +319,7 @@ function ExamsTab() {
         <div>
           <label className="mb-2 block text-sm font-medium text-ink">Course</label>
           <select
+            data-tour="practice-course"
             value={courseSlug}
             onChange={(e) => setCourseSlug(e.target.value as CourseSlug)}
             className="w-full rounded-md border border-hair bg-paper px-3 py-2 text-ink focus:border-orange focus:outline-none"
@@ -354,7 +355,7 @@ function ExamsTab() {
           </div>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div data-tour="practice-mcq-slider" className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium text-ink">
               MCQ count
@@ -401,7 +402,7 @@ function ExamsTab() {
           <label className="mb-2 block text-sm font-medium text-ink">
             Timer: <strong>{timerMin === 0 ? "Untimed" : `${timerMin} min`}</strong>
           </label>
-          <div className="flex flex-wrap items-center gap-2">
+          <div data-tour="practice-timer" className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => {
                 setUseCustomTimer(false);
@@ -457,7 +458,7 @@ function ExamsTab() {
 
         <div>
           <label className="mb-2 block text-sm font-medium text-ink">Difficulty</label>
-          <div className="flex gap-2">
+          <div data-tour="practice-difficulty" className="flex gap-2">
             {(["easy", "medium", "hard"] as const).map((d) => (
               <button
                 key={d}
@@ -481,6 +482,7 @@ function ExamsTab() {
         )}
 
         <button
+          data-tour="practice-generate"
           onClick={generateExam}
           disabled={!courseSlug}
           className="w-full rounded-md bg-orange px-4 py-3 font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"

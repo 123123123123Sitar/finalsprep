@@ -410,6 +410,10 @@ function OnboardingDialog({
         )}`;
         return;
       }
+      // Learner / skip path: drop them in /chat so the First Look chat
+      // tour fires automatically on arrival.
+      window.location.href = "/chat";
+      return;
     } catch (e: any) {
       setStepError(e?.message || "Couldn't finish onboarding.");
     } finally {

@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/app/components/ThemeProvider";
 import { BookModeProvider } from "@/app/components/BookMode";
 import StudyTimeBanner from "@/app/components/StudyTimeBanner";
 import OnboardingFlow from "@/app/components/OnboardingFlow";
+import FirstLookProvider from "@/app/components/FirstLookProvider";
 import SentryClientInit from "@/sentry.client.config";
 
 // Runs before React hydrates so we don't flash the wrong theme or a
@@ -58,6 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <StudyTimeBanner />
               {children}
               <OnboardingFlow />
+              <FirstLookProvider />
             </BookModeProvider>
           </ThemeProvider>
         </AuthProvider>
