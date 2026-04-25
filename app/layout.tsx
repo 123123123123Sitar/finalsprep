@@ -56,10 +56,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <ThemeProvider>
             <BookModeProvider>
-              <StudyTimeBanner />
-              {children}
-              <OnboardingFlow />
-              <FirstLookProvider />
+              <FirstLookProvider>
+                <StudyTimeBanner />
+                {children}
+                <OnboardingFlow />
+              </FirstLookProvider>
             </BookModeProvider>
           </ThemeProvider>
         </AuthProvider>

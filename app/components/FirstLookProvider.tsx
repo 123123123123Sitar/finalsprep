@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { usePathname, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -29,6 +37,7 @@ import {
 import type {
   StepCtx,
   Tour,
+  TourId,
   TourStep,
   TutorialsSeenDoc,
 } from "@/lib/tours/types";
@@ -42,6 +51,29 @@ type OnboardingShape = {
   completed?: boolean;
   completedAt?: { toMillis?: () => number; seconds?: number } | null;
 };
+
+type FirstLookContextValue = {
+  /**
+   * Imperatively start a tour if the current user has not already seen
+   * it at the current version. Used by pages that need to fire tours
+   * based on internal state rather than a route change (for example,
+   * `/study` calls this when a user opens a specific course).
+   * If a tour is already running, blocked, or already seen, this is a no-op.
+   */
+  triggerIfUnseen: (tourId: TourId) => void;
+};
+
+const FirstLookContext = createContext<FirstLookContextValue | null>(null);
+
+/**
+ * Hook for pages to imperatively start tours bound to internal state.
+ * Returns a no-op implementation when used outside the provider so call
+ * sites don't have to gate on context availability.
+ */
+export function useFirstLook(): FirstLookContextValue {
+  const ctx = useContext(FirstLookContext);
+  return ctx ?? { triggerIfUnseen: () => {} };
+}
 
 function readReplayTourId(): string | null {
   if (typeof window === "undefined") return null;
@@ -89,8 +121,15 @@ function toJoyrideStep(step: TourStep, ctx: StepCtx): Step {
  * Veteran users (those whose onboarding pre-dates every shipped tour) are
  * auto-marked seen on first mount so they aren't tour-bombed; they can
  * still replay any tour from Account → Support.
+ *
+ * Wraps children so descendants can call `useFirstLook().triggerIfUnseen(id)`
+ * for state-based tours that aren't tied to a specific route.
  */
-export default function FirstLookProvider() {
+export default function FirstLookProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { user, loading, plan, planLoading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
@@ -108,6 +147,32 @@ export default function FirstLookProvider() {
   const [joyrideSteps, setJoyrideSteps] = useState<Step[]>([]);
   const [stepIndex, setStepIndex] = useState(0);
   const [run, setRun] = useState(false);
+
+  // Latest values mirrored to a ref so the imperative `triggerIfUnseen`
+  // reads fresh state without causing the callback identity to churn on
+  // every state change (which would re-run dependent useEffects in callers).
+  const stateRef = useRef({
+    user,
+    loading,
+    plan,
+    planLoading,
+    onboardingCompletedAt,
+    onboardingResolved,
+    seenResolved,
+    tutorialsSeen,
+    run,
+  });
+  stateRef.current = {
+    user,
+    loading,
+    plan,
+    planLoading,
+    onboardingCompletedAt,
+    onboardingResolved,
+    seenResolved,
+    tutorialsSeen,
+    run,
+  };
 
   // Subscribe to onboarding doc — we need `completedAt` to gate veterans
   // and `completed` to know whether OnboardingFlow has already finished.
@@ -202,6 +267,55 @@ export default function FirstLookProvider() {
     tutorialsSeen?.firstSeenSystemAt,
   ]);
 
+  /**
+   * Shared logic for starting a tour. Used by both the route-based
+   * auto-fire effect and the imperative `triggerIfUnseen` API. Returns
+   * true if the tour was started, false otherwise.
+   */
+  const startTour = useCallback(
+    (tour: Tour, opts: { ignoreSeenCheck?: boolean }): boolean => {
+      const s = stateRef.current;
+      if (s.run) return false;
+      if (!s.user || !s.user.emailVerified) return false;
+      if (s.loading || s.planLoading) return false;
+      if (!s.onboardingResolved || !s.seenResolved) return false;
+      if (s.onboardingCompletedAt === null) return false;
+      if (s.tutorialsSeen?.dismissedAll) return false;
+
+      const seen = s.tutorialsSeen?.seen?.[tour.id];
+      const alreadySeen = !!seen && seen.version >= tour.version;
+      if (alreadySeen && !opts.ignoreSeenCheck) return false;
+
+      const filtered = tour.steps.filter(
+        (step) => !step.onlyForPlans || step.onlyForPlans.includes(s.plan)
+      );
+      if (filtered.length === 0) return false;
+
+      // Give the page a moment to hydrate before resolving anchors.
+      window.setTimeout(() => {
+        const ctx: StepCtx = { plan: stateRef.current.plan };
+        const resolved = filtered.map((step) => toJoyrideStep(step, ctx));
+        setActiveTour(tour);
+        setJoyrideSteps(resolved);
+        setStepIndex(0);
+        setRun(true);
+      }, 350);
+
+      return true;
+    },
+    []
+  );
+
+  // Imperative API for state-based triggers.
+  const triggerIfUnseen = useCallback(
+    (tourId: TourId) => {
+      const tour = getTourById(tourId);
+      if (!tour) return;
+      startTour(tour, { ignoreSeenCheck: false });
+    },
+    [startTour]
+  );
+
   // Decide whether to fire a tour for the current route.
   useEffect(() => {
     if (run) return;
@@ -213,36 +327,28 @@ export default function FirstLookProvider() {
 
     const replayTourId = readReplayTourId();
     let tour: Tour | null = null;
+    let ignoreSeenCheck = false;
 
     if (replayTourId && isTourId(replayTourId)) {
       const candidate = getTourById(replayTourId);
-      if (candidate && candidate.route === pathname) tour = candidate;
+      if (candidate && candidate.route === pathname) {
+        tour = candidate;
+        ignoreSeenCheck = true;
+      }
     }
 
     if (!tour) {
-      tour = getTourForRoute(pathname);
+      const routeTour = getTourForRoute(pathname);
+      if (routeTour && !routeTour.manualTrigger) tour = routeTour;
     }
 
     if (!tour) return;
 
-    const seen = tutorialsSeen?.seen?.[tour.id];
-    const alreadySeen = !!seen && seen.version >= tour.version;
-    if (alreadySeen && !replayTourId) return;
-
-    const filtered = tour.steps.filter(
-      (s) => !s.onlyForPlans || s.onlyForPlans.includes(plan)
-    );
-    if (filtered.length === 0) return;
-
-    // Give the page a moment to hydrate before resolving anchors.
     const timeoutId = window.setTimeout(() => {
-      const ctx: StepCtx = { plan };
-      const resolved = filtered.map((s) => toJoyrideStep(s, ctx));
-      setActiveTour(tour);
-      setJoyrideSteps(resolved);
-      setStepIndex(0);
-      setRun(true);
-    }, 350);
+      const t = tour;
+      if (!t) return;
+      startTour(t, { ignoreSeenCheck });
+    }, 0);
 
     return () => window.clearTimeout(timeoutId);
   }, [
@@ -256,6 +362,7 @@ export default function FirstLookProvider() {
     tutorialsSeen,
     pathname,
     run,
+    startTour,
   ]);
 
   // Strip the `fp_tour` replay param from the URL once a tour starts so a
@@ -309,28 +416,36 @@ export default function FirstLookProvider() {
     [activeTour, user]
   );
 
-  if (joyrideSteps.length === 0) return null;
+  const ctxValue = useMemo<FirstLookContextValue>(
+    () => ({ triggerIfUnseen }),
+    [triggerIfUnseen]
+  );
 
   return (
-    <Joyride
-      steps={joyrideSteps}
-      run={run}
-      stepIndex={stepIndex}
-      callback={handleCallback}
-      continuous
-      showSkipButton
-      disableOverlayClose
-      hideCloseButton
-      scrollToFirstStep
-      scrollOffset={80}
-      tooltipComponent={FirstLookTooltip}
-      floaterProps={{ hideArrow: true }}
-      styles={{
-        options: {
-          overlayColor: "rgba(0, 0, 0, 0.45)",
-          zIndex: 50,
-        },
-      }}
-    />
+    <FirstLookContext.Provider value={ctxValue}>
+      {children}
+      {joyrideSteps.length > 0 && (
+        <Joyride
+          steps={joyrideSteps}
+          run={run}
+          stepIndex={stepIndex}
+          callback={handleCallback}
+          continuous
+          showSkipButton
+          disableOverlayClose
+          hideCloseButton
+          scrollToFirstStep
+          scrollOffset={80}
+          tooltipComponent={FirstLookTooltip}
+          floaterProps={{ hideArrow: true }}
+          styles={{
+            options: {
+              overlayColor: "rgba(0, 0, 0, 0.45)",
+              zIndex: 50,
+            },
+          }}
+        />
+      )}
+    </FirstLookContext.Provider>
   );
 }

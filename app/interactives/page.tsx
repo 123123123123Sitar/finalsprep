@@ -127,7 +127,7 @@ export default function InteractivesPage() {
       <main className="bg-paper text-body">
         <SiteNav>
         </SiteNav>
-        <section className="mx-auto max-w-2xl px-6 py-20">
+        <section data-tour="interactives-learner-upsell" className="mx-auto max-w-2xl px-6 py-20">
           <div className="label mb-3">Interactives</div>
           <h1 className="font-serif text-[44px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[52px]">
             Ask the AI to build you a graph.
@@ -177,6 +177,7 @@ export default function InteractivesPage() {
 
         <div className="mt-8 rounded-xl border border-hair bg-paper p-5">
           <textarea
+            data-tour="interactives-prompt"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="e.g. Graph y = sin(x) and y = x - x^3/6 on the same axes so I can see where Taylor series diverges."
@@ -189,6 +190,7 @@ export default function InteractivesPage() {
               {prompt.length}/500
             </div>
             <button
+              data-tour="interactives-generate"
               onClick={generate}
               disabled={busy || !prompt.trim()}
               className="btn-primary text-sm disabled:opacity-50"
@@ -196,7 +198,7 @@ export default function InteractivesPage() {
               {busy ? "Generating…" : "Generate interactive"}
             </button>
           </div>
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div data-tour="interactives-examples" className="mt-4 flex flex-wrap gap-2">
             {EXAMPLES.map((ex) => (
               <button
                 key={ex}
@@ -230,7 +232,7 @@ export default function InteractivesPage() {
 
         {/* Past interactives */}
         {history.length > 0 && (
-          <section className="mt-12 pt-8 border-t border-hair">
+          <section data-tour="interactives-history" className="mt-12 pt-8 border-t border-hair">
             <h2 className="font-serif text-2xl font-normal text-ink mb-4">
               Past interactives
             </h2>

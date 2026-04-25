@@ -3,8 +3,17 @@ import type { PlanTier } from "@/lib/plans";
 export type TourId =
   | "chat-tour"
   | "study-tour"
+  | "study-course-tour"
   | "practice-tour"
-  | "insights-tour";
+  | "insights-tour"
+  | "dashboard-tour"
+  | "schedule-tour"
+  | "account-tour"
+  | "shop-tour"
+  | "interactives-tour"
+  | "social-tour"
+  | "messages-tour"
+  | "leaderboard-tour";
 
 export type StepCtx = { plan: PlanTier };
 
@@ -59,6 +68,15 @@ export type Tour = {
   label: string;
   description: string;
   steps: TourStep[];
+  /**
+   * If true, this tour never auto-fires on route match — it must be
+   * triggered explicitly via `useFirstLook().triggerIfUnseen(id)` or via
+   * the `?fp_tour=<id>` replay query param. Use for tours bound to
+   * internal page state rather than a URL (e.g., the study course-deep
+   * tour fires when the user opens a specific course, not when they
+   * land on /study).
+   */
+  manualTrigger?: boolean;
 };
 
 export type TutorialsSeenEntry = {

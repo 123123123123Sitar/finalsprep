@@ -204,6 +204,7 @@ function MessagesInner() {
           <div className="flex items-center justify-between border-b border-hair px-4 py-3">
             <div className="label">Messages</div>
             <button
+              data-tour="messages-new"
               onClick={() => {
                 setComposerOpen((v) => !v);
                 setComposerQuery("");
@@ -281,7 +282,7 @@ function MessagesInner() {
                 : "No conversations yet. Tap + New to find a classmate."}
             </div>
           ) : (
-            <ul className="max-h-[70vh] divide-y divide-hair overflow-y-auto">
+            <ul data-tour="messages-conversations" className="max-h-[70vh] divide-y divide-hair overflow-y-auto">
               {convos.map((c) => (
                 <li key={c.id}>
                   <button
@@ -320,7 +321,7 @@ function MessagesInner() {
         </aside>
 
         {/* Main: message thread */}
-        <section className="flex h-[80vh] flex-col overflow-hidden rounded-xl border border-hair bg-paper">
+        <section data-tour="messages-thread" className="flex h-[80vh] flex-col overflow-hidden rounded-xl border border-hair bg-paper">
           {active ? (
             <>
               <div className="flex items-center gap-3 border-b border-hair px-5 py-3">
@@ -384,7 +385,7 @@ function MessagesInner() {
                   })
                 )}
               </div>
-              <div className="border-t border-hair p-3">
+              <div data-tour="messages-composer" className="border-t border-hair p-3">
                 <div className="flex items-end gap-2">
                   <textarea
                     value={draft}
