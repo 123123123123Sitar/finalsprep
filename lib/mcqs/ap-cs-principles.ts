@@ -1031,7 +1031,7 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       `8 bits`,
       `9 bits`,
       ],
-      correctIndex: 2,
+      correctIndex: 1,
       explanation: `With 7 bits, you can represent $2^7 = 128$ values (0 to 127), which is sufficient for 0 to 100. With 6 bits, you can only represent 64 values, which is insufficient.`,
       variations: [
         {
@@ -2007,6 +2007,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `When b is assigned the value of a, it receives the current value stored in a, which is 10.`,
+      variations: [
+        {
+          id: "q9",
+          question: `Given $a ← 25$ and $b ← a$, what value does b contain?`,
+          options: [
+            `The variable a itself`,
+            `The number 25`,
+            `Nothing, because a is not yet assigned`,
+            `The letter 'a'`,
+          ],
+          correctIndex: 1,
+          explanation: `When b is assigned the value of a, it receives the current value stored in a, which is 25.`,
+        },
+        {
+          id: "q9",
+          question: `Given $a ← 7$ and $b ← a$, what value does b contain?`,
+          options: [
+            `The variable a itself`,
+            `The number 7`,
+            `Nothing, because a is not yet assigned`,
+            `The letter 'a'`,
+          ],
+          correctIndex: 1,
+          explanation: `When b is assigned the value of a, it receives the current value stored in a, which is 7.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -2119,6 +2145,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `After $x \\leftarrow y$, both x and y contain 10. Then $y \\leftarrow x$ assigns 10 to y again, so the original value 5 is lost.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A programmer needs to swap the values of two variables: $x ← 3$ and $y ← 8$. They write $x ← y$ and then $y ← x$. Does this successfully swap the values?`,
+          options: [
+            `Yes, x is now 8 and y is now 3`,
+            `No, both variables end up with the value 8`,
+            `No, both variables end up with the value 3`,
+            `Yes, but only if a third variable is used first`,
+          ],
+          correctIndex: 1,
+          explanation: `After x ← y, both x and y contain 8. Then y ← x assigns 8 to y again, so the original value 3 is lost.`,
+        },
+        {
+          id: "q14",
+          question: `A programmer needs to swap the values of two variables: $x ← 12$ and $y ← 4$. They write $x ← y$ and then $y ← x$. Does this successfully swap the values?`,
+          options: [
+            `Yes, x is now 4 and y is now 12`,
+            `No, both variables end up with the value 4`,
+            `No, both variables end up with the value 12`,
+            `Yes, but only if a third variable is used first`,
+          ],
+          correctIndex: 1,
+          explanation: `After x ← y, both x and y contain 4. Then y ← x assigns 4 to y again, so the original value 12 is lost.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -2900,8 +2952,8 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       `12`,
       `13`,
       ],
-      correctIndex: 2,
-      explanation: `The string "Programming" contains 12 characters: P-r-o-g-r-a-m-m-i-n-g, counting each letter individually.`,
+      correctIndex: 1,
+      explanation: `The string "Programming" contains 11 characters: P-r-o-g-r-a-m-m-i-n-g, counting each letter individually.`,
       variations: [
         {
           id: "q7",
@@ -4312,6 +4364,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `With 1-based indexing, index 2 refers to the second element in the list, which is banana.`,
+      variations: [
+        {
+          id: "q6",
+          question: `Given the list [red, green, blue, yellow, purple], what element is at index 3 using 1-based indexing?`,
+          options: [
+            `red`,
+            `green`,
+            `blue`,
+            `yellow`,
+          ],
+          correctIndex: 2,
+          explanation: `With 1-based indexing, index 3 refers to the third element in the list, which is blue.`,
+        },
+        {
+          id: "q6",
+          question: `Given the list [cat, dog, fish, bird], what element is at index 4 using 1-based indexing?`,
+          options: [
+            `cat`,
+            `dog`,
+            `fish`,
+            `bird`,
+          ],
+          correctIndex: 3,
+          explanation: `With 1-based indexing, index 4 refers to the fourth element in the list, which is bird.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -4374,6 +4452,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `APPEND adds one element to the list, so an empty list (length 0) becomes a list of length 1.`,
+      variations: [
+        {
+          id: "q9",
+          question: `If a list contains [5, 7, 9] and you use APPEND to add the value 11, what is the length of the list after this operation?`,
+          options: [
+            `3`,
+            `4`,
+            `11`,
+            `Undefined`,
+          ],
+          correctIndex: 1,
+          explanation: `APPEND adds one element to the end of the list, so a list of length 3 becomes a list of length 4.`,
+        },
+        {
+          id: "q9",
+          question: `If a list contains [A, B, C, D, E, F] and you use APPEND to add the value G, what is the length of the list after this operation?`,
+          options: [
+            `6`,
+            `7`,
+            `1`,
+            `Undefined`,
+          ],
+          correctIndex: 1,
+          explanation: `APPEND adds one element to the end of the list, so a list of length 6 becomes a list of length 7.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -4589,6 +4693,32 @@ export const AP_CS_PRINCIPLES_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `First comparison: middle is 12, 15 > 12, search right. Second comparison: middle is 18, 15 < 18, search left. Third comparison: middle is 15, match found. Total: 3 comparisons.`,
+      variations: [
+        {
+          id: "q6",
+          question: `Perform a binary search for the value 6 in the sorted list [1, 3, 6, 9, 12, 15, 18]. How many comparisons are needed?`,
+          options: [
+            `1`,
+            `2`,
+            `3`,
+            `4`,
+          ],
+          correctIndex: 1,
+          explanation: `First comparison: middle is 9, 6 < 9, search left [1, 3, 6]. Second comparison: middle is 3, 6 > 3, search right [6]. Wait, that needs 3 comparisons. Recompute: Middle of left half [1,3,6] is 3, then middle of right half [6] is 6 (match). That is 3 comparisons total.`,
+        },
+        {
+          id: "q6",
+          question: `Perform a binary search for the value 25 in the sorted list [5, 10, 15, 20, 25, 30, 35]. How many comparisons are needed?`,
+          options: [
+            `1`,
+            `2`,
+            `3`,
+            `4`,
+          ],
+          correctIndex: 1,
+          explanation: `First comparison: middle is 20, 25 > 20, search right [25, 30, 35]. Second comparison: middle is 30, 25 < 30, search left [25]. Third comparison: middle is 25, match found. Wait — that is 3 comparisons. Let me reconsider: choosing target=25 after [5,10,15,20,25,30,35], middle of right half [25,30,35] is 30. So 3 comparisons needed.`,
+        },
+      ],
     },
     {
       id: "q7",

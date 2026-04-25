@@ -10344,8 +10344,8 @@ export const AP_US_HISTORY_MCQS: LessonMcqs[] = [
       `Railroad construction → Homestead Act → Settlement → Native American removal`,
       `Settlement → Homestead Act → Railroad construction → Native American removal`,
       ],
-      correctIndex: 1,
-      explanation: `The Homestead Act (1862) preceded the transcontinental railroad (1869) and created incentives for settlement, which the railroad then facilitated; Native American removal occurred throughout but accelerated with these developments.`,
+      correctIndex: 0,
+      explanation: `Federal Native American removal policies (beginning with the Indian Removal Act of 1830 and continuing through Plains conflicts) opened lands that the Homestead Act (1862) then allocated to settlers, with the transcontinental railroad (1869) facilitating access and ultimately enabling large-scale settlement and farming.`,
     },
     {
       id: "q15",

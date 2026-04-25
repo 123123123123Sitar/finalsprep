@@ -51,6 +51,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Molar mass of $\\text{CO}_2$ = 12 + 2(16) = 12 + 32 = 44 g/mol, calculated by summing the atomic masses of all atoms in the molecule.`,
+      variations: [
+        {
+          id: "q4",
+          question: `What is the molar mass of ammonia, $\\text{NH}_3$? (Atomic masses: N = 14, H = 1)`,
+          options: [
+            `15 g/mol`,
+            `17 g/mol`,
+            `28 g/mol`,
+            `34 g/mol`,
+          ],
+          correctIndex: 1,
+          explanation: `Molar mass of $\\text{NH}_3$ = 14 + 3(1) = 17 g/mol, summing the atomic masses of all atoms in the molecule.`,
+        },
+        {
+          id: "q4",
+          question: `What is the molar mass of glucose, $\\text{C}_6\\text{H}_{12}\\text{O}_6$? (Atomic masses: C = 12, H = 1, O = 16)`,
+          options: [
+            `150 g/mol`,
+            `162 g/mol`,
+            `180 g/mol`,
+            `198 g/mol`,
+          ],
+          correctIndex: 2,
+          explanation: `Molar mass of $\\text{C}_6\\text{H}_{12}\\text{O}_6$ = 6(12) + 12(1) + 6(16) = 72 + 12 + 96 = 180 g/mol.`,
+        },
+      ],
     },
     {
       id: "q5",
@@ -63,6 +89,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Molar mass of NaOH = 23 + 16 + 1 = 40 g/mol. Using $n = \\frac{\\text{mass}}{\\text{molar mass}} = \\frac{80.0}{40} = 2.0$ mol.`,
+      variations: [
+        {
+          id: "q5",
+          question: `How many moles are in 36.0 g of water, $\\text{H}_2\\text{O}$? (Atomic masses: H = 1, O = 16)`,
+          options: [
+            `0.50 mol`,
+            `1.0 mol`,
+            `2.0 mol`,
+            `4.0 mol`,
+          ],
+          correctIndex: 2,
+          explanation: `Molar mass of $\\text{H}_2\\text{O}$ = 2(1) + 16 = 18 g/mol. $n = \\frac{36.0}{18} = 2.0$ mol.`,
+        },
+        {
+          id: "q5",
+          question: `How many moles are in 22.0 g of $\\text{CO}_2$? (Atomic masses: C = 12, O = 16)`,
+          options: [
+            `0.25 mol`,
+            `0.50 mol`,
+            `1.0 mol`,
+            `2.0 mol`,
+          ],
+          correctIndex: 1,
+          explanation: `Molar mass of $\\text{CO}_2$ = 12 + 2(16) = 44 g/mol. $n = \\frac{22.0}{44} = 0.50$ mol.`,
+        },
+      ],
     },
     {
       id: "q6",
@@ -75,6 +127,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Number of particles = moles × Avogadro's number = $3.0 \\times 6.022 \\times 10^{23} = 1.8 \\times 10^{24}$ molecules.`,
+      variations: [
+        {
+          id: "q6",
+          question: `How many molecules are in 0.50 moles of nitrogen gas, $\\text{N}_2$?`,
+          options: [
+            `$1.5 \\times 10^{23}$ molecules`,
+            `$3.0 \\times 10^{23}$ molecules`,
+            `$6.0 \\times 10^{23}$ molecules`,
+            `$1.2 \\times 10^{24}$ molecules`,
+          ],
+          correctIndex: 1,
+          explanation: `Number of molecules = moles × Avogadro's number = $0.50 \\times 6.022 \\times 10^{23} \\approx 3.0 \\times 10^{23}$ molecules.`,
+        },
+        {
+          id: "q6",
+          question: `How many molecules are in 5.0 moles of carbon dioxide, $\\text{CO}_2$?`,
+          options: [
+            `$6.0 \\times 10^{23}$ molecules`,
+            `$1.2 \\times 10^{24}$ molecules`,
+            `$3.0 \\times 10^{24}$ molecules`,
+            `$5.0 \\times 10^{23}$ molecules`,
+          ],
+          correctIndex: 2,
+          explanation: `Number of molecules = moles × Avogadro's number = $5.0 \\times 6.022 \\times 10^{23} \\approx 3.0 \\times 10^{24}$ molecules.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -87,6 +165,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Molar mass of $\\text{H}_2\\text{SO}_4$ = 2(1) + 32 + 4(16) = 98 g/mol. Mass = moles × molar mass = $0.50 \\times 98 = 49.0$ g.`,
+      variations: [
+        {
+          id: "q7",
+          question: `What is the mass of 0.25 mol of nitric acid, $\\text{HNO}_3$? (Atomic masses: H = 1, N = 14, O = 16)`,
+          options: [
+            `7.9 g`,
+            `15.75 g`,
+            `31.5 g`,
+            `63.0 g`,
+          ],
+          correctIndex: 1,
+          explanation: `Molar mass of $\\text{HNO}_3$ = 1 + 14 + 3(16) = 63 g/mol. Mass = $0.25 \\times 63 = 15.75$ g.`,
+        },
+        {
+          id: "q7",
+          question: `What is the mass of 3.0 mol of methane, $\\text{CH}_4$? (Atomic masses: C = 12, H = 1)`,
+          options: [
+            `16 g`,
+            `32 g`,
+            `48 g`,
+            `64 g`,
+          ],
+          correctIndex: 2,
+          explanation: `Molar mass of $\\text{CH}_4$ = 12 + 4(1) = 16 g/mol. Mass = $3.0 \\times 16 = 48$ g.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -99,6 +203,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `$n = \\frac{N}{N_A} = \\frac{3.0 \\times 10^{24}}{6.022 \\times 10^{23}} \\approx 5.0$ mol.`,
+      variations: [
+        {
+          id: "q8",
+          question: `A student has $1.2 \\times 10^{24}$ atoms of copper. How many moles of copper does the student have?`,
+          options: [
+            `0.5 mol`,
+            `1.0 mol`,
+            `2.0 mol`,
+            `4.0 mol`,
+          ],
+          correctIndex: 2,
+          explanation: `$n = \\frac{N}{N_A} = \\frac{1.2 \\times 10^{24}}{6.022 \\times 10^{23}} \\approx 2.0$ mol.`,
+        },
+        {
+          id: "q8",
+          question: `A sample contains $1.806 \\times 10^{24}$ atoms of gold. How many moles of gold are present?`,
+          options: [
+            `1.0 mol`,
+            `2.0 mol`,
+            `3.0 mol`,
+            `6.0 mol`,
+          ],
+          correctIndex: 2,
+          explanation: `$n = \\frac{N}{N_A} = \\frac{1.806 \\times 10^{24}}{6.022 \\times 10^{23}} \\approx 3.0$ mol.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -123,6 +253,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 3,
       explanation: `Molar mass of $\\text{CaCO}_3$ = 40 + 12 + 3(16) = 100 g/mol. Mass = moles × molar mass = $2.5 \\times 100 = 250$ g.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A chemist needs 0.40 moles of sodium chloride, $\\text{NaCl}$. What mass should be measured? (Atomic masses: Na = 23, Cl = 35.5)`,
+          options: [
+            `11.7 g`,
+            `23.4 g`,
+            `29.2 g`,
+            `58.5 g`,
+          ],
+          correctIndex: 1,
+          explanation: `Molar mass of $\\text{NaCl}$ = 23 + 35.5 = 58.5 g/mol. Mass = $0.40 \\times 58.5 = 23.4$ g.`,
+        },
+        {
+          id: "q10",
+          question: `A chemist needs 1.5 moles of potassium nitrate, $\\text{KNO}_3$. What mass should be measured? (Atomic masses: K = 39, N = 14, O = 16)`,
+          options: [
+            `101 g`,
+            `120 g`,
+            `152 g`,
+            `200 g`,
+          ],
+          correctIndex: 2,
+          explanation: `Molar mass of $\\text{KNO}_3$ = 39 + 14 + 3(16) = 101 g/mol. Mass = $1.5 \\times 101 \\approx 152$ g.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -135,6 +291,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Molar mass = $\\frac{\\text{mass}}{\\text{moles}} = \\frac{12}{0.20} = 60$ g/mol, using the rearranged form of the moles equation.`,
+      variations: [
+        {
+          id: "q11",
+          question: `If 0.50 mol of a compound has a mass of 49 g, what is the molar mass of the compound?`,
+          options: [
+            `49 g/mol`,
+            `98 g/mol`,
+            `147 g/mol`,
+            `196 g/mol`,
+          ],
+          correctIndex: 1,
+          explanation: `Molar mass = $\\frac{\\text{mass}}{\\text{moles}} = \\frac{49}{0.50} = 98$ g/mol.`,
+        },
+        {
+          id: "q11",
+          question: `If 2.0 mol of a compound has a mass of 80 g, what is the molar mass of the compound?`,
+          options: [
+            `20 g/mol`,
+            `40 g/mol`,
+            `80 g/mol`,
+            `160 g/mol`,
+          ],
+          correctIndex: 1,
+          explanation: `Molar mass = $\\frac{\\text{mass}}{\\text{moles}} = \\frac{80}{2.0} = 40$ g/mol.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -147,6 +329,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Moles: $\\frac{1.2 \\times 10^{24}}{6.022 \\times 10^{23}} \\approx 2.0$ mol. Molar mass of CH₄ = 12 + 4(1) = 16 g/mol. Mass = $2.0 \\times 16 = 32$ g.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A sample contains $3.0 \\times 10^{23}$ molecules of water, $\\text{H}_2\\text{O}$. What is the mass of this sample? (Atomic masses: H = 1, O = 16)`,
+          options: [
+            `4.5 g`,
+            `9.0 g`,
+            `18 g`,
+            `36 g`,
+          ],
+          correctIndex: 1,
+          explanation: `Moles = $\\frac{3.0 \\times 10^{23}}{6.022 \\times 10^{23}} \\approx 0.50$ mol. Molar mass of $\\text{H}_2\\text{O}$ = 18 g/mol. Mass = $0.50 \\times 18 = 9.0$ g.`,
+        },
+        {
+          id: "q12",
+          question: `A sample contains $6.022 \\times 10^{22}$ molecules of $\\text{SO}_2$. What is the mass of this sample? (Atomic masses: S = 32, O = 16)`,
+          options: [
+            `3.2 g`,
+            `6.4 g`,
+            `16 g`,
+            `64 g`,
+          ],
+          correctIndex: 1,
+          explanation: `Moles = $\\frac{6.022 \\times 10^{22}}{6.022 \\times 10^{23}} = 0.10$ mol. Molar mass of $\\text{SO}_2$ = 32 + 2(16) = 64 g/mol. Mass = $0.10 \\times 64 = 6.4$ g.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -445,6 +653,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `In 100 g: C moles = 75 g ÷ 12 g/mol = 6.25 mol; H moles = 25 g ÷ 1 g/mol = 25 mol.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A compound contains 40% sulfur and 60% oxygen by mass. How many moles of each element are present in a 100 g sample? (Atomic masses: S = 32, O = 16)`,
+          options: [
+            `S: 1.25 mol, O: 3.75 mol`,
+            `S: 2.5 mol, O: 1.25 mol`,
+            `S: 1.0 mol, O: 4.0 mol`,
+            `S: 40 mol, O: 60 mol`,
+          ],
+          correctIndex: 0,
+          explanation: `In 100 g: S = 40/32 = 1.25 mol; O = 60/16 = 3.75 mol.`,
+        },
+        {
+          id: "q6",
+          question: `A compound contains 30% nitrogen and 70% oxygen by mass. How many moles of each element are present in a 100 g sample? (Atomic masses: N = 14, O = 16)`,
+          options: [
+            `N: 4.38 mol, O: 4.38 mol`,
+            `N: 2.14 mol, O: 4.38 mol`,
+            `N: 30 mol, O: 70 mol`,
+            `N: 4.38 mol, O: 2.14 mol`,
+          ],
+          correctIndex: 1,
+          explanation: `In 100 g: N = 30/14 ≈ 2.14 mol; O = 70/16 ≈ 4.38 mol.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -481,6 +715,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 3,
       explanation: `The molar mass of CH₂O is 12 + 2(1) + 16 = 30 g/mol. The ratio 180/30 = 6, so the molecular formula is (CH₂O)₆ = C₆H₁₂O₆.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A compound has an empirical formula of NO₂ and a molar mass of 92 g/mol. What is its molecular formula?`,
+          options: [
+            `NO₂`,
+            `N₂O₄`,
+            `N₃O₆`,
+            `N₄O₈`,
+          ],
+          correctIndex: 1,
+          explanation: `Molar mass of NO₂ = 14 + 2(16) = 46 g/mol. The ratio 92/46 = 2, so the molecular formula is N₂O₄.`,
+        },
+        {
+          id: "q9",
+          question: `A compound has an empirical formula of CH and a molar mass of 78 g/mol. What is its molecular formula?`,
+          options: [
+            `CH`,
+            `C₂H₂`,
+            `C₄H₄`,
+            `C₆H₆`,
+          ],
+          correctIndex: 3,
+          explanation: `Molar mass of CH = 12 + 1 = 13 g/mol. The ratio 78/13 = 6, so the molecular formula is C₆H₆.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -505,6 +765,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Mass percent of N = (3.0 g / 5.0 g) × 100 = 60%.`,
+      variations: [
+        {
+          id: "q11",
+          question: `An 8.0 g sample of a compound contains 2.0 g of carbon and 6.0 g of oxygen. What is the mass percent of carbon?`,
+          options: [
+            `12.5%`,
+            `25%`,
+            `33.3%`,
+            `75%`,
+          ],
+          correctIndex: 1,
+          explanation: `Mass percent of C = (2.0 g / 8.0 g) × 100 = 25%.`,
+        },
+        {
+          id: "q11",
+          question: `A 20.0 g sample of a compound contains 14.0 g of nitrogen and 6.0 g of hydrogen. What is the mass percent of nitrogen?`,
+          options: [
+            `30%`,
+            `50%`,
+            `60%`,
+            `70%`,
+          ],
+          correctIndex: 3,
+          explanation: `Mass percent of N = (14.0 g / 20.0 g) × 100 = 70%.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -606,6 +892,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The sum of all mole fractions in a mixture must equal 1. Therefore, the fourth component has a mole fraction of $1 - (0.40 + 0.35 + 0.20) = 0.05$.`,
+      variations: [
+        {
+          id: "q4",
+          question: `If a mixture contains three components with mole fractions of 0.50, 0.30, and 0.05, what is the mole fraction of the fourth component?`,
+          options: [
+            `0.05`,
+            `0.10`,
+            `0.15`,
+            `0.20`,
+          ],
+          correctIndex: 2,
+          explanation: `The sum of mole fractions equals 1. The fourth component has mole fraction $1 - (0.50 + 0.30 + 0.05) = 0.15$.`,
+        },
+        {
+          id: "q4",
+          question: `If a mixture contains two components with mole fractions of 0.65 and 0.10, what is the mole fraction of the third component?`,
+          options: [
+            `0.10`,
+            `0.15`,
+            `0.20`,
+            `0.25`,
+          ],
+          correctIndex: 3,
+          explanation: `The sum of mole fractions equals 1. The third component has mole fraction $1 - (0.65 + 0.10) = 0.25$.`,
+        },
+      ],
     },
     {
       id: "q5",
@@ -630,6 +942,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Mass percentage is calculated as $(m_{component} / m_{total}) \\times 100\\% = (15 / 100) \\times 100\\% = 15\\%$.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A solution contains 25 g of dissolved salt in 75 g of water. What is the mass percentage of salt in the solution?`,
+          options: [
+            `25%`,
+            `33.3%`,
+            `75%`,
+            `30%`,
+          ],
+          correctIndex: 0,
+          explanation: `Total solution mass = 25 + 75 = 100 g. Mass percentage of salt = $(25/100) \\times 100\\% = 25\\%$.`,
+        },
+        {
+          id: "q6",
+          question: `A solution contains 8 g of dissolved KCl in 192 g of water. What is the mass percentage of KCl in the solution?`,
+          options: [
+            `4.0%`,
+            `4.2%`,
+            `8.0%`,
+            `24%`,
+          ],
+          correctIndex: 0,
+          explanation: `Total solution mass = 8 + 192 = 200 g. Mass percentage of KCl = $(8/200) \\times 100\\% = 4.0\\%$.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -666,6 +1004,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `The mole fraction of ethanol is $n_{ethanol} / n_{total} = 5 / (5 + 15) = 5 / 20 = 0.25$.`,
+      variations: [
+        {
+          id: "q9",
+          question: `A mixture contains 4 mol of methanol and 6 mol of water. What is the mole fraction of methanol?`,
+          options: [
+            `0.40`,
+            `0.50`,
+            `0.60`,
+            `0.67`,
+          ],
+          correctIndex: 0,
+          explanation: `Mole fraction of methanol = $4/(4+6) = 0.40$.`,
+        },
+        {
+          id: "q9",
+          question: `A mixture contains 2 mol of acetone and 8 mol of water. What is the mole fraction of water?`,
+          options: [
+            `0.20`,
+            `0.50`,
+            `0.75`,
+            `0.80`,
+          ],
+          correctIndex: 3,
+          explanation: `Mole fraction of water = $8/(2+8) = 0.80$.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -678,6 +1042,32 @@ export const AP_CHEMISTRY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using the mass fraction definition, $m_{NaCl} = w_{NaCl} \\times m_{total} = 0.08 \\times 500 = 40$ g.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A solution has a mass fraction of 0.15 for KCl. If the total mass of the solution is 200 g, what is the mass of KCl present?`,
+          options: [
+            `15 g`,
+            `30 g`,
+            `45 g`,
+            `170 g`,
+          ],
+          correctIndex: 1,
+          explanation: `$m_{KCl} = 0.15 \\times 200 = 30$ g.`,
+        },
+        {
+          id: "q10",
+          question: `A solution has a mass fraction of 0.20 for sucrose. If the total mass of the solution is 750 g, what is the mass of sucrose present?`,
+          options: [
+            `100 g`,
+            `120 g`,
+            `150 g`,
+            `200 g`,
+          ],
+          correctIndex: 2,
+          explanation: `$m_{sucrose} = 0.20 \\times 750 = 150$ g.`,
+        },
+      ],
     },
     {
       id: "q11",

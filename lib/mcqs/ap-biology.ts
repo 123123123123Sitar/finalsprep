@@ -5488,6 +5488,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `For each gene independently, P(Aa from Aa × Aa) = 2/4 = 1/2 and P(Bb from Bb × Bb) = 1/2. Combined: P(AaBb) = 1/2 × 1/2 = 1/4.`,
+      variations: [
+        {
+          id: "q10-v1",
+          question: `Two parents with genotypes AaBb and AaBb produce offspring. Assuming independent assortment, what is the probability that a randomly selected offspring has the genotype AABB?`,
+          options: [
+          `1/4`,
+          `1/8`,
+          `1/16`,
+          `1/2`,
+          ],
+          correctIndex: 2,
+          explanation: `For each gene independently, P(AA from Aa × Aa) = 1/4 and P(BB from Bb × Bb) = 1/4. Combined: P(AABB) = 1/4 × 1/4 = 1/16.`,
+        },
+        {
+          id: "q10-v2",
+          question: `Two parents with genotypes AaBbCc and AaBbCc produce offspring. Assuming independent assortment, what is the probability that a randomly selected offspring is heterozygous at all three loci (AaBbCc)?`,
+          options: [
+          `1/2`,
+          `1/4`,
+          `1/8`,
+          `1/16`,
+          ],
+          correctIndex: 2,
+          explanation: `For each gene independently, P(Aa) = 1/2, P(Bb) = 1/2, P(Cc) = 1/2. Combined: 1/2 × 1/2 × 1/2 = 1/8.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -5684,7 +5710,33 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       `1/2`,
       ],
       correctIndex: 0,
-      explanation: `For each gene independently, Bb × Bb produces 1/4 bb offspring. For both genes to be homozygous recessive, the probability is 1/4 × 1/4 = 1/16.`,
+      explanation: `For each gene independently, Aa × Aa produces 1/4 aa offspring (and Bb × Bb produces 1/4 bb). For both genes to be homozygous recessive, the probability is 1/4 × 1/4 = 1/16.`,
+      variations: [
+        {
+          id: "q11-v1",
+          question: `In a dihybrid cross (AaBb × AaBb), what fraction of offspring is expected to be heterozygous for both traits (AaBb)?`,
+          options: [
+          `1/16`,
+          `1/8`,
+          `1/4`,
+          `1/2`,
+          ],
+          correctIndex: 2,
+          explanation: `For each gene independently, Aa × Aa produces 1/2 Aa (and Bb × Bb produces 1/2 Bb). For both genes to be heterozygous, the probability is 1/2 × 1/2 = 1/4.`,
+        },
+        {
+          id: "q11-v2",
+          question: `In a dihybrid cross (AaBb × Aabb), what fraction of offspring is expected to be homozygous recessive for both traits (aabb)?`,
+          options: [
+          `1/16`,
+          `1/8`,
+          `1/4`,
+          `1/2`,
+          ],
+          correctIndex: 1,
+          explanation: `For gene A, Aa × Aa produces 1/4 aa. For gene B, Bb × bb produces 1/2 bb. Combined: 1/4 × 1/2 = 1/8.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -5834,6 +5886,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `With three genes, each with two alleles, the number of phenotypic classes is 2n + 1, where n is the number of genes; thus 2(3) + 1 = 7 distinct phenotypic classes.`,
+      variations: [
+        {
+          id: "q8-v1",
+          question: `In a polygenic trait with two genes, each contributing equally to a darker phenotype, how many different phenotypic classes would be expected in the F2 generation from a cross of two pure-breeding lines?`,
+          options: [
+          `3`,
+          `5`,
+          `7`,
+          `9`,
+          ],
+          correctIndex: 1,
+          explanation: `With two genes, each with two alleles, the number of phenotypic classes is 2n + 1, where n is the number of genes; thus 2(2) + 1 = 5 distinct phenotypic classes.`,
+        },
+        {
+          id: "q8-v2",
+          question: `In a polygenic trait with four genes, each contributing equally to a darker phenotype, how many different phenotypic classes would be expected in the F2 generation from a cross of two pure-breeding lines?`,
+          options: [
+          `5`,
+          `7`,
+          `9`,
+          `16`,
+          ],
+          correctIndex: 2,
+          explanation: `With four genes, each with two alleles, the number of phenotypic classes is 2n + 1, where n is the number of genes; thus 2(4) + 1 = 9 distinct phenotypic classes.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -6735,6 +6813,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Since each codon consists of 3 bases, 450 bases ÷ 3 = 150 codons. Subtracting the start and stop codons leaves approximately 148 amino acids in the protein.`,
+      variations: [
+        {
+          id: "q6-v1",
+          question: `An mRNA molecule is 900 bases long. Assuming it contains one start codon and one stop codon, approximately how many amino acids will the resulting protein contain?`,
+          options: [
+          `100`,
+          `300`,
+          `450`,
+          `900`,
+          ],
+          correctIndex: 1,
+          explanation: `Since each codon consists of 3 bases, 900 bases ÷ 3 = 300 codons. Subtracting the start and stop codons leaves approximately 298 amino acids in the protein.`,
+        },
+        {
+          id: "q6-v2",
+          question: `An mRNA molecule is 1500 bases long. Assuming it contains one start codon and one stop codon, approximately how many amino acids will the resulting protein contain?`,
+          options: [
+          `300`,
+          `500`,
+          `750`,
+          `1500`,
+          ],
+          correctIndex: 1,
+          explanation: `Since each codon consists of 3 bases, 1500 bases ÷ 3 = 500 codons. Subtracting the start and stop codons leaves approximately 498 amino acids in the protein.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -6831,6 +6935,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `600 nucleotides ÷ 3 = 200 codons. The start codon codes for methionine (counted), and the stop codon does not code for an amino acid, so 200 - 1 = 199 amino acids maximum.`,
+      variations: [
+        {
+          id: "q14-v1",
+          question: `An mRNA contains 300 nucleotides between the start codon and the stop codon (inclusive). What is the maximum number of amino acids that could be in the resulting polypeptide?`,
+          options: [
+          `100`,
+          `99`,
+          `101`,
+          `98`,
+          ],
+          correctIndex: 1,
+          explanation: `300 nucleotides ÷ 3 = 100 codons. The start codon codes for methionine (counted), and the stop codon does not code for an amino acid, so 100 - 1 = 99 amino acids maximum.`,
+        },
+        {
+          id: "q14-v2",
+          question: `An mRNA contains 1200 nucleotides between the start codon and the stop codon (inclusive). What is the maximum number of amino acids that could be in the resulting polypeptide?`,
+          options: [
+          `400`,
+          `399`,
+          `401`,
+          `398`,
+          ],
+          correctIndex: 1,
+          explanation: `1200 nucleotides ÷ 3 = 400 codons. The start codon codes for methionine (counted), and the stop codon does not code for an amino acid, so 400 - 1 = 399 amino acids maximum.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -8215,6 +8345,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Allele frequency is calculated as 400 B alleles ÷ (400 + 600) total alleles = 400 ÷ 1000 = 0.4.`,
+      variations: [
+        {
+          id: "q6-v1",
+          question: `A population of beetles has two alleles for shell color: B (black) and b (brown). If there are 700 B alleles and 300 b alleles in the population, what is the frequency of the B allele?`,
+          options: [
+          `0.3`,
+          `0.5`,
+          `0.7`,
+          `0.49`,
+          ],
+          correctIndex: 2,
+          explanation: `Allele frequency is calculated as 700 B alleles ÷ (700 + 300) total alleles = 700 ÷ 1000 = 0.7.`,
+        },
+        {
+          id: "q6-v2",
+          question: `A population of beetles has two alleles for shell color: B (black) and b (brown). If there are 250 B alleles and 750 b alleles in the population, what is the frequency of the B allele?`,
+          options: [
+          `0.75`,
+          `0.5`,
+          `0.4`,
+          `0.25`,
+          ],
+          correctIndex: 3,
+          explanation: `Allele frequency is calculated as 250 B alleles ÷ (250 + 750) total alleles = 250 ÷ 1000 = 0.25.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -8227,6 +8383,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The a allele appears in 480 heterozygotes (480 copies) and 320 homozygous recessive individuals (160 × 2 = 320 copies), totaling 800 a alleles out of 2000 total alleles: 800 ÷ 2000 = 0.4.`,
+      variations: [
+        {
+          id: "q7-v1",
+          question: `In a population of 1000 plants, 490 are homozygous dominant (AA), 420 are heterozygous (Aa), and 90 are homozygous recessive (aa). What is the frequency of the a allele?`,
+          options: [
+          `0.09`,
+          `0.21`,
+          `0.30`,
+          `0.49`,
+          ],
+          correctIndex: 2,
+          explanation: `The a allele appears 420 times (heterozygotes) plus 180 times (90 × 2 from homozygous recessive) = 600 copies out of 2000 total alleles: 600 ÷ 2000 = 0.3.`,
+        },
+        {
+          id: "q7-v2",
+          question: `In a population of 500 plants, 80 are homozygous dominant (AA), 240 are heterozygous (Aa), and 180 are homozygous recessive (aa). What is the frequency of the a allele?`,
+          options: [
+          `0.36`,
+          `0.40`,
+          `0.60`,
+          `0.72`,
+          ],
+          correctIndex: 2,
+          explanation: `The a allele appears 240 times (heterozygotes) plus 360 times (180 × 2 from homozygous recessive) = 600 copies out of 1000 total alleles: 600 ÷ 1000 = 0.6.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -8352,6 +8534,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Since $p + q = 1$ and $p = 0.6$, then $q = 1 - 0.6 = 0.4$. The two allele frequencies must sum to 1.`,
+      variations: [
+        {
+          id: "q2-v1",
+          question: `If the frequency of allele A is 0.7, what is the frequency of allele a in a population at Hardy–Weinberg equilibrium?`,
+          options: [
+          `0.3`,
+          `0.49`,
+          `0.7`,
+          `0.21`,
+          ],
+          correctIndex: 0,
+          explanation: `Since $p + q = 1$ and $p = 0.7$, then $q = 1 - 0.7 = 0.3$. The two allele frequencies must sum to 1.`,
+        },
+        {
+          id: "q2-v2",
+          question: `If the frequency of allele A is 0.85, what is the frequency of allele a in a population at Hardy–Weinberg equilibrium?`,
+          options: [
+          `0.5`,
+          `0.85`,
+          `0.15`,
+          `0.7225`,
+          ],
+          correctIndex: 2,
+          explanation: `Since $p + q = 1$ and $p = 0.85$, then $q = 1 - 0.85 = 0.15$. The two allele frequencies must sum to 1.`,
+        },
+      ],
     },
     {
       id: "q3",
@@ -8400,6 +8608,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `If $q^2 = 0.16$, then $q = 0.4$ and $p = 0.6$. The heterozygous frequency is $2pq = 2(0.6)(0.4) = 0.48$.`,
+      variations: [
+        {
+          id: "q6-v1",
+          question: `In a population, the frequency of the homozygous recessive genotype is 0.09. Assuming Hardy–Weinberg equilibrium, what is the frequency of the heterozygous genotype?`,
+          options: [
+          `0.09`,
+          `0.21`,
+          `0.42`,
+          `0.49`,
+          ],
+          correctIndex: 2,
+          explanation: `If $q^2 = 0.09$, then $q = 0.3$ and $p = 0.7$. The heterozygous frequency is $2pq = 2(0.7)(0.3) = 0.42$.`,
+        },
+        {
+          id: "q6-v2",
+          question: `In a population, the frequency of the homozygous recessive genotype is 0.25. Assuming Hardy–Weinberg equilibrium, what is the frequency of the heterozygous genotype?`,
+          options: [
+          `0.25`,
+          `0.5`,
+          `0.75`,
+          `0.125`,
+          ],
+          correctIndex: 1,
+          explanation: `If $q^2 = 0.25$, then $q = 0.5$ and $p = 0.5$. The heterozygous frequency is $2pq = 2(0.5)(0.5) = 0.5$.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -8412,6 +8646,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `If the recessive disorder frequency is 0.04, then $q^2 = 0.04$, so $q = 0.2$ and $p = 0.8$. Carriers are heterozygotes: $2pq = 2(0.8)(0.2) = 0.32$ or 32%.`,
+      variations: [
+        {
+          id: "q7-v1",
+          question: `A recessive genetic disorder occurs in 1% of a population. Assuming Hardy–Weinberg equilibrium, what proportion of the population are carriers (heterozygotes) for this disorder?`,
+          options: [
+          `0.01`,
+          `0.10`,
+          `0.18`,
+          `0.81`,
+          ],
+          correctIndex: 2,
+          explanation: `If the recessive disorder frequency is 0.01, then $q^2 = 0.01$, so $q = 0.1$ and $p = 0.9$. Carriers are heterozygotes: $2pq = 2(0.9)(0.1) = 0.18$ or 18%.`,
+        },
+        {
+          id: "q7-v2",
+          question: `A recessive genetic disorder occurs in 9% of a population. Assuming Hardy–Weinberg equilibrium, what proportion of the population are carriers (heterozygotes) for this disorder?`,
+          options: [
+          `0.09`,
+          `0.21`,
+          `0.42`,
+          `0.49`,
+          ],
+          correctIndex: 2,
+          explanation: `If the recessive disorder frequency is 0.09, then $q^2 = 0.09$, so $q = 0.3$ and $p = 0.7$. Carriers are heterozygotes: $2pq = 2(0.7)(0.3) = 0.42$ or 42%.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -8424,6 +8684,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `The frequency of the homozygous dominant genotype is $p^2 = (0.75)^2 = 0.5625$.`,
+      variations: [
+        {
+          id: "q8-v1",
+          question: `A population has allele frequencies of $p = 0.6$ and $q = 0.4$. If the population is in Hardy–Weinberg equilibrium, what is the expected frequency of the homozygous dominant genotype?`,
+          options: [
+          `0.16`,
+          `0.36`,
+          `0.48`,
+          `0.6`,
+          ],
+          correctIndex: 1,
+          explanation: `The frequency of the homozygous dominant genotype is $p^2 = (0.6)^2 = 0.36$.`,
+        },
+        {
+          id: "q8-v2",
+          question: `A population has allele frequencies of $p = 0.9$ and $q = 0.1$. If the population is in Hardy–Weinberg equilibrium, what is the expected frequency of the homozygous dominant genotype?`,
+          options: [
+          `0.01`,
+          `0.09`,
+          `0.18`,
+          `0.81`,
+          ],
+          correctIndex: 3,
+          explanation: `The frequency of the homozygous dominant genotype is $p^2 = (0.9)^2 = 0.81$.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -8448,6 +8734,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `If $q = 0.5$, then $p = 0.5$. The heterozygous frequency is $2pq = 2(0.5)(0.5) = 0.5$.`,
+      variations: [
+        {
+          id: "q10-v1",
+          question: `In a population at Hardy–Weinberg equilibrium with $q = 0.2$, what is the frequency of the heterozygous genotype?`,
+          options: [
+          `0.04`,
+          `0.16`,
+          `0.32`,
+          `0.64`,
+          ],
+          correctIndex: 2,
+          explanation: `If $q = 0.2$, then $p = 0.8$. The heterozygous frequency is $2pq = 2(0.8)(0.2) = 0.32$.`,
+        },
+        {
+          id: "q10-v2",
+          question: `In a population at Hardy–Weinberg equilibrium with $q = 0.4$, what is the frequency of the heterozygous genotype?`,
+          options: [
+          `0.16`,
+          `0.36`,
+          `0.48`,
+          `0.6`,
+          ],
+          correctIndex: 2,
+          explanation: `If $q = 0.4$, then $p = 0.6$. The heterozygous frequency is $2pq = 2(0.6)(0.4) = 0.48$.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -10065,6 +10377,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Apply the 10% rule twice (producer → primary → secondary): $100{,}000 \\times 0.1 \\times 0.1 = 1{,}000$ kcal reaches the hawks.`,
+      variations: [
+        {
+          id: "q6-v1",
+          question: `A grassland ecosystem contains grass (producers), grasshoppers (primary consumers), and hawks (secondary consumers). If the grass contains 50,000 kcal of energy, approximately how much energy would be available to the hawks?`,
+          options: [
+          `5,000 kcal`,
+          `500 kcal`,
+          `50 kcal`,
+          `5 kcal`,
+          ],
+          correctIndex: 1,
+          explanation: `Apply the 10% rule twice (producer → primary → secondary): $50{,}000 \\times 0.1 \\times 0.1 = 500$ kcal reaches the hawks.`,
+        },
+        {
+          id: "q6-v2",
+          question: `A grassland ecosystem has a four-level food chain: grass → grasshoppers → mice → hawks. If the grass contains 1,000,000 kcal of energy, approximately how much energy would be available to the hawks (tertiary consumers)?`,
+          options: [
+          `100,000 kcal`,
+          `10,000 kcal`,
+          `1,000 kcal`,
+          `100 kcal`,
+          ],
+          correctIndex: 2,
+          explanation: `Apply the 10% rule three times (producer → primary → secondary → tertiary): $1{,}000{,}000 \\times 0.1 \\times 0.1 \\times 0.1 = 1{,}000$ kcal reaches the hawks.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -10101,6 +10439,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `With 10% transfer efficiency, herbivores (primary consumers) would have approximately 10% of the producer biomass, which is 100,000 kg.`,
+      variations: [
+        {
+          id: "q9-v1",
+          question: `A forest contains 500,000 kg of plant biomass. Assuming a 10% transfer efficiency, approximately how much carnivore (secondary consumer) biomass could this forest support?`,
+          options: [
+          `50,000 kg`,
+          `5,000 kg`,
+          `500 kg`,
+          `50 kg`,
+          ],
+          correctIndex: 1,
+          explanation: `Apply the 10% rule twice: producer (500,000 kg) → herbivore (50,000 kg) → carnivore (5,000 kg).`,
+        },
+        {
+          id: "q9-v2",
+          question: `A grassland contains 200,000 kg of plant biomass. Assuming a 10% transfer efficiency, approximately how much herbivore biomass could this grassland support?`,
+          options: [
+          `200,000 kg`,
+          `20,000 kg`,
+          `2,000 kg`,
+          `200 kg`,
+          ],
+          correctIndex: 1,
+          explanation: `With 10% transfer efficiency, herbivores (primary consumers) would have approximately 10% of the producer biomass, which is 20,000 kg.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -10310,6 +10674,32 @@ export const AP_BIOLOGY_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Since $N = 200$ is well below the carrying capacity $K = 1000$, the term $(1 - N/K)$ is close to 1, making $dN/dt$ positive and the population will grow toward $K$.`,
+      variations: [
+        {
+          id: "q11-v1",
+          question: `A researcher models a deer population with $dN/dt = 0.4N(1 - N/500)$. If the current population is 600 deer, what does the model predict about the immediate future population size?`,
+          options: [
+          `The population will continue to grow toward 600 indefinitely`,
+          `The population will decrease toward 500`,
+          `The population will increase toward 1000`,
+          `The population will remain stable at 600`,
+          ],
+          correctIndex: 1,
+          explanation: `Since $N = 600$ exceeds the carrying capacity $K = 500$, the term $(1 - N/K) = (1 - 600/500) = -0.2$ is negative, making $dN/dt$ negative and the population will decline toward $K = 500$.`,
+        },
+        {
+          id: "q11-v2",
+          question: `A researcher models a rabbit population with $dN/dt = 0.5N(1 - N/2000)$. If the current population is exactly 2000 rabbits, what does the model predict about the population?`,
+          options: [
+          `The population will keep growing exponentially`,
+          `The population will crash to zero`,
+          `The growth rate $dN/dt = 0$, so the population remains at carrying capacity`,
+          `The population will oscillate between 1000 and 3000`,
+          ],
+          correctIndex: 2,
+          explanation: `When $N = K = 2000$, the term $(1 - N/K) = 0$, so $dN/dt = 0$. The population is exactly at carrying capacity and is not growing or declining.`,
+        },
+      ],
     },
     {
       id: "q12",
