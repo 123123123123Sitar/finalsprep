@@ -1,22 +1,27 @@
 import { NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { getAuthedUser } from "@/lib/authGuard";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
 import { getPlan, planToRateTier } from "@/lib/userPlan";
-import { aiCost } from "@/lib/aiCost";
-import { estimateTokens } from "@/lib/rateLimit";
 import { spendTokens } from "@/lib/spend";
 import { peekUsage } from "@/lib/rateLimitStore";
 import { getTokenBank } from "@/lib/tokenBank";
 import { COURSES, LESSONS, type CourseSlug } from "@/lib/topics";
 import { AP_EXAM_SPECS } from "@/lib/apExamSpec";
 import { getCurriculum } from "@/lib/curriculum";
-import { loadMcqsFor } from "@/lib/mcqs";
+import { loadMcqsFor, selectVariant } from "@/lib/mcqs";
+import { frqsForCourse, type PastFrq } from "@/lib/pastFrqs";
 
 export const runtime = "nodejs";
 
 /**
  * POST /api/practice/exam/generate
+ *
+ * Pure bank lookup, no AI. MCQs are sampled from lib/mcqs weighted by each
+ * unit's official College Board examWeight. FRQs are sampled from the
+ * curated PAST_FRQS bank in lib/pastFrqs. Tokens are still charged at a
+ * flat per-item rate because tokens are the app's internal currency.
+ *
+ * Pro/Hacker plans only.
  *
  * Body: {
  *   courseSlug: CourseSlug,
@@ -24,14 +29,6 @@ export const runtime = "nodejs";
  *   frqCount?: number,
  *   difficulty?: "easy" | "medium" | "hard"
  * }
- *
- * MCQs are pulled from the static 11,000-question bank in lib/mcqs, weighted
- * by the official College Board unit percentages from lib/curriculum. No AI
- * call; no AI cost to us. Tokens are still charged to the user at a flat
- * per-MCQ rate (MCQ_TOKEN_COST_EACH) because tokens are the app's currency.
- *
- * FRQs still go through Claude (no FRQ bank exists yet) and charge real AI
- * cost on top of the MCQ flat fee.
  */
 
 type Difficulty = "easy" | "medium" | "hard";
@@ -65,173 +62,14 @@ type GeneratedFrq = {
 const VALID_DIFFICULTIES: Difficulty[] = ["easy", "medium", "hard"];
 const LETTERS: Array<"A" | "B" | "C" | "D"> = ["A", "B", "C", "D"];
 
-// Hard ceilings so a malformed client can't ask for a 500-question exam and
-// burn the user's daily budget in one call.
+// Hard ceilings: refuse oversized requests even on a Pro account.
 const MAX_MCQ = 80;
 const MAX_FRQ = 10;
 
-// Flat token charge per MCQ. MCQs come from our static bank, so we don't
-// pay an AI provider — this is the internal-currency price that still lets
-// the app monetize practice use.
+// Flat token cost per item. Tokens are the app's internal currency; we no
+// longer pay an AI provider to assemble these exams.
 const MCQ_TOKEN_COST_EACH = 50;
-
-function difficultyGuidance(difficulty: Difficulty): string {
-  switch (difficulty) {
-    case "easy":
-      return `"easy" → early-unit recall and direct application. One-step reasoning. Bloom levels: remember / understand.`;
-    case "hard":
-      return `"hard" → late-unit synthesis, multi-step reasoning, carefully designed distractors drawn from common misconceptions. Bloom levels: analyze / evaluate / create. Should feel like a released exam's hardest MCQs and late-part FRQs.`;
-    default:
-      return `"medium" → typical mid-exam difficulty. Two-step reasoning, standard AP stem phrasing, distractors from plausible student errors. Bloom level: apply / analyze.`;
-  }
-}
-
-function buildFrqSystemPrompt(
-  course: { title: string; units: { number: number; title: string }[] },
-  frqCount: number,
-  difficulty: Difficulty,
-  examTitle: string,
-  isHistory: boolean,
-  isCsp: boolean,
-  isMathOrScience: boolean,
-  frqParts: { label: string; count: number; minutes: number }[]
-) {
-  const unitList = course.units
-    .map((u) => `  Unit ${u.number}: ${u.title}`)
-    .join("\n");
-
-  const frqSectionGuidance = (() => {
-    if (isHistory) {
-      return `HISTORY FRQ STRUCTURE
-- The ${course.title} free-response section officially consists of:
-${frqParts.map((p) => `    • ${p.count}× ${p.label} (${p.minutes} min total)`).join("\n")}
-- Distribute the ${frqCount} FRQs you generate across these types proportionally. If the student asked for fewer than the official mix, prioritize SAQs first, then DBQ, then LEQ.
-- SAQs must have 3 lettered sub-parts (a)(b)(c), each worth 1 point, each asking for a specific historical example / evidence / explanation. Keep them under 6 sentences of expected response.
-- DBQs must reference 5–7 short fictional primary-source documents you invent (give each a label like "Doc A", attribution, and 1–3 sentence excerpt). Rubric must mirror the 7-point DBQ scoring (Thesis, Contextualization, Evidence from Docs, Evidence Beyond Docs, Sourcing, Complexity).
-- LEQs must use the 6-point LEQ rubric (Thesis 1, Contextualization 1, Evidence 2, Analysis & Reasoning 2) and target one of: comparison, causation, or continuity/change over time.`;
-    }
-    return `FRQ STRUCTURE
-- Each FRQ should have 2–4 sub-parts labeled (a), (b), (c), (d), escalating in difficulty.
-- Each sub-part lists a specific ask AND a per-part point value (1–4 points each).
-- Typical College Board FRQ part phrasing: "Calculate…", "Justify your answer…", "Explain, in terms of …", "Describe a procedure that would…", "Draw and label…".
-${isMathOrScience ? "- For math/science FRQs, require the student to show work and state units. When calculators are normally allowed for a part, say so." : ""}
-- Rubric text must be scoring criteria a grader can mechanically check, one bullet per earned point, in the form "1 pt: [exact criterion]".
-- Total points per FRQ should be realistic (typically 10 pts for AP math/sci FRQs; 4–10 for short, 20+ for AP Chem Q1/Q2). Match the course's actual conventions.
-- FRQ prompts may use KaTeX: wrap inline math with $...$ and display math with $$...$$.`;
-  })();
-
-  const cspNote = isCsp
-    ? "\n- AP CSP exam is MCQ-only. Generate the requested FRQs anyway as AP-CSP-style written-response items (pseudocode tracing, algorithm analysis, data-representation explanations) but note in the prompt that they are supplemental practice, not part of the official exam."
-    : "";
-
-  return `You are a senior College Board AP item writer producing free-response questions for ${examTitle}.
-
-Every FRQ must be:
-- Accurate: no physics typos, no wrong chemistry, no historical errors.
-- On-spec: use the exact content scope of the official Course and Exam Description for this course only.
-- Calibrated to the target difficulty.
-- Self-contained: stands alone without referring to material outside the FRQ.
-
-TARGET DIFFICULTY
-- ${difficultyGuidance(difficulty)}
-
-OFFICIAL CED UNITS (pick from these ONLY; do not invent units)
-${unitList}
-
-${frqSectionGuidance}${cspNote}
-
-STRICT OUTPUT FORMAT
-Return ONLY a JSON object. No prose, no markdown fences, no commentary before or after.
-
-{
-  "frqs": [
-    {
-      "prompt": "<stem / scenario — may be empty string if each part is independent>",
-      "parts": [
-        { "label": "(a)", "prompt": "<ask>", "rubric": "1 pt: …\\n1 pt: …", "points": <int> }
-      ],
-      "totalPoints": <sum of part points>,
-      "suggestedMinutes": <integer>,
-      "difficulty": "easy" | "medium" | "hard",
-      "unit": "<exact unit title from the CED list>"
-    }
-  ]
-}
-
-HARD REQUIREMENTS:
-- Exactly ${frqCount} FRQs.
-- Each FRQ's totalPoints equals the sum of its parts' points.
-- No duplicate stems.
-- Escape newlines in JSON strings as \\n and backslashes as \\\\.`;
-}
-
-function extractJson(text: string): any | null {
-  const cleaned = text
-    .replace(/```json\s*/gi, "")
-    .replace(/```\s*$/g, "")
-    .trim();
-  try {
-    return JSON.parse(cleaned);
-  } catch {
-    const m = cleaned.match(/\{[\s\S]*\}/);
-    if (!m) return null;
-    try {
-      return JSON.parse(m[0]);
-    } catch {
-      return null;
-    }
-  }
-}
-
-function validateFrqs(raw: unknown, expected: number): GeneratedFrq[] | null {
-  if (!Array.isArray(raw)) {
-    return expected === 0 ? [] : null;
-  }
-  const out: GeneratedFrq[] = [];
-  for (const f of raw) {
-    if (!f || typeof f !== "object") continue;
-    const prompt = typeof (f as any).prompt === "string" ? (f as any).prompt.trim() : "";
-    const rawParts = (f as any).parts;
-    if (!Array.isArray(rawParts) || rawParts.length === 0) continue;
-    const parts: GeneratedFrqPart[] = [];
-    for (const p of rawParts) {
-      if (!p || typeof p !== "object") continue;
-      const label = typeof p.label === "string" ? p.label.trim() : "";
-      const partPrompt = typeof p.prompt === "string" ? p.prompt.trim() : "";
-      const rubric = typeof p.rubric === "string" ? p.rubric.trim() : "";
-      const points = Math.max(0, Math.round(Number(p.points) || 0));
-      if (!label || !partPrompt || !rubric || points === 0) continue;
-      parts.push({ label, prompt: partPrompt, rubric, points });
-    }
-    if (parts.length === 0) continue;
-    const totalPoints = parts.reduce((s, p) => s + p.points, 0);
-    const suggestedMinutes = Math.max(
-      1,
-      Math.round(Number((f as any).suggestedMinutes) || 15)
-    );
-    const difficulty = (f as any).difficulty;
-    out.push({
-      prompt,
-      parts,
-      totalPoints,
-      suggestedMinutes,
-      difficulty: VALID_DIFFICULTIES.includes(difficulty) ? difficulty : "medium",
-      unit: typeof (f as any).unit === "string" ? (f as any).unit : undefined,
-    });
-  }
-  if (expected > 0 && out.length === 0) return null;
-  return out.slice(0, expected);
-}
-
-function parseWeightMidpoint(examWeight: string): number {
-  // "10-17%" → 13.5, "8%" → 8. Fallback to 1 so no unit gets zero weight.
-  const nums = examWeight.match(/\d+(\.\d+)?/g);
-  if (!nums || nums.length === 0) return 1;
-  const parsed = nums.map((n) => parseFloat(n)).filter((n) => Number.isFinite(n));
-  if (parsed.length === 0) return 1;
-  const avg = parsed.reduce((s, x) => s + x, 0) / parsed.length;
-  return avg > 0 ? avg : 1;
-}
+const FRQ_TOKEN_COST_EACH = 200;
 
 function shuffle<T>(arr: T[]): T[] {
   const out = arr.slice();
@@ -240,6 +78,18 @@ function shuffle<T>(arr: T[]): T[] {
     [out[i], out[j]] = [out[j], out[i]];
   }
   return out;
+}
+
+function parseWeightMidpoint(examWeight: string): number {
+  // "10-17%" → 13.5, "8%" → 8. Fallback to 1 so no unit gets zero weight.
+  const nums = examWeight.match(/\d+(\.\d+)?/g);
+  if (!nums || nums.length === 0) return 1;
+  const parsed = nums
+    .map((n) => parseFloat(n))
+    .filter((n) => Number.isFinite(n));
+  if (parsed.length === 0) return 1;
+  const avg = parsed.reduce((s, x) => s + x, 0) / parsed.length;
+  return avg > 0 ? avg : 1;
 }
 
 async function sampleMcqsFromBank(
@@ -251,7 +101,9 @@ async function sampleMcqsFromBank(
   const curriculum = getCurriculum(courseSlug);
   if (!curriculum || curriculum.units.length === 0) return [];
 
-  // Enumerate all bank MCQs per unit for this course, keyed by unit number.
+  // Build per-unit pools so we can weight allocation against availability.
+  // loadMcqsFor is async (the course bundles are code-split); parallelize
+  // per-unit fetches.
   const byUnit = new Map<
     number,
     { unitTitle: string; mcqs: GeneratedMcq[] }
@@ -262,10 +114,18 @@ async function sampleMcqsFromBank(
         (c) => c.courseSlug === courseSlug && c.unitNumber === u.unitNumber
       )
     );
+    const lessonMcqsLists = await Promise.all(
+      unitLessons.map((l) => loadMcqsFor(l.slug))
+    );
     const mcqs: GeneratedMcq[] = [];
-    for (const lesson of unitLessons) {
-      const lessonMcqs = await loadMcqsFor(lesson.slug);
-      for (const m of lessonMcqs) {
+    for (const list of lessonMcqsLists) {
+      for (const bankMcq of list) {
+        // Pick a random variant each time so two students taking the same
+        // exam — or the same student taking it twice — see different
+        // numbers on parametric questions.
+        const totalVariants = 1 + (bankMcq.variations?.length ?? 0);
+        const variantIdx = Math.floor(Math.random() * totalVariants);
+        const m = selectVariant(bankMcq, variantIdx);
         if (m.options.length < 2) continue;
         const choices: McqChoice[] = [];
         for (let i = 0; i < Math.min(4, m.options.length); i++) {
@@ -285,28 +145,31 @@ async function sampleMcqsFromBank(
     byUnit.set(u.unitNumber, { unitTitle: u.title, mcqs });
   }
 
-  // Weight-proportional allocation. Parse each unit's examWeight to a midpoint
-  // (e.g. "10-17%" → 13.5), then distribute mcqCount by weight; remainder
-  // goes to the units with the largest fractional shortfall.
+  // Weight-proportional allocation. Parse each unit's examWeight to a
+  // midpoint (e.g. "10-17%" → 13.5), distribute mcqCount by weight,
+  // remainder goes to the units with the largest fractional shortfall.
   const allocations = curriculum.units.map((u) => {
     const weight = parseWeightMidpoint(u.examWeight);
     const available = byUnit.get(u.unitNumber)?.mcqs.length ?? 0;
-    return { unitNumber: u.unitNumber, weight, available, allocated: 0, exact: 0 };
+    return {
+      unitNumber: u.unitNumber,
+      weight,
+      available,
+      allocated: 0,
+      exact: 0,
+    };
   });
   const totalWeight = allocations.reduce((s, a) => s + a.weight, 0) || 1;
   for (const a of allocations) {
     a.exact = (mcqCount * a.weight) / totalWeight;
     a.allocated = Math.min(a.available, Math.floor(a.exact));
   }
-  // Distribute remainder by largest fractional part, respecting availability.
   let remaining =
     mcqCount - allocations.reduce((s, a) => s + a.allocated, 0);
   if (remaining > 0) {
     const byFrac = [...allocations]
       .filter((a) => a.available > a.allocated)
-      .sort(
-        (a, b) => b.exact - b.allocated - (a.exact - a.allocated)
-      );
+      .sort((a, b) => b.exact - b.allocated - (a.exact - a.allocated));
     let i = 0;
     while (remaining > 0 && byFrac.length > 0) {
       const a = byFrac[i % byFrac.length];
@@ -315,12 +178,12 @@ async function sampleMcqsFromBank(
         remaining--;
       }
       i++;
-      // Stop if no unit has capacity left.
       if (byFrac.every((x) => x.allocated >= x.available)) break;
     }
   }
 
-  // Sample each unit's quota randomly from its pool.
+  // Randomize the pick inside each unit and the final order across units so
+  // the same exam settings never produce the same question sequence.
   const picked: GeneratedMcq[] = [];
   for (const a of allocations) {
     if (a.allocated === 0) continue;
@@ -331,11 +194,40 @@ async function sampleMcqsFromBank(
   return shuffle(picked);
 }
 
+function sampleFrqsFromBank(
+  courseSlug: CourseSlug,
+  frqCount: number,
+  difficulty: Difficulty,
+  defaultMinutesPerFrq: number
+): GeneratedFrq[] {
+  if (frqCount <= 0) return [];
+  const pool: PastFrq[] = frqsForCourse(courseSlug);
+  if (pool.length === 0) return [];
+  const shuffled = shuffle(pool);
+  const picked = shuffled.slice(0, Math.min(frqCount, shuffled.length));
+  return picked.map((f) => ({
+    prompt: f.prompt,
+    parts: f.parts.map((p) => ({
+      label: p.label,
+      prompt: p.prompt,
+      rubric: p.rubric,
+      points: p.points,
+    })),
+    totalPoints: f.totalPoints,
+    suggestedMinutes: Math.max(1, Math.round(defaultMinutesPerFrq)),
+    difficulty,
+    unit: f.topic,
+  }));
+}
+
 export async function POST(req: Request) {
   const adminOn = isAdminConfigured();
   const user = adminOn ? await getAuthedUser(req) : null;
   if (adminOn && (!user || !user.emailVerified)) {
-    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Authentication required" },
+      { status: 401 }
+    );
   }
 
   let body: any = {};
@@ -347,7 +239,10 @@ export async function POST(req: Request) {
 
   const courseSlug = body?.courseSlug as CourseSlug | undefined;
   if (!courseSlug) {
-    return NextResponse.json({ error: "courseSlug required" }, { status: 400 });
+    return NextResponse.json(
+      { error: "courseSlug required" },
+      { status: 400 }
+    );
   }
   const course = COURSES.find((c) => c.slug === courseSlug);
   const spec = AP_EXAM_SPECS[courseSlug];
@@ -391,19 +286,10 @@ export async function POST(req: Request) {
     );
   }
 
-  // Pre-check the token budget: MCQ flat fee + conservative FRQ estimate.
+  const estimatedCost =
+    mcqCount * MCQ_TOKEN_COST_EACH + frqCount * FRQ_TOKEN_COST_EACH;
+
   if (user?.uid && userPlan) {
-    const estimatedFrqOutput = frqCount * 400;
-    const estimatedFrqInput = frqCount > 0 ? 1200 : 0;
-    const estimatedFrqCost =
-      frqCount > 0
-        ? aiCost({
-            inputTokens: estimatedFrqInput,
-            outputTokens: estimatedFrqOutput,
-            plan,
-          })
-        : 0;
-    const estimatedCost = mcqCount * MCQ_TOKEN_COST_EACH + estimatedFrqCost;
     const tier = planToRateTier(userPlan);
     const [usage, bank] = await Promise.all([
       peekUsage(user.uid, tier),
@@ -414,7 +300,7 @@ export async function POST(req: Request) {
     if (available < estimatedCost) {
       return NextResponse.json(
         {
-          error: `Not enough tokens. This exam is estimated at ~${estimatedCost} tokens and you have ${available} available. Wait for your daily cap to reset or top up your bonus bank.`,
+          error: `Not enough tokens. This exam costs ${estimatedCost} tokens and you have ${available} available. Wait for your daily cap to reset or top up your bonus bank.`,
           estimatedCost,
           available,
         },
@@ -423,7 +309,6 @@ export async function POST(req: Request) {
     }
   }
 
-  // MCQs: pull from the bank, weighted by CED unit percentages. Free. Fast.
   const mcqs = await sampleMcqsFromBank(courseSlug, mcqCount, difficulty);
   if (mcqCount > 0 && mcqs.length === 0) {
     return NextResponse.json(
@@ -435,76 +320,31 @@ export async function POST(req: Request) {
     );
   }
 
-  // FRQs: still generated by Claude. No bank for those yet.
-  let frqs: GeneratedFrq[] = [];
-  let frqInputTokens = 0;
-  let frqOutputTokens = 0;
-  let frqError: string | null = null;
-  if (frqCount > 0) {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: "ANTHROPIC_API_KEY missing — required for FRQ generation." },
-        { status: 500 }
-      );
-    }
-    const isHistory = /history/i.test(course.title);
-    const isCsp = courseSlug === "ap-cs-principles";
-    const isMathOrScience =
-      /precalc|calc|stat|physics|chem|bio|environ/i.test(courseSlug);
-    const systemPrompt = buildFrqSystemPrompt(
-      course,
-      frqCount,
-      difficulty,
-      spec.title,
-      isHistory,
-      isCsp,
-      isMathOrScience,
-      spec.frq.parts
+  const defaultMinutesPerFrq =
+    spec.frq.count > 0 ? spec.frq.minutes / spec.frq.count : 15;
+  const frqs = sampleFrqsFromBank(
+    courseSlug,
+    frqCount,
+    difficulty,
+    defaultMinutesPerFrq
+  );
+  if (frqCount > 0 && frqs.length === 0) {
+    return NextResponse.json(
+      {
+        error:
+          "No past FRQs on file for this course yet. Try another course or stick to MCQs.",
+      },
+      { status: 503 }
     );
-    const userPrompt = `Generate ${frqCount} FRQs for ${spec.title} at "${difficulty}" difficulty. Begin JSON output immediately.`;
-    const maxTokens = Math.min(16000, 1000 + frqCount * 700);
-    try {
-      const client = new Anthropic({ apiKey });
-      const res = await client.messages.create({
-        model: "claude-sonnet-4-6",
-        max_tokens: maxTokens,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt }],
-      });
-      const rawText = res.content
-        .map((c) => (c.type === "text" ? c.text : ""))
-        .join("");
-      frqInputTokens =
-        (res as any).usage?.input_tokens ??
-        estimateTokens(systemPrompt + userPrompt);
-      frqOutputTokens =
-        (res as any).usage?.output_tokens ?? estimateTokens(rawText);
-      const parsed = extractJson(rawText);
-      const validated = validateFrqs(parsed?.frqs ?? [], frqCount);
-      if (validated === null) {
-        frqError = "Model returned no usable FRQs.";
-      } else {
-        frqs = validated;
-      }
-    } catch (e: any) {
-      frqError = e?.message || "FRQ generation failed";
-    }
   }
 
-  // Charge: flat MCQ fee + real FRQ AI cost if we called Claude.
+  // Charge: flat per-item. Charge only for what we actually returned so a
+  // course missing some FRQs doesn't overbill.
   let charged = 0;
   if (user?.uid) {
-    const mcqFee = mcqs.length * MCQ_TOKEN_COST_EACH;
-    const frqFee =
-      frqInputTokens + frqOutputTokens > 0
-        ? aiCost({
-            inputTokens: frqInputTokens,
-            outputTokens: frqOutputTokens,
-            plan,
-          })
-        : 0;
-    const cost = mcqFee + frqFee;
+    const cost =
+      mcqs.length * MCQ_TOKEN_COST_EACH +
+      frqs.length * FRQ_TOKEN_COST_EACH;
     if (cost > 0) {
       const result = await spendTokens(user.uid, cost);
       charged = result.charged;
@@ -518,6 +358,5 @@ export async function POST(req: Request) {
     mcqs,
     frqs,
     tokensCharged: charged,
-    ...(frqError ? { frqError } : {}),
   });
 }

@@ -940,7 +940,8 @@ type GradeResult = {
 };
 
 function FrqsTab() {
-  const { getIdToken } = useAuth();
+  const { getIdToken, plan, planLoading } = useAuth();
+  const isHacker = plan === "hacker";
   const [filterCourse, setFilterCourse] = useState<CourseSlug | "all">("all");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [response, setResponse] = useState("");
@@ -954,6 +955,32 @@ function FrqsTab() {
   }, [filterCourse]);
 
   const active: PastFrq | null = activeId ? getFrqById(activeId) : null;
+
+  if (!planLoading && !isHacker) {
+    return (
+      <div className="mt-8 rounded-xl border-2 border-orange/40 bg-orange-tint p-6">
+        <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-orange-ink">
+          Hacker feature
+        </div>
+        <h4 className="mt-2 font-serif text-2xl font-normal text-ink">
+          Past-FRQ practice is a Hacker perk.
+        </h4>
+        <p className="mt-3 max-w-xl text-[15px] text-body">
+          Work real past AP free-response questions and get your response
+          graded part-by-part against the official College Board rubric.
+          Unlocked on the Hacker plan.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <a href="/#price" className="btn-primary text-sm">
+            Upgrade to Hacker - $29/mo
+          </a>
+          <a href="/#price" className="btn-ghost text-sm">
+            See all plans →
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   // Reset response + grade when switching FRQ.
   useEffect(() => {

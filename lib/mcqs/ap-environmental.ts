@@ -1207,8 +1207,34 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       `30%`,
       `40%`,
       ],
-      correctIndex: 2,
+      correctIndex: 1,
       explanation: `Infiltration (30 cm) plus runoff (50 cm) equals 80 cm, leaving 20 cm unaccounted for, which represents 20% of the 100 cm total precipitation.`,
+      variations: [
+        {
+          id: "q8-v1",
+          question: `A watershed receives 200 cm of annual precipitation. If 80 cm infiltrates into the soil and 60 cm becomes runoff, what percentage of precipitation is unaccounted for by these two processes?`,
+          options: [
+          `20%`,
+          `30%`,
+          `40%`,
+          `60%`,
+          ],
+          correctIndex: 1,
+          explanation: `Infiltration (80 cm) plus runoff (60 cm) equals 140 cm, leaving 60 cm unaccounted for, which represents 60/200 = 30% of total precipitation.`,
+        },
+        {
+          id: "q8-v2",
+          question: `A watershed receives 50 cm of annual precipitation. If 10 cm infiltrates into the soil and 20 cm becomes runoff, what percentage of precipitation is unaccounted for by these two processes?`,
+          options: [
+          `30%`,
+          `40%`,
+          `50%`,
+          `60%`,
+          ],
+          correctIndex: 1,
+          explanation: `Infiltration (10 cm) plus runoff (20 cm) equals 30 cm, leaving 20 cm unaccounted for, which represents 20/50 = 40% of total precipitation.`,
+        },
+      ],
     },
     {
       id: "q9",
@@ -1661,8 +1687,34 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       `100 units`,
       `10 units`,
       ],
-      correctIndex: 2,
-      explanation: `Energy decreases by approximately 90% at each trophic level; tertiary consumers (level 4) would receive roughly 1% of the original producer energy: 10,000 → 1,000 → 100.`,
+      correctIndex: 3,
+      explanation: `Energy decreases by approximately 90% at each trophic level. Tertiary consumers are three transfers above producers, so they receive roughly 0.1% of the original producer energy: 10,000 → 1,000 (primary) → 100 (secondary) → 10 (tertiary).`,
+      variations: [
+        {
+          id: "q15-v1",
+          question: `Producers in an ecosystem contain 50,000 units of energy. Applying the 10% rule, approximately how much energy would be available to secondary consumers?`,
+          options: [
+          `5,000 units`,
+          `500 units`,
+          `50 units`,
+          `5 units`,
+          ],
+          correctIndex: 1,
+          explanation: `Secondary consumers are two transfers above producers: 50,000 → 5,000 (primary) → 500 (secondary).`,
+        },
+        {
+          id: "q15-v2",
+          question: `Producers in an ecosystem contain 1,000,000 units of energy. Applying the 10% rule, approximately how much energy would be available to tertiary consumers?`,
+          options: [
+          `10,000 units`,
+          `1,000 units`,
+          `100 units`,
+          `10 units`,
+          ],
+          correctIndex: 1,
+          explanation: `Tertiary consumers are three transfers above producers: 1,000,000 → 100,000 → 10,000 → 1,000 units.`,
+        },
+      ],
     },
     ],
   },
@@ -1798,20 +1850,34 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       `40 kcal more`,
       `400 kcal more`,
       ],
-      correctIndex: 1,
-      explanation: `Ecosystem A: 80,000 × 0.1 × 0.1 × 0.1 = 8 kcal. Ecosystem B: 40,000 × 0.1 × 0.1 × 0.1 = 4 kcal. Difference: 8 − 4 = 4 kcal. Wait, that's option 0. Let me recalculate: 8 kcal − 4 kcal = 4 kcal. The correct answer should be option 0, not 1. Correcting: Ecosystem A has 8 kcal and Ecosystem B has 4 kcal, so A has 4 kcal more.`,
-    },
-    {
-      id: "q11-corrected",
-      question: `Two ecosystems are compared: Ecosystem A has 80,000 kcal in producers and Ecosystem B has 40,000 kcal in producers. How much more energy is available to tertiary consumers in Ecosystem A compared to Ecosystem B?`,
-      options: [
-      `4 kcal more`,
-      `8 kcal more`,
-      `40 kcal more`,
-      `400 kcal more`,
+      correctIndex: 2,
+      explanation: `Tertiary consumers receive 0.1 × 0.1 × 0.1 = 0.1% of producer energy. Ecosystem A: 80,000 × 0.001 = 80 kcal. Ecosystem B: 40,000 × 0.001 = 40 kcal. Difference: 80 − 40 = 40 kcal more in A.`,
+      variations: [
+        {
+          id: "q11-v1",
+          question: `Two ecosystems are compared: Ecosystem A has 60,000 kcal in producers and Ecosystem B has 20,000 kcal in producers. How much more energy is available to secondary consumers in Ecosystem A compared to Ecosystem B?`,
+          options: [
+          `40 kcal more`,
+          `400 kcal more`,
+          `4,000 kcal more`,
+          `40,000 kcal more`,
+          ],
+          correctIndex: 1,
+          explanation: `Secondary consumers receive 0.1 × 0.1 = 1% of producer energy. Ecosystem A: 60,000 × 0.01 = 600 kcal. Ecosystem B: 20,000 × 0.01 = 200 kcal. Difference: 600 − 200 = 400 kcal more in A.`,
+        },
+        {
+          id: "q11-v2",
+          question: `Two ecosystems are compared: Ecosystem A has 100,000 kcal in producers and Ecosystem B has 50,000 kcal in producers. How much more energy is available to tertiary consumers in Ecosystem A compared to Ecosystem B?`,
+          options: [
+          `5 kcal more`,
+          `50 kcal more`,
+          `500 kcal more`,
+          `5,000 kcal more`,
+          ],
+          correctIndex: 1,
+          explanation: `Tertiary consumers receive 0.1% of producer energy. Ecosystem A: 100,000 × 0.001 = 100 kcal. Ecosystem B: 50,000 × 0.001 = 50 kcal. Difference: 100 − 50 = 50 kcal more in A.`,
+        },
       ],
-      correctIndex: 0,
-      explanation: `Ecosystem A: 80,000 × 0.1 × 0.1 × 0.1 = 8 kcal. Ecosystem B: 40,000 × 0.1 × 0.1 × 0.1 = 4 kcal. Ecosystem A has 8 − 4 = 4 kcal more energy available to tertiary consumers.`,
     },
     {
       id: "q12",
@@ -1834,20 +1900,34 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       `1,111 kcal`,
       `11,100 kcal`,
       ],
-      correctIndex: 2,
-      explanation: `Primary consumers: 1,000 kcal; secondary consumers: 100 kcal; tertiary consumers: 10 kcal. Total: 1,000 + 100 + 10 = 1,110 kcal. (Note: rechecking—1,000 + 100 + 10 = 1,110, not 1,111. Correcting to option 1.)`,
-    },
-    {
-      id: "q13-corrected",
-      question: `An energy pyramid shows that producers contain 10,000 kcal. If the pyramid has four trophic levels (producers, primary consumers, secondary consumers, and tertiary consumers), what is the total energy available to all consumer levels combined?`,
-      options: [
-      `111 kcal`,
-      `1,110 kcal`,
-      `1,111 kcal`,
-      `11,100 kcal`,
-      ],
       correctIndex: 1,
-      explanation: `Primary consumers: 10,000 × 0.1 = 1,000 kcal; secondary consumers: 1,000 × 0.1 = 100 kcal; tertiary consumers: 100 × 0.1 = 10 kcal. Total: 1,000 + 100 + 10 = 1,110 kcal.`,
+      explanation: `Primary consumers: 1,000 kcal; secondary consumers: 100 kcal; tertiary consumers: 10 kcal. Total: 1,000 + 100 + 10 = 1,110 kcal.`,
+      variations: [
+        {
+          id: "q13-v1",
+          question: `An energy pyramid shows that producers contain 100,000 kcal. If the pyramid has four trophic levels (producers, primary consumers, secondary consumers, and tertiary consumers), what is the total energy available to all consumer levels combined?`,
+          options: [
+          `1,110 kcal`,
+          `11,100 kcal`,
+          `100,000 kcal`,
+          `111,000 kcal`,
+          ],
+          correctIndex: 1,
+          explanation: `Primary: 10,000 kcal; secondary: 1,000 kcal; tertiary: 100 kcal. Total: 10,000 + 1,000 + 100 = 11,100 kcal.`,
+        },
+        {
+          id: "q13-v2",
+          question: `An energy pyramid shows that producers contain 50,000 kcal. If the pyramid has three consumer levels (primary, secondary, tertiary), what is the total energy available to all consumer levels combined?`,
+          options: [
+          `555 kcal`,
+          `5,550 kcal`,
+          `55,500 kcal`,
+          `555,000 kcal`,
+          ],
+          correctIndex: 1,
+          explanation: `Primary: 5,000 kcal; secondary: 500 kcal; tertiary: 50 kcal. Total: 5,000 + 500 + 50 = 5,550 kcal.`,
+        },
+      ],
     },
     ],
   },
@@ -4121,6 +4201,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Using the Rule of 70: doubling time = 70 ÷ 5 = 14 years.`,
+      variations: [
+        {
+          id: "q4-v1",
+          question: `A population growing at 2% per year will double in approximately how many years?`,
+          options: [
+          `14 years`,
+          `25 years`,
+          `35 years`,
+          `70 years`,
+          ],
+          correctIndex: 2,
+          explanation: `Using the Rule of 70: doubling time = 70 ÷ 2 = 35 years.`,
+        },
+        {
+          id: "q4-v2",
+          question: `A population growing at 7% per year will double in approximately how many years?`,
+          options: [
+          `5 years`,
+          `7 years`,
+          `10 years`,
+          `14 years`,
+          ],
+          correctIndex: 2,
+          explanation: `Using the Rule of 70: doubling time = 70 ÷ 7 = 10 years.`,
+        },
+      ],
     },
     {
       id: "q5",
@@ -4145,6 +4251,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Doubling time = 70 ÷ 1 = 70 years. At a 1% growth rate, the population doubles very slowly.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A country's population is growing at 3.5% annually. Using the Rule of 70, how long will it take for the population to double?`,
+          options: [
+          `10 years`,
+          `15 years`,
+          `20 years`,
+          `25 years`,
+          ],
+          correctIndex: 2,
+          explanation: `Doubling time = 70 ÷ 3.5 = 20 years.`,
+        },
+        {
+          id: "q6",
+          question: `A country's population is growing at 10% annually. Using the Rule of 70, how long will it take for the population to double?`,
+          options: [
+          `5 years`,
+          `7 years`,
+          `10 years`,
+          `14 years`,
+          ],
+          correctIndex: 1,
+          explanation: `Doubling time = 70 ÷ 10 = 7 years.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -4193,6 +4325,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Doubling time = 70 ÷ 8 = 8.75 years. The population will double from 500 to 1,000 in approximately 8.75 years.`,
+      variations: [
+        {
+          id: "q10",
+          question: `A wildlife manager observes that a rabbit population is growing at 4% annually. If the current population is 200 rabbits, approximately how many years until the population reaches 400 rabbits?`,
+          options: [
+          `10 years`,
+          `14 years`,
+          `17.5 years`,
+          `20 years`,
+          ],
+          correctIndex: 2,
+          explanation: `Doubling time = 70 ÷ 4 = 17.5 years. The population will double from 200 to 400 in approximately 17.5 years.`,
+        },
+        {
+          id: "q10",
+          question: `A wildlife manager observes that a bird population is growing at 14% annually. If the current population is 1,000 birds, approximately how many years until the population reaches 2,000 birds?`,
+          options: [
+          `5 years`,
+          `7 years`,
+          `10 years`,
+          `14 years`,
+          ],
+          correctIndex: 0,
+          explanation: `Doubling time = 70 ÷ 14 = 5 years. The population will double from 1,000 to 2,000 in approximately 5 years.`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -4479,6 +4637,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `A TFR of 2.8 exceeds the replacement level of 2.1, meaning each generation produces more children than needed to replace itself, causing population growth.`,
+      variations: [
+        {
+          id: "q3",
+          question: `If a country has a TFR of 3.4, what is happening to its population size (ignoring migration)?`,
+          options: [
+          `The population is declining`,
+          `The population is stable`,
+          `The population is growing`,
+          `The population growth rate cannot be determined from TFR alone`,
+          ],
+          correctIndex: 2,
+          explanation: `A TFR of 3.4 exceeds the replacement level of 2.1, meaning each generation produces more children than needed to replace itself, causing population growth.`,
+        },
+        {
+          id: "q3",
+          question: `If a country has a TFR of 2.0, what is happening to its population size (ignoring migration)?`,
+          options: [
+          `The population is declining`,
+          `The population is stable or slowly declining`,
+          `The population is growing`,
+          `The population growth rate cannot be determined from TFR alone`,
+          ],
+          correctIndex: 1,
+          explanation: `A TFR of 2.0 is below the replacement level of 2.1, meaning each generation is slightly smaller than the previous one, resulting in population decline or stability.`,
+        },
+      ],
     },
     {
       id: "q4",
@@ -4503,6 +4687,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `A TFR of 1.9 is below the replacement level of 2.1, meaning each generation is smaller than the previous one, resulting in population decline over time.`,
+      variations: [
+        {
+          id: "q5",
+          question: `A country with a TFR of 1.5 will experience what demographic trend?`,
+          options: [
+          `Rapid population growth`,
+          `Population decline (ignoring migration)`,
+          `Population stability`,
+          `Unpredictable population change`,
+          ],
+          correctIndex: 1,
+          explanation: `A TFR of 1.5 is well below the replacement level of 2.1, meaning each generation is significantly smaller than the previous one, resulting in population decline over time.`,
+        },
+        {
+          id: "q5",
+          question: `A country with a TFR of 2.5 will experience what demographic trend?`,
+          options: [
+          `Rapid population growth`,
+          `Population decline (ignoring migration)`,
+          `Population stability`,
+          `Unpredictable population change`,
+          ],
+          correctIndex: 0,
+          explanation: `A TFR of 2.5 exceeds the replacement level of 2.1, meaning each generation is larger than the previous one, resulting in rapid population growth over time.`,
+        },
+      ],
     },
     {
       id: "q6",
@@ -4527,6 +4737,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Country A's TFR of 3.2 exceeds replacement (2.1), so it is growing; Country B's TFR of 1.8 is below replacement, so it is declining.`,
+      variations: [
+        {
+          id: "q7",
+          question: `Country X has a TFR of 2.9 and Country Y has a TFR of 2.1. Assuming no migration, which statement is true?`,
+          options: [
+          `Both countries will experience population decline`,
+          `Country X's population is growing while Country Y's is stable`,
+          `Country Y's population is growing while Country X's is stable`,
+          `Both countries will experience population growth at the same rate`,
+          ],
+          correctIndex: 1,
+          explanation: `Country X's TFR of 2.9 exceeds replacement (2.1), so it is growing; Country Y's TFR of 2.1 is at replacement level, so it is stable.`,
+        },
+        {
+          id: "q7",
+          question: `Country M has a TFR of 1.7 and Country N has a TFR of 3.5. Assuming no migration, which statement is true?`,
+          options: [
+          `Both countries will experience population decline`,
+          `Country M's population is growing while Country N's is declining`,
+          `Country N's population is growing while Country M's is declining`,
+          `Both countries will experience population growth at the same rate`,
+          ],
+          correctIndex: 2,
+          explanation: `Country M's TFR of 1.7 is below replacement (2.1), so it is declining; Country N's TFR of 3.5 exceeds replacement, so it is growing.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -5524,6 +5760,10 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `A balanced loam composition with roughly equal parts sand and silt plus some clay provides moderate drainage while retaining adequate water and nutrients.`,
+      variations: [
+        { id: "q13", question: `A soil scientist analyzes a sample and finds it has good drainage, moderate water retention, and adequate nutrient-holding capacity. Which soil composition best matches these properties?`, options: [`50% sand, 30% silt, 20% clay`, `40% sand, 40% silt, 20% clay`, `20% sand, 60% silt, 20% clay`, `80% sand, 10% silt, 10% clay`], correctIndex: 0, explanation: `A loamy sand provides better drainage while retaining nutrients.` },
+        { id: "q13", question: `A soil scientist analyzes a sample and finds it has slower drainage, excellent water retention, and good nutrient capacity. Which soil composition best matches these properties?`, options: [`60% sand, 30% silt, 10% clay`, `40% sand, 40% silt, 20% clay`, `30% sand, 50% silt, 20% clay`, `90% sand, 5% silt, 5% clay`], correctIndex: 2, explanation: `A silt loam composition retains water and nutrients better than balanced loam.` },
+      ],
     },
     {
       id: "q14",
@@ -6143,6 +6383,10 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       `A day when the sun is directly overhead at the equator`,
       ],
       correctIndex: 1,
+      variations: [
+        { id: "q9", question: `A wetland in a watershed filters out 45% of the sediment flowing through it. How does this affect downstream water quality?`, options: [`Water quality is unaffected by partial filtration`, `Water quality improves due to sediment removal`, `Water quality worsens due to pollutant release`, `Water quality depends only on rainfall`], correctIndex: 1, explanation: `By removing 45% of sediment, the wetland still significantly improves downstream water clarity and quality.` },
+        { id: "q9", question: `A wetland in a watershed filters out 75% of the sediment flowing through it. How does this affect downstream water quality?`, options: [`No effect on downstream quality`, `Water quality improves due to sediment removal`, `Water quality becomes worse than without the wetland`, `Water quality depends only on land use`], correctIndex: 1, explanation: `Filtering 75% of sediment removes most suspended material, substantially improving downstream water quality.` },
+      ],
       explanation: `An equinox occurs twice per year when day and night are roughly equal in duration, happening around March 20 and September 22.`,
     },
     {
@@ -6232,6 +6476,10 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
     {
       id: "q11",
       question: `A student observes that sunrise occurs earlier and sunset occurs later as spring progresses toward summer in the Northern Hemisphere. Which statement best explains this observation?`,
+      variations: [
+        { id: "q1", question: `What is the approximate axial tilt angle of Mars?`, options: [`23.5°`, `25.2°`, `15.0°`, `35.0°`], correctIndex: 1, explanation: `Mars has an axial tilt of approximately 25.2°, similar to Earth's tilt, also producing seasonal variations.` },
+        { id: "q1", question: `What would result if Earth's axial tilt were 0° instead of 23.5°?`, options: [`Seasons would be more extreme`, `No seasons would occur`, `Polar regions would be warmer`, `The equator would be colder`], correctIndex: 1, explanation: `With no axial tilt, every location would receive equal sunlight year-round, eliminating all seasons.` },
+      ],
       options: [
       `Earth is moving closer to the sun, increasing daylight hours`,
       `The Northern Hemisphere is gradually tilting more toward the sun, extending daylight hours`,
@@ -6429,6 +6677,10 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
     {
       id: "q12",
       question: `Two cities are at identical latitudes and elevations. City A is on a coast with a nearby warm ocean current, while City B is inland. Which city would likely experience greater temperature variation between summer and winter?`,
+      variations: [
+        { id: "q2", question: `If sea level temperature is 20°C, what is the approximate temperature at 3 km altitude in the troposphere?`, options: [`2.5°C`, `19.5°C`, `-0.5°C`, `10°C`], correctIndex: 2, explanation: `At 6.5°C/km × 3 km = 19.5°C decrease, so 20°C - 19.5°C = 0.5°C.` },
+        { id: "q2", question: `If temperature decreases at 6.5°C per km, what altitude change produces a 13°C drop?`, options: [`1 km`, `1.5 km`, `2 km`, `3 km`], correctIndex: 2, explanation: `13°C ÷ 6.5°C/km = 2 km altitude change.` },
+      ],
       options: [
       `City A, due to ocean warming`,
       `City B, due to lack of oceanic temperature moderation`,
@@ -6573,6 +6825,10 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       `El Niño causes all Atlantic hurricanes to move westward`,
       ],
       correctIndex: 1,
+      variations: [
+        { id: "q15", question: `A coastal city at 35°N has a winter temperature of 8°C. An inland city at the same latitude has -5°C. If the inland city were moved to 1,500 meters elevation, approximately what would its new winter temperature be?`, options: [`-5°C`, `-14.75°C`, `8°C`, `-10°C`], correctIndex: 1, explanation: `At 1,500 meters, temperature decreases by 6.5°C/km × 1.5 km = 9.75°C, so -5°C - 9.75°C ≈ -14.75°C.` },
+        { id: "q15", question: `A coastal city at 42°N has a winter temperature of 3°C. An inland city at the same latitude has -10°C. If the inland city were moved to 2,500 meters elevation, approximately what would its new winter temperature be?`, options: [`-10°C`, `-26.25°C`, `3°C`, `-18°C`], correctIndex: 1, explanation: `At 2,500 meters, temperature decreases by 6.5°C/km × 2.5 km = 16.25°C, so -10°C - 16.25°C ≈ -26.25°C.` },
+      ],
       explanation: `El Niño tends to suppress Atlantic hurricane activity through increased wind shear and other atmospheric changes that inhibit hurricane development.`,
     },
     {
@@ -6638,6 +6894,10 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
     {
       id: "q14",
       question: `Consider a scenario where sea surface temperatures in the Pacific are warming, trade winds are weakening, and atmospheric pressure patterns are shifting. Based on these observations, what can be inferred about the likely global climate impacts over the next several months?`,
+      variations: [
+        { id: "q4", question: `If an El Niño event occurred in 2015 and ENSO cycles repeat every 3-6 years on average, approximately when might the next significant event occur?`, options: [`2016-2017`, `2018-2021`, `2025-2030`, `2035-2040`], correctIndex: 1, explanation: `Adding 3-6 years to 2015 suggests the next major event would occur around 2018-2021.` },
+        { id: "q4", question: `An ENSO cycle lasted from 2009 to 2016. If this cycle represents a typical ENSO period, approximately how many years long was it?`, options: [`3-4 years`, `5-7 years`, `8-10 years`, `12-15 years`], correctIndex: 1, explanation: `The cycle from 2009 to 2016 is approximately 7 years, within the typical 2-7 year ENSO range.` },
+      ],
       options: [
       `Atlantic hurricane activity will increase significantly`,
       `The southwestern United States will experience drought`,
@@ -8609,6 +8869,10 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Meat production is resource-intensive, requiring land for grazing and feed crops, water, and energy; therefore, tripling meat consumption would substantially increase the ecological footprint.`,
+      variations: [
+        { id: "q8", question: `A developing nation increases its per capita meat consumption from 20 kg to 60 kg annually. How would this change affect its ecological footprint?`, options: [`The footprint would decrease because more efficient farming practices are used`,`The footprint would remain unchanged because total population stays the same`,`The footprint would increase because meat production requires significant land and resources`,`The footprint would increase only if the nation also increases its energy consumption`], correctIndex: 2, explanation: `Meat production is resource-intensive; tripling consumption from 20 to 60 kg would substantially increase the ecological footprint.` },
+        { id: "q8", question: `A developing nation increases its per capita meat consumption from 10 kg to 40 kg annually. How would this change affect its ecological footprint?`, options: [`The footprint would decrease because more efficient farming practices are used`,`The footprint would remain unchanged because total population stays the same`,`The footprint would increase because meat production requires significant land and resources`,`The footprint would increase only if the nation also increases its energy consumption`], correctIndex: 2, explanation: `Meat production requires land for grazing and feed crops; quadrupling consumption would substantially increase the ecological footprint.` },
+      ],
     },
     {
       id: "q9",
@@ -8645,6 +8909,10 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The reduction needed is $(2.8 - 1.6) / 2.8 = 1.2 / 2.8 ≈ 0.43$ or approximately 43% decrease in global consumption.`,
+      variations: [
+        { id: "q11", question: `If the global average ecological footprint is 3.0 global hectares per person and the sustainable level is 1.5 global hectares per person, by approximately what percentage would global consumption need to decrease to achieve sustainability?`, options: [`30%`,`50%`,`60%`,`75%`], correctIndex: 1, explanation: `The reduction needed is $(3.0 - 1.5) / 3.0 = 1.5 / 3.0 = 0.50$ or 50% decrease in global consumption.` },
+        { id: "q11", question: `If the global average ecological footprint is 2.5 global hectares per person and the sustainable level is 1.6 global hectares per person, by approximately what percentage would global consumption need to decrease?`, options: [`22%`,`36%`,`55%`,`69%`], correctIndex: 1, explanation: `The reduction needed is $(2.5 - 1.6) / 2.5 = 0.9 / 2.5 = 0.36$ or approximately 36% decrease in global consumption.` },
+      ],
     },
     {
       id: "q12",
@@ -8818,6 +9086,10 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Since the harvest rate (10,000) does not exceed the regeneration rate (12,000), the resource base is maintained, satisfying the core principle that resource use must not exceed regeneration.`,
+      variations: [
+        { id: "q10", question: `A forest is harvested at a rate of 8,000 trees per year, and 10,000 new trees grow annually. Is this practice sustainable according to the resource regeneration principle?`, options: [`No, because any tree harvesting reduces biodiversity`,`Yes, because harvest rate is less than regeneration rate`,`No, because the forest will eventually be depleted`,`Yes, only if the harvested trees are replanted in the same location`], correctIndex: 1, explanation: `Since the harvest rate (8,000) does not exceed the regeneration rate (10,000), the resource base is maintained, satisfying the core principle that resource use must not exceed regeneration.` },
+        { id: "q10", question: `A forest is harvested at a rate of 15,000 trees per year, and 18,000 new trees grow annually. Is this practice sustainable according to the resource regeneration principle?`, options: [`No, because any tree harvesting reduces biodiversity`,`Yes, because harvest rate is less than regeneration rate`,`No, because the forest will eventually be depleted`,`Yes, only if the harvested trees are replanted in the same location`], correctIndex: 1, explanation: `Since the harvest rate (15,000) does not exceed the regeneration rate (18,000), the resource base is maintained, satisfying the core principle that resource use must not exceed regeneration.` },
+      ],
     },
     {
       id: "q11",
@@ -10136,7 +10408,33 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       `50%`,
       ],
       correctIndex: 1,
-      explanation: `Starting from 20% renewables, doubling renewable capacity would increase the renewable share to approximately 30% of total energy consumption if fossil fuels remain constant.`,
+      explanation: `Starting from 20% renewables (and 80% fossil), doubling renewables gives R=40, F=80, total=120. New share = 40/120 ≈ 33%, closest to 30%.`,
+      variations: [
+        {
+          id: "q12-v1",
+          question: `If renewables make up 25% of a country's energy and fossil fuels make up 75%, doubling renewable capacity while keeping fossil fuels constant gives renewables what approximate share of the new total?`,
+          options: [
+          `33%`,
+          `40%`,
+          `50%`,
+          `67%`,
+          ],
+          correctIndex: 1,
+          explanation: `New renewables = 50, fossil = 75, total = 125. New share = 50/125 = 40%.`,
+        },
+        {
+          id: "q12-v2",
+          question: `If renewables make up 10% of a country's energy and fossil fuels make up 90%, tripling renewable capacity while keeping fossil fuels constant gives renewables what approximate share of the new total?`,
+          options: [
+          `15%`,
+          `25%`,
+          `33%`,
+          `45%`,
+          ],
+          correctIndex: 1,
+          explanation: `New renewables = 30, fossil = 90, total = 120. New share = 30/120 = 25%.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -10611,7 +10909,7 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
     },
     {
       id: "q6",
-      question: `A power plant burns 1 unit of coal and releases 100 units of CO₂. If a plant burns 1 unit of natural gas and releases 50 units of CO₂, which fuel produces less CO₂ per unit energy?`,
+      question: `A power plant burns 1 GJ of coal and releases 100 kg of CO₂. Another plant burns 1 GJ of natural gas and releases 50 kg of CO₂. Which fuel produces less CO₂ per unit energy?`,
       options: [
       `Coal produces less CO₂ per unit energy`,
       `Natural gas produces less CO₂ per unit energy`,
@@ -10619,7 +10917,33 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       `The answer depends on the plant's efficiency`,
       ],
       correctIndex: 1,
-      explanation: `Natural gas releases approximately half the CO₂ per unit of energy compared to coal, making it a lower-carbon fossil fuel option for electricity generation.`,
+      explanation: `For the same energy output (1 GJ), natural gas emits 50 kg vs coal's 100 kg of CO₂ — natural gas releases half the CO₂ per unit of energy.`,
+      variations: [
+        {
+          id: "q6-v1",
+          question: `Plant A burns 2 GJ of coal and releases 180 kg of CO₂. Plant B burns 5 GJ of natural gas and releases 250 kg of CO₂. Which fuel produces less CO₂ per GJ of energy?`,
+          options: [
+          `Coal at 90 kg/GJ`,
+          `Natural gas at 50 kg/GJ`,
+          `They are equal`,
+          `Cannot determine without efficiency data`,
+          ],
+          correctIndex: 1,
+          explanation: `Coal: 180/2 = 90 kg/GJ. Natural gas: 250/5 = 50 kg/GJ. Natural gas produces less CO₂ per unit energy.`,
+        },
+        {
+          id: "q6-v2",
+          question: `Plant A burns 4 GJ of oil and releases 280 kg of CO₂. Plant B burns 10 GJ of natural gas and releases 550 kg of CO₂. Which fuel produces less CO₂ per GJ of energy?`,
+          options: [
+          `Oil at 70 kg/GJ`,
+          `Natural gas at 55 kg/GJ`,
+          `Both produce 60 kg/GJ`,
+          `Oil at 55 kg/GJ`,
+          ],
+          correctIndex: 1,
+          explanation: `Oil: 280/4 = 70 kg/GJ. Natural gas: 550/10 = 55 kg/GJ. Natural gas produces less CO₂ per unit energy.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -11002,6 +11326,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Biomass energy is sustainable only when regrowth matches or exceeds use. Here, harvesting 500 tons while only 300 tons regrow annually means the practice is unsustainable and will deplete forest resources.`,
+      variations: [
+        {
+          id: "q7", 
+          question: `A region harvests 800 tons of wood annually for biomass energy. If the forests in that region grow only 600 tons of new wood per year, what is the sustainability status of this practice?`,
+          options: [
+          `Completely sustainable because wood is a renewable resource`,
+          `Unsustainable because harvest exceeds regrowth`,
+          `Sustainable if the wood is processed efficiently`,
+          `Sustainable if renewable energy is used in harvesting`,
+          ],
+          correctIndex: 1,
+          explanation: `Harvesting 800 tons while only 600 tons regrow annually means a net loss of 200 tons per year, making this unsustainable.`,
+        },
+        {
+          id: "q7", 
+          question: `A region harvests 400 tons of wood annually for biomass energy. If the forests in that region grow 400 tons of new wood per year, what is the sustainability status of this practice?`,
+          options: [
+          `Completely sustainable because harvest matches regrowth`,
+          `Unsustainable because any harvesting depletes forests`,
+          `Sustainable if renewable energy is used in harvesting`,
+          `Sustainable only if the wood is from agricultural waste`,
+          ],
+          correctIndex: 0,
+          explanation: `When harvest equals regrowth at 400 tons annually, forest biomass remains stable, making this sustainable.`,
+        }
+      ],
     },
     {
       id: "q8",
@@ -12542,6 +12892,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Photochemical smog depends on both NOx and VOCs; if non-vehicle sources like industrial facilities still emit VOCs, the remaining vehicle NOx can still react to form substantial ozone.`,
+      variations: [
+        {
+          id: "q12",
+          question: `A city reduces vehicle emissions by 40% but photochemical smog levels only decrease by 15%. Which factor could account for this disproportionate result?`,
+          options: [
+          `The remaining vehicles are now producing more ozone directly`,
+          `Industrial VOC emissions and other non-vehicle sources still contribute significantly to smog formation`,
+          `Reducing emissions increases the intensity of sunlight`,
+          `Ozone is being transported from neighboring regions with higher emissions`,
+          ],
+          correctIndex: 1,
+          explanation: `Photochemical smog depends on both NOx and VOCs; if non-vehicle sources contribute significantly, vehicle emission reduction yields smaller smog improvements.`,
+        },
+        {
+          id: "q12",
+          question: `A city reduces vehicle emissions by 60% but photochemical smog levels only decrease by 25%. Which factor could account for this disproportionate result?`,
+          options: [
+          `The remaining vehicles are now producing more ozone directly`,
+          `Industrial VOC emissions and other non-vehicle sources still contribute significantly to smog formation`,
+          `Reducing emissions increases the intensity of sunlight`,
+          `Ozone is being transported from neighboring regions with higher emissions`,
+          ],
+          correctIndex: 1,
+          explanation: `Photochemical smog depends on both NOx and VOCs; if non-vehicle sources contribute significantly, vehicle emission reduction yields smaller smog improvements.`,
+        },
+      ],
     },
     {
       id: "q13",
@@ -12566,6 +12942,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Photochemical smog formation requires both NOx and VOCs; eliminating most NOx while leaving abundant VOCs means the reaction is limited by the scarcity of NOx, not VOCs.`,
+      variations: [
+        {
+          id: "q14",
+          question: `If a city implements strict emission controls that eliminate 85% of NOx but only 15% of VOCs, what would be the expected effect on photochemical smog?`,
+          options: [
+          `Smog would be eliminated because NOx is the primary precursor`,
+          `Smog would decrease slightly because most of the limiting precursor was removed`,
+          `Smog would remain largely unchanged because VOCs are still abundant`,
+          `Smog would increase due to the excess VOCs reacting with atmospheric oxygen`,
+          ],
+          correctIndex: 2,
+          explanation: `When NOx is substantially reduced but VOCs remain abundant, the reaction becomes NOx-limited; smog levels change minimally since VOCs are non-limiting.`,
+        },
+        {
+          id: "q14",
+          question: `If a city implements strict emission controls that eliminate 80% of NOx but only 5% of VOCs, what would be the expected effect on photochemical smog?`,
+          options: [
+          `Smog would be eliminated because NOx is the primary precursor`,
+          `Smog would decrease significantly since both precursors are moderately reduced`,
+          `Smog would remain relatively unchanged because VOCs are still highly abundant`,
+          `Smog would increase due to the excess VOCs reacting with atmospheric oxygen`,
+          ],
+          correctIndex: 2,
+          explanation: `When NOx is substantially reduced but VOCs remain very abundant, the reaction becomes NOx-limited; smog levels remain largely unchanged.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -13455,6 +13857,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The dramatic pH drop to 4.8 (characteristic of acid rain) and the timing correlate with industrial acid rain formation, which directly explains both the acidification and fish mortality.`,
+      variations: [
+        {
+          id: "q11",
+          question: `A researcher observes that a lake's pH has decreased from 7.2 to 5.1 over the past 15 years, and fish populations have declined significantly. Which sequence of events best explains these observations?`,
+          options: [
+          `Increased atmospheric CO₂ caused natural acidification independent of industrial emissions`,
+          `Increased SO₂ and NOx emissions formed acids that lowered pH below the tolerance threshold for fish`,
+          `Algal blooms consumed all oxygen, suffocating fish regardless of pH changes`,
+          `Natural weathering of acidic rocks in the watershed lowered pH`,
+          ],
+          correctIndex: 1,
+          explanation: `A pH drop to 5.1 (characteristic of acid rain) combined with fish population decline directly correlates with industrial acid rain formation.`,
+        },
+        {
+          id: "q11",
+          question: `A researcher observes that a lake's pH has decreased from 6.8 to 4.5 over the past 25 years, and fish populations have been extirpated. Which sequence of events best explains these observations?`,
+          options: [
+          `Increased atmospheric CO₂ caused natural acidification independent of industrial emissions`,
+          `Increased SO₂ and NOx emissions formed acids that lowered pH below the tolerance threshold for fish`,
+          `Algal blooms consumed all oxygen, suffocating fish regardless of pH changes`,
+          `Natural weathering of acidic rocks in the watershed lowered pH`,
+          ],
+          correctIndex: 1,
+          explanation: `A pH drop to 4.5 (severely acidic, characteristic of acid rain) correlates with fish extirpation, directly explaining both acidification and species loss.`,
+        },
+      ],
     },
     {
       id: "q12",
@@ -13688,6 +14116,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `Removing the 85 dB construction source would reduce overall noise exposure noticeably, but traffic and industrial noise would persist and continue to affect residents.`,
+      variations: [
+        {
+          id: "q15",
+          question: `A city experiences noise pollution from three sources: traffic (68 dB), construction (82 dB), and industry (78 dB). If construction activity were eliminated, what would be the most likely outcome for residents?`,
+          options: [
+          `Noise levels would drop to near silence because traffic and industry are minor sources`,
+          `Residents would experience a noticeable reduction in overall noise exposure, though traffic and industrial noise would remain`,
+          `Noise pollution would be completely eliminated`,
+          `Residents would perceive no change because the remaining sources are equally loud`,
+          ],
+          correctIndex: 1,
+          explanation: `Removing the 82 dB construction source would reduce overall noise exposure noticeably, but traffic and industrial noise would persist.`,
+        },
+        {
+          id: "q15",
+          question: `A city experiences noise pollution from three sources: traffic (72 dB), construction (88 dB), and industry (82 dB). If construction activity were eliminated, what would be the most likely outcome for residents?`,
+          options: [
+          `Noise levels would drop to near silence because traffic and industry are minor sources`,
+          `Residents would experience a noticeable reduction in overall noise exposure, though traffic and industrial noise would remain`,
+          `Noise pollution would be completely eliminated`,
+          `Residents would perceive no change because the remaining sources are equally loud`,
+          ],
+          correctIndex: 1,
+          explanation: `Removing the 88 dB construction source would reduce overall noise exposure noticeably, but traffic and industrial noise would persist.`,
+        },
+      ],
     },
     ],
   },
@@ -15060,6 +15514,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Starting at 0.001 ppm, multiplying by 10 for each of three trophic levels (primary consumer, secondary consumer, tertiary consumer) gives 0.001 × 10 × 10 × 10 = 1 ppm.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A river contains a toxin at 0.01 ppm. With 10x biomagnification per trophic level, what concentration would a secondary consumer have?`,
+          options: [
+            `0.1 ppm`,
+            `1 ppm`,
+            `10 ppm`,
+            `100 ppm`,
+          ],
+          correctIndex: 1,
+          explanation: `Secondary consumer (2 levels): 0.01 × 10 × 10 = 1 ppm.`,
+        },
+        {
+          id: "q6",
+          question: `An aquatic ecosystem has initial toxin concentration of 0.0001 ppm. With 10x magnification per level, what is the concentration in a secondary consumer?`,
+          options: [
+            `0.001 ppm`,
+            `0.01 ppm`,
+            `0.1 ppm`,
+            `1 ppm`,
+          ],
+          correctIndex: 1,
+          explanation: `Secondary consumer (2 trophic levels): 0.0001 × 10 × 10 = 0.01 ppm.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -15108,6 +15588,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The concentration increases by a factor of 10 at each step: 10 ppm → 100 ppm (×10) and 100 ppm → 1000 ppm (×10), indicating a consistent 10-fold biomagnification between consecutive trophic levels.`,
+      variations: [
+        {
+          id: "q10",
+          question: `In a food chain, toxin concentration is 5 ppm in herbivores and 50 ppm in carnivores. What is the biomagnification factor?`,
+          options: [
+            `5 times`,
+            `10 times`,
+            `25 times`,
+            `50 times`,
+          ],
+          correctIndex: 1,
+          explanation: `Biomagnification factor = 50 ppm ÷ 5 ppm = 10 times.`,
+        },
+        {
+          id: "q10",
+          question: `A pollutant shows concentrations of 2 ppm in plankton, 20 ppm in fish, and 200 ppm in seabirds. What is the consistent biomagnification factor between trophic levels?`,
+          options: [
+            `2 times`,
+            `5 times`,
+            `10 times`,
+            `100 times`,
+          ],
+          correctIndex: 2,
+          explanation: `Each step shows 10x increase: 2 → 20 (×10) and 20 → 200 (×10).`,
+        },
+      ],
     },
     {
       id: "q11",
@@ -15156,6 +15662,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The consistent 10-fold increase per trophic level continues: 100 ppm (eagle) × 10 = 1000 ppm in a super-predator feeding on eagles.`,
+      variations: [
+        {
+          id: "q14",
+          question: `A food chain shows PCB concentrations: algae 0.1 ppm, zooplankton 1 ppm, fish 10 ppm, seal 100 ppm, orca 1000 ppm. If an apex predator whale feeds on orcas, what concentration would be expected?`,
+          options: [
+            `5000 ppm`,
+            `10,000 ppm`,
+            `50,000 ppm`,
+            `100,000 ppm`,
+          ],
+          correctIndex: 1,
+          explanation: `The 10-fold pattern continues: 1000 ppm (orca) × 10 = 10,000 ppm in the whale.`,
+        },
+        {
+          id: "q14",
+          question: `In a marine ecosystem, a toxin shows 0.01 ppm in producers, 0.1 ppm in primary consumers, 1 ppm in secondary consumers, and 10 ppm in tertiary consumers. What would be the concentration in a quaternary consumer?`,
+          options: [
+            `50 ppm`,
+            `100 ppm`,
+            `500 ppm`,
+            `1000 ppm`,
+          ],
+          correctIndex: 1,
+          explanation: `Quaternary consumer (4 levels up): 0.01 × 10⁴ = 100 ppm, or following the pattern 10 × 10 = 100 ppm.`,
+        },
+      ],
     },
     {
       id: "q15",
@@ -15764,6 +16296,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `A lower LD50 means less dose is required to kill 50% of the population, indicating greater toxicity. Substance A with an LD50 of 10 mg/kg is far more toxic than Substance B.`,
+      variations: [
+        {
+          id: "q3",
+          question: `Chemical X has an LD50 of 50 mg/kg while Chemical Y has an LD50 of 200 mg/kg. Which is more toxic?`,
+          options: [
+            `Chemical Y is more toxic`,
+            `Chemical X is more toxic`,
+            `They have equal toxicity`,
+            `Toxicity cannot be determined from LD50 alone`,
+          ],
+          correctIndex: 1,
+          explanation: `Chemical X is more toxic because its lower LD50 (50 mg/kg) means it requires less dose to kill 50% of the population compared to Chemical Y (200 mg/kg).`,
+        },
+        {
+          id: "q3",
+          question: `Compound A: LD50 = 5 mg/kg. Compound B: LD50 = 100 mg/kg. Which is more hazardous?`,
+          options: [
+            `Compound B`,
+            `Compound A`,
+            `Both equally hazardous`,
+            `Cannot determine from LD50 data`,
+          ],
+          correctIndex: 1,
+          explanation: `Compound A (LD50 = 5 mg/kg) is more hazardous because a much smaller dose is lethal compared to Compound B (LD50 = 100 mg/kg).`,
+        },
+      ],
     },
     {
       id: "q4",
@@ -15908,6 +16466,58 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `At 20 mg/kg, the exposure exceeds Compound A's LD50 of 12 mg/kg (predicting severe acute toxicity or lethality) but is well below Compound B's LD50 of 1200 mg/kg (predicting no acute lethality), demonstrating how LD50 predicts dose-response relationships.`,
+      variations: [
+        {
+          id: "q15",
+          question: `Pesticide X: LD50 = 25 mg/kg. Pesticide Y: LD50 = 500 mg/kg. A farmer is exposed to 50 mg/kg of each. What outcome is predicted?`,
+          options: [
+            `Both cause equal harm`,
+            `X likely causes lethal toxicity; Y unlikely to cause acute lethality`,
+            `Y is more dangerous`,
+            `Neither causes harm`,
+          ],
+          correctIndex: 1,
+          explanation: `At 50 mg/kg exposure: Pesticide X (LD50 = 25) is exceeded (50 > 25, predicting lethality), while Pesticide Y (LD50 = 500) is not exceeded (50 < 500, predicting no acute lethality).`,
+      variations: [
+        {
+          id: "q15",
+          question: `Pesticide X: LD50 = 25 mg/kg. Pesticide Y: LD50 = 500 mg/kg. A farmer is exposed to 50 mg/kg of each. What outcome is predicted?`,
+          options: [
+            `Both cause equal harm`,
+            `X likely causes lethal toxicity; Y unlikely to cause acute lethality`,
+            `Y is more dangerous`,
+            `Neither causes harm`,
+          ],
+          correctIndex: 1,
+          explanation: `At 50 mg/kg exposure: Pesticide X (LD50 = 25) is exceeded (50 > 25, predicting lethality), while Pesticide Y (LD50 = 500) is not exceeded (50 < 500, predicting no acute lethality).`,
+        },
+        {
+          id: "q15",
+          question: `Substance M: LD50 = 8 mg/kg. Substance N: LD50 = 200 mg/kg. An accident releases 15 mg/kg exposure of each. What is predicted?`,
+          options: [
+            `Both cause identical effects`,
+            `M causes severe/lethal toxicity; N causes minimal acute toxicity`,
+            `N is more dangerous`,
+            `Neither causes toxicity`,
+          ],
+          correctIndex: 1,
+          explanation: `Substance M (15 mg/kg exposure vs 8 mg/kg LD50): exceeds LD50, predicting severe acute toxicity or death. Substance N (15 mg/kg vs 200 mg/kg LD50): well below LD50, predicting minimal acute toxicity.`,
+        },
+      ],
+        },
+        {
+          id: "q15",
+          question: `Substance M: LD50 = 8 mg/kg. Substance N: LD50 = 200 mg/kg. An accident releases 15 mg/kg exposure of each. What is predicted?`,
+          options: [
+            `Both cause identical effects`,
+            `M causes severe/lethal toxicity; N causes minimal acute toxicity`,
+            `N is more dangerous`,
+            `Neither causes toxicity`,
+          ],
+          correctIndex: 1,
+          explanation: `Substance M (15 mg/kg exposure vs 8 mg/kg LD50): exceeds LD50, predicting severe acute toxicity or death. Substance N (15 mg/kg vs 200 mg/kg LD50): well below LD50, predicting minimal acute toxicity.`,
+        },
+      ],
     },
     ],
   },
@@ -15985,6 +16595,58 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `The threshold dose is the lowest dose at which an effect is observed; in this case, 5 mg/kg is the first dose showing a measurable effect.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A chemical shows no toxic effects at doses up to 20 mg/kg, but clear toxicity appears at 20 mg/kg and higher. What is the threshold dose?`,
+          options: [
+            `10 mg/kg`,
+            `20 mg/kg`,
+            `30 mg/kg`,
+            `Undefined`,
+          ],
+          correctIndex: 1,
+          explanation: `The threshold dose is 20 mg/kg, the lowest dose at which a measurable toxic effect is observed.`,
+      variations: [
+        {
+          id: "q6",
+          question: `A chemical shows no toxic effects at doses up to 20 mg/kg, but clear toxicity appears at 20 mg/kg and higher. What is the threshold dose?`,
+          options: [
+            `10 mg/kg`,
+            `20 mg/kg`,
+            `30 mg/kg`,
+            `Undefined`,
+          ],
+          correctIndex: 1,
+          explanation: `The threshold dose is 20 mg/kg, the lowest dose at which a measurable toxic effect is observed.`,
+        },
+        {
+          id: "q6",
+          question: `Exposure data: no effects below 0.5 mg/kg; effects present at 0.5 mg/kg and above. What is the threshold?`,
+          options: [
+            `0.1 mg/kg`,
+            `0.5 mg/kg`,
+            `1 mg/kg`,
+            `Cannot determine`,
+          ],
+          correctIndex: 1,
+          explanation: `The threshold dose is 0.5 mg/kg, the first dose level showing detectable effects.`,
+        },
+      ],
+        },
+        {
+          id: "q6",
+          question: `Exposure data: no effects below 0.5 mg/kg; effects present at 0.5 mg/kg and above. What is the threshold?`,
+          options: [
+            `0.1 mg/kg`,
+            `0.5 mg/kg`,
+            `1 mg/kg`,
+            `Cannot determine`,
+          ],
+          correctIndex: 1,
+          explanation: `The threshold dose is 0.5 mg/kg, the first dose level showing detectable effects.`,
+        },
+      ],
     },
     {
       id: "q7",
@@ -15997,6 +16659,58 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 1,
       explanation: `LD50 is the dose at which 50% mortality occurs; the data shows 50% response at 30 mg, making this the LD50.`,
+      variations: [
+        {
+          id: "q7",
+          question: `Dose-response data: 0% at 5 mg, 10% at 10 mg, 50% at 25 mg, 90% at 40 mg. What is the LD50?`,
+          options: [
+            `15 mg`,
+            `25 mg`,
+            `35 mg`,
+            `45 mg`,
+          ],
+          correctIndex: 1,
+          explanation: `LD50 corresponds to 50% response/mortality, which occurs at 25 mg according to the data.`,
+      variations: [
+        {
+          id: "q7",
+          question: `Dose-response data: 0% at 5 mg, 10% at 10 mg, 50% at 25 mg, 90% at 40 mg. What is the LD50?`,
+          options: [
+            `15 mg`,
+            `25 mg`,
+            `35 mg`,
+            `45 mg`,
+          ],
+          correctIndex: 1,
+          explanation: `LD50 corresponds to 50% response/mortality, which occurs at 25 mg according to the data.`,
+        },
+        {
+          id: "q7",
+          question: `Dose-response curve shows: 0% at 2 mg, 25% at 4 mg, 50% at 6 mg, 75% at 8 mg. The LD50 is:`,
+          options: [
+            `4 mg`,
+            `6 mg`,
+            `8 mg`,
+            `10 mg`,
+          ],
+          correctIndex: 1,
+          explanation: `The LD50 (50% mortality/response) occurs at 6 mg based on the curve data.`,
+        },
+      ],
+        },
+        {
+          id: "q7",
+          question: `Dose-response curve shows: 0% at 2 mg, 25% at 4 mg, 50% at 6 mg, 75% at 8 mg. The LD50 is:`,
+          options: [
+            `4 mg`,
+            `6 mg`,
+            `8 mg`,
+            `10 mg`,
+          ],
+          correctIndex: 1,
+          explanation: `The LD50 (50% mortality/response) occurs at 6 mg based on the curve data.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -17107,6 +17821,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 2,
       explanation: `Since methane has roughly doubled since pre-industrial times, a baseline of 100 units would correspond to approximately 250 units currently (accounting for the 2.5× increase mentioned).`,
+      variations: [
+        {
+          id: "q7",
+          question: `If pre-industrial methane was at a baseline level of 200 units, what would the current methane concentration be approximately?`,
+          options: [
+          `300 units`,
+          `400 units`,
+          `500 units`,
+          `600 units`,
+          ],
+          correctIndex: 2,
+          explanation: `Baseline of 200 units × 2.5 = 500 units.`,
+        },
+        {
+          id: "q7",
+          question: `If pre-industrial methane was at a baseline level of 80 units, what would the current methane concentration be approximately?`,
+          options: [
+          `120 units`,
+          `160 units`,
+          `200 units`,
+          `240 units`,
+          ],
+          correctIndex: 2,
+          explanation: `Baseline of 80 units × 2.5 = 200 units.`,
+        },
+      ],
     },
     {
       id: "q8",
@@ -17129,8 +17869,34 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       `Approximately 75%`,
       `Approximately 100%`,
       ],
-      correctIndex: 2,
-      explanation: `The increase from 280 ppm to 420 ppm is 140 ppm, which represents a 140/280 = 0.5 or 50% increase; however, the calculation should be (420-280)/280 × 100 = 50%, making the closest answer approximately 50% (option 1 is actually correct—this tests careful calculation).`,
+      correctIndex: 1,
+      explanation: `Pre-industrial CO₂ was 280 ppm. Percentage increase = 140/280 × 100 = 50%.`,
+      variations: [
+        {
+          id: "q9-v1",
+          question: `If atmospheric CO₂ rose from 280 ppm to 350 ppm, what percentage increase does this represent?`,
+          options: [
+          `Approximately 10%`,
+          `Approximately 25%`,
+          `Approximately 35%`,
+          `Approximately 50%`,
+          ],
+          correctIndex: 1,
+          explanation: `Percentage increase = (350−280)/280 × 100 = 70/280 × 100 = 25%.`,
+        },
+        {
+          id: "q9-v2",
+          question: `If atmospheric CO₂ rose from 300 ppm to 450 ppm, what percentage increase does this represent?`,
+          options: [
+          `Approximately 25%`,
+          `Approximately 33%`,
+          `Approximately 50%`,
+          `Approximately 67%`,
+          ],
+          correctIndex: 2,
+          explanation: `Percentage increase = (450−300)/300 × 100 = 150/300 × 100 = 50%.`,
+        },
+      ],
     },
     {
       id: "q10",
@@ -17203,6 +17969,32 @@ export const AP_ENVIRONMENTAL_MCQS: LessonMcqs[] = [
       ],
       correctIndex: 0,
       explanation: `Starting from 420 ppm, reaching 520 ppm requires an increase of 100 ppm; at 50 ppm per decade, this would occur in approximately 2 decades.`,
+      variations: [
+        {
+          id: "q15",
+          question: `If global CO₂ emissions continue at current rates and atmospheric CO₂ increases by 30 ppm per decade, approximately when would atmospheric CO₂ reach 480 ppm?`,
+          options: [
+          `In approximately 2 decades`,
+          `In approximately 3 decades`,
+          `In approximately 5 decades`,
+          `In approximately 8 decades`,
+          ],
+          correctIndex: 1,
+          explanation: `Starting from 420 ppm, reaching 480 ppm requires an increase of 60 ppm; at 30 ppm per decade, this would occur in approximately 2 decades (60÷30=2).`,
+        },
+        {
+          id: "q15",
+          question: `If global CO₂ emissions continue at current rates and atmospheric CO₂ increases by 60 ppm per decade, approximately when would atmospheric CO₂ reach 600 ppm?`,
+          options: [
+          `In approximately 2 decades`,
+          `In approximately 3 decades`,
+          `In approximately 4 decades`,
+          `In approximately 6 decades`,
+          ],
+          correctIndex: 2,
+          explanation: `Starting from 420 ppm, reaching 600 ppm requires an increase of 180 ppm; at 60 ppm per decade, this would occur in approximately 3 decades (180÷60=3).`,
+        },
+      ],
     },
     ],
   },

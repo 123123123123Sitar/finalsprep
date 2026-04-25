@@ -91,11 +91,46 @@ export async function loadMcqsFor(lessonSlug: string): Promise<Mcq[]> {
 }
 
 /**
+ * Pick one concrete variant of a parametric MCQ. Variant 0 is always the
+ * original question. Higher variant indices select from the `variations`
+ * array, wrapping when there aren't enough variants. Returns a plain Mcq
+ * shape (the chosen variant's numbers, options, answer, explanation) so
+ * callers don't have to know about the variations machinery.
+ *
+ * Questions without variations collapse to just the original — same Mcq
+ * every time. That's fine: conceptual / factual questions don't have
+ * meaningful parametric variants.
+ */
+export function selectVariant(mcq: Mcq, variantIndex: number): Mcq {
+  const variants = mcq.variations ?? [];
+  if (variants.length === 0) return mcq;
+  const safe = Math.max(0, Math.floor(variantIndex));
+  // index 0 = original; 1..N = variations.
+  const total = variants.length + 1;
+  const slot = safe % total;
+  if (slot === 0) return mcq;
+  const v = variants[slot - 1];
+  return {
+    id: mcq.id,
+    question: v.question,
+    options: v.options,
+    correctIndex: v.correctIndex,
+    explanation: v.explanation,
+    variations: mcq.variations,
+  };
+}
+
+/**
  * Select PRIMARY_COUNT questions from the pool for a given attempt index.
  * Uses round-robin rotation so retakes always pull fresh questions before
  * recycling. With a 15-question pool and 4 per attempt, attempts 0..2 have
  * zero overlap; attempt 3 wraps, and the full pool re-cycles every 15
  * attempts.
+ *
+ * Once a pool-level repeat is unavoidable (attempt ≥ 4), each question
+ * also rotates through its parametric variants so the numbers and answer
+ * change — a student who has seen every question in the pool still gets
+ * a different problem on the next retake.
  */
 export function pickQuestionsForAttempt(
   pool: Mcq[],
@@ -106,7 +141,13 @@ export function pickQuestionsForAttempt(
   const k = Math.min(PRIMARY_COUNT, n);
   const safeIdx = Math.max(0, Math.floor(attemptIndex));
   const start = (safeIdx * k) % n;
+  // How many full cycles through the pool has the student completed?
+  // Use that as the variant offset so the 5th retake of "question X" is
+  // a different number/answer than the 1st.
+  const variantOffset = Math.floor((safeIdx * k) / n);
   const out: Mcq[] = [];
-  for (let i = 0; i < k; i++) out.push(pool[(start + i) % n]);
+  for (let i = 0; i < k; i++) {
+    out.push(selectVariant(pool[(start + i) % n], variantOffset));
+  }
   return out;
 }

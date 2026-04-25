@@ -1762,8 +1762,8 @@ export const AP_WORLD_HISTORY_MCQS: LessonMcqs[] = [
       `Sail only during the summer months when all winds are favorable`,
       `Avoid sailing during monsoon seasons entirely due to dangerous conditions`,
       ],
-      correctIndex: 0,
-      explanation: `Merchants would depart with favorable winds (southwest monsoon) and return when winds reversed (northeast monsoon), completing a round trip within the annual wind cycle.`,
+      correctIndex: 1,
+      explanation: `The northeast monsoon (winter) blows from northeast to southwest, carrying ships from India to East Africa; the southwest monsoon (summer) reverses direction, carrying ships back from East Africa to India. A merchant exploits this seasonal reversal to complete a round trip within a year.`,
     },
     {
       id: "q9",
@@ -10366,15 +10366,15 @@ export const AP_WORLD_HISTORY_MCQS: LessonMcqs[] = [
     mcqs: [
     {
       id: "q1",
-      question: `In what year did the Bolsheviks, led by Lenin, establish the Soviet Union?`,
+      question: `In what year did the Bolsheviks, led by Lenin, formally establish the Soviet Union (USSR)?`,
       options: [
       `1905`,
       `1917`,
       `1922`,
       `1924`,
       ],
-      correctIndex: 1,
-      explanation: `The October Revolution of 1917 brought Lenin and the Bolsheviks to power in Russia, establishing the foundation of the Soviet state. While the USSR was formally constituted in 1922, the revolution itself occurred in 1917.`,
+      correctIndex: 2,
+      explanation: `Although the Bolsheviks seized power in the October Revolution of 1917, the Union of Soviet Socialist Republics was formally constituted on December 30, 1922 by the Treaty on the Creation of the USSR, which united the Russian, Ukrainian, Belorussian, and Transcaucasian republics.`,
     },
     {
       id: "q2",
