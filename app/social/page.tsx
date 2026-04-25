@@ -124,7 +124,7 @@ export default function SocialHomePage() {
     <main className="min-h-screen bg-paper">
       <SiteNav sticky />
       <CommunityTabs />
-      <div className="mx-auto grid max-w-6xl gap-8 px-6 py-10 lg:grid-cols-[1fr_300px]">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:grid-cols-[1fr_300px]">
         <div>
           <header className="mb-6">
             <div className="label">Community</div>

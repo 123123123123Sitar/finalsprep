@@ -30,7 +30,7 @@ function SignInPageInner() {
     <main className="bg-paper text-body">
       <SiteNav />
 
-      <section className="mx-auto max-w-5xl px-6 py-16">
+      <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
         {!configured ? (
           <div className="mx-auto max-w-xl text-center">
             <div className="label mb-3">Sign-in unavailable</div>
@@ -99,7 +99,7 @@ function SignInPageSkeleton() {
     <main className="bg-paper text-body">
       <SiteNav />
 
-      <section className="mx-auto max-w-5xl px-6 py-16">
+      <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
         <div className="flex h-64 items-center justify-center text-muted">
           <div className="typing-dots" aria-label="Loading">
             <span /> <span /> <span />

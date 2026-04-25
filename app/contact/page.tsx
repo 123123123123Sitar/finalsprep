@@ -87,7 +87,7 @@ function ContactPageSkeleton() {
   return (
     <main className="bg-paper text-body">
       <SiteNav />
-      <section className="mx-auto max-w-3xl px-6 py-16">
+      <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
         <div className="label mb-3">Contact</div>
         <div className="h-16 w-3/4 animate-pulse rounded bg-hair/40" />
         <div className="mt-8 h-64 animate-pulse rounded bg-hair/30" />
@@ -201,7 +201,7 @@ function ContactPageInner() {
     <main className="bg-paper text-body">
       <SiteNav />
 
-      <section className="mx-auto max-w-3xl px-6 py-16">
+      <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
         <div className="label mb-3">Contact</div>
         <h1 className="font-serif text-[42px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[52px]">
           Talk to a human at FinalsPrep.

@@ -101,7 +101,7 @@ export default function ProjectsPage() {
     <main className="bg-paper text-body">
       <SiteNav>
       </SiteNav>
-      <section className="mx-auto max-w-5xl px-6 py-12">
+      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
         <div className="label mb-3">Projects</div>
         <h1 className="font-serif text-[44px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[52px]">
           Group chats by what you're working on.

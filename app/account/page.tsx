@@ -318,7 +318,7 @@ function AccountInner() {
         <SiteNav>
           <a href="/study" className="nav-link">Study</a>
         </SiteNav>
-        <section className="mx-auto max-w-xl px-6 py-24 text-center">
+        <section className="mx-auto max-w-xl px-4 py-12 text-center sm:px-6 sm:py-24">
           <div className="label mb-3">Account unavailable</div>
           <h2 className="font-serif text-3xl text-ink">
             Account access is temporarily unavailable.
@@ -348,7 +348,7 @@ function AccountInner() {
     <main className="bg-paper text-body">
       <SiteNav />
 
-      <section className="mx-auto max-w-3xl px-6 pb-24 pt-12 sm:pt-16">
+      <section className="mx-auto max-w-3xl px-4 pb-16 pt-8 sm:px-6 sm:pb-24 sm:pt-16">
         <div className="flex flex-col gap-1">
           <div className="label">Account</div>
           <h1 className="font-serif text-[40px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[48px]">

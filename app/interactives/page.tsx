@@ -127,7 +127,7 @@ export default function InteractivesPage() {
       <main className="bg-paper text-body">
         <SiteNav>
         </SiteNav>
-        <section data-tour="interactives-learner-upsell" className="mx-auto max-w-2xl px-6 py-20">
+        <section data-tour="interactives-learner-upsell" className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-20">
           <div className="label mb-3">Interactives</div>
           <h1 className="font-serif text-[44px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[52px]">
             Ask the AI to build you a graph.
@@ -164,7 +164,7 @@ export default function InteractivesPage() {
     <main className="bg-paper text-body">
       <SiteNav>
       </SiteNav>
-      <section className="mx-auto max-w-4xl px-6 py-12">
+      <section className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
         <div className="label mb-3">Interactives</div>
         <h1 className="font-serif text-[44px] font-normal leading-[1.05] tracking-tightest text-ink sm:text-[52px]">
           Describe the widget.

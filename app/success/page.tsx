@@ -11,7 +11,7 @@ export default function Success({
     <main className="bg-paper">
       <SiteNav />
       <SuccessNotifier plan={plan} />
-      <section className="mx-auto max-w-2xl px-6 py-24">
+      <section className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-24">
         <div className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted">
           Payment received
         </div>

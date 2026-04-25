@@ -146,7 +146,7 @@ export default function ExamPage() {
   return (
     <main className="bg-paper text-body">
       <SiteNav />
-      <section className="mx-auto max-w-3xl px-6 py-16">
+      <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
         {phase === "setup" && (
           <div className="space-y-8">
             <div>

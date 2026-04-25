@@ -256,16 +256,16 @@ function MarketingHome() {
       <div className="relative isolate overflow-hidden">
         {/* Animated aurora background - full viewport width */}
         <AuroraBackground />
-      <section className="relative z-10 mx-auto max-w-6xl overflow-visible px-6 pt-20 pb-24 sm:pt-28">
+      <section className="relative z-10 mx-auto max-w-6xl overflow-visible px-5 pt-12 pb-16 sm:px-6 sm:pt-20 sm:pb-24 md:pt-28">
         <div className="grid items-start gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
           <div className="relative">
             <div className="label animate-fadeUp mb-6">An AI tutor for every AP</div>
-            <h1 className="animate-heroReveal font-serif text-[48px] font-normal leading-[1.05] tracking-tightest text-ink pb-2 sm:text-[64px]">
+            <h1 className="animate-heroReveal font-serif text-[36px] font-normal leading-[1.05] tracking-tightest text-ink pb-2 sm:text-[48px] md:text-[64px]">
               An <span className="italic gradient-text">AI tutor</span>{" "}
               for every<br />
               AP class. Open 24 hours.
             </h1>
-            <p className="animate-fadeUp delay-300 mt-7 max-w-xl text-[18px] leading-relaxed text-body">
+            <p className="animate-fadeUp delay-300 mt-6 max-w-xl text-[16px] leading-relaxed text-body sm:mt-7 sm:text-[18px]">
               <strong className="text-ink">A real AI tutor</strong> that walks
               you through math, physics, chemistry, bio, CS, and history —
               concept-first, with the reasoning, not just the answer. The AI
@@ -311,7 +311,7 @@ function MarketingHome() {
         {/* social proof strip */}
         <Reveal from="up">
         <div className="mt-16 border-y border-hair py-6">
-          <div className="grid gap-4 text-center sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 text-center sm:grid-cols-4">
             {[
               { n: "16", l: "AP courses covered" },
               { n: "10k", l: "Free tokens / day" },
@@ -348,7 +348,7 @@ function MarketingHome() {
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* FEATURE PREVIEWS - visual mockups of what's actually in the app */}
-      <section id="features" className="relative mx-auto max-w-6xl overflow-hidden px-6 py-20">
+      <section id="features" className="relative mx-auto max-w-6xl overflow-hidden px-5 py-12 sm:px-6 sm:py-20">
         <Reveal from="up">
           <div className="label mb-3">Built around the AI tutor</div>
           <h2 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
@@ -429,7 +429,7 @@ function MarketingHome() {
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* COMMON MISTAKES */}
-      <section className="mx-auto max-w-5xl px-6 py-16">
+      <section className="mx-auto max-w-5xl px-5 py-10 sm:px-6 sm:py-16">
         <Reveal from="right">
         <div className="grid gap-10 md:grid-cols-[1fr_1.4fr]">
           <div>
@@ -493,7 +493,7 @@ function MarketingHome() {
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* HOW IT WORKS */}
-      <section id="how" className="mx-auto max-w-5xl px-6 py-16">
+      <section id="how" className="mx-auto max-w-5xl px-5 py-10 sm:px-6 sm:py-16">
         <Reveal from="left">
         <div className="label mb-4">How it works</div>
         <h2 className="font-serif text-4xl font-normal leading-tight text-ink">
@@ -539,7 +539,7 @@ function MarketingHome() {
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* COVERAGE - every AP we cover, organized by category */}
-      <section id="coverage" className="mx-auto max-w-5xl px-6 py-16">
+      <section id="coverage" className="mx-auto max-w-5xl px-5 py-10 sm:px-6 sm:py-16">
         <Reveal from="up">
           <div className="label mb-4">Every AP covered</div>
           <h2 className="font-serif text-3xl font-normal leading-tight text-ink sm:text-4xl">
@@ -649,7 +649,7 @@ function MarketingHome() {
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* PRICING */}
-      <section id="price" className="mx-auto max-w-6xl px-6 py-20">
+      <section id="price" className="mx-auto max-w-6xl px-5 py-12 sm:px-6 sm:py-20">
         <Reveal from="up">
           <div className="label mb-4">Pricing</div>
           <h2 className="font-serif text-4xl font-normal leading-tight text-ink sm:text-5xl">
@@ -935,7 +935,7 @@ function MarketingHome() {
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-5xl px-6 py-16">
+      <section id="faq" className="mx-auto max-w-5xl px-5 py-10 sm:px-6 sm:py-16">
         <Reveal from="scale">
         <div className="grid gap-10 md:grid-cols-[220px_1fr]">
           <div>
@@ -990,17 +990,17 @@ function MarketingHome() {
       <div aria-hidden className="section-divider mx-auto max-w-5xl" />
 
       {/* CLOSING */}
-      <section className="marquee-bg relative mx-auto max-w-5xl px-6 py-24 sm:py-32">
+      <section className="marquee-bg relative mx-auto max-w-5xl px-5 py-14 sm:px-6 sm:py-24 md:py-32">
         <Reveal from="scale">
         <div className="mx-auto max-w-3xl text-center">
           
-          <h2 className="font-serif text-5xl font-normal leading-[1.05] tracking-tight text-ink sm:text-6xl md:text-7xl">
+          <h2 className="font-serif text-[36px] font-normal leading-[1.05] tracking-tight text-ink sm:text-5xl md:text-6xl lg:text-7xl">
             Your next exam is{" "}
             <span className="gradient-sweep italic">closer</span>
             <br />
             than you think.
           </h2>
-          <p className="mx-auto mt-7 max-w-xl text-[18px] leading-relaxed text-body">
+          <p className="mx-auto mt-6 max-w-xl text-[16px] leading-relaxed text-body sm:mt-7 sm:text-[18px]">
             It takes less time to paste a problem in than to read the rest
             of this page. Try the free tier first. If it helps, Pro is{" "}
             <strong className="text-ink">$16/month</strong> — and right now
@@ -1059,7 +1059,7 @@ function BlogPreviewSection() {
   const guides = getSubjectPostsSorted().slice(0, 3);
   if (featured.length === 0 && guides.length === 0) return null;
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-6xl px-5 py-12 sm:px-6 sm:py-20">
       <Reveal from="up">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>

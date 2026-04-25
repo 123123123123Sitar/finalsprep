@@ -140,7 +140,7 @@ function Shell({ children }: { children: React.ReactNode }) {
 function InvalidItem() {
   return (
     <Shell>
-      <section className="mx-auto max-w-xl px-6 py-16">
+      <section className="mx-auto max-w-xl px-4 py-10 sm:px-6 sm:py-16">
         <h1 className="font-serif text-3xl text-ink">We couldn't find that item.</h1>
         <p className="mt-3 text-body">Check the link or head back to the pricing page.</p>
         <a href="/#price" className="btn-primary mt-6 inline-flex">View pricing</a>

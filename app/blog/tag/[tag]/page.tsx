@@ -113,7 +113,7 @@ export default function BlogTagPage({ params }: Props) {
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-6 py-12">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
         <ul className="divide-y divide-hair">
           {posts.map((post, i) => (
             <li key={post.slug}>

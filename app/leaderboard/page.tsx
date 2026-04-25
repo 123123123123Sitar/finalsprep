@@ -95,7 +95,7 @@ export default function LeaderboardPage() {
     <main className="min-h-screen bg-paper">
       <SiteNav sticky />
       <CommunityTabs />
-      <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
         <header className="mb-8">
           <div className="label">Community</div>
           <h1 className="mt-1 font-serif text-4xl text-ink">Leaderboards</h1>

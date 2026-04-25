@@ -109,7 +109,7 @@ export default function BlogIndexPage() {
           left) so the top of the feed feels like a front page. */}
       {heroPost && (
         <section aria-labelledby="featured-heading" className="border-b border-hair">
-          <div className="mx-auto max-w-6xl px-6 py-12">
+          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
             <div className="mb-6 flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] text-muted">
               <span className="h-px w-8 bg-hair" aria-hidden />
               <span id="featured-heading">Lead story</span>

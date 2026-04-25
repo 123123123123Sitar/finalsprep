@@ -160,7 +160,7 @@ function GiftInner() {
   return (
     <main className="bg-paper text-body">
       <SiteNav />
-      <div className="mx-auto max-w-xl px-6 py-12">
+      <div className="mx-auto max-w-xl px-4 py-8 sm:px-6 sm:py-12">
         <h1 className="text-2xl font-semibold text-ink">Redeem a gift</h1>
         <p className="mt-2 text-sm text-muted">
           Paste a gift code to unlock a plan your friend bought for you.

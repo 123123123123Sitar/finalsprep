@@ -1468,7 +1468,7 @@ function ChatInner() {
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {messages.length === 0 ? (
             // Empty state: vertically + horizontally centered hero
-            <div className="mx-auto flex min-h-full max-w-3xl flex-col items-center justify-center px-6 py-16 text-center">
+            <div className="mx-auto flex min-h-full max-w-3xl flex-col items-center justify-center px-4 py-10 text-center sm:px-6 sm:py-16">
               <div className="animate-slideInUp w-full">
                 <h1 className="font-serif text-4xl font-normal leading-[1.15] text-ink sm:text-5xl">
                   {pickGreeting(greetingSeed, firstName)}
@@ -1492,7 +1492,7 @@ function ChatInner() {
               </div>
             </div>
           ) : (
-            <div className="mx-auto max-w-4xl px-6 pb-8 pt-10">
+            <div className="mx-auto max-w-4xl px-4 pb-6 pt-6 sm:px-6 sm:pb-8 sm:pt-10">
               <div className="space-y-5">
                 {messages.map((m, i) => (
                   <Message
@@ -1521,7 +1521,7 @@ function ChatInner() {
           )}
 
           {error && (
-            <div className="mx-auto max-w-4xl px-6 pb-6">
+            <div className="mx-auto max-w-4xl px-4 pb-6 sm:px-6">
               <div
                 className={`animate-fadeUpSm rounded-md border p-4 text-sm ${
                   limitHit

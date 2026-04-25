@@ -244,8 +244,15 @@ export function BuyProButton() {
   }
 
   return (
-    <button onClick={buy} disabled={submitting} className="btn-primary">
-      {submitting ? "Opening…" : "Get Pro - $11 first month"}
+    <button onClick={buy} disabled={submitting} className="btn-primary whitespace-nowrap">
+      {submitting ? (
+        "Opening…"
+      ) : (
+        <>
+          <span className="sm:hidden">Get Pro</span>
+          <span className="hidden sm:inline">Get Pro - $11 first month</span>
+        </>
+      )}
     </button>
   );
 }
@@ -378,7 +385,7 @@ function AccountMenu({
         />
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-40 mt-2 w-72 rounded-xl border border-hair bg-paper p-4 shadow-[0_28px_80px_-28px_rgba(0,0,0,0.4)]">
+        <div className="absolute right-0 top-full z-40 mt-2 w-72 max-w-[calc(100vw-1.5rem)] rounded-xl border border-hair bg-paper p-4 shadow-[0_28px_80px_-28px_rgba(0,0,0,0.4)]">
           <div className="mb-3">
             <div className="flex items-center gap-2">
               <a
@@ -588,7 +595,7 @@ function BookmarksMenu({ uid }: { uid: string }) {
         </svg>
       </button>
       {open && (
-        <div className="absolute right-0 top-full z-40 mt-2 w-80 rounded-xl border border-hair bg-paper p-2 shadow-[0_28px_80px_-28px_rgba(0,0,0,0.4)]">
+        <div className="absolute right-0 top-full z-40 mt-2 w-80 max-w-[calc(100vw-1.5rem)] rounded-xl border border-hair bg-paper p-2 shadow-[0_28px_80px_-28px_rgba(0,0,0,0.4)]">
           <div className="label px-2 pt-1 pb-2">Bookmarks</div>
           {bookmarks === null ? (
             <div className="px-2 py-3 text-sm text-muted">Loading…</div>

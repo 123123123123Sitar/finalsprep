@@ -10,7 +10,7 @@ export default function PrivacyPage() {
     <main className="bg-paper text-body">
       <SiteNav />
 
-      <article className="mx-auto max-w-3xl px-6 py-16">
+      <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-16">
         <div className="label mb-3">Legal</div>
         <h1 className="font-serif text-5xl font-normal leading-tight text-ink">
           Privacy Policy

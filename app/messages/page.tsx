@@ -198,7 +198,7 @@ function MessagesInner() {
   return (
     <main className="min-h-screen bg-paper">
       <SiteNav sticky />
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 px-6 py-8 md:grid-cols-[280px_1fr]">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 px-4 py-6 sm:px-6 sm:py-8 md:grid-cols-[280px_1fr]">
         {/* Sidebar: conversation list */}
         <aside className="rounded-xl border border-hair bg-paper">
           <div className="flex items-center justify-between border-b border-hair px-4 py-3">

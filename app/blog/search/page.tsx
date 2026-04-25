@@ -64,7 +64,7 @@ export default function BlogSearchPage({ searchParams }: Props) {
         </div>
       </div>
 
-      <div className="mx-auto max-w-3xl px-6 py-10 sm:py-14">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-14">
         <header className="mb-8">
           <div className="label mb-3">Search</div>
           <h1 className="font-serif text-[40px] font-normal leading-[1.05] tracking-tight text-ink sm:text-[52px]">

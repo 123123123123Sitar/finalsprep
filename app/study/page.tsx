@@ -587,7 +587,7 @@ export default function Study() {
       <SiteNav maxWidth="max-w-6xl">
       </SiteNav>
 
-      <div className="mx-auto max-w-6xl px-6 py-12">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
         {view === "home" ? (
           <StudyHome
             courses={addedCourses}
@@ -1855,7 +1855,7 @@ function StudyEmpty({ signedIn, plan }: { signedIn: boolean; plan: PlanTier }) {
     <main className="bg-paper text-body">
       <SiteNav maxWidth="max-w-6xl">
       </SiteNav>
-      <div className="mx-auto max-w-2xl px-6 py-16">
+      <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-16">
         <div className="label mb-3">Study</div>
         <h1 className="font-serif text-[40px] font-normal leading-[1.1] tracking-tightest text-ink sm:text-[48px]">
           Pick your AP courses.

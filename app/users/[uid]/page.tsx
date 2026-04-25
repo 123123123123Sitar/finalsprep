@@ -103,7 +103,7 @@ export default function UserProfilePage({
     return (
       <main className="min-h-screen bg-paper">
         <SiteNav sticky />
-        <div className="mx-auto max-w-2xl px-6 py-16 text-center">
+        <div className="mx-auto max-w-2xl px-4 py-10 text-center sm:px-6 sm:py-16">
           <h1 className="font-serif text-3xl text-ink">Profile not found</h1>
           <p className="mt-2 text-sm text-muted">
             {error || "This user doesn't exist."}
@@ -121,7 +121,7 @@ export default function UserProfilePage({
   return (
     <main className="min-h-screen bg-paper">
       <SiteNav sticky />
-      <div className="mx-auto max-w-3xl px-6 py-10">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
         <div className="flex items-start gap-5">
           <UserAvatar
             seed={p.uid}
