@@ -1758,7 +1758,7 @@ function StudyHome({
         )}
       </div>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div data-tour="study-courses-grid" className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {courses.map((c) => {
           const { done, total, pct } = courseProgress(c.slug, completedSlugs);
           return (
