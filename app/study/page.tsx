@@ -87,6 +87,7 @@ import { hasMcqs, loadMcqsFor, PRIMARY_COUNT, type Mcq } from "@/lib/mcqs";
 import { Quiz } from "@/app/components/Quiz";
 import { recordActivityClient } from "@/lib/activityClient";
 import { useAuth } from "@/app/components/AuthProvider";
+import { useFirstLook } from "@/app/components/FirstLookProvider";
 import type { PlanTier } from "@/lib/plans";
 
 type Tab =
@@ -273,6 +274,15 @@ export default function Study() {
   // Starts on home so users always land on the overview, not a half-remembered
   // course from last session.
   const [view, setView] = useState<"home" | "course">("home");
+
+  // Fire the deep course-view tour the first time the user opens a specific
+  // course. Covers tabs, units, lesson tools, highlights, bookmarks,
+  // flashcards, the quiz module, and (for learners) the PRO lock indicator.
+  const { triggerIfUnseen } = useFirstLook();
+  useEffect(() => {
+    if (view !== "course") return;
+    triggerIfUnseen("study-course-tour");
+  }, [view, triggerIfUnseen]);
 
   // Sync URL with current course/unit/lesson selection so each has a
   // bookmarkable route. Uses replaceState so we don't pollute history.
@@ -625,7 +635,7 @@ export default function Study() {
 
         <section className="mt-10 grid gap-10 lg:grid-cols-[300px_1fr]">
           {/* Sidebar: units + lessons */}
-          <aside className="space-y-6">
+          <aside data-tour="study-unit-tree" className="space-y-6">
             {curriculum && (
               <button
                 onClick={selectExamGuide}
@@ -669,7 +679,7 @@ export default function Study() {
                     <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-orange-ink/80">
                       Unit {unit.number}
                       {unitLocked && (
-                        <span className="ml-2 rounded bg-orange/20 px-1.5 py-0.5 text-[9px] text-orange-ink">
+                        <span data-tour="study-pro-lock" className="ml-2 rounded bg-orange/20 px-1.5 py-0.5 text-[9px] text-orange-ink">
                           PRO
                         </span>
                       )}
@@ -872,7 +882,7 @@ export default function Study() {
                       <h2 className="font-serif text-3xl font-normal text-ink sm:text-4xl">
                         {selectedLesson.title}
                       </h2>
-                      <div className="shrink-0 pt-2">
+                      <div data-tour="study-bookmark" className="shrink-0 pt-2">
                         <BookmarkButton
                           bookmark={{
                             slug: selectedLesson.slug,
@@ -904,7 +914,7 @@ export default function Study() {
                   />
                 )}
 
-                <div className="mt-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-hair">
+                <div data-tour="study-tab-strip" className="mt-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-hair">
                   <div className="flex flex-wrap gap-x-6">
                     {TABS.filter((t) => t.show).map((t) => (
                       <button
@@ -925,12 +935,13 @@ export default function Study() {
                     ))}
                   </div>
                   {(!!selectedLesson || !!viewedCedTopic) && (
-                    <div className="pb-2">
+                    <div data-tour="study-bookmode" className="pb-2">
                       <BookModeToggle />
                     </div>
                   )}
                 </div>
 
+                <div data-tour="study-highlight-tooltip">
                 <HighlightTooltip
                   onHighlight={handleHighlight}
                   enabled={tab === "curriculum" || tab === "lesson"}
@@ -946,6 +957,7 @@ export default function Study() {
                   }}
                 >
                 <div
+                  data-tour="study-lesson-area"
                   key={`${courseSlug}-${selectedUnit}-${selectedLesson?.slug ?? ""}-${tab}`}
                   className="mt-8 animate-fadeUp"
                 >
@@ -1077,7 +1089,9 @@ export default function Study() {
                           onUpgrade={() => buy("pro-monthly")}
                         />
                       ) : (
-                        <ToolsPanel tools={unitTools} />
+                        <div data-tour="study-tools-panel">
+                          <ToolsPanel tools={unitTools} />
+                        </div>
                       )}
                     </>
                   )}
@@ -1130,7 +1144,7 @@ export default function Study() {
                   )}
 
                   {tab === "cards" && selectedLesson && (
-                    <div className="max-w-2xl">
+                    <div data-tour="study-flashcards" className="max-w-2xl">
                       <Flashcards
                         cards={selectedLesson.flashcards}
                         storageKey={selectedLesson.slug}
@@ -1188,6 +1202,7 @@ export default function Study() {
                 </div>
                 </InlineHighlights>
                 </HighlightTooltip>
+                </div>
               </>
             )}
           </div>
@@ -1521,7 +1536,7 @@ function LessonPanel({
         </div>
       )}
       {uid && hasMcqs(lesson.slug) && mcqPool && (
-        <div className="mt-8">
+        <div data-tour="study-quiz" className="mt-8">
           <Quiz
             lessonSlug={lesson.slug}
             pool={mcqPool}

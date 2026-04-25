@@ -288,7 +288,7 @@ export default function Dashboard() {
 
       <section className="mx-auto max-w-5xl px-6 pt-12 pb-6">
         <div className="label mb-3">Dashboard</div>
-        <h1 className="font-serif text-[40px] font-normal leading-[1.1] tracking-tightest text-ink sm:text-[52px]">
+        <h1 data-tour="dashboard-greeting" className="font-serif text-[40px] font-normal leading-[1.1] tracking-tightest text-ink sm:text-[52px]">
           Welcome back, {displayName}.
         </h1>
         <p className="mt-3 max-w-xl text-[15px] text-muted">
@@ -304,11 +304,13 @@ export default function Dashboard() {
 
       <section className="mx-auto max-w-5xl px-6 pb-4">
         <div className="grid gap-4 sm:grid-cols-3">
-          <SummaryTile
-            label="Current streak"
-            value={streak ? `${streak.current} day${streak.current === 1 ? "" : "s"}` : "-"}
-            hint={streak?.longest ? `Best: ${streak.longest}` : "Solve one problem to start"}
-          />
+          <div data-tour="dashboard-streak">
+            <SummaryTile
+              label="Current streak"
+              value={streak ? `${streak.current} day${streak.current === 1 ? "" : "s"}` : "-"}
+              hint={streak?.longest ? `Best: ${streak.longest}` : "Solve one problem to start"}
+            />
+          </div>
           <SummaryTile
             label="Plan"
             value={planLoading ? "…" : planLabel(plan)}
@@ -321,7 +323,7 @@ export default function Dashboard() {
             }
             cta={!planLoading && plan === "learner" ? { href: "/#price", label: "Upgrade" } : undefined}
           />
-          <div className="rounded-xl border border-hair bg-paper p-5">
+          <div data-tour="dashboard-tokens" className="rounded-xl border border-hair bg-paper p-5">
             <div className="label">Your tokens</div>
             <div className="mt-3 space-y-3">
               <div>
@@ -405,7 +407,7 @@ export default function Dashboard() {
             </a>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div data-tour="dashboard-courses" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {addedCourses.map((c) => (
               <CourseCard
                 key={c.slug}
@@ -423,7 +425,7 @@ export default function Dashboard() {
 
       <section className="mx-auto max-w-5xl px-6 py-8">
         <h2 className="label mb-4">Jump back in</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div data-tour="dashboard-quick-links" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {QUICK_ACTIONS.map((a) => (
             <a
               key={a.href}

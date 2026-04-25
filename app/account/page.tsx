@@ -441,6 +441,7 @@ function TabBar({
 }) {
   return (
     <nav
+      data-tour="account-tabs"
       role="tablist"
       aria-label="Account settings"
       className="mt-8 flex flex-wrap gap-1 border-b border-hair"
@@ -584,6 +585,7 @@ function ProfileTab(props: {
       </Card>
 
       <Card title="Profile picture" hint="Upload a photo, or pick an emoji + color combo.">
+        <div data-tour="account-avatar">
         <AvatarEditor
           uid={props.uid}
           label={props.displayName || props.username || props.email || "You"}
@@ -597,6 +599,7 @@ function ProfileTab(props: {
           onError={props.onError}
           onOk={props.onOk}
         />
+        </div>
       </Card>
 
       <Card title="Grade level" hint="Helps the AI pitch examples at the right depth.">
@@ -862,7 +865,9 @@ function PreferencesTab({
   return (
     <div className="space-y-6">
       <Card title="Appearance" hint="Pick a theme for the whole app. Syncs across devices while signed in.">
-        <ThemePicker />
+        <div data-tour="account-theme">
+          <ThemePicker />
+        </div>
       </Card>
 
       <Card
@@ -924,6 +929,7 @@ function BillingTab({
   return (
     <div className="space-y-6">
       <Card title="Subscription">
+        <div data-tour="account-billing">
         {plan === "learner" ? (
           <p className="text-[15px] text-body">
             You're on the free Learner plan.{" "}
@@ -944,9 +950,11 @@ function BillingTab({
             </p>
           </>
         )}
+        </div>
       </Card>
 
       <Card title="Bonus tokens" hint="Spent automatically when your daily budget runs out.">
+        <div data-tour="account-tokens">
         <p className="text-[15px] text-body">
           You have{" "}
           <span className="font-semibold text-ink">
@@ -957,6 +965,7 @@ function BillingTab({
         <a href="/shop" className="btn-ghost mt-4 inline-flex text-sm">
           Top up tokens →
         </a>
+        </div>
       </Card>
 
       <ReferralCard referral={referral} />

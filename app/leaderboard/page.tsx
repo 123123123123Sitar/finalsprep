@@ -114,7 +114,7 @@ export default function LeaderboardPage() {
         </header>
 
         <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
-          <aside className="space-y-5">
+          <aside data-tour="leaderboard-tabs" className="space-y-5">
             <div>
               <div className="label mb-2">Global</div>
               <ul className="space-y-1">
@@ -195,7 +195,7 @@ export default function LeaderboardPage() {
             )}
           </aside>
 
-          <div className="space-y-4">
+          <div data-tour="leaderboard-table" className="space-y-4">
             {active === "overall" ? (
               <CourseLeaderboard
                 courseSlug="overall"

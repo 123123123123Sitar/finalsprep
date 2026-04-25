@@ -97,7 +97,7 @@ export default function ShopPage() {
           never expire.
         </p>
 
-        <div className="mt-8 inline-block rounded-xl border border-orange/40 bg-orange-tint px-6 py-4">
+        <div data-tour="shop-balance" className="mt-8 inline-block rounded-xl border border-orange/40 bg-orange-tint px-6 py-4">
           <div className="label text-orange-ink">Your current balance</div>
           <div className="mt-1 font-serif text-4xl font-normal text-orange-ink">
             {balance === null ? "…" : balance.toLocaleString()}
@@ -111,7 +111,7 @@ export default function ShopPage() {
           </div>
         )}
 
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
+        <div data-tour="shop-packs" className="mt-10 grid gap-5 md:grid-cols-3">
           {TOKEN_PACKS.map((pack, i) => (
             <div
               key={pack.id}

@@ -593,6 +593,7 @@ export default function SchedulePage() {
           </span>
         ) : (
           <button
+            data-tour="schedule-claim"
             onClick={() => claim(qualifyingMins)}
             disabled={claiming || !canClaim}
             className={`btn-primary disabled:opacity-50${canClaim ? " animate-glowPulse" : ""}`}
@@ -634,7 +635,7 @@ export default function SchedulePage() {
           Longer, deeper sessions earn a focus bonus.
         </p>
 
-        <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-hair bg-paper px-4 py-2 text-sm">
+        <div data-tour="schedule-token-balance" className="mt-6 inline-flex items-center gap-2 rounded-full border border-hair bg-paper px-4 py-2 text-sm">
           <span className="text-muted">Bonus balance:</span>
           <strong className="font-mono text-ink">
             {bankBalance.toLocaleString()}
@@ -649,7 +650,7 @@ export default function SchedulePage() {
         {todayPanel}
 
         {/* AI-GENERATED STUDY PLAN */}
-        <div className="mt-10 rounded-xl border border-hair bg-paper p-6">
+        <div data-tour="schedule-ai-plan" className="mt-10 rounded-xl border border-hair bg-paper p-6">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <div>
               <div className="label">AI study plan</div>
@@ -722,7 +723,7 @@ export default function SchedulePage() {
         </div>
 
         {/* WEEKLY CALENDAR: time-blocked grid */}
-        <div className="mt-12">
+        <div data-tour="schedule-calendar" className="mt-12">
           <div className="label mb-3">Your week</div>
           <WeekGrid
             blocks={schedule.blocks}
@@ -732,7 +733,7 @@ export default function SchedulePage() {
         </div>
 
         {/* ADD-SESSION FORM */}
-        <div className="mt-8 rounded-xl border border-hair bg-paper p-6">
+        <div data-tour="schedule-add-block" className="mt-8 rounded-xl border border-hair bg-paper p-6">
           <div className="label mb-3">Add a study block</div>
           <div className="grid gap-3 sm:grid-cols-[1.4fr_1fr_1fr_1fr_auto]">
             <select

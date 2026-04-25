@@ -161,7 +161,7 @@ export default function SocialHomePage() {
             )}
           </section>
 
-          <section>
+          <section data-tour="social-feed">
             <div className="mb-3 flex items-baseline justify-between">
               <div className="label">Hot across all forums</div>
               <a href="/social" className="text-[12px] text-muted hover:text-ink">
@@ -195,6 +195,7 @@ export default function SocialHomePage() {
           <div className="rounded-xl border border-hair bg-paper p-4">
             <div className="label mb-2">Find people</div>
             <input
+              data-tour="social-search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search username…"
@@ -236,7 +237,7 @@ export default function SocialHomePage() {
           </div>
 
           {user && recs && recs.length > 0 && (
-            <div className="rounded-xl border border-hair bg-paper p-4">
+            <div data-tour="social-recommendations" className="rounded-xl border border-hair bg-paper p-4">
               <div className="label mb-2">People you might like</div>
               <p className="mb-3 text-[12px] text-muted">
                 Based on your courses and interests.
