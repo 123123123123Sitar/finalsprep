@@ -13,6 +13,7 @@ import {
   ACTIVITY_COVERAGE_THRESHOLD,
   type StudyBlock,
 } from "@/lib/schedule";
+import { captureException } from "@/lib/observability";
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
@@ -178,8 +179,9 @@ export async function POST(req: Request) {
       claimed = true;
     });
   } catch (e: any) {
+    captureException(e, { area: "schedule.claim", uid: user?.uid });
     return NextResponse.json(
-      { error: e?.message || "claim failed" },
+      { error: "Couldn't claim your reward. Please try again." },
       { status: 500 }
     );
   }

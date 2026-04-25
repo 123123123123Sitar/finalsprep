@@ -15,6 +15,7 @@ import { getPlan, planToRateTier } from "@/lib/userPlan";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
 import { aiCost } from "@/lib/aiCost";
 import { spendTokens } from "@/lib/spend";
+import { captureException } from "@/lib/observability";
 
 export const runtime = "nodejs";
 
@@ -173,8 +174,9 @@ export async function POST(req: Request) {
       unitNumber,
     });
   } catch (e: any) {
+    captureException(e, { area: "generate-practice" });
     return NextResponse.json(
-      { error: e?.message || "Upstream error" },
+      { error: "Practice service is unavailable. Please try again." },
       { status: 500 }
     );
   }

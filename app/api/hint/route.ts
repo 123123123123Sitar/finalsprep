@@ -13,6 +13,7 @@ import { getAuthedUser } from "@/lib/authGuard";
 import { getPlan, planToRateTier } from "@/lib/userPlan";
 import { isAdminConfigured } from "@/lib/firebaseAdmin";
 import { recordAiHistory } from "@/lib/aiHistory";
+import { captureException } from "@/lib/observability";
 import { aiCost } from "@/lib/aiCost";
 import { spendTokens } from "@/lib/spend";
 
@@ -169,8 +170,9 @@ export async function POST(req: Request) {
       resetMinutes: p.resetMinutes,
     });
   } catch (e: any) {
+    captureException(e, { area: "hint" });
     return NextResponse.json(
-      { error: e?.message || "Upstream error" },
+      { error: "Hint service is unavailable. Please try again." },
       { status: 500 }
     );
   }

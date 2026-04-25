@@ -9,6 +9,7 @@ import { aiCost } from "@/lib/aiCost";
 import { estimateTokens } from "@/lib/rateLimit";
 import { spendTokens } from "@/lib/spend";
 import { FieldValue } from "firebase-admin/firestore";
+import { captureException } from "@/lib/observability";
 
 export const runtime = "nodejs";
 
@@ -179,8 +180,9 @@ export async function POST(req: Request) {
       );
     }
   } catch (e: any) {
+    captureException(e, { area: "interactives.generate" });
     return NextResponse.json(
-      { error: e?.message || "Model request failed" },
+      { error: "Interactive generation is unavailable. Please try again." },
       { status: 500 }
     );
   }

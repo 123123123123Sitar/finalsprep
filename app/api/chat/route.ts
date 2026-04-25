@@ -302,7 +302,6 @@ export async function POST(req: Request) {
 
         controller.close();
       } catch (e: any) {
-        const msg = e?.message || "Upstream error";
         captureException(e, {
           area: "chat.stream",
           uid: user?.uid,
@@ -311,7 +310,9 @@ export async function POST(req: Request) {
           model: picked.model,
           thinking,
         });
-        controller.enqueue(enc.encode(`\n\n[error: ${msg}]`));
+        controller.enqueue(
+          enc.encode("\n\n[error: The tutor is temporarily unavailable. Please try again.]")
+        );
         // Still charge the floor for failed prompts so users can't retry
         // for free past their budget on error.
         const inputEst = estimateTokens(

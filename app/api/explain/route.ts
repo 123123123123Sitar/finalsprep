@@ -19,6 +19,7 @@ import { isAdminConfigured } from "@/lib/firebaseAdmin";
 import { recordAiHistory } from "@/lib/aiHistory";
 import { aiCost } from "@/lib/aiCost";
 import { spendTokens } from "@/lib/spend";
+import { captureException } from "@/lib/observability";
 
 export const runtime = "nodejs";
 
@@ -189,8 +190,9 @@ export async function POST(req: Request) {
       rateTier: tier,
     });
   } catch (e: any) {
+    captureException(e, { area: "explain" });
     return NextResponse.json(
-      { error: e?.message || "Upstream error" },
+      { error: "Explanation service is unavailable. Please try again." },
       { status: 500 }
     );
   }

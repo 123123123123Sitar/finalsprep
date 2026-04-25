@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAuthedUser } from "@/lib/authGuard";
 import { isAdminConfigured, getAdminDb } from "@/lib/firebaseAdmin";
 import { ymdLocal } from "@/lib/schedule";
+import { captureException } from "@/lib/observability";
 
 export const runtime = "nodejs";
 
@@ -56,6 +57,10 @@ export async function POST(req: Request) {
     });
     return NextResponse.json({ ok: true, blockId, completed });
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message || "complete failed" }, { status: 500 });
+    captureException(e, { area: "schedule.complete" });
+    return NextResponse.json(
+      { error: "Couldn't update your schedule. Please try again." },
+      { status: 500 }
+    );
   }
 }

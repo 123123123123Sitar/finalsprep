@@ -554,7 +554,7 @@ export default function Study() {
         void postScoreEvent(getIdToken, courseSlug, "tool_use");
       }
     } catch (e: any) {
-      setError(e.message);
+      setError(e?.message || "Couldn't load that explanation. Please try again.");
     } finally {
       setLoading(false);
     }
