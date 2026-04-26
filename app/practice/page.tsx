@@ -977,6 +977,8 @@ function FrqsTab() {
   const [grading, setGrading] = useState(false);
   const [result, setResult] = useState<GradeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hint, setHint] = useState<string | null>(null);
+  const [hintLoading, setHintLoading] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -1029,7 +1031,35 @@ function FrqsTab() {
     setResponse("");
     setResult(null);
     setError(null);
+    setHint(null);
   }, [activeId]);
+
+  async function getHint() {
+    if (!active) return;
+    setError(null);
+    setHintLoading(true);
+    try {
+      const token = await getIdToken();
+      const res = await fetch("/api/practice/frq/hint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ frqId: active.id, response }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data?.error || "Couldn't generate a hint.");
+      } else {
+        setHint(typeof data?.hint === "string" ? data.hint : null);
+      }
+    } catch (e: any) {
+      setError(e?.message || "Network error.");
+    } finally {
+      setHintLoading(false);
+    }
+  }
 
   async function grade() {
     if (!active) return;
@@ -1130,15 +1160,43 @@ function FrqsTab() {
           </div>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <button
             onClick={grade}
-            disabled={grading}
+            disabled={grading || hintLoading}
             className="flex-1 rounded-md bg-orange px-4 py-3 font-medium text-white hover:opacity-90 disabled:opacity-50"
           >
             {grading ? "Grading…" : "Grade my response"}
           </button>
+          <button
+            onClick={getHint}
+            disabled={hintLoading || grading}
+            title="Costs 50–100 tokens"
+            className="rounded-md border border-orange/50 bg-orange-tint px-4 py-3 font-medium text-orange-ink hover:border-orange disabled:opacity-50 sm:flex-none"
+          >
+            {hintLoading ? "Thinking…" : "AI hint"}
+          </button>
         </div>
+
+        {hint && (
+          <div className="rounded-md border border-orange/40 bg-orange-tint p-4">
+            <div className="mb-1 flex items-center justify-between gap-2">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-orange-ink">
+                AI hint
+              </div>
+              <button
+                onClick={() => setHint(null)}
+                aria-label="Dismiss hint"
+                className="text-xs text-muted hover:text-ink"
+              >
+                ×
+              </button>
+            </div>
+            <Markdown className="space-y-1 text-[14px] leading-relaxed text-ink">
+              {hint}
+            </Markdown>
+          </div>
+        )}
 
         {result && <GradeResultCard result={result} />}
       </div>
