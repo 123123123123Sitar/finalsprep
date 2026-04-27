@@ -393,17 +393,20 @@ export default function Study() {
     [courseSlug, selectedUnit]
   );
 
+  // Learners see Practice, Interactive, and Flashcards tabs as previews so
+  // they know what's behind the upgrade. Click → LockedTabTeaser. Paid users
+  // get the real components.
   const TABS: { key: Tab; label: string; show: boolean }[] = [
     { key: "curriculum", label: "Overview", show: !!curriculumUnit },
     {
       key: "practice",
       label: "Practice",
-      show: isPro && unitPractice.length > 0,
+      show: unitPractice.length > 0,
     },
     {
       key: "tools",
       label: "Interactive",
-      show: isPro && unitTools.length > 0,
+      show: unitTools.length > 0,
     },
     { key: "lesson", label: "Lesson", show: isPro && !!selectedLesson },
     {
@@ -411,7 +414,11 @@ export default function Study() {
       label: "Diagram",
       show: isPro && !!selectedLesson?.diagram,
     },
-    { key: "cards", label: "Flashcards", show: isPro && !!selectedLesson },
+    {
+      key: "cards",
+      label: "Flashcards",
+      show: isPro ? !!selectedLesson : !!curriculumUnit,
+    },
     {
       key: "links",
       label: "Links",
@@ -1063,7 +1070,7 @@ export default function Study() {
 
                   {tab === "practice" && (
                     <>
-                      {locked ? (
+                      {!isPro || locked ? (
                         <LockedTabTeaser
                           label="practice problems"
                           count={unitPractice.length}
@@ -1082,7 +1089,7 @@ export default function Study() {
 
                   {tab === "tools" && (
                     <>
-                      {locked ? (
+                      {!isPro || locked ? (
                         <LockedTabTeaser
                           label="interactive tools"
                           count={unitTools.length}
@@ -1143,17 +1150,28 @@ export default function Study() {
                     </div>
                   )}
 
-                  {tab === "cards" && selectedLesson && (
-                    <div data-tour="study-flashcards" className="max-w-2xl">
-                      <Flashcards
-                        cards={selectedLesson.flashcards}
-                        storageKey={selectedLesson.slug}
+                  {tab === "cards" && (
+                    !isPro ? (
+                      <LockedTabTeaser
+                        label="flashcard decks"
+                        count={
+                          units.find((u) => u.number === selectedUnit)
+                            ?.lessons.length ?? 0
+                        }
+                        onUpgrade={() => buy("pro-monthly")}
                       />
-                      <p className="mt-4 text-xs text-muted">
-                        Progress is stored locally in your browser. Clearing site
-                        data will reset your "known" marks.
-                      </p>
-                    </div>
+                    ) : selectedLesson ? (
+                      <div data-tour="study-flashcards" className="max-w-2xl">
+                        <Flashcards
+                          cards={selectedLesson.flashcards}
+                          storageKey={selectedLesson.slug}
+                        />
+                        <p className="mt-4 text-xs text-muted">
+                          Progress is stored locally in your browser. Clearing site
+                          data will reset your "known" marks.
+                        </p>
+                      </div>
+                    ) : null
                   )}
 
                   {tab === "links" && selectedLesson && (

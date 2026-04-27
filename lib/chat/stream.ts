@@ -141,3 +141,76 @@ export async function runGeminiStream(
   }
   return { inputTokens, outputTokens };
 }
+
+export async function runMercuryStream(
+  ctx: StreamContext,
+  opts: { apiKey: string; model: string }
+): Promise<StreamRunResult> {
+  const { messages, systemPrompt, outputTokenLimit, onDelta } = ctx;
+  const oaMessages = [
+    { role: "system" as const, content: systemPrompt },
+    ...messages.map((m) => ({ role: m.role, content: m.content })),
+  ];
+  const res = await fetch(
+    "https://api.inceptionlabs.ai/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${opts.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: opts.model,
+        messages: oaMessages,
+        max_tokens: outputTokenLimit,
+        stream: true,
+      }),
+    }
+  );
+  if (!res.ok || !res.body) {
+    let bodyText = "";
+    try {
+      bodyText = await res.text();
+    } catch {
+      // ignore
+    }
+    const err: any = new Error(
+      `Mercury request failed: ${res.status} ${bodyText.slice(0, 200)}`
+    );
+    err.status = res.status;
+    throw err;
+  }
+
+  let inputTokens = 0;
+  let outputTokens = 0;
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    let nl: number;
+    while ((nl = buffer.indexOf("\n")) >= 0) {
+      const line = buffer.slice(0, nl).trim();
+      buffer = buffer.slice(nl + 1);
+      if (!line.startsWith("data:")) continue;
+      const data = line.slice(5).trim();
+      if (!data || data === "[DONE]") continue;
+      try {
+        const json = JSON.parse(data);
+        const delta = json.choices?.[0]?.delta?.content;
+        if (typeof delta === "string" && delta.length > 0) onDelta(delta);
+        const u = json.usage;
+        if (u) {
+          if (typeof u.prompt_tokens === "number") inputTokens = u.prompt_tokens;
+          if (typeof u.completion_tokens === "number")
+            outputTokens = u.completion_tokens;
+        }
+      } catch {
+        // ignore malformed chunk
+      }
+    }
+  }
+  return { inputTokens, outputTokens };
+}

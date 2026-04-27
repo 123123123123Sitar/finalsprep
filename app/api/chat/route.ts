@@ -23,12 +23,13 @@ import { aiCost } from "@/lib/aiCost";
 import { spendTokens } from "@/lib/spend";
 import { recordActivity } from "@/lib/activity";
 import { captureException } from "@/lib/observability";
-import { HAIKU_MODEL, pickModel } from "@/lib/chat/models";
+import { GEMINI_MODEL, HAIKU_MODEL, pickModel } from "@/lib/chat/models";
 import { runOcrSplit, validateImages } from "@/lib/chat/images";
 import { reserveBudget } from "@/lib/chat/budget";
 import {
   runAnthropicStream,
   runGeminiStream,
+  runMercuryStream,
   type ChatMsg,
 } from "@/lib/chat/stream";
 
@@ -46,6 +47,7 @@ function jsonError(status: number, body: Record<string, unknown>) {
 export async function POST(req: Request) {
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
   const geminiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  const inceptionKey = process.env.INCEPTION_API_KEY;
 
   // Require signed-in user (unless admin SDK isn't configured yet, for dev).
   const adminOn = isAdminConfigured();
@@ -105,18 +107,23 @@ export async function POST(req: Request) {
     (plan === "pro" || plan === "hacker") && body?.voiceMode === true;
   const systemPrompt = buildChatSystemPrompt(aiPrefs, { voiceMode, plan });
   const geminiBlocked = plan === "learner" ? await isGeminiBlocked() : false;
-  const picked = pickModel(plan, thinking, geminiBlocked);
+  // Mercury 2 is text-only, so route image queries to Gemini instead.
+  const hasImagesUpfront =
+    Array.isArray(body?.images) && body.images.length > 0;
+  const picked = pickModel(plan, thinking, geminiBlocked, {
+    inceptionAvailable: !!inceptionKey,
+    hasImages: hasImagesUpfront,
+  });
 
   // Gate on the right API key. If Gemini isn't configured, fall back to
   // Anthropic Haiku so the app still works; we just eat a slightly higher cost.
-  const needAnthropic = picked.provider === "anthropic";
-  if (needAnthropic && !anthropicKey) {
+  if (picked.provider === "anthropic" && !anthropicKey) {
     return jsonError(500, {
       error: "Chat requires ANTHROPIC_API_KEY to be set on the server.",
       limitReached: true,
     });
   }
-  if (!needAnthropic && !geminiKey) {
+  if (picked.provider === "gemini" && !geminiKey) {
     if (!anthropicKey) {
       return jsonError(500, {
         error:
@@ -196,33 +203,57 @@ export async function POST(req: Request) {
       };
 
       try {
-        if (picked.provider === "anthropic") {
-          const r = await runAnthropicStream(
-            {
-              messages,
-              imagesForVision,
-              systemPrompt,
-              outputTokenLimit,
-              onDelta,
-            },
-            { apiKey: anthropicKey!, model: picked.model }
-          );
-          capturedInput = r.inputTokens;
-          capturedOutput = r.outputTokens;
-        } else {
+        const ctx = {
+          messages,
+          imagesForVision,
+          systemPrompt,
+          outputTokenLimit,
+          onDelta,
+        };
+        // Sequential attempt chain. Each stage may pivot `picked` to the
+        // next provider; later stages run only if a prior stage didn't
+        // already stream a successful response.
+        let completed = false;
+
+        if (picked.provider === "inception") {
           try {
-            const r = await runGeminiStream(
-              {
-                messages,
-                imagesForVision,
-                systemPrompt,
-                outputTokenLimit,
-                onDelta,
-              },
-              { apiKey: geminiKey!, model: picked.model }
-            );
+            const r = await runMercuryStream(ctx, {
+              apiKey: inceptionKey!,
+              model: picked.model,
+            });
             capturedInput = r.inputTokens;
             capturedOutput = r.outputTokens;
+            completed = true;
+          } catch (e) {
+            if (accumulated.length !== 0) throw e;
+            captureException(e, {
+              area: "chat.stream.mercury_fallback",
+              uid: user?.uid,
+              plan,
+            });
+            if (geminiKey && !geminiBlocked) {
+              picked.provider = "gemini";
+              picked.model = GEMINI_MODEL;
+              picked.costMultiplier = 1;
+            } else if (anthropicKey) {
+              picked.provider = "anthropic";
+              picked.model = HAIKU_MODEL;
+              picked.costMultiplier = 1;
+            } else {
+              throw e;
+            }
+          }
+        }
+
+        if (!completed && picked.provider === "gemini") {
+          try {
+            const r = await runGeminiStream(ctx, {
+              apiKey: geminiKey!,
+              model: picked.model,
+            });
+            capturedInput = r.inputTokens;
+            capturedOutput = r.outputTokens;
+            completed = true;
           } catch (e) {
             // Learner fallback: if Gemini rate-limited us before any tokens
             // streamed, flip the global flag and retry on Claude Haiku.
@@ -235,22 +266,20 @@ export async function POST(req: Request) {
               picked.provider = "anthropic";
               picked.model = HAIKU_MODEL;
               picked.costMultiplier = 1;
-              const r = await runAnthropicStream(
-                {
-                  messages,
-                  imagesForVision,
-                  systemPrompt,
-                  outputTokenLimit,
-                  onDelta,
-                },
-                { apiKey: anthropicKey, model: HAIKU_MODEL }
-              );
-              capturedInput = r.inputTokens;
-              capturedOutput = r.outputTokens;
             } else {
               throw e;
             }
           }
+        }
+
+        if (!completed && picked.provider === "anthropic") {
+          const r = await runAnthropicStream(ctx, {
+            apiKey: anthropicKey!,
+            model: picked.model,
+          });
+          capturedInput = r.inputTokens;
+          capturedOutput = r.outputTokens;
+          completed = true;
         }
 
         // Single source of truth for the formula lives in lib/aiCost.ts.
