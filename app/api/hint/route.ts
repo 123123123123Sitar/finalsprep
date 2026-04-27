@@ -144,7 +144,7 @@ export async function POST(req: Request) {
     if (user?.uid) {
       const split = await spendTokens(user.uid, totalTokens);
       if (split.fromDaily > 0) record(key, split.fromDaily);
-      void recordAiHistory({
+      await recordAiHistory({
         uid: user.uid,
         kind: "explain",
         source: "ai",

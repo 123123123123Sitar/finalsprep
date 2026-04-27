@@ -215,7 +215,7 @@ Return the JSON object now.`;
     plan,
   });
   await spendTokens(user.uid, totalTokens);
-  void recordAiHistory({
+  await recordAiHistory({
     uid: user.uid,
     kind: "schedule_plan",
     source: "ai",

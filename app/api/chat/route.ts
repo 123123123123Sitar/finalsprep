@@ -308,7 +308,7 @@ export async function POST(req: Request) {
         }
 
         if (user?.uid) {
-          void recordAiHistory({
+          await recordAiHistory({
             uid: user.uid,
             kind: "chat",
             source: "ai",
