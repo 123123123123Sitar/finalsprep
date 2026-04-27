@@ -11,7 +11,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (!configured) {
     return (
-      <div className="mx-auto max-w-xl px-6 py-24 text-center">
+      <div className="mx-auto flex min-h-0 w-full max-w-xl flex-1 flex-col items-center justify-center px-6 py-12 text-center">
         <div className="label mb-4">Sign-in unavailable</div>
         <h2 className="font-serif text-3xl text-ink">
           Sign-in is temporarily unavailable.
@@ -29,7 +29,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center text-muted">
+      <div className="flex min-h-0 flex-1 items-center justify-center text-muted">
         <div className="typing-dots" aria-label="Loading">
           <span /> <span /> <span />
         </div>
@@ -42,7 +42,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="mx-auto px-6 py-16">
+    <div className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col justify-center px-6 py-12">
       <AuthPanel
         initialMode="signin"
         pendingUser={!!user && !user.emailVerified}

@@ -271,7 +271,9 @@ export default function ChatPage() {
     // h-[100dvh] instead of h-screen so the iOS keyboard doesn't push the
     // composer off-screen. The dynamic viewport unit recalculates as the
     // keyboard shows/hides; h-screen stays frozen at the full viewport height.
-    <main className="flex h-[100dvh] flex-col bg-paper text-body">
+    // overflow-hidden so any overflowing child gets clipped at the main —
+    // without it the body scrolls past the viewport into a blank white page.
+    <main className="flex h-[100dvh] flex-col overflow-hidden bg-paper text-body">
       <SiteNav maxWidth="max-w-none" sticky={false} />
       <AuthGate>
         <ChatInner />
