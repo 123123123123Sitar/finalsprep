@@ -12,6 +12,8 @@ export async function recordAiHistory({
   prompt,
   response,
   tokens,
+  inputTokens,
+  outputTokens,
   model,
   metadata,
 }: {
@@ -21,12 +23,25 @@ export async function recordAiHistory({
   plan: PlanTier;
   prompt: string;
   response: string;
+  /** Cost-weighted billing units charged via spendTokens (see aiCost.ts). */
   tokens?: number;
+  /** Raw input tokens reported by the model API. Powers admin cost reporting. */
+  inputTokens?: number;
+  /** Raw output tokens reported by the model API. */
+  outputTokens?: number;
   model?: string;
   metadata?: Record<string, string | number | boolean | null | undefined>;
 }) {
   const db = getAdminDb();
   if (!db) return;
+
+  const safeInput = Math.max(0, Math.round(inputTokens || 0));
+  const safeOutput = Math.max(0, Math.round(outputTokens || 0));
+  const enrichedMetadata = sanitizeMetadata({
+    ...(metadata || {}),
+    inputTokens: safeInput || undefined,
+    outputTokens: safeOutput || undefined,
+  });
 
   try {
     await db.collection("users").doc(uid).collection("aiHistory").add({
@@ -36,11 +51,14 @@ export async function recordAiHistory({
       prompt: trimText(prompt, 4000),
       promptPreview: trimText(prompt, 240),
       promptChars: prompt.length,
-      responsePreview: trimText(response, 4000),
+      response: trimText(response, 4000),
+      responsePreview: trimText(response, 240),
       responseChars: response.length,
       tokens: Math.max(0, Math.round(tokens || 0)),
+      inputTokens: safeInput,
+      outputTokens: safeOutput,
       model: model || null,
-      metadata: sanitizeMetadata(metadata),
+      metadata: enrichedMetadata,
       createdAt: Date.now(),
     });
   } catch (e) {

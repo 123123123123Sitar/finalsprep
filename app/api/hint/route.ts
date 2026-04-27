@@ -152,6 +152,8 @@ export async function POST(req: Request) {
         prompt: `[hint #${hintIndex + 1}] ${problem}`,
         response: text,
         tokens: totalTokens,
+        inputTokens,
+        outputTokens,
         model,
         metadata: { hintIndex: hintIndex + 1 },
       });

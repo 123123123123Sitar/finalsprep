@@ -168,6 +168,8 @@ export async function POST(req: Request) {
         prompt: problem,
         response: text,
         tokens: totalTokens,
+        inputTokens,
+        outputTokens,
         model,
         metadata: {
           aiVerbosity: aiPrefs.aiVerbosity,

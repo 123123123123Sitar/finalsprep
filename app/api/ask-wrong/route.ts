@@ -160,6 +160,8 @@ export async function POST(req: Request) {
         prompt: `[ask-wrong] ${question}`,
         response: text,
         tokens: totalTokens,
+        inputTokens,
+        outputTokens,
         model,
         metadata: { wasAttemptProvided: !!attempt },
       });

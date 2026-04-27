@@ -316,6 +316,8 @@ export async function POST(req: Request) {
             prompt: messages[messages.length - 1]?.content || "",
             response: accumulated,
             tokens: totalTokens,
+            inputTokens,
+            outputTokens,
             model: picked.model,
             metadata: {
               provider: picked.provider,

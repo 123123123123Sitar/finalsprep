@@ -185,6 +185,8 @@ export async function POST(req: Request) {
         prompt: userText,
         response: feedback,
         tokens: totalTokens,
+        inputTokens,
+        outputTokens,
         model,
         metadata: { verdict, score, hasImage },
       });

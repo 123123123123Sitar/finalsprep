@@ -223,6 +223,8 @@ Return the JSON object now.`;
     prompt: userPrompt.slice(0, 1000),
     response: responseText.slice(0, 2000),
     tokens: totalTokens,
+    inputTokens: inputTokens || estimateTokens(userPrompt),
+    outputTokens: outputTokens || estimateTokens(responseText),
     model: MODEL,
     metadata: { courses: selectedCourses.length },
   });
