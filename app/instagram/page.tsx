@@ -461,6 +461,178 @@ export default function InstagramPage() {
         .dot-float {
           animation: dotFloat 1.8s ease-in-out infinite;
         }
+
+        /* ==================================================================
+         * Revised reels (v2) — high-fidelity mock animations
+         * Each animation runs over the reel duration and loops, so the
+         * preview always feels like a live screen recording.
+         * ================================================================ */
+        .v2-phone {
+          --v2-duration: 16s;
+          position: relative;
+          aspect-ratio: 9 / 16;
+          overflow: hidden;
+          border-radius: 34px;
+          background: #0c0c0e;
+          box-shadow: 0 30px 70px -32px rgba(0, 0, 0, 0.55);
+        }
+        .v2-phone:hover .v2-anim,
+        .v2-phone:hover .reel-progress span {
+          animation-play-state: paused;
+        }
+        .v2-anim { animation-duration: var(--v2-duration); animation-iteration-count: infinite; animation-timing-function: linear; }
+
+        @keyframes v2CursorBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        .v2-cursor { animation: v2CursorBlink 0.85s steps(2) infinite; display: inline-block; width: 2px; height: 1em; background: currentColor; vertical-align: middle; margin-left: 1px; }
+
+        @keyframes v2Typing {
+          0% { width: 0; }
+          12% { width: 100%; }
+          82% { width: 100%; }
+          90% { width: 100%; opacity: 1; }
+          92% { opacity: 0; width: 0; }
+          100% { opacity: 0; width: 0; }
+        }
+        .v2-typing { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; animation: v2Typing var(--v2-duration) linear infinite; }
+
+        @keyframes v2FadeIn1 { 0%, 18% { opacity: 0; transform: translateY(6px); } 24%, 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes v2FadeIn2 { 0%, 32% { opacity: 0; transform: translateY(6px); } 38%, 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes v2FadeIn3 { 0%, 46% { opacity: 0; transform: translateY(6px); } 52%, 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes v2FadeIn4 { 0%, 60% { opacity: 0; transform: translateY(6px); } 66%, 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes v2FadeIn5 { 0%, 74% { opacity: 0; transform: translateY(6px); } 80%, 100% { opacity: 1; transform: translateY(0); } }
+        .v2-fade-1 { animation-name: v2FadeIn1; }
+        .v2-fade-2 { animation-name: v2FadeIn2; }
+        .v2-fade-3 { animation-name: v2FadeIn3; }
+        .v2-fade-4 { animation-name: v2FadeIn4; }
+        .v2-fade-5 { animation-name: v2FadeIn5; }
+
+        @keyframes v2Reveal {
+          0%, 14% { clip-path: inset(0 100% 0 0); }
+          24%, 100% { clip-path: inset(0 0 0 0); }
+        }
+        .v2-reveal { animation-name: v2Reveal; }
+
+        @keyframes v2Stream {
+          0%, 22% { clip-path: inset(0 100% 0 0); }
+          26% { clip-path: inset(0 88% 0 0); }
+          30% { clip-path: inset(0 76% 0 0); }
+          34% { clip-path: inset(0 62% 0 0); }
+          38% { clip-path: inset(0 48% 0 0); }
+          42% { clip-path: inset(0 32% 0 0); }
+          46% { clip-path: inset(0 18% 0 0); }
+          50%, 100% { clip-path: inset(0 0 0 0); }
+        }
+        .v2-stream { animation-name: v2Stream; }
+
+        @keyframes v2BarFill {
+          0%, 12% { transform: scaleX(0); }
+          70%, 100% { transform: scaleX(var(--v2-bar-end, 0.75)); }
+        }
+        .v2-bar-fill { transform-origin: left; animation-name: v2BarFill; }
+
+        @keyframes v2Pulse { 0%, 100% { transform: scale(1); opacity: 0.85; } 50% { transform: scale(1.18); opacity: 1; } }
+        .v2-pulse { animation: v2Pulse 1.6s ease-in-out infinite; }
+
+        @keyframes v2Thinking { 0%, 30% { opacity: 0; } 32%, 46% { opacity: 1; } 48%, 100% { opacity: 0; } }
+        .v2-thinking { animation-name: v2Thinking; }
+
+        @keyframes v2TabSlide {
+          0%, 12% { transform: translateX(0); }
+          22%, 36% { transform: translateX(100%); }
+          46%, 60% { transform: translateX(200%); }
+          70%, 100% { transform: translateX(0); }
+        }
+        .v2-tab-slide { animation-name: v2TabSlide; }
+
+        @keyframes v2HighlightCycle {
+          0%, 14% { opacity: 1; }
+          22%, 100% { opacity: 0.45; }
+        }
+        @keyframes v2HighlightCycle2 {
+          0%, 14% { opacity: 0.45; }
+          22%, 36% { opacity: 1; }
+          44%, 100% { opacity: 0.45; }
+        }
+        @keyframes v2HighlightCycle3 {
+          0%, 36% { opacity: 0.45; }
+          44%, 58% { opacity: 1; }
+          66%, 100% { opacity: 0.45; }
+        }
+        .v2-hl-1 { animation-name: v2HighlightCycle; }
+        .v2-hl-2 { animation-name: v2HighlightCycle2; }
+        .v2-hl-3 { animation-name: v2HighlightCycle3; }
+
+        @keyframes v2GraphDraw {
+          0%, 18% { stroke-dashoffset: 800; }
+          50%, 100% { stroke-dashoffset: 0; }
+        }
+        .v2-graph-draw { stroke-dasharray: 800; stroke-dashoffset: 800; animation-name: v2GraphDraw; }
+
+        @keyframes v2GraphDrawSlow {
+          0%, 30% { stroke-dashoffset: 800; }
+          70%, 100% { stroke-dashoffset: 0; }
+        }
+        .v2-graph-draw-2 { stroke-dasharray: 800; stroke-dashoffset: 800; animation-name: v2GraphDrawSlow; }
+
+        @keyframes v2Tick {
+          0%, 30% { transform: scale(0); opacity: 0; }
+          36% { transform: scale(1.4); opacity: 1; }
+          42%, 100% { transform: scale(1); opacity: 1; }
+        }
+        .v2-tick { animation-name: v2Tick; }
+
+        @keyframes v2CountUp {
+          0%, 18% { transform: translateY(0); }
+          26% { transform: translateY(-1.1em); }
+          34% { transform: translateY(-2.2em); }
+          42% { transform: translateY(-3.3em); }
+          50%, 100% { transform: translateY(-4.4em); }
+        }
+        .v2-count-up { display: inline-block; animation-name: v2CountUp; line-height: 1.1em; }
+
+        @keyframes v2BookFlip {
+          0%, 14% { transform: perspective(800px) rotateY(0); }
+          22%, 38% { transform: perspective(800px) rotateY(-25deg); }
+          46%, 62% { transform: perspective(800px) rotateY(0); }
+          70%, 86% { transform: perspective(800px) rotateY(-25deg); }
+          94%, 100% { transform: perspective(800px) rotateY(0); }
+        }
+        .v2-book-flip { transform-origin: left center; animation-name: v2BookFlip; animation-timing-function: ease-in-out; }
+
+        @keyframes v2PageNumCycle {
+          0%, 14% { opacity: 1; }
+          22%, 38% { opacity: 0; }
+          46%, 62% { opacity: 1; }
+          70%, 86% { opacity: 0; }
+          94%, 100% { opacity: 1; }
+        }
+        @keyframes v2PageNumCycle2 {
+          0%, 22% { opacity: 0; }
+          30%, 46% { opacity: 1; }
+          54%, 70% { opacity: 0; }
+          78%, 94% { opacity: 1; }
+        }
+        .v2-page-1 { animation-name: v2PageNumCycle; }
+        .v2-page-2 { animation-name: v2PageNumCycle2; opacity: 0; }
+
+        @keyframes v2CodeStep {
+          0%, 18% { background-color: rgba(255, 137, 6, 0.0); }
+          22% { background-color: rgba(255, 137, 6, 0.18); }
+          30% { background-color: rgba(255, 137, 6, 0.0); }
+        }
+        @keyframes v2CodeStep2 {
+          0%, 32% { background-color: rgba(255, 137, 6, 0.0); }
+          36% { background-color: rgba(255, 137, 6, 0.18); }
+          44% { background-color: rgba(255, 137, 6, 0.0); }
+        }
+        @keyframes v2CodeStep3 {
+          0%, 46% { background-color: rgba(255, 137, 6, 0.0); }
+          50% { background-color: rgba(255, 137, 6, 0.18); }
+          58% { background-color: rgba(255, 137, 6, 0.0); }
+        }
+        .v2-code-1 { animation-name: v2CodeStep; }
+        .v2-code-2 { animation-name: v2CodeStep2; }
+        .v2-code-3 { animation-name: v2CodeStep3; }
       `}</style>
 
       <section className="mx-auto max-w-6xl px-5 pb-10 pt-10 sm:px-6 sm:pb-14 sm:pt-14">
@@ -1109,13 +1281,19 @@ function LineStack() {
 function RevisedReelPreview({ reel }: { reel: RevisedReel }) {
   return (
     <div
-      className="relative mx-auto aspect-[9/16] w-full max-w-[300px] overflow-hidden rounded-[34px] border border-ink/10 bg-[#0c0c0e] shadow-[0_30px_70px_-32px_rgba(0,0,0,0.55)]"
-      style={{ "--reel-duration": `${reel.duration}s` } as React.CSSProperties}
+      className="v2-phone mx-auto w-full max-w-[300px]"
+      style={
+        {
+          "--reel-duration": `${reel.duration}s`,
+          "--v2-duration": `${reel.duration}s`,
+        } as React.CSSProperties
+      }
+      data-reel-id={reel.id}
     >
       {/* Phone notch */}
       <div className="pointer-events-none absolute left-1/2 top-2 z-30 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
 
-      {/* Top progress bar (animated by reelProgress keyframes from existing styles) */}
+      {/* Top progress bar */}
       <div className="absolute inset-x-5 top-9 z-20 h-[3px] overflow-hidden rounded-full bg-white/15 reel-progress">
         <span className="block h-full rounded-full bg-white" />
       </div>
@@ -1186,23 +1364,34 @@ function PhoneAppHeader({ title, route }: { title: string; route: string }) {
 function HiFiChat() {
   return (
     <div className="flex h-full flex-col bg-paper">
-      <PhoneAppHeader title="Projectile question" route="8.4k / 10k" />
+      <PhoneAppHeader title="Projectile motion" route="8.4k / 10k" />
       <div className="flex-1 space-y-2 overflow-hidden px-3 py-3">
-        <div className="ml-auto max-w-[82%] rounded-2xl bg-offwhite px-3 py-2 text-[10.5px] leading-snug text-body">
-          A ball is thrown up at 20 m/s. How high does it go?
+        <div className="v2-anim v2-fade-1 ml-auto max-w-[88%] rounded-2xl bg-offwhite px-3 py-2 text-[10.5px] leading-snug text-body shadow-sm">
+          A ball is thrown up at <span className="font-mono">20 m/s</span>. How high does it go before falling back?
         </div>
-        <div className="max-w-[92%] border-l-2 border-orange bg-paper px-3 py-2 text-[10.5px] leading-snug text-body">
-          Call up positive. At the peak v = 0. Use{" "}
-          <span className="italic">v² = v₀² − 2gh</span> →{" "}
-          <strong className="text-ink">h = 20 m</strong>.
+        <div className="v2-anim v2-thinking max-w-[55%] border-l-2 border-orange bg-paper px-3 py-2 text-[10.5px] leading-snug text-muted">
+          <span className="inline-flex items-center gap-1">
+            <span className="h-1.5 w-1.5 v2-pulse rounded-full bg-orange" />
+            <span className="h-1.5 w-1.5 v2-pulse rounded-full bg-orange" style={{ animationDelay: "0.2s" }} />
+            <span className="h-1.5 w-1.5 v2-pulse rounded-full bg-orange" style={{ animationDelay: "0.4s" }} />
+          </span>
         </div>
-        <div className="max-w-[70%] border-l-2 border-orange bg-paper px-3 py-2 text-[10.5px] leading-snug text-muted">
-          <span className="inline-block h-1.5 w-1.5 animate-pulseSoft rounded-full bg-orange align-middle" />
-          <span className="ml-1">Want the full walkthrough?</span>
+        <div className="v2-anim v2-fade-2 max-w-[94%] border-l-2 border-orange bg-paper px-3 py-2 text-[10.5px] leading-snug text-body">
+          <span className="font-semibold text-ink">Concept first.</span> This is{" "}
+          <span className="italic">conservation of energy</span> — at the
+          peak the ball is momentarily at rest, so all its kinetic energy has
+          become potential.
         </div>
-        <div className="rounded-lg border border-hair bg-offwhite px-3 py-2 text-[10px] text-muted">
-          <span className="font-semibold text-ink">Common mistake.</span> Treating
-          speed as slope without direction.
+        <div className="v2-anim v2-fade-3 v2-stream max-w-[94%] border-l-2 border-orange bg-paper px-3 py-2 text-[10.5px] leading-snug text-body">
+          Use{" "}
+          <span className="rounded bg-offwhite px-1 font-mono text-[10px] text-ink">v² = v₀² − 2gh</span>
+          . At the peak, v = 0. So{" "}
+          <span className="font-mono">h = v₀² / (2g) = 400 / 20 = </span>
+          <strong className="text-ink">20 m</strong>.
+        </div>
+        <div className="v2-anim v2-fade-4 rounded-lg border border-orange/30 bg-orange-tint/40 px-3 py-2 text-[10px] leading-snug text-body">
+          <span className="font-semibold text-orange-ink">Common mistake.</span> Treating
+          speed as displacement — they have different signs at the peak.
         </div>
       </div>
       <div className="px-3 pb-3">
@@ -1212,10 +1401,11 @@ function HiFiChat() {
               <path d="M8 2v12M2 8h12" />
             </svg>
           </span>
-          <span className="flex-1 truncate text-[10px] text-white/45">
-            Ask a follow-up…
+          <span className="flex-1 truncate text-[10px] text-white/55">
+            <span className="v2-anim v2-typing">Ask a follow-up about energy losses…</span>
+            <span className="v2-cursor" />
           </span>
-          <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange text-paper">
+          <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange text-paper v2-pulse">
             <svg viewBox="0 0 16 16" className="h-2.5 w-2.5" fill="currentColor">
               <path d="M8 14V2M3 7l5-5 5 5" />
             </svg>
@@ -1229,37 +1419,52 @@ function HiFiChat() {
 function HiFiStudy() {
   return (
     <div className="flex h-full flex-col bg-paper">
-      <PhoneAppHeader title="AP Physics 1 · Unit 1" route="study" />
+      <PhoneAppHeader title="AP Physics 1" route="Unit 1 · Kinematics" />
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-[38%] shrink-0 border-r border-hair bg-offwhite/70 px-2 py-3 text-[9px]">
+        <div className="w-[40%] shrink-0 border-r border-hair bg-offwhite/70 px-2 py-3 text-[9px]">
           <div className="text-[7px] font-semibold uppercase tracking-[0.18em] text-orange-ink/80">
+            Exam guide
+          </div>
+          <div className="mt-1 rounded bg-orange/10 px-1.5 py-0.5 text-[8px] font-medium text-orange-ink">
+            May 2 · 70 days
+          </div>
+
+          <div className="mt-3 text-[7px] font-semibold uppercase tracking-[0.18em] text-orange-ink/80">
             Unit 1
           </div>
           <div className="font-serif text-[11px] text-ink">Kinematics</div>
-          <div className="mt-2 space-y-0.5 border-l-2 border-orange/60 pl-2">
-            <div className="flex items-center gap-1 text-orange">
+          <div className="mt-1.5 space-y-0.5 border-l-2 border-orange/60 pl-2">
+            <div className="v2-anim v2-hl-1 flex items-center gap-1 text-orange">
               <span className="h-1 w-1 rounded-full bg-orange" />
-              <span>1.1 Motion</span>
+              <span>1.1 Position & velocity</span>
             </div>
-            <div className="flex items-center gap-1 text-muted">
-              <span className="h-1 w-1 rounded-full bg-ink/30" />
-              <span>1.2 Vectors</span>
+            <div className="v2-anim v2-hl-2 flex items-center gap-1 text-orange">
+              <span className="h-1 w-1 rounded-full bg-orange" />
+              <span>1.2 Acceleration</span>
             </div>
-            <div className="flex items-center gap-1 text-muted">
-              <span className="h-1 w-1 rounded-full bg-ink/30" />
-              <span>1.3 Projectile</span>
+            <div className="v2-anim v2-hl-3 flex items-center gap-1 text-orange">
+              <span className="h-1 w-1 rounded-full bg-orange" />
+              <span>1.3 Projectile motion</span>
               <span className="ml-auto text-green-700">✓</span>
             </div>
+            <div className="flex items-center gap-1 text-muted">
+              <span className="h-1 w-1 rounded-full bg-ink/30" />
+              <span>1.4 Free fall</span>
+            </div>
           </div>
+
           <div className="mt-3 text-[7px] font-semibold uppercase tracking-[0.18em] text-orange-ink/80">
             Unit 2
           </div>
-          <div className="font-serif text-[10.5px] text-ink">Forces</div>
+          <div className="font-serif text-[10.5px] text-ink">Dynamics</div>
           <div className="mt-3 text-[7px] font-semibold uppercase tracking-[0.18em] text-muted/70">
             Unit 3
           </div>
-          <div className="font-serif text-[10.5px] text-muted">Energy 🔒</div>
+          <div className="flex items-center gap-1 font-serif text-[10.5px] text-muted">
+            Energy <span className="text-[8px]">🔒</span>
+          </div>
         </div>
+
         <div className="min-w-0 flex-1 px-3 py-3">
           <div className="text-[7.5px] uppercase tracking-wider text-muted">
             Unit 1 · Exam weight 12–18%
@@ -1267,29 +1472,37 @@ function HiFiStudy() {
           <div className="mt-0.5 font-serif text-[12px] leading-tight text-ink">
             Kinematics in one dimension
           </div>
-          <div className="mt-2 flex gap-2 border-b border-hair text-[8.5px]">
-            <span className="-mb-px border-b-2 border-orange py-1 text-ink">
-              Overview
-            </span>
-            <span className="py-1 text-muted">Practice</span>
-            <span className="py-1 text-muted">Interactive</span>
+          <div className="relative mt-2 flex gap-3 border-b border-hair text-[8.5px]">
+            <span className="relative pb-1.5 text-ink">Overview</span>
+            <span className="relative pb-1.5 text-muted">Practice</span>
+            <span className="relative pb-1.5 text-muted">Interactive</span>
+            <span className="absolute -bottom-px left-0 h-0.5 w-[58px] bg-orange v2-anim v2-tab-slide" />
           </div>
-          <div className="mt-2 space-y-1">
+          <div className="v2-anim v2-fade-1 mt-2 space-y-1">
             <div className="h-1.5 w-[95%] rounded-full bg-ink/10" />
             <div className="h-1.5 w-[88%] rounded-full bg-ink/10" />
             <div className="h-1.5 w-[72%] rounded-full bg-ink/10" />
           </div>
-          <div className="mt-3 rounded border border-hair bg-offwhite px-2 py-1.5 text-[8.5px] leading-snug text-body">
+          <div className="v2-anim v2-fade-2 mt-2 rounded border-l-2 border-orange bg-offwhite px-2 py-1.5 text-[8.5px] leading-snug text-body">
             <span className="font-semibold text-ink">Big idea.</span> Position,
-            velocity, and acceleration are each the derivative of the last.
+            velocity, and acceleration are each the derivative of the previous.
           </div>
-          <div className="mt-2 flex flex-wrap gap-1 text-[7.5px] text-muted">
-            <span className="rounded-full border border-hair bg-paper px-2 py-0.5">
+          <div className="v2-anim v2-fade-3 mt-2 flex flex-wrap gap-1 text-[7.5px] text-muted">
+            <span className="rounded-full border border-hair bg-paper px-2 py-0.5 font-mono">
               v = v₀ + at
             </span>
-            <span className="rounded-full border border-hair bg-paper px-2 py-0.5">
+            <span className="rounded-full border border-hair bg-paper px-2 py-0.5 font-mono">
               x = v₀t + ½at²
             </span>
+            <span className="rounded-full border border-hair bg-paper px-2 py-0.5 font-mono">
+              v² = v₀² − 2g·h
+            </span>
+          </div>
+          <div className="v2-anim v2-fade-4 mt-2 flex items-center gap-1.5 text-[8px]">
+            <span className="rounded-full bg-green-100 px-2 py-0.5 font-medium text-green-800">
+              Mark complete
+            </span>
+            <span className="text-muted">3 of 4 topics</span>
           </div>
         </div>
       </div>
@@ -1300,9 +1513,11 @@ function HiFiStudy() {
 function HiFiBook() {
   return (
     <div className="flex h-full flex-col bg-paper">
-      <PhoneAppHeader title="Book Mode" route="study" />
-      <div className="relative flex h-full items-stretch justify-center bg-gradient-to-b from-offwhite to-paper p-4">
-        <div className="relative flex aspect-[3/4] w-full max-w-[200px] flex-col rounded-sm border border-hair bg-paper shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)]">
+      <PhoneAppHeader title="Book Mode" route="AP Calc BC · 6.3" />
+      <div className="relative flex h-full items-stretch justify-center bg-gradient-to-b from-offwhite to-paper p-3">
+        <div
+          className="v2-anim v2-book-flip relative flex aspect-[3/4] w-full max-w-[210px] flex-col rounded-sm border border-hair bg-paper shadow-[0_8px_24px_-12px_rgba(0,0,0,0.25)]"
+        >
           <div className="absolute inset-y-1 -right-1 w-1.5 rounded-r-sm border border-l-0 border-hair bg-offwhite opacity-70" />
           <div className="absolute inset-y-2 -right-2.5 w-1.5 rounded-r-sm border border-l-0 border-hair bg-offwhite opacity-40" />
           <div className="border-b border-hair px-3 py-2 text-center">
@@ -1313,19 +1528,51 @@ function HiFiBook() {
               Integration by Parts
             </div>
           </div>
-          <div className="flex-1 space-y-1 px-4 py-3">
-            <div className="h-1.5 w-[88%] rounded-full bg-ink/10" />
-            <div className="h-1.5 w-[94%] rounded-full bg-ink/10" />
-            <div className="h-1.5 w-[78%] rounded-full bg-ink/10" />
+
+          {/* Page A — visible 0–22% & 46–62% & 94–100% */}
+          <div className="v2-anim v2-page-1 flex-1 space-y-1 px-4 py-3 absolute inset-0 mt-[36px] mb-[24px]">
+            <div className="font-serif text-[8px] italic text-muted">§ 6.3 · Page 3 of 7</div>
+            <div className="mt-1 text-[8px] leading-[1.45] text-body">
+              When a product of two functions appears under an integral, choose
+              one to differentiate (u) and one to integrate (dv).
+            </div>
             <div className="my-2 rounded bg-offwhite px-2 py-1 text-center font-serif text-[11px] italic text-ink">
               ∫ u dv = uv − ∫ v du
             </div>
-            <div className="h-1.5 w-[88%] rounded-full bg-ink/10" />
-            <div className="h-1.5 w-[70%] rounded-full bg-ink/10" />
+            <div className="text-[8px] leading-[1.45] text-body">
+              Pick u via <span className="font-mono">LIATE</span> — log, inverse
+              trig, algebraic, trig, exponential.
+            </div>
+            <div className="mt-1 text-[7.5px] text-muted italic">
+              Example next page →
+            </div>
           </div>
-          <div className="flex items-center justify-between border-t border-hair px-3 py-1.5 font-serif text-[8px] italic text-muted">
+
+          {/* Page B — visible 22–46% & 70–94% */}
+          <div className="v2-anim v2-page-2 flex-1 space-y-1 px-4 py-3 absolute inset-0 mt-[36px] mb-[24px]">
+            <div className="font-serif text-[8px] italic text-muted">§ 6.3 · Page 4 of 7</div>
+            <div className="mt-1 text-[8px] leading-[1.45] text-body">
+              Worked example: <span className="font-mono">∫ x · eˣ dx</span>.
+              Set u = x and dv = eˣ dx. Then du = dx and v = eˣ.
+            </div>
+            <div className="my-2 rounded bg-offwhite px-2 py-1 text-center font-serif text-[10px] italic text-ink">
+              x·eˣ − ∫ eˣ dx = (x − 1)eˣ + C
+            </div>
+            <div className="text-[8px] leading-[1.45] text-body">
+              The integral on the right is now elementary, so we're done.
+            </div>
+            <div className="mt-1 text-[7.5px] text-muted italic">
+              Try one yourself →
+            </div>
+          </div>
+
+          <div className="absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-hair px-3 py-1.5 font-serif text-[8px] italic text-muted">
             <span>← Prev</span>
-            <span>3 / 7</span>
+            <span>
+              <span className="v2-anim v2-page-1">3</span>
+              <span className="v2-anim v2-page-2">4</span>
+              <span> / 7</span>
+            </span>
             <span>Next →</span>
           </div>
         </div>
@@ -1337,18 +1584,35 @@ function HiFiBook() {
 function HiFiTools() {
   return (
     <div className="flex h-full flex-col bg-paper">
-      <PhoneAppHeader title="Interactives" route="live widget" />
-      <div className="flex h-full flex-col gap-2 p-3">
+      <PhoneAppHeader title="Interactives" route="live graph" />
+
+      {/* Prompt that types in */}
+      <div className="border-b border-hair bg-offwhite px-3 py-2">
+        <div className="text-[7px] font-semibold uppercase tracking-[0.18em] text-muted">
+          Prompt
+        </div>
+        <div className="mt-0.5 truncate text-[10px] leading-snug text-ink">
+          <span className="v2-anim v2-typing">
+            graph y = sin(x) and its 3rd-order Taylor approx
+          </span>
+          <span className="v2-cursor text-orange" />
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-2 p-3">
         <div className="flex items-center gap-1.5 text-[9px] text-muted">
-          <span className="rounded border border-hair bg-offwhite px-1.5 py-0.5 text-ink">
+          <span className="v2-anim v2-hl-1 rounded border border-orange/50 bg-orange-tint/40 px-1.5 py-0.5 font-medium text-orange-ink">
             Graph 2D
           </span>
-          <span className="rounded border border-hair px-1.5 py-0.5">3D</span>
-          <span className="rounded border border-hair px-1.5 py-0.5">
+          <span className="v2-anim v2-hl-2 rounded border border-hair px-1.5 py-0.5">
+            3D
+          </span>
+          <span className="v2-anim v2-hl-3 rounded border border-hair px-1.5 py-0.5">
             Physics
           </span>
           <span className="rounded border border-hair px-1.5 py-0.5">Java</span>
         </div>
+
         <div className="relative flex-1 overflow-hidden rounded-md border border-hair bg-paper">
           <svg
             viewBox="0 0 200 240"
@@ -1371,43 +1635,58 @@ function HiFiTools() {
               </pattern>
             </defs>
             <rect width="200" height="240" fill="url(#grid-revised)" />
-            <line
-              x1="0"
-              y1="120"
-              x2="200"
-              y2="120"
-              stroke="rgb(var(--rule))"
-              strokeWidth="0.7"
-            />
-            <line
-              x1="100"
-              y1="0"
-              x2="100"
-              y2="240"
-              stroke="rgb(var(--rule))"
-              strokeWidth="0.7"
-            />
+            <line x1="0" y1="120" x2="200" y2="120" stroke="rgb(var(--rule))" strokeWidth="0.7" />
+            <line x1="100" y1="0" x2="100" y2="240" stroke="rgb(var(--rule))" strokeWidth="0.7" />
+            {/* sin curve */}
             <path
-              d="M10 200 C 50 80, 150 80, 190 200"
+              className="v2-anim v2-graph-draw"
+              d="M0 120 C 25 70, 50 70, 75 120 S 125 170, 150 120 S 200 70, 200 120"
               fill="none"
               stroke="rgb(var(--orange))"
               strokeWidth="2"
+              strokeLinecap="round"
             />
+            {/* Taylor approx — dashed, draws second */}
             <path
-              d="M10 120 C 40 80, 70 160, 100 120 S 160 80, 190 120"
+              className="v2-anim v2-graph-draw-2"
+              d="M0 230 C 20 160, 45 110, 70 110 S 110 130, 140 145 S 180 200, 200 230"
               fill="none"
-              stroke="#0ea5e9"
+              stroke="#0284c7"
               strokeWidth="1.6"
-              strokeDasharray="3 3"
+              strokeDasharray="800"
+              strokeLinecap="round"
             />
-            <circle cx="100" cy="80" r="2.6" fill="rgb(var(--orange))" />
+            {/* axis labels */}
+            <text x="184" y="116" fontSize="7" fill="rgb(var(--muted))" fontFamily="monospace">x</text>
+            <text x="104" y="10" fontSize="7" fill="rgb(var(--muted))" fontFamily="monospace">y</text>
+            <text x="6" y="116" fontSize="6" fill="rgb(var(--muted))">−π</text>
+            <text x="190" y="116" fontSize="6" fill="rgb(var(--muted))">π</text>
           </svg>
+          {/* Legend chip */}
+          <div className="absolute left-1.5 top-1.5 flex flex-col gap-0.5 rounded bg-paper/90 px-1.5 py-1 text-[7px] backdrop-blur">
+            <div className="flex items-center gap-1">
+              <span className="h-0.5 w-3 bg-orange" />
+              <span className="font-mono text-ink">sin(x)</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="h-0.5 w-3 border-t border-dashed border-[#0284c7]" />
+              <span className="font-mono text-ink">T₃(x)</span>
+            </div>
+          </div>
         </div>
-        <div className="rounded-md border border-hair bg-offwhite px-2 py-1.5 font-mono text-[9px] text-ink">
-          <span className="text-muted">f(x) = </span>
-          <span>sin(x)</span>
-          <span className="ml-2 text-muted">T₃(x) = </span>
-          <span>x − x³/6</span>
+
+        <div className="rounded-md border border-hair bg-offwhite px-2 py-1.5 font-mono text-[8.5px] text-ink">
+          <div>
+            <span className="text-muted">f(x) =</span> <span>sin(x)</span>
+          </div>
+          <div>
+            <span className="text-muted">T₃(x) =</span>{" "}
+            <span>x − x³/6</span>
+          </div>
+        </div>
+
+        <div className="text-[7.5px] text-muted">
+          Drag the curve to compare divergence near x = π/2.
         </div>
       </div>
     </div>
@@ -1415,6 +1694,7 @@ function HiFiTools() {
 }
 
 function HiFiReview() {
+  const bars = [8, 14, 11, 18, 9, 16, 22];
   return (
     <div className="flex h-full flex-col bg-paper">
       <PhoneAppHeader title="Insights · Review" route="last 7 days" />
@@ -1422,7 +1702,7 @@ function HiFiReview() {
         <div className="flex items-end justify-between gap-3">
           <div>
             <div className="text-[8px] uppercase tracking-wider text-muted">
-              Token usage
+              AI tokens
             </div>
             <div className="font-serif text-[14px] text-ink">42,180</div>
           </div>
@@ -1430,34 +1710,66 @@ function HiFiReview() {
             <div className="text-[8px] uppercase tracking-wider text-muted">
               Streak
             </div>
-            <div className="font-serif text-[14px] text-orange">5 days</div>
+            <div className="font-serif text-[14px] text-orange">
+              <span>5 days</span>
+              <span className="ml-1 text-[9px]">🔥</span>
+            </div>
           </div>
         </div>
-        <div className="mt-2 flex h-12 items-end gap-1">
-          {[8, 14, 11, 18, 9, 16, 22].map((h, i) => (
-            <div
-              key={i}
-              className="flex-1 rounded-t bg-orange/70"
-              style={{ height: `${(h / 22) * 100}%` }}
-            />
+
+        <div className="mt-2 flex h-14 items-end gap-1">
+          {bars.map((h, i) => (
+            <div key={i} className="flex flex-1 flex-col items-center justify-end gap-0.5">
+              <div
+                className="v2-anim v2-bar-fill w-full rounded-t bg-orange/75"
+                style={
+                  {
+                    height: `${(h / 22) * 100}%`,
+                    "--v2-bar-end": "1",
+                    animationDelay: `${i * 0.08}s`,
+                    transformOrigin: "bottom",
+                  } as React.CSSProperties
+                }
+              />
+              <div className="text-[6.5px] text-muted">
+                {["M", "T", "W", "T", "F", "S", "S"][i]}
+              </div>
+            </div>
           ))}
         </div>
+
         <div className="mt-3 text-[8px] uppercase tracking-wider text-muted">
-          Review bank · topics to revisit
+          Review bank · spaced
         </div>
         <div className="mt-1 space-y-1">
-          <div className="flex items-center justify-between rounded border border-hair px-2 py-1 text-[10px] text-body">
-            <span>Related rates · ladder</span>
-            <span className="text-orange-ink">retry</span>
+          <div className="v2-anim v2-fade-1 flex items-center justify-between rounded border border-hair bg-paper px-2 py-1 text-[9.5px] text-body">
+            <span className="truncate">Calc BC · Related rates ladder</span>
+            <span className="ml-2 shrink-0 rounded-full bg-orange-tint px-1.5 py-0.5 text-[8px] font-medium text-orange-ink">
+              retry
+            </span>
           </div>
-          <div className="flex items-center justify-between rounded border border-hair px-2 py-1 text-[10px] text-body">
-            <span>Gibbs free energy · sign</span>
-            <span className="text-orange-ink">retry</span>
+          <div className="v2-anim v2-fade-2 flex items-center justify-between rounded border border-hair bg-paper px-2 py-1 text-[9.5px] text-body">
+            <span className="truncate">Chem · Gibbs free energy sign</span>
+            <span className="ml-2 shrink-0 rounded-full bg-orange-tint px-1.5 py-0.5 text-[8px] font-medium text-orange-ink">
+              retry
+            </span>
           </div>
-          <div className="flex items-center justify-between rounded border border-hair px-2 py-1 text-[10px] text-body">
-            <span>Projectile · range</span>
-            <span className="text-green-700">✓ fixed</span>
+          <div className="v2-anim v2-fade-3 flex items-center justify-between rounded border border-hair bg-paper px-2 py-1 text-[9.5px] text-body">
+            <span className="truncate">Phys 1 · Projectile range</span>
+            <span className="ml-2 shrink-0 rounded-full bg-green-100 px-1.5 py-0.5 text-[8px] font-medium text-green-800">
+              ✓ fixed
+            </span>
           </div>
+          <div className="v2-anim v2-fade-4 flex items-center justify-between rounded border border-hair bg-paper px-2 py-1 text-[9.5px] text-body">
+            <span className="truncate">Bio · Hardy-Weinberg setup</span>
+            <span className="ml-2 shrink-0 rounded-full bg-orange-tint px-1.5 py-0.5 text-[8px] font-medium text-orange-ink">
+              retry
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-2 text-[7.5px] text-muted">
+          Spaced repetition: re-asks the day before you'd forget.
         </div>
       </div>
     </div>
@@ -1467,52 +1779,72 @@ function HiFiReview() {
 function HiFiSchedule() {
   return (
     <div className="flex h-full flex-col bg-paper">
-      <PhoneAppHeader title="Today · April 17" route="schedule" />
+      <PhoneAppHeader title="Today · April 27" route="schedule" />
       <div className="flex h-full flex-col p-3">
         <div className="flex items-baseline justify-between">
           <div>
             <div className="text-[8px] uppercase tracking-wider text-muted">
-              Goal
+              Daily goal
             </div>
             <div className="font-serif text-[13px] text-ink">
               45 / 60 min studied
             </div>
           </div>
-          <div className="text-[10px] text-orange-ink">
-            <span className="font-semibold">+800</span> bonus
+          <div className="v2-anim v2-fade-3 text-[10px] text-orange-ink">
+            <span className="font-semibold">+800</span> bonus tokens
           </div>
         </div>
+
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-offwhite">
           <div
-            className="h-full rounded-full bg-orange"
-            style={{ width: "75%" }}
+            className="v2-anim v2-bar-fill h-full rounded-full bg-orange"
+            style={{ "--v2-bar-end": "0.75", width: "100%" } as React.CSSProperties}
           />
         </div>
+
         <div className="mt-3 space-y-1.5">
-          <div className="flex items-center gap-2 rounded border border-hair bg-offwhite px-2 py-1.5 text-[10px]">
-            <span className="grid h-4 w-4 place-items-center rounded bg-green-100 text-center text-green-700">
+          <div className="v2-anim v2-fade-1 flex items-center gap-2 rounded border border-hair bg-offwhite px-2 py-1.5 text-[9.5px]">
+            <span className="grid h-4 w-4 place-items-center rounded bg-green-100 text-[8px] text-green-700 v2-anim v2-tick">
               ✓
             </span>
-            <span className="text-muted line-through">
-              Calc BC · 6.3 Integration
+            <span className="truncate text-muted line-through">
+              Calc BC · 6.3 Integration by parts
             </span>
-            <span className="ml-auto text-[9px] text-muted">20m</span>
+            <span className="ml-auto shrink-0 text-[9px] text-muted">20m</span>
           </div>
-          <div className="flex items-center gap-2 rounded border border-hair bg-offwhite px-2 py-1.5 text-[10px]">
-            <span className="grid h-4 w-4 place-items-center rounded bg-green-100 text-center text-green-700">
+          <div className="v2-anim v2-fade-2 flex items-center gap-2 rounded border border-hair bg-offwhite px-2 py-1.5 text-[9.5px]">
+            <span className="grid h-4 w-4 place-items-center rounded bg-green-100 text-[8px] text-green-700 v2-anim v2-tick" style={{ animationDelay: "0.4s" }}>
               ✓
             </span>
-            <span className="text-muted line-through">
+            <span className="truncate text-muted line-through">
               Physics 1 · review bank
             </span>
-            <span className="ml-auto text-[9px] text-muted">25m</span>
+            <span className="ml-auto shrink-0 text-[9px] text-muted">25m</span>
           </div>
-          <div className="flex items-center gap-2 rounded border border-orange/40 bg-orange-tint px-2 py-1.5 text-[10px] text-orange-ink">
-            <span className="grid h-4 w-4 place-items-center rounded border border-orange/40 bg-paper text-center">
+          <div className="v2-anim v2-fade-3 flex items-center gap-2 rounded border border-orange/40 bg-orange-tint px-2 py-1.5 text-[9.5px] text-orange-ink">
+            <span className="grid h-4 w-4 place-items-center rounded border border-orange/40 bg-paper text-center text-[10px] v2-pulse">
               ·
             </span>
-            <span>Chem · FRQ warm-up</span>
-            <span className="ml-auto text-[9px]">15m</span>
+            <span className="truncate font-medium">Chem · FRQ warm-up</span>
+            <span className="ml-auto shrink-0 text-[9px]">15m</span>
+          </div>
+          <div className="v2-anim v2-fade-4 flex items-center gap-2 rounded border border-dashed border-hair bg-paper px-2 py-1.5 text-[9.5px] text-muted">
+            <span className="grid h-4 w-4 place-items-center rounded border border-hair bg-paper text-[8px]">
+              ·
+            </span>
+            <span className="truncate">Chem · 10 spaced cards</span>
+            <span className="ml-auto shrink-0 text-[9px]">10m</span>
+          </div>
+        </div>
+
+        <div className="mt-2 rounded-md border border-hair bg-offwhite px-2 py-1.5 text-[8px]">
+          <div className="flex items-center justify-between text-muted">
+            <span>Plan tokens</span>
+            <span className="font-mono text-ink">8.4k / 10k</span>
+          </div>
+          <div className="mt-0.5 flex items-center justify-between text-muted">
+            <span>Bonus bank</span>
+            <span className="font-mono text-orange-ink">+2,400</span>
           </div>
         </div>
       </div>
