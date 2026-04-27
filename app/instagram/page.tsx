@@ -118,7 +118,7 @@ const revisedReels: RevisedReel[] = [
     beats: [
       { time: "0–3s", copy: "Token bars rise from zero — streak counter ticks" },
       { time: "3–9s", copy: "Review-bank rows slide in with 'retry' tags" },
-      { time: "9–13s", copy: "One row flips to 'fixed' green check" },
+      { time: "9–13s", copy: "One row flips to 'fixed' with the orange check pill" },
       { time: "13–16s", copy: "Dashboard pulls back; URL card fades in" },
     ],
   },
@@ -473,9 +473,9 @@ export default function InstagramPage() {
           position: relative;
           aspect-ratio: 9 / 16;
           overflow: hidden;
-          border-radius: 34px;
-          background: #0c0c0e;
-          box-shadow: 0 30px 70px -32px rgba(0, 0, 0, 0.55);
+          border-radius: 0;
+          background: rgb(var(--paper));
+          border: 1px solid rgb(var(--hair));
         }
         .v2-phone:hover .v2-anim,
         .v2-phone:hover .reel-progress span {
@@ -1126,9 +1126,9 @@ function FrqMock() {
         My answer: the control group shows what happens without the treatment...
       </div>
       <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px]">
-        <div className="rounded bg-green-50 py-2 text-green-800">2/2 claim</div>
-        <div className="rounded bg-amber-50 py-2 text-amber-800">1/2 evidence</div>
-        <div className="rounded bg-orange-tint py-2 text-orange-ink">revise</div>
+        <div className="rounded bg-orange-tint py-2 text-orange-ink">2/2 claim</div>
+        <div className="rounded bg-offwhite py-2 text-muted">1/2 evidence</div>
+        <div className="rounded border border-orange/40 bg-paper py-2 text-orange-ink">revise</div>
       </div>
     </AppWindow>
   );
@@ -1194,7 +1194,7 @@ function ScheduleMock() {
       <div className="mt-4 space-y-2">
         {["Calc lesson", "Physics review bank", "Chem FRQ warm-up"].map((task, i) => (
           <div key={task} className="flex items-center gap-2 rounded-lg border border-hair bg-offwhite px-3 py-2 text-[12px]">
-            <span className={`grid h-5 w-5 place-items-center rounded ${i < 2 ? "bg-green-100 text-green-700" : "border border-orange/40 text-orange-ink"}`}>{i < 2 ? "✓" : "·"}</span>
+            <span className={`grid h-5 w-5 place-items-center rounded ${i < 2 ? "bg-orange-tint text-orange-ink" : "border border-orange/40 text-orange-ink"}`}>{i < 2 ? "✓" : "·"}</span>
             <span className={i < 2 ? "text-muted line-through" : "text-ink"}>{task}</span>
           </div>
         ))}
@@ -1295,43 +1295,14 @@ function RevisedReelPreview({ reel }: { reel: RevisedReel }) {
       }
       data-reel-id={reel.id}
     >
-      {/* Phone notch */}
-      <div className="pointer-events-none absolute left-1/2 top-2 z-30 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
-
-      {/* Top progress bar */}
-      <div className="absolute inset-x-5 top-9 z-20 h-[3px] overflow-hidden rounded-full bg-white/15 reel-progress">
-        <span className="block h-full rounded-full bg-white" />
+      {/* Top progress bar — kept as a thin orange marker, no dark chrome. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 h-[3px] overflow-hidden bg-hair reel-progress">
+        <span className="block h-full bg-orange" />
       </div>
 
-      {/* Status row */}
-      <div className="absolute inset-x-5 top-[54px] z-20 flex items-center justify-between text-white">
-        <div className="flex items-center gap-2">
-          <div className="grid h-7 w-7 place-items-center rounded-md bg-white/10 backdrop-blur">
-            <LogoMark size={16} />
-          </div>
-          <div>
-            <div className="text-[11px] font-semibold leading-none">FinalsPrep</div>
-            <div className="mt-0.5 text-[9px] text-white/65">{reel.route}</div>
-          </div>
-        </div>
-        <div className="rounded-full bg-white/10 px-2 py-1 text-[9px] font-medium text-white/80 backdrop-blur">
-          AP prep
-        </div>
-      </div>
-
-      {/* App surface */}
-      <div className="absolute inset-x-3 top-[100px] bottom-[110px] overflow-hidden rounded-2xl bg-paper">
+      {/* Full-bleed app surface — the only thing in the rectangle. */}
+      <div className="absolute inset-0 overflow-hidden bg-paper">
         <RevisedMock kind={reel.kind} />
-      </div>
-
-      {/* Bottom caption / hook */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black via-black/85 to-transparent px-5 pb-6 pt-16 text-white">
-        <div className="text-[20px] font-semibold leading-tight tracking-tight">
-          {reel.title}
-        </div>
-        <div className="mt-2 text-[12px] leading-[1.45] text-white/70">
-          {reel.hook}
-        </div>
       </div>
     </div>
   );
@@ -1450,7 +1421,7 @@ function HiFiStudy() {
             <div className="v2-anim v2-hl-3 flex items-center gap-1 text-orange">
               <span className="h-1 w-1 rounded-full bg-orange" />
               <span>1.3 Projectile motion</span>
-              <span className="ml-auto text-green-700">✓</span>
+              <span className="ml-auto text-orange-ink">✓</span>
             </div>
             <div className="flex items-center gap-1 text-muted">
               <span className="h-1 w-1 rounded-full bg-ink/30" />
@@ -1504,7 +1475,7 @@ function HiFiStudy() {
             </span>
           </div>
           <div className="v2-anim v2-fade-4 mt-2 flex items-center gap-1.5 text-[8px]">
-            <span className="rounded-full bg-green-100 px-2 py-0.5 font-medium text-green-800">
+            <span className="rounded-full bg-orange-tint px-2 py-0.5 font-medium text-orange-ink">
               Mark complete
             </span>
             <span className="text-muted">3 of 4 topics</span>
@@ -1761,7 +1732,7 @@ function HiFiReview() {
           </div>
           <div className="v2-anim v2-fade-3 flex items-center justify-between rounded border border-hair bg-paper px-2 py-1 text-[9.5px] text-body">
             <span className="truncate">Phys 1 · Projectile range</span>
-            <span className="ml-2 shrink-0 rounded-full bg-green-100 px-1.5 py-0.5 text-[8px] font-medium text-green-800">
+            <span className="ml-2 shrink-0 rounded-full border border-orange/40 bg-paper px-1.5 py-0.5 text-[8px] font-medium text-orange-ink">
               ✓ fixed
             </span>
           </div>
@@ -1809,7 +1780,7 @@ function HiFiSchedule() {
 
         <div className="mt-3 space-y-1.5">
           <div className="v2-anim v2-fade-1 flex items-center gap-2 rounded border border-hair bg-offwhite px-2 py-1.5 text-[9.5px]">
-            <span className="grid h-4 w-4 place-items-center rounded bg-green-100 text-[8px] text-green-700 v2-anim v2-tick">
+            <span className="grid h-4 w-4 place-items-center rounded bg-orange-tint text-[8px] text-orange-ink v2-anim v2-tick">
               ✓
             </span>
             <span className="truncate text-muted line-through">
@@ -1818,7 +1789,7 @@ function HiFiSchedule() {
             <span className="ml-auto shrink-0 text-[9px] text-muted">20m</span>
           </div>
           <div className="v2-anim v2-fade-2 flex items-center gap-2 rounded border border-hair bg-offwhite px-2 py-1.5 text-[9.5px]">
-            <span className="grid h-4 w-4 place-items-center rounded bg-green-100 text-[8px] text-green-700 v2-anim v2-tick" style={{ animationDelay: "0.4s" }}>
+            <span className="grid h-4 w-4 place-items-center rounded bg-orange-tint text-[8px] text-orange-ink v2-anim v2-tick" style={{ animationDelay: "0.4s" }}>
               ✓
             </span>
             <span className="truncate text-muted line-through">
