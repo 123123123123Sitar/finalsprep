@@ -3,6 +3,7 @@ import SiteNav from "@/app/components/SiteNav";
 import { LogoMark } from "@/app/components/Logo";
 import ReelDownloadButtons from "./ReelDownloadButtons";
 import CopyScriptButton from "./CopyScriptButton";
+import PasswordGate from "./PasswordGate";
 
 function wordCount(s: string): number {
   return s.trim().split(/\s+/).filter(Boolean).length;
@@ -413,6 +414,7 @@ const reels: Reel[] = [
 
 export default function InstagramPage() {
   return (
+    <PasswordGate>
     <main className="min-h-screen bg-paper text-body">
       <SiteNav sticky={false} />
 
@@ -615,6 +617,7 @@ export default function InstagramPage() {
         </div>
       </section>
     </main>
+    </PasswordGate>
   );
 }
 
