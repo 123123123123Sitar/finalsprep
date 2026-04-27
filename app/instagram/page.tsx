@@ -4,6 +4,7 @@ import { LogoMark } from "@/app/components/Logo";
 import ReelDownloadButtons from "./ReelDownloadButtons";
 import CopyScriptButton from "./CopyScriptButton";
 import PasswordGate from "./PasswordGate";
+import RecordReelButton from "./RecordReelButton";
 
 function wordCount(s: string): number {
   return s.trim().split(/\s+/).filter(Boolean).length;
@@ -743,6 +744,10 @@ export default function InstagramPage() {
                 <p className="mt-3 max-w-2xl text-[17px] text-body">
                   {reel.hook}
                 </p>
+                <RecordReelButton
+                  reelId={reel.id}
+                  durationSeconds={reel.duration}
+                />
 
                 <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
                   <div className="rounded-lg border border-hair bg-paper p-5">
