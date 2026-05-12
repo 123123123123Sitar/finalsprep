@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import { updateProfile } from "firebase/auth";
 import {
   doc,
@@ -84,8 +85,16 @@ type OnboardingDoc = {
  * Mounted from the root layout so it overlays every page once a verified
  * user signs in for the first time.
  */
+// Routes where the onboarding modal must NOT cover the page even if the
+// user hasn't completed onboarding yet — namely the legal pages the modal
+// itself links to. Without this, clicking Terms/Privacy mid-onboarding
+// opens a new tab that immediately overlays the same modal on top of the
+// policy, making the policy unreadable.
+const ONBOARDING_HIDDEN_ROUTES = new Set(["/terms", "/privacy"]);
+
 export default function OnboardingFlow() {
   const { user, loading, configured } = useAuth();
+  const pathname = usePathname();
   const [onboardingState, setOnboardingState] = useState<
     "loading" | "needed" | "done"
   >("loading");
@@ -120,6 +129,7 @@ export default function OnboardingFlow() {
   }, [user, loading, configured]);
 
   if (onboardingState !== "needed" || !user) return null;
+  if (pathname && ONBOARDING_HIDDEN_ROUTES.has(pathname)) return null;
   return <OnboardingDialog uid={user.uid} email={user.email} />;
 }
 

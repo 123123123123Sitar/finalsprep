@@ -148,6 +148,12 @@ export default function FirstLookProvider({
   const [stepIndex, setStepIndex] = useState(0);
   const [run, setRun] = useState(false);
 
+  // Guards against the 350ms gap between `startTour` and `setRun(true)`:
+  // without it, a dependency change (e.g. a Firestore subscription emitting
+  // a new object reference) could re-run the route effect and queue a second
+  // startTour while the first one is still waiting to flip `run`.
+  const pendingTourIdRef = useRef<TourId | null>(null);
+
   // Latest values mirrored to a ref so the imperative `triggerIfUnseen`
   // reads fresh state without causing the callback identity to churn on
   // every state change (which would re-run dependent useEffects in callers).
@@ -276,6 +282,7 @@ export default function FirstLookProvider({
     (tour: Tour, opts: { ignoreSeenCheck?: boolean }): boolean => {
       const s = stateRef.current;
       if (s.run) return false;
+      if (pendingTourIdRef.current) return false;
       if (!s.user || !s.user.emailVerified) return false;
       if (s.loading || s.planLoading) return false;
       if (!s.onboardingResolved || !s.seenResolved) return false;
@@ -291,6 +298,7 @@ export default function FirstLookProvider({
       );
       if (filtered.length === 0) return false;
 
+      pendingTourIdRef.current = tour.id;
       // Give the page a moment to hydrate before resolving anchors.
       window.setTimeout(() => {
         const ctx: StepCtx = { plan: stateRef.current.plan };
@@ -299,6 +307,7 @@ export default function FirstLookProvider({
         setJoyrideSteps(resolved);
         setStepIndex(0);
         setRun(true);
+        pendingTourIdRef.current = null;
       }, 350);
 
       return true;
@@ -389,8 +398,22 @@ export default function FirstLookProvider({
         setStepIndex(0);
         setActiveTour(null);
         setJoyrideSteps([]);
+        pendingTourIdRef.current = null;
 
         if (tour && user) {
+          // Optimistically reflect the seen entry locally so the route-based
+          // effect doesn't re-fire this tour during the round-trip to Firestore.
+          setTutorialsSeen((prev) => ({
+            ...(prev || {}),
+            seen: {
+              ...(prev?.seen || {}),
+              [tour.id]: {
+                version: tour.version,
+                seenAt: Date.now(),
+                completed,
+              },
+            },
+          }));
           const db = getDb();
           if (db) {
             markTourSeen(
