@@ -148,6 +148,15 @@ export default function FirstLookProvider({
   const [stepIndex, setStepIndex] = useState(0);
   const [run, setRun] = useState(false);
 
+  // Prevent duplicate starts while a tour is waiting for the hydration delay
+  // below, and keep completed/skipped tours locally suppressed until the
+  // Firestore `tutorialsSeen` snapshot catches up. Without this optimistic
+  // guard, setting `run` to false at the end of a tour can briefly make the
+  // route effect see the old "unseen" snapshot and immediately replay it.
+  const activeOrPendingTourRef = useRef<TourId | null>(null);
+  const pendingStartTimerRef = useRef<number | null>(null);
+  const optimisticallySeenRef = useRef<Partial<Record<TourId, number>>>({});
+
   // Latest values mirrored to a ref so the imperative `triggerIfUnseen`
   // reads fresh state without causing the callback identity to churn on
   // every state change (which would re-run dependent useEffects in callers).
@@ -228,6 +237,18 @@ export default function FirstLookProvider({
     }
     const unsub = subscribeTutorialsSeen(db, user.uid, (d) => {
       setTutorialsSeen(d);
+
+      if (d?.seen) {
+        for (const [tourId, version] of Object.entries(
+          optimisticallySeenRef.current
+        )) {
+          const persistedVersion = d.seen[tourId as TourId]?.version ?? 0;
+          if (version !== undefined && persistedVersion >= version) {
+            delete optimisticallySeenRef.current[tourId as TourId];
+          }
+        }
+      }
+
       setSeenResolved(true);
     });
     return () => unsub();
@@ -267,6 +288,16 @@ export default function FirstLookProvider({
     tutorialsSeen?.firstSeenSystemAt,
   ]);
 
+  useEffect(() => {
+    return () => {
+      if (pendingStartTimerRef.current !== null) {
+        window.clearTimeout(pendingStartTimerRef.current);
+        pendingStartTimerRef.current = null;
+      }
+      activeOrPendingTourRef.current = null;
+    };
+  }, []);
+
   /**
    * Shared logic for starting a tour. Used by both the route-based
    * auto-fire effect and the imperative `triggerIfUnseen` API. Returns
@@ -275,7 +306,7 @@ export default function FirstLookProvider({
   const startTour = useCallback(
     (tour: Tour, opts: { ignoreSeenCheck?: boolean }): boolean => {
       const s = stateRef.current;
-      if (s.run) return false;
+      if (s.run || activeOrPendingTourRef.current) return false;
       if (!s.user || !s.user.emailVerified) return false;
       if (s.loading || s.planLoading) return false;
       if (!s.onboardingResolved || !s.seenResolved) return false;
@@ -283,7 +314,10 @@ export default function FirstLookProvider({
       if (s.tutorialsSeen?.dismissedAll) return false;
 
       const seen = s.tutorialsSeen?.seen?.[tour.id];
-      const alreadySeen = !!seen && seen.version >= tour.version;
+      const persistedSeen = !!seen && seen.version >= tour.version;
+      const optimisticSeen =
+        (optimisticallySeenRef.current[tour.id] ?? 0) >= tour.version;
+      const alreadySeen = persistedSeen || optimisticSeen;
       if (alreadySeen && !opts.ignoreSeenCheck) return false;
 
       const filtered = tour.steps.filter(
@@ -291,8 +325,13 @@ export default function FirstLookProvider({
       );
       if (filtered.length === 0) return false;
 
+      activeOrPendingTourRef.current = tour.id;
+
       // Give the page a moment to hydrate before resolving anchors.
-      window.setTimeout(() => {
+      pendingStartTimerRef.current = window.setTimeout(() => {
+        pendingStartTimerRef.current = null;
+        if (activeOrPendingTourRef.current !== tour.id) return;
+
         const ctx: StepCtx = { plan: stateRef.current.plan };
         const resolved = filtered.map((step) => toJoyrideStep(step, ctx));
         setActiveTour(tour);
@@ -385,6 +424,14 @@ export default function FirstLookProvider({
       if (finishStatuses.includes(status)) {
         const completed = status === STATUS.FINISHED;
         const tour = activeTour;
+        if (tour) {
+          optimisticallySeenRef.current[tour.id] = tour.version;
+        }
+        if (pendingStartTimerRef.current !== null) {
+          window.clearTimeout(pendingStartTimerRef.current);
+          pendingStartTimerRef.current = null;
+        }
+        activeOrPendingTourRef.current = null;
         setRun(false);
         setStepIndex(0);
         setActiveTour(null);
